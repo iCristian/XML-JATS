@@ -11,7 +11,6 @@ from typing import Any, Dict, Iterable, List, Tuple
 
 from lxml import etree
 
-
 _XML_ID = "{http://www.w3.org/XML/1998/namespace}id"
 _SANITIZE_ENTITY_RE = re.compile(r"&(?![a-zA-Z]+;|#\d+;|#x[0-9a-fA-F]+;)")
 
@@ -358,9 +357,13 @@ def _render_sections(sections: List[Dict[str, Any]], depth: int = 1, prefix: str
       classes.append("subsection")
     html_parts.append(f"<section id=\"{section_id}\" class=\"{' '.join(classes)}\">")
     heading_parts = ["<header class=\"section-header\">"]
-    if label:
-      heading_parts.append(f"<span class=\"section-eyebrow\">{label}</span>")
-    heading_parts.append(f"<{heading_tag}>{title}</{heading_tag}>")
+    number_text = label
+    if number_text and not number_text.endswith('.'):
+      number_text = f"{number_text}."
+    number_html = f"<span class=\"section-number\">{number_text}</span>" if number_text else ""
+    heading_parts.append(
+      f"<{heading_tag} class=\"section-heading\">{number_html}<span class=\"section-title\">{title}</span></{heading_tag}>"
+    )
     heading_parts.append("</header>")
     html_parts.append("".join(heading_parts))
     body_html = _render_paragraphs(section["paragraphs"])
@@ -536,69 +539,69 @@ def build_html(doc: Dict[str, Any]) -> str:
 :root {
   color-scheme: light;
   --font-sans: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
-  --bg-body: linear-gradient(180deg, #eef2ff 0%, #fdf2ff 60%, #ffffff 100%);
-  --bg-card: rgba(255, 255, 255, 0.92);
-  --accent: #2563eb;
-  --accent-secondary: #f97316;
-  --accent-soft: rgba(37, 99, 235, 0.14);
-  --accent-soft-alt: rgba(249, 115, 22, 0.16);
-  --border-soft: rgba(37, 99, 235, 0.14);
-  --text-main: #0b1120;
-  --text-muted: #3b4860;
-  --text-subtle: #5b6477;
-  --shadow-soft: 0 30px 70px -40px rgba(30, 41, 83, 0.6);
-  --radius-md: 20px;
-  --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.35);
-  --bg-soft: rgba(37, 99, 235, 0.08);
-  --gradient-header: linear-gradient(120deg, rgba(37, 99, 235, 0.95), rgba(124, 58, 237, 0.9));
+  --bg-body: #f3f4f6;
+  --bg-card: #ffffff;
+  --accent: #1f3d7a;
+  --accent-secondary: #2f4f8f;
+  --accent-soft: rgba(31, 61, 122, 0.12);
+  --accent-soft-alt: rgba(31, 61, 122, 0.08);
+  --border-soft: rgba(15, 23, 42, 0.14);
+  --text-main: #1f2937;
+  --text-muted: #374151;
+  --text-subtle: #4b5563;
+  --shadow-soft: 0 24px 48px -32px rgba(15, 23, 42, 0.35);
+  --radius-md: 18px;
+  --focus-ring: 0 0 0 3px rgba(31, 61, 122, 0.35);
+  --bg-soft: rgba(15, 23, 42, 0.04);
+  --header-bg: linear-gradient(135deg, #f9fafc, #eef1f7);
 }
 body[data-theme="dark"] {
   color-scheme: dark;
-  --bg-body: #050b18;
-  --bg-card: rgba(11, 21, 40, 0.92);
-  --accent: #60a5fa;
-  --accent-secondary: #fbbf24;
-  --accent-soft: rgba(96, 165, 250, 0.2);
-  --accent-soft-alt: rgba(251, 191, 36, 0.2);
-  --border-soft: rgba(96, 165, 250, 0.22);
+  --bg-body: #0b1220;
+  --bg-card: #121a2f;
+  --accent: #7aa2ff;
+  --accent-secondary: #90b4ff;
+  --accent-soft: rgba(122, 162, 255, 0.22);
+  --accent-soft-alt: rgba(122, 162, 255, 0.12);
+  --border-soft: rgba(148, 163, 184, 0.35);
   --text-main: #e2e8f0;
   --text-muted: #cbd5f5;
-  --text-subtle: #94a3b8;
-  --shadow-soft: 0 34px 70px -35px rgba(0, 0, 0, 0.75);
-  --focus-ring: 0 0 0 3px rgba(96, 165, 250, 0.5);
-  --bg-soft: rgba(96, 165, 250, 0.12);
-  --gradient-header: linear-gradient(120deg, rgba(37, 99, 235, 0.35), rgba(124, 58, 237, 0.3));
+  --text-subtle: #a5b4d1;
+  --shadow-soft: 0 28px 56px -32px rgba(0, 0, 0, 0.65);
+  --focus-ring: 0 0 0 3px rgba(122, 162, 255, 0.5);
+  --bg-soft: rgba(122, 162, 255, 0.12);
+  --header-bg: linear-gradient(135deg, #10182b, #131f36);
 }
 body[data-contrast="high"] {
-  --bg-body: #f8fafc;
+  --bg-body: #ffffff;
   --bg-card: #ffffff;
   --accent: #0b1120;
-  --accent-secondary: #d97706;
-  --accent-soft: rgba(15, 23, 42, 0.14);
-  --accent-soft-alt: rgba(217, 119, 6, 0.18);
-  --border-soft: rgba(15, 23, 42, 0.45);
+  --accent-secondary: #1f2937;
+  --accent-soft: rgba(11, 17, 32, 0.12);
+  --accent-soft-alt: rgba(11, 17, 32, 0.08);
+  --border-soft: rgba(11, 17, 32, 0.35);
   --text-main: #0b1120;
-  --text-muted: #0f172a;
+  --text-muted: #111827;
   --text-subtle: #1f2937;
   --shadow-soft: none;
-  --focus-ring: 0 0 0 3px #0f172a;
-  --bg-soft: rgba(15, 23, 42, 0.08);
-  --gradient-header: linear-gradient(120deg, rgba(11, 17, 32, 0.95), rgba(59, 7, 100, 0.9));
+  --focus-ring: 0 0 0 3px rgba(11, 17, 32, 0.4);
+  --bg-soft: rgba(11, 17, 32, 0.08);
+  --header-bg: linear-gradient(135deg, #ffffff, #e5e7eb);
 }
 body[data-theme="dark"][data-contrast="high"] {
   --bg-body: #020817;
-  --bg-card: #05122e;
-  --accent: #facc15;
-  --accent-secondary: #34d399;
-  --accent-soft: rgba(250, 204, 21, 0.28);
-  --accent-soft-alt: rgba(52, 211, 153, 0.28);
-  --border-soft: rgba(250, 204, 21, 0.5);
+  --bg-card: #061226;
+  --accent: #f3c969;
+  --accent-secondary: #f0d893;
+  --accent-soft: rgba(243, 201, 105, 0.28);
+  --accent-soft-alt: rgba(243, 201, 105, 0.18);
+  --border-soft: rgba(243, 201, 105, 0.5);
   --text-main: #f8fafc;
   --text-muted: #e2e8f0;
   --text-subtle: #cbd5f5;
-  --focus-ring: 0 0 0 3px rgba(250, 204, 21, 0.6);
-  --bg-soft: rgba(250, 204, 21, 0.18);
-  --gradient-header: linear-gradient(120deg, rgba(250, 204, 21, 0.32), rgba(59, 130, 246, 0.32));
+  --focus-ring: 0 0 0 3px rgba(243, 201, 105, 0.55);
+  --bg-soft: rgba(243, 201, 105, 0.18);
+  --header-bg: linear-gradient(135deg, #0b172c, #152441);
 }
 *, *::before, *::after {
   box-sizing: border-box;
@@ -637,29 +640,26 @@ button {
   flex-direction: column;
 }
 .app-header {
-  padding: 32px clamp(16px, 4vw, 48px) 28px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 20px;
-  background: var(--gradient-header);
-  color: #ffffff;
-  border-radius: 0 0 var(--radius-md) var(--radius-md);
-  box-shadow: var(--shadow-soft);
-  position: relative;
-  overflow: hidden;
+  padding: clamp(20px, 4vw, 36px) clamp(16px, 5vw, 48px) 12px;
+  background: var(--bg-body);
+  margin-bottom: clamp(16px, 4vw, 32px);
 }
-.app-header::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 0;
-  height: 160px;
-  background: radial-gradient(circle at 20% 40%, rgba(255, 255, 255, 0.28), transparent 60%),
-    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.18), transparent 55%);
-  pointer-events: none;
+.header-panel {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 960px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  padding: clamp(24px, 3vw, 40px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 2.5vw, 24px);
 }
 .branding {
-  flex: 1 1 320px;
+  flex: 1 1 auto;
+  width: 100%;
   position: relative;
   z-index: 1;
 }
@@ -667,24 +667,27 @@ button {
   font-size: clamp(2rem, 2.8vw, 2.75rem);
   margin: 0;
   letter-spacing: -0.02em;
-  color: #ffffff;
+  color: var(--text-main);
 }
 .branding .translated-title {
   margin: 8px 0 0;
   font-size: clamp(1.1rem, 2vw, 1.35rem);
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-subtle);
 }
 .control-bar {
   display: flex;
   align-items: center;
   gap: 12px;
-  position: relative;
-  z-index: 1;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  width: 100%;
+  border-top: 1px solid var(--border-soft);
+  padding-top: clamp(12px, 2vw, 18px);
 }
 .control-bar button {
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  color: #ffffff;
+  background: transparent;
+  border: 1px solid var(--border-soft);
+  color: var(--text-main);
   padding: 10px 16px;
   border-radius: 999px;
   cursor: pointer;
@@ -695,7 +698,7 @@ button {
 }
 .control-bar button:hover {
   transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.22);
+  background: var(--accent-soft);
   box-shadow: var(--shadow-soft);
 }
 .control-bar button .state {
@@ -704,6 +707,7 @@ button {
 .layout {
   position: relative;
   padding: 0 clamp(16px, 4vw, 56px) 48px;
+  flex: 1 1 auto;
 }
 .sidebar {
   width: min(340px, 82vw);
@@ -765,11 +769,11 @@ body.sidebar-open .sidebar {
 }
 .toc-item a {
   display: grid;
-  grid-template-columns: auto auto 1fr;
+  grid-template-columns: auto 1fr;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding: 10px 14px;
-  border-radius: 14px;
+  border-radius: 12px;
   color: var(--text-main);
   background: transparent;
   transition: background 0.2s ease, transform 0.2s ease;
@@ -781,19 +785,14 @@ body.sidebar-open .sidebar {
   transform: translateX(4px);
 }
 .toc-marker {
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  background: var(--accent);
-  box-shadow: 0 0 0 4px var(--accent-soft);
-}
-body[data-theme="dark"] .toc-marker {
-  box-shadow: 0 0 0 4px var(--accent-soft-alt);
+  display: none;
 }
 .toc-number {
   font-weight: 600;
-  color: var(--accent);
-  min-width: 2.5ch;
+  color: var(--text-main);
+  min-width: 3ch;
+  font-size: 1rem;
+  font-variant-numeric: lining-nums;
 }
 .toc-number:empty {
   display: none;
@@ -829,9 +828,10 @@ body[data-theme="dark"] .toc-marker {
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
 }
 .keyword-list li {
-  background: linear-gradient(135deg, var(--accent-soft), var(--accent-soft-alt));
-  color: var(--accent);
-  border-radius: 999px;
+  background: var(--bg-soft);
+  color: var(--text-main);
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
   padding: 8px 12px;
   font-size: 0.9rem;
 }
@@ -863,47 +863,37 @@ body[data-theme="dark"] .toc-marker {
   grid-template-columns: minmax(0, 1fr);
 }
 .article-section {
-  transition: transform 0.28s ease, box-shadow 0.28s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .article-section.main-section {
-  position: relative;
-  overflow: hidden;
-}
-.article-section.main-section::before {
-  content: "";
-  position: absolute;
-  left: clamp(16px, 2.5vw, 32px);
-  right: clamp(16px, 2.5vw, 32px);
-  top: clamp(16px, 2.5vw, 28px);
-  height: 4px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
-  opacity: 0.85;
+  border-left: 6px solid var(--accent);
+  padding-left: clamp(24px, 3vw, 36px);
 }
 .article-section.main-section:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 40px 70px -45px rgba(37, 99, 235, 0.45);
-}
-.article-section.main-section .section-header {
-  padding-top: clamp(8px, 1.8vw, 14px);
+  box-shadow: 0 24px 48px -36px rgba(31, 61, 122, 0.35);
 }
 .section-header {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  align-items: baseline;
 }
-.section-header h2, .section-header h3, .section-header h4, .section-header h5, .section-header h6 {
+.section-heading {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 12px;
   margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   color: var(--text-main);
 }
-.section-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.8rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--accent-secondary);
+.section-number {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--accent);
+  font-variant-numeric: lining-nums;
+  line-height: 1;
+}
+.section-title {
+  font-weight: 600;
 }
 .section-body {
   display: grid;
@@ -933,6 +923,10 @@ body[data-theme="dark"] .toc-marker {
 .article-section.subsection .section-header h5,
 .article-section.subsection .section-header h6 {
   color: var(--text-main);
+}
+.article-section.subsection .section-number {
+  color: var(--text-subtle);
+  font-size: 0.95rem;
 }
 .article-section.subsection .section-body p {
   font-size: 1rem;
@@ -1057,6 +1051,47 @@ body[data-theme="dark"] .toc-marker {
   opacity: 1;
   visibility: visible;
 }
+.floating-button {
+  position: fixed;
+  right: clamp(16px, 4vw, 40px);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--accent);
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 24;
+}
+.floating-button .icon {
+  font-weight: 700;
+  font-size: 1rem;
+}
+.floating-button.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.floating-button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+.floating-top {
+  bottom: 108px;
+}
+.floating-menu {
+  bottom: 44px;
+}
+body[data-theme="dark"] .floating-button {
+  color: #0b1220;
+}
 @media (max-width: 720px) {
   .app-header {
     padding-inline: 16px;
@@ -1082,6 +1117,8 @@ body[data-theme="dark"] .toc-marker {
   const sidebar = document.getElementById('sidebar');
   const sidebarClose = document.getElementById('sidebarClose');
   const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+  const scrollTopButton = document.getElementById('scrollTopButton');
+  const floatingMenuButton = document.getElementById('floatingMenuButton');
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const storedTheme = localStorage.getItem('jats-theme');
   const storedContrast = localStorage.getItem('jats-contrast');
@@ -1122,6 +1159,7 @@ body[data-theme="dark"] .toc-marker {
   function updateSidebarAria(isOpen) {
     sidebarToggle?.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
     sidebar?.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+    floatingMenuButton?.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
   }
 
   function openSidebar() {
@@ -1170,6 +1208,33 @@ body[data-theme="dark"] .toc-marker {
       closeSidebar();
     });
   });
+
+  scrollTopButton?.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  if (floatingMenuButton) {
+    floatingMenuButton.addEventListener('click', () => {
+      if (body.classList.contains('sidebar-open')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
+    });
+  }
+
+  function handleScroll() {
+    const shouldShow = window.scrollY > 240;
+    if (scrollTopButton) {
+      scrollTopButton.classList.toggle('visible', shouldShow);
+    }
+    if (floatingMenuButton) {
+      floatingMenuButton.classList.toggle('visible', shouldShow);
+    }
+  }
+
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  handleScroll();
 })();
 """
 
@@ -1236,18 +1301,20 @@ body[data-theme="dark"] .toc-marker {
   <style>{css}</style>
 </head>
 <body data-theme=\"light\" data-contrast=\"normal\">
-  <div class=\"app\">
-    <header class=\"app-header\">
-      <div class=\"branding\">
-        <h1>{title}</h1>
-        {f'<p class="translated-title">{translated_title}</p>' if translated_title else ''}
-      </div>
-      <div class=\"control-bar\">
-  <button id=\"sidebarToggle\" type=\"button\" class=\"sidebar-toggle\" aria-label=\"Mostrar índice\" aria-controls=\"sidebar\" aria-expanded=\"false\">
-          <span>Índice</span>
-        </button>
-        <button id=\"themeToggle\" aria-label=\"Cambiar tema\"><span>Modo</span><span class=\"state\">Modo oscuro</span></button>
-        <button id=\"contrastToggle\" aria-label=\"Cambiar contraste\"><span>Contraste</span><span class=\"state\">Alto contraste</span></button>
+  <div class="app">
+    <header class="app-header">
+      <div class="header-panel">
+        <div class="branding">
+          <h1>{title}</h1>
+          {f'<p class="translated-title">{translated_title}</p>' if translated_title else ''}
+        </div>
+        <div class="control-bar">
+          <button id="sidebarToggle" type="button" class="sidebar-toggle" aria-label="Mostrar índice" aria-controls="sidebar" aria-expanded="false">
+            <span>Índice</span>
+          </button>
+          <button id="themeToggle" aria-label="Cambiar tema"><span>Modo</span><span class="state">Modo oscuro</span></button>
+          <button id="contrastToggle" aria-label="Cambiar contraste"><span>Contraste</span><span class="state">Alto contraste</span></button>
+        </div>
       </div>
     </header>
     <div class=\"layout\">
@@ -1268,6 +1335,14 @@ body[data-theme="dark"] .toc-marker {
         {references_section}
       </main>
     </div>
+    <button id="scrollTopButton" class="floating-button floating-top" type="button" aria-label="Volver al inicio">
+      <span class="icon" aria-hidden="true">&uarr;</span>
+      <span class="label">Arriba</span>
+    </button>
+    <button id="floatingMenuButton" class="floating-button floating-menu" type="button" aria-label="Mostrar índice flotante" aria-controls="sidebar" aria-expanded="false">
+      <span class="icon" aria-hidden="true">&#9776;</span>
+      <span class="label">Índice</span>
+    </button>
   </div>
   <script>{js}</script>
 </body>

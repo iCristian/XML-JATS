@@ -8,69 +8,69 @@
 :root {
   color-scheme: light;
   --font-sans: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
-  --bg-body: linear-gradient(180deg, #eef2ff 0%, #fdf2ff 60%, #ffffff 100%);
-  --bg-card: rgba(255, 255, 255, 0.92);
-  --accent: #2563eb;
-  --accent-secondary: #f97316;
-  --accent-soft: rgba(37, 99, 235, 0.14);
-  --accent-soft-alt: rgba(249, 115, 22, 0.16);
-  --border-soft: rgba(37, 99, 235, 0.14);
-  --text-main: #0b1120;
-  --text-muted: #3b4860;
-  --text-subtle: #5b6477;
-  --shadow-soft: 0 30px 70px -40px rgba(30, 41, 83, 0.6);
-  --radius-md: 20px;
-  --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.35);
-  --bg-soft: rgba(37, 99, 235, 0.08);
-  --gradient-header: linear-gradient(120deg, rgba(37, 99, 235, 0.95), rgba(124, 58, 237, 0.9));
+  --bg-body: #f3f4f6;
+  --bg-card: #ffffff;
+  --accent: #1f3d7a;
+  --accent-secondary: #2f4f8f;
+  --accent-soft: rgba(31, 61, 122, 0.12);
+  --accent-soft-alt: rgba(31, 61, 122, 0.08);
+  --border-soft: rgba(15, 23, 42, 0.14);
+  --text-main: #1f2937;
+  --text-muted: #374151;
+  --text-subtle: #4b5563;
+  --shadow-soft: 0 24px 48px -32px rgba(15, 23, 42, 0.35);
+  --radius-md: 18px;
+  --focus-ring: 0 0 0 3px rgba(31, 61, 122, 0.35);
+  --bg-soft: rgba(15, 23, 42, 0.04);
+  --header-bg: linear-gradient(135deg, #f9fafc, #eef1f7);
 }
 body[data-theme="dark"] {
   color-scheme: dark;
-  --bg-body: #050b18;
-  --bg-card: rgba(11, 21, 40, 0.92);
-  --accent: #60a5fa;
-  --accent-secondary: #fbbf24;
-  --accent-soft: rgba(96, 165, 250, 0.2);
-  --accent-soft-alt: rgba(251, 191, 36, 0.2);
-  --border-soft: rgba(96, 165, 250, 0.22);
+  --bg-body: #0b1220;
+  --bg-card: #121a2f;
+  --accent: #7aa2ff;
+  --accent-secondary: #90b4ff;
+  --accent-soft: rgba(122, 162, 255, 0.22);
+  --accent-soft-alt: rgba(122, 162, 255, 0.12);
+  --border-soft: rgba(148, 163, 184, 0.35);
   --text-main: #e2e8f0;
   --text-muted: #cbd5f5;
-  --text-subtle: #94a3b8;
-  --shadow-soft: 0 34px 70px -35px rgba(0, 0, 0, 0.75);
-  --focus-ring: 0 0 0 3px rgba(96, 165, 250, 0.5);
-  --bg-soft: rgba(96, 165, 250, 0.12);
-  --gradient-header: linear-gradient(120deg, rgba(37, 99, 235, 0.35), rgba(124, 58, 237, 0.3));
+  --text-subtle: #a5b4d1;
+  --shadow-soft: 0 28px 56px -32px rgba(0, 0, 0, 0.65);
+  --focus-ring: 0 0 0 3px rgba(122, 162, 255, 0.5);
+  --bg-soft: rgba(122, 162, 255, 0.12);
+  --header-bg: linear-gradient(135deg, #10182b, #131f36);
 }
 body[data-contrast="high"] {
-  --bg-body: #f8fafc;
+  --bg-body: #ffffff;
   --bg-card: #ffffff;
   --accent: #0b1120;
-  --accent-secondary: #d97706;
-  --accent-soft: rgba(15, 23, 42, 0.14);
-  --accent-soft-alt: rgba(217, 119, 6, 0.18);
-  --border-soft: rgba(15, 23, 42, 0.45);
+  --accent-secondary: #1f2937;
+  --accent-soft: rgba(11, 17, 32, 0.12);
+  --accent-soft-alt: rgba(11, 17, 32, 0.08);
+  --border-soft: rgba(11, 17, 32, 0.35);
   --text-main: #0b1120;
-  --text-muted: #0f172a;
+  --text-muted: #111827;
   --text-subtle: #1f2937;
   --shadow-soft: none;
-  --focus-ring: 0 0 0 3px #0f172a;
-  --bg-soft: rgba(15, 23, 42, 0.08);
-  --gradient-header: linear-gradient(120deg, rgba(11, 17, 32, 0.95), rgba(59, 7, 100, 0.9));
+  --focus-ring: 0 0 0 3px rgba(11, 17, 32, 0.4);
+  --bg-soft: rgba(11, 17, 32, 0.08);
+  --header-bg: linear-gradient(135deg, #ffffff, #e5e7eb);
 }
 body[data-theme="dark"][data-contrast="high"] {
   --bg-body: #020817;
-  --bg-card: #05122e;
-  --accent: #facc15;
-  --accent-secondary: #34d399;
-  --accent-soft: rgba(250, 204, 21, 0.28);
-  --accent-soft-alt: rgba(52, 211, 153, 0.28);
-  --border-soft: rgba(250, 204, 21, 0.5);
+  --bg-card: #061226;
+  --accent: #f3c969;
+  --accent-secondary: #f0d893;
+  --accent-soft: rgba(243, 201, 105, 0.28);
+  --accent-soft-alt: rgba(243, 201, 105, 0.18);
+  --border-soft: rgba(243, 201, 105, 0.5);
   --text-main: #f8fafc;
   --text-muted: #e2e8f0;
   --text-subtle: #cbd5f5;
-  --focus-ring: 0 0 0 3px rgba(250, 204, 21, 0.6);
-  --bg-soft: rgba(250, 204, 21, 0.18);
-  --gradient-header: linear-gradient(120deg, rgba(250, 204, 21, 0.32), rgba(59, 130, 246, 0.32));
+  --focus-ring: 0 0 0 3px rgba(243, 201, 105, 0.55);
+  --bg-soft: rgba(243, 201, 105, 0.18);
+  --header-bg: linear-gradient(135deg, #0b172c, #152441);
 }
 *, *::before, *::after {
   box-sizing: border-box;
@@ -109,29 +109,26 @@ button {
   flex-direction: column;
 }
 .app-header {
-  padding: 32px clamp(16px, 4vw, 48px) 28px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 20px;
-  background: var(--gradient-header);
-  color: #ffffff;
-  border-radius: 0 0 var(--radius-md) var(--radius-md);
-  box-shadow: var(--shadow-soft);
-  position: relative;
-  overflow: hidden;
+  padding: clamp(20px, 4vw, 36px) clamp(16px, 5vw, 48px) 12px;
+  background: var(--bg-body);
+  margin-bottom: clamp(16px, 4vw, 32px);
 }
-.app-header::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 0;
-  height: 160px;
-  background: radial-gradient(circle at 20% 40%, rgba(255, 255, 255, 0.28), transparent 60%),
-    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.18), transparent 55%);
-  pointer-events: none;
+.header-panel {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 960px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  padding: clamp(24px, 3vw, 40px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 2.5vw, 24px);
 }
 .branding {
-  flex: 1 1 320px;
+  flex: 1 1 auto;
+  width: 100%;
   position: relative;
   z-index: 1;
 }
@@ -139,24 +136,27 @@ button {
   font-size: clamp(2rem, 2.8vw, 2.75rem);
   margin: 0;
   letter-spacing: -0.02em;
-  color: #ffffff;
+  color: var(--text-main);
 }
 .branding .translated-title {
   margin: 8px 0 0;
   font-size: clamp(1.1rem, 2vw, 1.35rem);
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-subtle);
 }
 .control-bar {
   display: flex;
   align-items: center;
   gap: 12px;
-  position: relative;
-  z-index: 1;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  width: 100%;
+  border-top: 1px solid var(--border-soft);
+  padding-top: clamp(12px, 2vw, 18px);
 }
 .control-bar button {
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  color: #ffffff;
+  background: transparent;
+  border: 1px solid var(--border-soft);
+  color: var(--text-main);
   padding: 10px 16px;
   border-radius: 999px;
   cursor: pointer;
@@ -167,7 +167,7 @@ button {
 }
 .control-bar button:hover {
   transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.22);
+  background: var(--accent-soft);
   box-shadow: var(--shadow-soft);
 }
 .control-bar button .state {
@@ -176,6 +176,7 @@ button {
 .layout {
   position: relative;
   padding: 0 clamp(16px, 4vw, 56px) 48px;
+  flex: 1 1 auto;
 }
 .sidebar {
   width: min(340px, 82vw);
@@ -237,11 +238,11 @@ body.sidebar-open .sidebar {
 }
 .toc-item a {
   display: grid;
-  grid-template-columns: auto auto 1fr;
+  grid-template-columns: auto 1fr;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding: 10px 14px;
-  border-radius: 14px;
+  border-radius: 12px;
   color: var(--text-main);
   background: transparent;
   transition: background 0.2s ease, transform 0.2s ease;
@@ -253,19 +254,14 @@ body.sidebar-open .sidebar {
   transform: translateX(4px);
 }
 .toc-marker {
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  background: var(--accent);
-  box-shadow: 0 0 0 4px var(--accent-soft);
-}
-body[data-theme="dark"] .toc-marker {
-  box-shadow: 0 0 0 4px var(--accent-soft-alt);
+  display: none;
 }
 .toc-number {
   font-weight: 600;
-  color: var(--accent);
-  min-width: 2.5ch;
+  color: var(--text-main);
+  min-width: 3ch;
+  font-size: 1rem;
+  font-variant-numeric: lining-nums;
 }
 .toc-number:empty {
   display: none;
@@ -301,9 +297,10 @@ body[data-theme="dark"] .toc-marker {
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
 }
 .keyword-list li {
-  background: linear-gradient(135deg, var(--accent-soft), var(--accent-soft-alt));
-  color: var(--accent);
-  border-radius: 999px;
+  background: var(--bg-soft);
+  color: var(--text-main);
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
   padding: 8px 12px;
   font-size: 0.9rem;
 }
@@ -335,47 +332,37 @@ body[data-theme="dark"] .toc-marker {
   grid-template-columns: minmax(0, 1fr);
 }
 .article-section {
-  transition: transform 0.28s ease, box-shadow 0.28s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .article-section.main-section {
-  position: relative;
-  overflow: hidden;
-}
-.article-section.main-section::before {
-  content: "";
-  position: absolute;
-  left: clamp(16px, 2.5vw, 32px);
-  right: clamp(16px, 2.5vw, 32px);
-  top: clamp(16px, 2.5vw, 28px);
-  height: 4px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
-  opacity: 0.85;
+  border-left: 6px solid var(--accent);
+  padding-left: clamp(24px, 3vw, 36px);
 }
 .article-section.main-section:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 40px 70px -45px rgba(37, 99, 235, 0.45);
-}
-.article-section.main-section .section-header {
-  padding-top: clamp(8px, 1.8vw, 14px);
+  box-shadow: 0 24px 48px -36px rgba(31, 61, 122, 0.35);
 }
 .section-header {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  align-items: baseline;
 }
-.section-header h2, .section-header h3, .section-header h4, .section-header h5, .section-header h6 {
+.section-heading {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 12px;
   margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   color: var(--text-main);
 }
-.section-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.8rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--accent-secondary);
+.section-number {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--accent);
+  font-variant-numeric: lining-nums;
+  line-height: 1;
+}
+.section-title {
+  font-weight: 600;
 }
 .section-body {
   display: grid;
@@ -405,6 +392,10 @@ body[data-theme="dark"] .toc-marker {
 .article-section.subsection .section-header h5,
 .article-section.subsection .section-header h6 {
   color: var(--text-main);
+}
+.article-section.subsection .section-number {
+  color: var(--text-subtle);
+  font-size: 0.95rem;
 }
 .article-section.subsection .section-body p {
   font-size: 1rem;
@@ -529,6 +520,47 @@ body[data-theme="dark"] .toc-marker {
   opacity: 1;
   visibility: visible;
 }
+.floating-button {
+  position: fixed;
+  right: clamp(16px, 4vw, 40px);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--accent);
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 24;
+}
+.floating-button .icon {
+  font-weight: 700;
+  font-size: 1rem;
+}
+.floating-button.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.floating-button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+.floating-top {
+  bottom: 108px;
+}
+.floating-menu {
+  bottom: 44px;
+}
+body[data-theme="dark"] .floating-button {
+  color: #0b1220;
+}
 @media (max-width: 720px) {
   .app-header {
     padding-inline: 16px;
@@ -548,16 +580,18 @@ body[data-theme="dark"] .toc-marker {
 <body data-theme="light" data-contrast="normal">
   <div class="app">
     <header class="app-header">
-      <div class="branding">
-        <h1>Percepción del adulto mayor sobre su sexualidad: rol profesional de matronas y matrones</h1>
-        
-      </div>
-      <div class="control-bar">
-  <button id="sidebarToggle" type="button" class="sidebar-toggle" aria-label="Mostrar índice" aria-controls="sidebar" aria-expanded="false">
-          <span>Índice</span>
-        </button>
-        <button id="themeToggle" aria-label="Cambiar tema"><span>Modo</span><span class="state">Modo oscuro</span></button>
-        <button id="contrastToggle" aria-label="Cambiar contraste"><span>Contraste</span><span class="state">Alto contraste</span></button>
+      <div class="header-panel">
+        <div class="branding">
+          <h1>Percepción del adulto mayor sobre su sexualidad: rol profesional de matronas y matrones</h1>
+          
+        </div>
+        <div class="control-bar">
+          <button id="sidebarToggle" type="button" class="sidebar-toggle" aria-label="Mostrar índice" aria-controls="sidebar" aria-expanded="false">
+            <span>Índice</span>
+          </button>
+          <button id="themeToggle" aria-label="Cambiar tema"><span>Modo</span><span class="state">Modo oscuro</span></button>
+          <button id="contrastToggle" aria-label="Cambiar contraste"><span>Contraste</span><span class="state">Alto contraste</span></button>
+        </div>
       </div>
     </header>
     <div class="layout">
@@ -797,7 +831,7 @@ body[data-theme="dark"] .toc-marker {
         
         <section class="article-body">
           <div class="section-grid">
-            <section id="s1" class="article-section level-1 main-section surface"><header class="section-header"><span class="section-eyebrow">1</span><h2>Introducción</h2></header><div class="section-body"><p>La sexualidad es una dimensión presente a lo largo de toda la vida, incluida la tercera edad. Según la Organización Mundial de la Salud (OMS, 2018) ésta abarca “el sexo, las identidades y los roles de género, la orientación sexual, el erotismo, el placer, la intimidad y la reproducción” Sin embargo, “la existencia de prejuicios sociales (…) propicia una desinformación permanente de la temática sexual en la edad geriátrica” (Martínez, 2008). Los prejuicios más frecuentes señalan que no tienen vida sexual activa y que no están interesados en las relaciones románticas (Llanes, 2013). Estas concepciones afectan la forma en que las personas mayores experimentan su sexualidad y se relacionan con su entorno.</p><p>Durante esta etapa, factores como los cambios fisiológicos, las enfermedades crónicas, la demencia y la depresión pueden influir en la vivencia de la sexualidad (Olivera Carmenates &amp; Bujardón Mendoza, 2010). No obstante, la sexualidad continúa siendo un derecho humano y una necesidad emocional esencial (Servicio Nacional del Adulto Mayor [SENAMA], 2017).</p><p>En Chile, las personas mayores —definida como las de 60 o más años (SENAMA)— representan actualmente el 16,2 % de la población, proyectándose un aumento al 19 % para 2035 (Instituto Nacional de Estadísticas [INE], 2019). Este crecimiento implica un aumento en la demanda asistencial, por lo que resulta indispensable la actualización continua de los profesionales de salud, incluidos matrones y matronas, en la atención integral de las necesidades biopsicosociales de este grupo etario, considerando la sexualidad como un aspecto relevante.</p><p>En este contexto, los lineamientos nacionales para mejorar la calidad de vida de las mujeres incluyen las Orientaciones Técnicas para la Atención Integral de la Mujer en Edad de Climaterio en el nivel de Atención Primaria de Salud (APS), dirigidas a mujeres de entre 45 y 64 años (Ministerio de Salud [MINSAL], 2014). Estas orientaciones promueven la salud sexual mediante talleres y consejerías, abordando temas como cambios en la libido, lubricación genital y dificultades de pareja, entre otros. Sin embargo, en el caso de las personas de 65 años o más, el Examen de Medicina Preventiva del Adulto Mayor (EMPAM) (Subsecretaría de Salud Pública, 2012) se enfoca en la evaluación funcional para detectar factores de riesgo, sin incluir aspectos relacionados con la sexualidad.</p><p>Aunque existen investigaciones sobre la sexualidad en la vejez, en Chile estos estudios son escasos y carecen de actualizaciones recientes. Frente a este escenario y considerando los cambios en el perfil demográfico, el presente estudio plantea como objetivos generales: i) describir la percepción de las personas mayores pertenecientes a los CAM de San Miguel e Independencia, respecto a su sexualidad y la manera en que la vivencian; y de acuerdo a esto, ii) describir desde la percepción de los usuarios el rol educativo que deben desempeñar los profesionales matrones y matronas, así como las acciones pertinentes para impactar positivamente en la sexualidad de este grupo etario.</p></div></section><section id="s2" class="article-section level-1 main-section surface"><header class="section-header"><span class="section-eyebrow">2</span><h2>Material y métodos</h2></header><div class="section-body"><p>Diseño del estudio: cualitativo descriptivo con enfoque fenomenológico, elegido por su pertinencia para explorar la percepción subjetiva de las personas mayores sobre su sexualidad y el rol que asignan a los matrones/as. Este enfoque permite comprender los significados que las personas atribuyen a sus experiencias, en coherencia con los objetivos del estudio, orientados a describir cómo se vivencia la sexualidad en la vejez y qué acciones educativas son consideradas pertinentes por los propios usuarios.</p><p>Población y muestra: la población estuvo compuesta por personas de 60 años o más, asistentes a los CAM de atención ambulatoria diurna ubicados en las comunas de Independencia y San Miguel, Región Metropolitana (RM) de Chile. Estos centros tienen como objetivo promover la autonomía, independencia y permanencia de las personas mayores en su entorno familiar y comunitario, a través de actividades recreativas (Ministerio de Desarrollo Social y Familia).</p><p>Los criterios de inclusión fueron: ser persona de 60 años o más, asistir regularmente a alguno de los CAM seleccionados, comprender el propósito del estudio y firmar el consentimiento informado. Se excluyeron personas con diagnóstico de demencia senil u otras condiciones físicas o mentales que dificultaran significativamente la comunicación o participación en la entrevista.</p><p>Para caracterizar a los participantes, se recogieron variables sociodemográficas relevantes, así como antecedentes sobre orientación sexual y acceso a atención en salud sexual.</p><p>Técnica de recolección de datos: se utilizó la entrevista semiestructurada como técnica principal de recolección de datos, aplicada de manera presencial por las investigadoras. El guion de entrevista fue elaborado a partir de los objetivos del estudio y abordó cinco dimensiones temáticas: relación de la persona mayor con su entorno, relaciones socioafectivas, relación consigo mismo, vivencia de la sexualidad y experiencia con la atención en salud. El número de entrevistados se definió en función del criterio de saturación de la información, es decir, se dejó de incorporar nuevos participantes cuando los datos comenzaron a repetirse y no surgieron categorías considerables adicionales.</p><p>Con el fin de asegurar el rigor metodológico, el guion fue sometido a un proceso de validación de contenido. Esta validación fue realizada por miembros del Comité de Ética de la Facultad de Medicina de la Universidad de Chile —como parte de la revisión ética—. Las observaciones aportadas permitieron mejorar la claridad, pertinencia y coherencia de las preguntas incluidas en la versión final.</p><p>La estructura flexible de la entrevista permitió a las investigadoras introducir preguntas adicionales según la dinámica de cada conversación, lo que facilitó la profundización en los relatos y permitió captar elementos emergentes relevantes.</p><p>Análisis de la información: como medida de rigor, las entrevistas fueron grabadas en formato de audio —con consentimiento explícito— y transcritas íntegramente en formato Word para su posterior análisis.</p><p>Los datos recolectados fueron procesados mediante la técnica de análisis de contenido, de forma manual, siguiendo los pasos del análisis de contenido descritos por Granheim y Lundman (2004). En primer lugar, se excluyó la información no pertinente a los objetivos del estudio. Luego, se aplicó codificación abierta de primer nivel, identificando unidades de análisis por párrafos, a las que se les asignaron códigos descriptivos que representaban los significados centrales expresados por los participantes.</p><p>Posteriormente, los códigos fueron comparados entre sí y agrupados inductivamente en categorías y subcategorías según su similitud temática (Hernández et al., 2014). Estos agrupamientos se registraron en una tabla elaborada por las investigadoras, organizada según las temáticas emergentes, lo que permitió estructurar los hallazgos de manera clara y coherente con los objetivos del estudio.</p><p>Para reforzar la validez y confiabilidad del proceso, la codificación fue realizada por dos investigadoras de forma independiente y luego contrastada. Las discrepancias fueron discutidas hasta alcanzar consenso, asegurando la consistencia de las categorías. Además, se mantuvo una trazabilidad documental desde las transcripciones originales hasta la matriz final de resultados, lo que facilitó la auditabilidad del análisis.</p><p>Aspectos éticos: quienes participaron firmaron un consentimiento informado previo a su participación, garantizando la confidencialidad y el respeto a su integridad. El estudio fue aprobado por el Comité de Ética de la Investigación en Seres Humanos de la Facultad de Medicina de la Universidad de Chile (Acta N.º 208, Fecha: 14/03/2023).</p><p>Para resguardar el anonimato, se identificó a cada participante mediante un código compuesto por su sexo y un número correlativo.</p></div></section><section id="s3" class="article-section level-1 main-section surface"><header class="section-header"><span class="section-eyebrow">3</span><h2>Resultados</h2></header><div class="section-body"><p>La muestra estuvo compuesta por 12 participantes (10 mujeres y 2 hombres), con edades entre 61 y 81 años (ver Tabla 1).</p><p>A partir del análisis de contenido, se identificaron las siguientes categorías y subcategorías temáticas:</p></div><div class="subsection-group"><section id="sec-1" class="article-section level-2 subsection"><header class="section-header"><span class="section-eyebrow">3.1</span><h3>Relación de la persona mayor con su entorno</h3></header><div class="subsection-group"><section id="sec-1" class="article-section level-3 subsection"><header class="section-header"><span class="section-eyebrow">3.1.1</span><h4>La persona mayor y su familia</h4></header><div class="section-body"><p>Esta subcategoría hace referencia a con quién convive la persona mayor y la calidad de la relación con su familia. La mayoría de los entrevistados declaran vivir solos y tener una buena relación familiar con una comunicación constante, por medio de visitas domiciliarias o vía telefónica. Se compartió el hecho del distanciamiento familiar (hermanos, tíos, primos) luego del fallecimiento del único progenitor vivo. Parte de ellos sienten que algunos familiares como hijos o nietos no tienen tiempo o interés para establecer una relación de calidad con ellos.</p><p>“(…) tú no puedes depender de la familia porque todos tienen su vida propia y no puedes convertirte en un “cacho”, te conviertes en algo con lo ellos no contaban; entonces yo trato de no molestar a la familia…” (E.1)</p></div></section><section id="sec-2" class="article-section level-3 subsection"><header class="section-header"><span class="section-eyebrow">3.1.2</span><h4>Círculo social</h4></header><div class="section-body"><p>Esta subcategoría describe las relaciones de amistad y vínculos dentro y fuera del CAM. Gran parte de las personas mayores, refieren tener muy buena relación con su grupo más cercano de amigos y/o compañeros del CAM, mientras que un menor número refiere tener muy pocos amigos.</p><p>La mayoría le atribuye gran importancia a la apariencia física al momento de relacionarse con los demás, destacándose la higiene personal.</p><p>“(…) Para una persona que me guste a mí, yo tengo que ver que esté preocupada de su aseo, que ande con su ropa limpia, porque a veces yo veo caballeros aquí con la ropa toda manchada y como que no les importa, yo encuentro que eso es importante (…)” (E.5).</p></div></section><section id="sec-3" class="article-section level-3 subsection"><header class="section-header"><span class="section-eyebrow">3.1.3</span><h4>Relación con el sexo opuesto</h4></header><div class="section-body"><p>Las respuestas fueron variadas, parte considerable refirió tener buena relación con las personas del sexo opuesto, y destacan el respeto como base de sus relaciones interpersonales. Por otro lado, de los que declararon que su relación era distante, gran parte lo asocia a experiencias negativas previas.</p><p>“Cuando los niños eran grandes nos separamos porque había violencia intrafamiliar por el alcoholismo. Mi vida sexual era mala, porque este marido mío, cuando tenía sexo conmigo, él se desocupaba no más, sin prepararte a ti, sin amor diría… Y no quería saber nada de los hombres porque lo había pasado tan mal, que yo no quería mirar a un varón (…)” (E.11)</p><p>Algunas mujeres solteras expresaron que prefieren las relaciones “puertas afuera”, debido a que el convivir con un hombre significaba preocuparse de labores domésticas adicionales y menor libertad para hacer su voluntad.</p></div></section></div></section><section id="sec-2" class="article-section level-2 subsection"><header class="section-header"><span class="section-eyebrow">3.2</span><h3>Autoestima e imagen corporal</h3></header><div class="subsection-group"><section id="sec-1" class="article-section level-3 subsection"><header class="section-header"><span class="section-eyebrow">3.2.1</span><h4>Autopercepción</h4></header><div class="section-body"><p>Gran parte destacó entre sus cualidades su carisma y valores, por lo que referían estar conformes con su manera de ser. Algunos refirieron sentirse atractivos/as y una pequeña cantidad inseguros consigo mismos. El considerar un buen estado de salud como fundamental para su bienestar y el sentirse satisfechos con lo logrado en su vida, fueron testimonios compartidos.</p><p>“Yo soy alegre, respetuoso. Es que yo me miro como una persona totalmente positiva que siempre mira solamente la parte buena… también diría que soy muy amistoso, simpático. (…)” (E.3)</p></div></section><section id="sec-2" class="article-section level-3 subsection"><header class="section-header"><span class="section-eyebrow">3.2.2</span><h4>Envejecimiento y cambios físicos</h4></header><div class="section-body"><p>Hace referencia a cómo se siente la persona mayor con los cambios físicos que ha atravesado con el paso de los años. Predominantemente, quienes fueron entrevistados refieren sentirse afectados por los cambios físicos que implica el envejecimiento, sus razones son principalmente las morbilidades que se han manifestado durante este tiempo, que limitan el ejercicio de actividad física, aunque sientan motivación para hacerla, no obstante, muestran aceptación por estos cambios y gratitud por mantener salud.</p></div></section><section id="sec-3" class="article-section level-3 subsection"><header class="section-header"><span class="section-eyebrow">3.2.3</span><h4>Autocuidado</h4></header><div class="section-body"><p>Para las personas mayores es fundamental a la hora de cuidar su apariencia, la higiene personal.</p><p>“Aquí nos hablan mucho de eso, de que el adulto/a mayor no debe olvidar su baño, la limpieza, (…) creo que es importante la apariencia física, no andar a la última moda, andar limpio más que nada, bien presentados” (E.11).</p><p>La actividad física y la alimentación saludable también se incluyen como herramientas de autocuidado relevantes, aunque más difíciles de mantener. Todos/as los participantes que realizan actividad física, lo hacen en los CAM de su comuna.</p><p>“Lo que más trato es el alimento, porque el ejercicio es lo que más me cuesta, lo único que hago es caminar no más, nada más” (E.2).</p></div></section></div></section><section id="sec-3" class="article-section level-2 subsection"><header class="section-header"><span class="section-eyebrow">3.3</span><h3>Sexualidad en la persona mayor:</h3></header><div class="subsection-group"><section id="sec-1" class="article-section level-3 subsection"><header class="section-header"><span class="section-eyebrow">3.3.1</span><h4>Concepto de sexualidad que maneja la persona mayor</h4></header><div class="section-body"><p>La mayoría relaciona el concepto de sexualidad con actividad sexual, algunos refieren que la sexualidad es la atracción y el deseo hacia otra persona, y/o que es un concepto muy amplio que abarca varios componentes.</p><p>“Primero, la diferencia entre hombre y mujer, y a su vez, por la sexualidad nosotras podemos ser mamás, también lo que sentimos, porque el hecho de la sexualidad yo creo que siempre es importante. (…)” (E.10)</p></div></section><section id="sec-2" class="article-section level-3 subsection"><header class="section-header"><span class="section-eyebrow">3.3.2</span><h4>Educación sexual</h4></header><div class="section-body"><p>Hace referencia a indagar si la persona mayor ha tenido instancias de educación sexual y en dónde. Una gran cantidad de personas mayores refirieron haber recibido educación sexual en los CAM, otra pequeña cantidad refirió haberla recibido por profesionales de salud en stands de matrones/as, talleres en centros de salud familiar (CESFAM), o en sus controles con médico o matrón/a. Una minoría refiere haber buscado información en revistas e internet, y casos aislados mencionan nunca haber recibido educación sexual.</p><p>“Muy pocas, ahora aquí (CAM) se habla un poco, pero antes se hablaba muy poco. Y se sigue hablando muy poco, y yo creo que hace falta el hablarlo más, hay muchas preguntas de la gente mayor (…)” (E.10)</p></div></section><section id="sec-3" class="article-section level-3 subsection"><header class="section-header"><span class="section-eyebrow">3.3.3</span><h4>Vivencia de la sexualidad y deseo sexual</h4></header><div class="section-body"><p>Esta subcategoría refiere a las experiencias que ha tenido o tiene la persona mayor en su sexualidad, de qué manera la expresa, si presenta deseo sexual o si modificaría algo de su entorno para vivir la sexualidad de manera plena.</p><p>La mayoría se siente libre de hablar de sexualidad. Respecto al deseo, existen dos percepciones predominantes: la primera es que el deseo sexual no ha variado con el tiempo y que actualmente sienten deseo, y la segunda, es la percepción de disminución y/o ausencia del deseo con el envejecimiento. En este último grupo las razones son el no tener una pareja estable y sentirse realizado sexualmente, ya que entre sus principales prioridades se encuentra el cuidado familiar y del hogar, no la búsqueda de pareja. Las actividades preferidas en pareja son salir a pasear, caminar y conversar. En general refirieron que se encontraban en una etapa donde el coito pasaba a un segundo plano, predominando el cariño, las caricias y el amor.</p><p>“No tengo ninguna relación, ósea la verdad es no tengo ningún interés íntimo con el sexo opuesto, pero porque no me hace falta eso, porque ya tengo mi vida hecha, mi hijo, voy a ser abuela, entonces estoy preocupada de otras cosas” (E.2).</p><p>A las personas mayores les gustaría que la sociedad entendiera que ellos tienen derecho a vivir su sexualidad como cualquier otra persona, a hablar del tema y a mantener vínculos sexo afectivos.</p><p>“Yo creo que falta mucha información y hablar de que nosotros, los adultos/as mayores somos sexualmente activos, pero falta información y que para todos los problemas que tenga la mujer, tanto como el hombre, existe solución. (…)” (E.6)</p></div></section><section id="sec-4" class="article-section level-3 subsection"><header class="section-header"><span class="section-eyebrow">3.3.4</span><h4>Percepción de la sociedad respecto a la vida sexual de la persona mayor</h4></header><div class="section-body"><p>Hace referencia a lo que cree la persona mayor sobre el pensamiento de la sociedad con respecto a la sexualidad en la tercera edad. Los entrevistados piensan que la sociedad en general cree que la persona mayor no está interesada en vivir la sexualidad, que es un área que no experimenta.</p><p>“Yo pienso que los jóvenes creen que los viejos a una cierta edad ya no tienen sexo (…), porque nos ven como abuelos, que están en las casas, que todavía trabajan y que cuando están juntos es como para hacerse compañía no más, ser amigos” (E.6).</p></div></section><section id="sec-5" class="article-section level-3 subsection"><header class="section-header"><span class="section-eyebrow">3.3.5</span><h4>Disfunciones sexuales</h4></header><div class="section-body"><p>Esta subcategoría pretende indagar la existencia o no de disfunciones sexuales y si ha consultado a algún profesional de salud a causa de esta. En las mujeres, las disfunciones sexuales predominantes fueron la dispareunia y la sequedad vaginal, cuya eventualidad habría disminuido en todas al usar lubricantes como tratamiento, recomendado por un profesional de la salud o amigas.</p><p>En los hombres, las disfunciones predominantes fueron la eyaculación precoz y la disfunción eréctil. Ante estos problemas los entrevistados no solicitaron atención médica, ya que lo aceptaban como un evento normal en esta etapa.</p><p>“La parte de la erección ha bajado un poco, por eso también ha bajado la actividad sexual. Aunque cuesta, pero se logra, si uno se frustra, jode, hay que estar totalmente positivo en el momento. Si ya no siguen ocurriendo las erecciones, nos quedamos tranquilos, nada de andar buscando la pastilla (…)” (E.3).</p></div></section></div></section><section id="sec-4" class="article-section level-2 subsection"><header class="section-header"><span class="section-eyebrow">3.4</span><h3>Atención en salud</h3></header><div class="subsection-group"><section id="sec-1" class="article-section level-3 subsection"><header class="section-header"><span class="section-eyebrow">3.4.1</span><h4>Abordaje de la sexualidad en la atención sanitaria</h4></header><div class="section-body"><p>La mayoría refiere que no se aborda la sexualidad dentro de sus atenciones de salud, solo un par de casos aislados refirió que se abordó porque ellos iniciaron el tema.</p><p>“Mira hago preguntas, de repente hago una, al que me ve por la depresión, le preguntaba cosas chicas, como “¿hasta cuándo dura sexualmente un hombre?” Que eso no lo sabía, y me dijo “hasta que se muera” (E.9).</p></div></section><section id="sec-2" class="article-section level-3 subsection"><header class="section-header"><span class="section-eyebrow">3.4.2</span><h4>Satisfacción de la persona mayor respecto al abordaje de la sexualidad en los centros de salud</h4></header><div class="section-body"><p>La mayoría no se sentían satisfechos con la atención otorgada porque no se indaga en la esfera sexual, sino que la atención se enfoca en el motivo de consulta, y porque además son pocas las instancias educativas respecto a este ámbito</p><p>“No estoy satisfecha porque no se recibe mayor información, aunque eso para mí es ya tan natural que ya sé que no voy a recibir educación al respecto, tampoco hay planificación y preocupación.” (E.6)</p></div></section><section id="sec-3" class="article-section level-3 subsection"><header class="section-header"><span class="section-eyebrow">3.4.3</span><h4>Aspectos que considerar o modificar en la atención de salud que potencien o mejoren su salud sexual</h4></header><div class="section-body"><p>Una opinión predominante fue que era necesario una mayor entrega de información sobre sexualidad y cambios fisiológicos que se presentan durante la vejez. Igualmente, consideraban que debería existir más disposición por parte del profesional de salud para empezar estos temas, consultar sobre salud sexual, asegurarse que la persona mayor haya entendido y resolver dudas.</p><p>“Que te vean como persona, porque te ven como un número, ven lo preciso y nada más y no se dan el tiempo de escucharte, porque tú ves que están anotando no más, pero no te están escuchando en realidad, no hay escucha activa.” (E.12).</p></div></section></div></section></div></section><section id="s4" class="article-section level-1 main-section surface"><header class="section-header"><span class="section-eyebrow">4</span><h2>Discusión</h2></header><div class="section-body"><p>Los resultados muestran que la mayoría de las personas mayores mantiene una relación positiva con sus familias, aunque algunas mencionan un distanciamiento posterior a la muerte de sus progenitores. Esta situación se relaciona con el rol tradicional de los padres como articuladores del vínculo familiar, en línea con lo señalado por Taylor et al. (2018), quienes destacan que las relaciones familiares en la vejez se sustentan en la obligación y el deber. Sin embargo, nuestro estudio aporta una nueva perspectiva al evidenciar que, incluso en ausencia de vínculos familiares cercanos, las personas mayores desarrollan fuertes lazos de amistad, especialmente en espacios como los CAM, que funcionan como redes afectivas sustitutivas.</p><p>Este hallazgo resulta especialmente relevante si se considera que, según el Observatorio del Envejecimiento UC-Confuturo (2023), un 32% de las personas mayores en Chile declara no tener amigos, lo cual puede impactar negativamente su salud física y mental. Así, nuestros resultados aportan evidencia cualitativa que respalda la importancia de fortalecer espacios comunitarios como los CAM para promover relaciones significativas en la vejez.</p><p>En cuanto a la sexualidad, algunas mujeres atribuyen la falta de deseo sexual a un rol tradicional de cuidadora que desplaza el autocuidado, lo que coincide con lo que reportan Vázquez et al. (2020). Sin embargo, nuestro estudio amplía este punto al resaltar que la interacción de factores fisiológicos, como la menopausia y la disminución de estrógenos, también juega un papel fundamental en la disminución del deseo sexual (Montero; Carnerero, 2016). Además, se identificaron patologías características de la vejez, como la hipertensión, diabetes, y problemas articulares, que afectan la sexualidad al generar dolor, fatiga y limitaciones en la movilidad, lo que puede llevar a la disminución de la frecuencia y satisfacción en la actividad sexual. Este hallazgo refuerza la necesidad de un enfoque integral en el tratamiento y atención de las disfunciones sexuales en la vejez, que combine aspectos emocionales, fisiológicos y el manejo adecuado de las enfermedades crónicas.</p><p>Respecto a la autoestima e imagen corporal, se observó que los participantes priorizan la higiene personal, lo cual es consistente con estudios previos que destacan la importancia de la educación sanitaria a lo largo del ciclo vital (Albert Cuñat et al., 2000). Sin embargo, nuestro estudio aporta una dimensión afectiva al señalar cómo la preocupación por el autocuidado también se vincula con la posibilidad de establecer vínculos afectivos y de pareja en esta etapa.</p><p>En relación con la educación sexual, se evidenció una importante brecha generacional. Las personas mayores no recibieron formación adecuada durante su juventud, lo que podría explicar una visión restringida de la sexualidad centrada en el coito. Aunque en décadas recientes se han impulsado iniciativas como las Orientaciones Técnicas para la Atención Integral de la Mujer en Edad de Climaterio (MINSAL, 2014), estas siguen estando enfocadas casi exclusivamente en mujeres. Nuestros hallazgos refuerzan la necesidad de extender estas políticas a varones y de incorporar una mirada más amplia de la sexualidad, integrando aspectos afectivos, identitarios y relacionales.</p><p>Un hallazgo significativo es que muchas personas mayores que refieren no tener deseo sexual también declaran no tener pareja. Esto se alinea con lo reportado por Cremé Lobaina et al. (2017) y Pino Álvarez et al. (2022), quienes señalan que el deseo sexual tiende a mantenerse más activo en personas con pareja estable. Además, se constata que las mujeres son más propensas a consultar por disfunciones sexuales, lo que podría vincularse a diferencias culturales respecto al cuidado de la salud. De hecho, según Acevedo Ayala y Bartolucci Konga (2019), las principales disfunciones sexuales en hombres mayores son la disfunción eréctil, la eyaculación precoz y la eyaculación retardada, mientras que en mujeres predominan el trastorno del interés y excitación sexual y la dispareunia. Nuestro estudio refuerza este patrón, al identificar que los hombres consultan menos por estos temas, lo que subraya la necesidad de sensibilizar al personal sanitario sobre las diferencias de género en el abordaje y vivencia de la salud sexual en la vejez.</p><p>En cuanto a la percepción social, los participantes consideran que su sexualidad es invisibilizada, siendo culturalmente asociada solo a la juventud (Llanes, 2013; Torres Mencía &amp; Rodríguez Martín, 2019). Esto sugiere que el personal sanitario, en particular las matronas/es, debe jugar un rol activo en la promoción de una visión integral de la sexualidad como parte del ciclo vital completo.</p><p>Nuestros resultados también evidencian que la mayoría de los profesionales de salud no abordan el tema de la sexualidad a menos que el/la paciente lo mencione, situación ya advertida en investigaciones previas (Solway, 2018). Las razones incluyen la falta de tiempo en consulta, lo que se traduce en una atención centrada en lo biomédico. Por tanto, se recomienda generar instancias específicas —como talleres o atenciones programadas en CESFAM, urología, geriatría o medicina general— donde se aborde abiertamente la sexualidad de personas mayores, considerando sus necesidades particulares.</p><p>Es esencial que el matrón o la matrona garanticen la educación sexual para toda la población, especialmente en la vejez, mediante talleres, charlas o consejerías en centros educativos o de salud. Esto debe realizarse bajo un enfoque de empoderamiento en salud, el cual busca fortalecer la autonomía, la confianza y la capacidad de autogestión en las decisiones relacionadas con el autocuidado. Para lograrlo, se requiere: acceso a información clara y equilibrada; herramientas que apoyen la toma de decisiones (como entrega de medicamentos, talleres o derivación oportuna); y una atención por parte de profesionales de salud empáticos, bien informados y dispuestos a escuchar, promoviendo un modelo de decisiones compartidas</p></div></section><section id="s5" class="article-section level-1 main-section surface"><header class="section-header"><span class="section-eyebrow">5</span><h2>Limitaciones</h2></header><div class="section-body"><p>Una de las principales limitaciones fue la falta de espacios completamente privados para las entrevistas. Esta situación pudo haber inhibido la expresión plena de pensamientos o experiencias por parte de los participantes, afectando potencialmente la profundidad, riqueza y autenticidad de los datos recogidos. Para futuros estudios, se recomienda coordinar previamente la disponibilidad de espacios cerrados que garanticen mayor confidencialidad.</p><p>Otra limitación fue la posible distorsión relacional derivada de la diferencia etaria y la condición de externas de las investigadoras, lo que pudo haber condicionado la confianza y apertura de los entrevistados. Para minimizar este efecto, se sugiere una estancia más prolongada en el campo, que permita fortalecer el vínculo entre entrevistadoras y entrevistados y mejorar la credibilidad del proceso investigativo.</p><p>Finalmente, los resultados están limitados al contexto de dos comunas de mediana y baja prioridad social, lo que restringe la transferibilidad de los hallazgos. Ampliar el muestreo a comunas con distintas características permitiría explorar posibles contrastes y enriquecer la comprensión del fenómeno estudiado. Además, se reconoce que el marco del estudio no incluyó directamente la visión del personal de salud, lo cual podría enriquecer los hallazgos en estudios posteriores.</p></div></section><section id="s6" class="article-section level-1 main-section surface"><header class="section-header"><span class="section-eyebrow">6</span><h2>Conclusiones</h2></header><div class="section-body"><p>Existe deseo y actividad sexual en la tercera edad, pero para potenciarla es crucial normalizar su existencia en la sociedad y proporcionar una adecuada información respecto a sexualidad, donde el rol educativo de los matrones y las matronas es primordial y se debe enfatizar a través de actividades de promoción y prevención de enfermedades e ITS y cambios fisiológicos, para lograr que las personas mayores se empoderen en la toma de decisiones.</p><p>Debido a que las consejerías abordadas en la atención de climaterio no involucran a varones, la educación sexual debería entregarse en servicios donde su asistencia es mayor, como medicina, urología, o dentro de programas cardiovasculares.</p><p>Los CAM son espacios ideales para promover educación sexual y aclarar dudas colectivamente.</p><p>Las implicancias prácticas de este estudio resaltan la necesidad de capacitar a los equipos de salud para brindar una atención integral y sensible a la diversidad de experiencias en la vejez.</p></div></section>
+            <section id="s1" class="article-section level-1 main-section surface"><header class="section-header"><h2 class="section-heading"><span class="section-number">1.</span><span class="section-title">Introducción</span></h2></header><div class="section-body"><p>La sexualidad es una dimensión presente a lo largo de toda la vida, incluida la tercera edad. Según la Organización Mundial de la Salud (OMS, 2018) ésta abarca “el sexo, las identidades y los roles de género, la orientación sexual, el erotismo, el placer, la intimidad y la reproducción” Sin embargo, “la existencia de prejuicios sociales (…) propicia una desinformación permanente de la temática sexual en la edad geriátrica” (Martínez, 2008). Los prejuicios más frecuentes señalan que no tienen vida sexual activa y que no están interesados en las relaciones románticas (Llanes, 2013). Estas concepciones afectan la forma en que las personas mayores experimentan su sexualidad y se relacionan con su entorno.</p><p>Durante esta etapa, factores como los cambios fisiológicos, las enfermedades crónicas, la demencia y la depresión pueden influir en la vivencia de la sexualidad (Olivera Carmenates &amp; Bujardón Mendoza, 2010). No obstante, la sexualidad continúa siendo un derecho humano y una necesidad emocional esencial (Servicio Nacional del Adulto Mayor [SENAMA], 2017).</p><p>En Chile, las personas mayores —definida como las de 60 o más años (SENAMA)— representan actualmente el 16,2 % de la población, proyectándose un aumento al 19 % para 2035 (Instituto Nacional de Estadísticas [INE], 2019). Este crecimiento implica un aumento en la demanda asistencial, por lo que resulta indispensable la actualización continua de los profesionales de salud, incluidos matrones y matronas, en la atención integral de las necesidades biopsicosociales de este grupo etario, considerando la sexualidad como un aspecto relevante.</p><p>En este contexto, los lineamientos nacionales para mejorar la calidad de vida de las mujeres incluyen las Orientaciones Técnicas para la Atención Integral de la Mujer en Edad de Climaterio en el nivel de Atención Primaria de Salud (APS), dirigidas a mujeres de entre 45 y 64 años (Ministerio de Salud [MINSAL], 2014). Estas orientaciones promueven la salud sexual mediante talleres y consejerías, abordando temas como cambios en la libido, lubricación genital y dificultades de pareja, entre otros. Sin embargo, en el caso de las personas de 65 años o más, el Examen de Medicina Preventiva del Adulto Mayor (EMPAM) (Subsecretaría de Salud Pública, 2012) se enfoca en la evaluación funcional para detectar factores de riesgo, sin incluir aspectos relacionados con la sexualidad.</p><p>Aunque existen investigaciones sobre la sexualidad en la vejez, en Chile estos estudios son escasos y carecen de actualizaciones recientes. Frente a este escenario y considerando los cambios en el perfil demográfico, el presente estudio plantea como objetivos generales: i) describir la percepción de las personas mayores pertenecientes a los CAM de San Miguel e Independencia, respecto a su sexualidad y la manera en que la vivencian; y de acuerdo a esto, ii) describir desde la percepción de los usuarios el rol educativo que deben desempeñar los profesionales matrones y matronas, así como las acciones pertinentes para impactar positivamente en la sexualidad de este grupo etario.</p></div></section><section id="s2" class="article-section level-1 main-section surface"><header class="section-header"><h2 class="section-heading"><span class="section-number">2.</span><span class="section-title">Material y métodos</span></h2></header><div class="section-body"><p>Diseño del estudio: cualitativo descriptivo con enfoque fenomenológico, elegido por su pertinencia para explorar la percepción subjetiva de las personas mayores sobre su sexualidad y el rol que asignan a los matrones/as. Este enfoque permite comprender los significados que las personas atribuyen a sus experiencias, en coherencia con los objetivos del estudio, orientados a describir cómo se vivencia la sexualidad en la vejez y qué acciones educativas son consideradas pertinentes por los propios usuarios.</p><p>Población y muestra: la población estuvo compuesta por personas de 60 años o más, asistentes a los CAM de atención ambulatoria diurna ubicados en las comunas de Independencia y San Miguel, Región Metropolitana (RM) de Chile. Estos centros tienen como objetivo promover la autonomía, independencia y permanencia de las personas mayores en su entorno familiar y comunitario, a través de actividades recreativas (Ministerio de Desarrollo Social y Familia).</p><p>Los criterios de inclusión fueron: ser persona de 60 años o más, asistir regularmente a alguno de los CAM seleccionados, comprender el propósito del estudio y firmar el consentimiento informado. Se excluyeron personas con diagnóstico de demencia senil u otras condiciones físicas o mentales que dificultaran significativamente la comunicación o participación en la entrevista.</p><p>Para caracterizar a los participantes, se recogieron variables sociodemográficas relevantes, así como antecedentes sobre orientación sexual y acceso a atención en salud sexual.</p><p>Técnica de recolección de datos: se utilizó la entrevista semiestructurada como técnica principal de recolección de datos, aplicada de manera presencial por las investigadoras. El guion de entrevista fue elaborado a partir de los objetivos del estudio y abordó cinco dimensiones temáticas: relación de la persona mayor con su entorno, relaciones socioafectivas, relación consigo mismo, vivencia de la sexualidad y experiencia con la atención en salud. El número de entrevistados se definió en función del criterio de saturación de la información, es decir, se dejó de incorporar nuevos participantes cuando los datos comenzaron a repetirse y no surgieron categorías considerables adicionales.</p><p>Con el fin de asegurar el rigor metodológico, el guion fue sometido a un proceso de validación de contenido. Esta validación fue realizada por miembros del Comité de Ética de la Facultad de Medicina de la Universidad de Chile —como parte de la revisión ética—. Las observaciones aportadas permitieron mejorar la claridad, pertinencia y coherencia de las preguntas incluidas en la versión final.</p><p>La estructura flexible de la entrevista permitió a las investigadoras introducir preguntas adicionales según la dinámica de cada conversación, lo que facilitó la profundización en los relatos y permitió captar elementos emergentes relevantes.</p><p>Análisis de la información: como medida de rigor, las entrevistas fueron grabadas en formato de audio —con consentimiento explícito— y transcritas íntegramente en formato Word para su posterior análisis.</p><p>Los datos recolectados fueron procesados mediante la técnica de análisis de contenido, de forma manual, siguiendo los pasos del análisis de contenido descritos por Granheim y Lundman (2004). En primer lugar, se excluyó la información no pertinente a los objetivos del estudio. Luego, se aplicó codificación abierta de primer nivel, identificando unidades de análisis por párrafos, a las que se les asignaron códigos descriptivos que representaban los significados centrales expresados por los participantes.</p><p>Posteriormente, los códigos fueron comparados entre sí y agrupados inductivamente en categorías y subcategorías según su similitud temática (Hernández et al., 2014). Estos agrupamientos se registraron en una tabla elaborada por las investigadoras, organizada según las temáticas emergentes, lo que permitió estructurar los hallazgos de manera clara y coherente con los objetivos del estudio.</p><p>Para reforzar la validez y confiabilidad del proceso, la codificación fue realizada por dos investigadoras de forma independiente y luego contrastada. Las discrepancias fueron discutidas hasta alcanzar consenso, asegurando la consistencia de las categorías. Además, se mantuvo una trazabilidad documental desde las transcripciones originales hasta la matriz final de resultados, lo que facilitó la auditabilidad del análisis.</p><p>Aspectos éticos: quienes participaron firmaron un consentimiento informado previo a su participación, garantizando la confidencialidad y el respeto a su integridad. El estudio fue aprobado por el Comité de Ética de la Investigación en Seres Humanos de la Facultad de Medicina de la Universidad de Chile (Acta N.º 208, Fecha: 14/03/2023).</p><p>Para resguardar el anonimato, se identificó a cada participante mediante un código compuesto por su sexo y un número correlativo.</p></div></section><section id="s3" class="article-section level-1 main-section surface"><header class="section-header"><h2 class="section-heading"><span class="section-number">3.</span><span class="section-title">Resultados</span></h2></header><div class="section-body"><p>La muestra estuvo compuesta por 12 participantes (10 mujeres y 2 hombres), con edades entre 61 y 81 años (ver Tabla 1).</p><p>A partir del análisis de contenido, se identificaron las siguientes categorías y subcategorías temáticas:</p></div><div class="subsection-group"><section id="sec-1" class="article-section level-2 subsection"><header class="section-header"><h3 class="section-heading"><span class="section-number">3.1.</span><span class="section-title">Relación de la persona mayor con su entorno</span></h3></header><div class="subsection-group"><section id="sec-1" class="article-section level-3 subsection"><header class="section-header"><h4 class="section-heading"><span class="section-number">3.1.1.</span><span class="section-title">La persona mayor y su familia</span></h4></header><div class="section-body"><p>Esta subcategoría hace referencia a con quién convive la persona mayor y la calidad de la relación con su familia. La mayoría de los entrevistados declaran vivir solos y tener una buena relación familiar con una comunicación constante, por medio de visitas domiciliarias o vía telefónica. Se compartió el hecho del distanciamiento familiar (hermanos, tíos, primos) luego del fallecimiento del único progenitor vivo. Parte de ellos sienten que algunos familiares como hijos o nietos no tienen tiempo o interés para establecer una relación de calidad con ellos.</p><p>“(…) tú no puedes depender de la familia porque todos tienen su vida propia y no puedes convertirte en un “cacho”, te conviertes en algo con lo ellos no contaban; entonces yo trato de no molestar a la familia…” (E.1)</p></div></section><section id="sec-2" class="article-section level-3 subsection"><header class="section-header"><h4 class="section-heading"><span class="section-number">3.1.2.</span><span class="section-title">Círculo social</span></h4></header><div class="section-body"><p>Esta subcategoría describe las relaciones de amistad y vínculos dentro y fuera del CAM. Gran parte de las personas mayores, refieren tener muy buena relación con su grupo más cercano de amigos y/o compañeros del CAM, mientras que un menor número refiere tener muy pocos amigos.</p><p>La mayoría le atribuye gran importancia a la apariencia física al momento de relacionarse con los demás, destacándose la higiene personal.</p><p>“(…) Para una persona que me guste a mí, yo tengo que ver que esté preocupada de su aseo, que ande con su ropa limpia, porque a veces yo veo caballeros aquí con la ropa toda manchada y como que no les importa, yo encuentro que eso es importante (…)” (E.5).</p></div></section><section id="sec-3" class="article-section level-3 subsection"><header class="section-header"><h4 class="section-heading"><span class="section-number">3.1.3.</span><span class="section-title">Relación con el sexo opuesto</span></h4></header><div class="section-body"><p>Las respuestas fueron variadas, parte considerable refirió tener buena relación con las personas del sexo opuesto, y destacan el respeto como base de sus relaciones interpersonales. Por otro lado, de los que declararon que su relación era distante, gran parte lo asocia a experiencias negativas previas.</p><p>“Cuando los niños eran grandes nos separamos porque había violencia intrafamiliar por el alcoholismo. Mi vida sexual era mala, porque este marido mío, cuando tenía sexo conmigo, él se desocupaba no más, sin prepararte a ti, sin amor diría… Y no quería saber nada de los hombres porque lo había pasado tan mal, que yo no quería mirar a un varón (…)” (E.11)</p><p>Algunas mujeres solteras expresaron que prefieren las relaciones “puertas afuera”, debido a que el convivir con un hombre significaba preocuparse de labores domésticas adicionales y menor libertad para hacer su voluntad.</p></div></section></div></section><section id="sec-2" class="article-section level-2 subsection"><header class="section-header"><h3 class="section-heading"><span class="section-number">3.2.</span><span class="section-title">Autoestima e imagen corporal</span></h3></header><div class="subsection-group"><section id="sec-1" class="article-section level-3 subsection"><header class="section-header"><h4 class="section-heading"><span class="section-number">3.2.1.</span><span class="section-title">Autopercepción</span></h4></header><div class="section-body"><p>Gran parte destacó entre sus cualidades su carisma y valores, por lo que referían estar conformes con su manera de ser. Algunos refirieron sentirse atractivos/as y una pequeña cantidad inseguros consigo mismos. El considerar un buen estado de salud como fundamental para su bienestar y el sentirse satisfechos con lo logrado en su vida, fueron testimonios compartidos.</p><p>“Yo soy alegre, respetuoso. Es que yo me miro como una persona totalmente positiva que siempre mira solamente la parte buena… también diría que soy muy amistoso, simpático. (…)” (E.3)</p></div></section><section id="sec-2" class="article-section level-3 subsection"><header class="section-header"><h4 class="section-heading"><span class="section-number">3.2.2.</span><span class="section-title">Envejecimiento y cambios físicos</span></h4></header><div class="section-body"><p>Hace referencia a cómo se siente la persona mayor con los cambios físicos que ha atravesado con el paso de los años. Predominantemente, quienes fueron entrevistados refieren sentirse afectados por los cambios físicos que implica el envejecimiento, sus razones son principalmente las morbilidades que se han manifestado durante este tiempo, que limitan el ejercicio de actividad física, aunque sientan motivación para hacerla, no obstante, muestran aceptación por estos cambios y gratitud por mantener salud.</p></div></section><section id="sec-3" class="article-section level-3 subsection"><header class="section-header"><h4 class="section-heading"><span class="section-number">3.2.3.</span><span class="section-title">Autocuidado</span></h4></header><div class="section-body"><p>Para las personas mayores es fundamental a la hora de cuidar su apariencia, la higiene personal.</p><p>“Aquí nos hablan mucho de eso, de que el adulto/a mayor no debe olvidar su baño, la limpieza, (…) creo que es importante la apariencia física, no andar a la última moda, andar limpio más que nada, bien presentados” (E.11).</p><p>La actividad física y la alimentación saludable también se incluyen como herramientas de autocuidado relevantes, aunque más difíciles de mantener. Todos/as los participantes que realizan actividad física, lo hacen en los CAM de su comuna.</p><p>“Lo que más trato es el alimento, porque el ejercicio es lo que más me cuesta, lo único que hago es caminar no más, nada más” (E.2).</p></div></section></div></section><section id="sec-3" class="article-section level-2 subsection"><header class="section-header"><h3 class="section-heading"><span class="section-number">3.3.</span><span class="section-title">Sexualidad en la persona mayor:</span></h3></header><div class="subsection-group"><section id="sec-1" class="article-section level-3 subsection"><header class="section-header"><h4 class="section-heading"><span class="section-number">3.3.1.</span><span class="section-title">Concepto de sexualidad que maneja la persona mayor</span></h4></header><div class="section-body"><p>La mayoría relaciona el concepto de sexualidad con actividad sexual, algunos refieren que la sexualidad es la atracción y el deseo hacia otra persona, y/o que es un concepto muy amplio que abarca varios componentes.</p><p>“Primero, la diferencia entre hombre y mujer, y a su vez, por la sexualidad nosotras podemos ser mamás, también lo que sentimos, porque el hecho de la sexualidad yo creo que siempre es importante. (…)” (E.10)</p></div></section><section id="sec-2" class="article-section level-3 subsection"><header class="section-header"><h4 class="section-heading"><span class="section-number">3.3.2.</span><span class="section-title">Educación sexual</span></h4></header><div class="section-body"><p>Hace referencia a indagar si la persona mayor ha tenido instancias de educación sexual y en dónde. Una gran cantidad de personas mayores refirieron haber recibido educación sexual en los CAM, otra pequeña cantidad refirió haberla recibido por profesionales de salud en stands de matrones/as, talleres en centros de salud familiar (CESFAM), o en sus controles con médico o matrón/a. Una minoría refiere haber buscado información en revistas e internet, y casos aislados mencionan nunca haber recibido educación sexual.</p><p>“Muy pocas, ahora aquí (CAM) se habla un poco, pero antes se hablaba muy poco. Y se sigue hablando muy poco, y yo creo que hace falta el hablarlo más, hay muchas preguntas de la gente mayor (…)” (E.10)</p></div></section><section id="sec-3" class="article-section level-3 subsection"><header class="section-header"><h4 class="section-heading"><span class="section-number">3.3.3.</span><span class="section-title">Vivencia de la sexualidad y deseo sexual</span></h4></header><div class="section-body"><p>Esta subcategoría refiere a las experiencias que ha tenido o tiene la persona mayor en su sexualidad, de qué manera la expresa, si presenta deseo sexual o si modificaría algo de su entorno para vivir la sexualidad de manera plena.</p><p>La mayoría se siente libre de hablar de sexualidad. Respecto al deseo, existen dos percepciones predominantes: la primera es que el deseo sexual no ha variado con el tiempo y que actualmente sienten deseo, y la segunda, es la percepción de disminución y/o ausencia del deseo con el envejecimiento. En este último grupo las razones son el no tener una pareja estable y sentirse realizado sexualmente, ya que entre sus principales prioridades se encuentra el cuidado familiar y del hogar, no la búsqueda de pareja. Las actividades preferidas en pareja son salir a pasear, caminar y conversar. En general refirieron que se encontraban en una etapa donde el coito pasaba a un segundo plano, predominando el cariño, las caricias y el amor.</p><p>“No tengo ninguna relación, ósea la verdad es no tengo ningún interés íntimo con el sexo opuesto, pero porque no me hace falta eso, porque ya tengo mi vida hecha, mi hijo, voy a ser abuela, entonces estoy preocupada de otras cosas” (E.2).</p><p>A las personas mayores les gustaría que la sociedad entendiera que ellos tienen derecho a vivir su sexualidad como cualquier otra persona, a hablar del tema y a mantener vínculos sexo afectivos.</p><p>“Yo creo que falta mucha información y hablar de que nosotros, los adultos/as mayores somos sexualmente activos, pero falta información y que para todos los problemas que tenga la mujer, tanto como el hombre, existe solución. (…)” (E.6)</p></div></section><section id="sec-4" class="article-section level-3 subsection"><header class="section-header"><h4 class="section-heading"><span class="section-number">3.3.4.</span><span class="section-title">Percepción de la sociedad respecto a la vida sexual de la persona mayor</span></h4></header><div class="section-body"><p>Hace referencia a lo que cree la persona mayor sobre el pensamiento de la sociedad con respecto a la sexualidad en la tercera edad. Los entrevistados piensan que la sociedad en general cree que la persona mayor no está interesada en vivir la sexualidad, que es un área que no experimenta.</p><p>“Yo pienso que los jóvenes creen que los viejos a una cierta edad ya no tienen sexo (…), porque nos ven como abuelos, que están en las casas, que todavía trabajan y que cuando están juntos es como para hacerse compañía no más, ser amigos” (E.6).</p></div></section><section id="sec-5" class="article-section level-3 subsection"><header class="section-header"><h4 class="section-heading"><span class="section-number">3.3.5.</span><span class="section-title">Disfunciones sexuales</span></h4></header><div class="section-body"><p>Esta subcategoría pretende indagar la existencia o no de disfunciones sexuales y si ha consultado a algún profesional de salud a causa de esta. En las mujeres, las disfunciones sexuales predominantes fueron la dispareunia y la sequedad vaginal, cuya eventualidad habría disminuido en todas al usar lubricantes como tratamiento, recomendado por un profesional de la salud o amigas.</p><p>En los hombres, las disfunciones predominantes fueron la eyaculación precoz y la disfunción eréctil. Ante estos problemas los entrevistados no solicitaron atención médica, ya que lo aceptaban como un evento normal en esta etapa.</p><p>“La parte de la erección ha bajado un poco, por eso también ha bajado la actividad sexual. Aunque cuesta, pero se logra, si uno se frustra, jode, hay que estar totalmente positivo en el momento. Si ya no siguen ocurriendo las erecciones, nos quedamos tranquilos, nada de andar buscando la pastilla (…)” (E.3).</p></div></section></div></section><section id="sec-4" class="article-section level-2 subsection"><header class="section-header"><h3 class="section-heading"><span class="section-number">3.4.</span><span class="section-title">Atención en salud</span></h3></header><div class="subsection-group"><section id="sec-1" class="article-section level-3 subsection"><header class="section-header"><h4 class="section-heading"><span class="section-number">3.4.1.</span><span class="section-title">Abordaje de la sexualidad en la atención sanitaria</span></h4></header><div class="section-body"><p>La mayoría refiere que no se aborda la sexualidad dentro de sus atenciones de salud, solo un par de casos aislados refirió que se abordó porque ellos iniciaron el tema.</p><p>“Mira hago preguntas, de repente hago una, al que me ve por la depresión, le preguntaba cosas chicas, como “¿hasta cuándo dura sexualmente un hombre?” Que eso no lo sabía, y me dijo “hasta que se muera” (E.9).</p></div></section><section id="sec-2" class="article-section level-3 subsection"><header class="section-header"><h4 class="section-heading"><span class="section-number">3.4.2.</span><span class="section-title">Satisfacción de la persona mayor respecto al abordaje de la sexualidad en los centros de salud</span></h4></header><div class="section-body"><p>La mayoría no se sentían satisfechos con la atención otorgada porque no se indaga en la esfera sexual, sino que la atención se enfoca en el motivo de consulta, y porque además son pocas las instancias educativas respecto a este ámbito</p><p>“No estoy satisfecha porque no se recibe mayor información, aunque eso para mí es ya tan natural que ya sé que no voy a recibir educación al respecto, tampoco hay planificación y preocupación.” (E.6)</p></div></section><section id="sec-3" class="article-section level-3 subsection"><header class="section-header"><h4 class="section-heading"><span class="section-number">3.4.3.</span><span class="section-title">Aspectos que considerar o modificar en la atención de salud que potencien o mejoren su salud sexual</span></h4></header><div class="section-body"><p>Una opinión predominante fue que era necesario una mayor entrega de información sobre sexualidad y cambios fisiológicos que se presentan durante la vejez. Igualmente, consideraban que debería existir más disposición por parte del profesional de salud para empezar estos temas, consultar sobre salud sexual, asegurarse que la persona mayor haya entendido y resolver dudas.</p><p>“Que te vean como persona, porque te ven como un número, ven lo preciso y nada más y no se dan el tiempo de escucharte, porque tú ves que están anotando no más, pero no te están escuchando en realidad, no hay escucha activa.” (E.12).</p></div></section></div></section></div></section><section id="s4" class="article-section level-1 main-section surface"><header class="section-header"><h2 class="section-heading"><span class="section-number">4.</span><span class="section-title">Discusión</span></h2></header><div class="section-body"><p>Los resultados muestran que la mayoría de las personas mayores mantiene una relación positiva con sus familias, aunque algunas mencionan un distanciamiento posterior a la muerte de sus progenitores. Esta situación se relaciona con el rol tradicional de los padres como articuladores del vínculo familiar, en línea con lo señalado por Taylor et al. (2018), quienes destacan que las relaciones familiares en la vejez se sustentan en la obligación y el deber. Sin embargo, nuestro estudio aporta una nueva perspectiva al evidenciar que, incluso en ausencia de vínculos familiares cercanos, las personas mayores desarrollan fuertes lazos de amistad, especialmente en espacios como los CAM, que funcionan como redes afectivas sustitutivas.</p><p>Este hallazgo resulta especialmente relevante si se considera que, según el Observatorio del Envejecimiento UC-Confuturo (2023), un 32% de las personas mayores en Chile declara no tener amigos, lo cual puede impactar negativamente su salud física y mental. Así, nuestros resultados aportan evidencia cualitativa que respalda la importancia de fortalecer espacios comunitarios como los CAM para promover relaciones significativas en la vejez.</p><p>En cuanto a la sexualidad, algunas mujeres atribuyen la falta de deseo sexual a un rol tradicional de cuidadora que desplaza el autocuidado, lo que coincide con lo que reportan Vázquez et al. (2020). Sin embargo, nuestro estudio amplía este punto al resaltar que la interacción de factores fisiológicos, como la menopausia y la disminución de estrógenos, también juega un papel fundamental en la disminución del deseo sexual (Montero; Carnerero, 2016). Además, se identificaron patologías características de la vejez, como la hipertensión, diabetes, y problemas articulares, que afectan la sexualidad al generar dolor, fatiga y limitaciones en la movilidad, lo que puede llevar a la disminución de la frecuencia y satisfacción en la actividad sexual. Este hallazgo refuerza la necesidad de un enfoque integral en el tratamiento y atención de las disfunciones sexuales en la vejez, que combine aspectos emocionales, fisiológicos y el manejo adecuado de las enfermedades crónicas.</p><p>Respecto a la autoestima e imagen corporal, se observó que los participantes priorizan la higiene personal, lo cual es consistente con estudios previos que destacan la importancia de la educación sanitaria a lo largo del ciclo vital (Albert Cuñat et al., 2000). Sin embargo, nuestro estudio aporta una dimensión afectiva al señalar cómo la preocupación por el autocuidado también se vincula con la posibilidad de establecer vínculos afectivos y de pareja en esta etapa.</p><p>En relación con la educación sexual, se evidenció una importante brecha generacional. Las personas mayores no recibieron formación adecuada durante su juventud, lo que podría explicar una visión restringida de la sexualidad centrada en el coito. Aunque en décadas recientes se han impulsado iniciativas como las Orientaciones Técnicas para la Atención Integral de la Mujer en Edad de Climaterio (MINSAL, 2014), estas siguen estando enfocadas casi exclusivamente en mujeres. Nuestros hallazgos refuerzan la necesidad de extender estas políticas a varones y de incorporar una mirada más amplia de la sexualidad, integrando aspectos afectivos, identitarios y relacionales.</p><p>Un hallazgo significativo es que muchas personas mayores que refieren no tener deseo sexual también declaran no tener pareja. Esto se alinea con lo reportado por Cremé Lobaina et al. (2017) y Pino Álvarez et al. (2022), quienes señalan que el deseo sexual tiende a mantenerse más activo en personas con pareja estable. Además, se constata que las mujeres son más propensas a consultar por disfunciones sexuales, lo que podría vincularse a diferencias culturales respecto al cuidado de la salud. De hecho, según Acevedo Ayala y Bartolucci Konga (2019), las principales disfunciones sexuales en hombres mayores son la disfunción eréctil, la eyaculación precoz y la eyaculación retardada, mientras que en mujeres predominan el trastorno del interés y excitación sexual y la dispareunia. Nuestro estudio refuerza este patrón, al identificar que los hombres consultan menos por estos temas, lo que subraya la necesidad de sensibilizar al personal sanitario sobre las diferencias de género en el abordaje y vivencia de la salud sexual en la vejez.</p><p>En cuanto a la percepción social, los participantes consideran que su sexualidad es invisibilizada, siendo culturalmente asociada solo a la juventud (Llanes, 2013; Torres Mencía &amp; Rodríguez Martín, 2019). Esto sugiere que el personal sanitario, en particular las matronas/es, debe jugar un rol activo en la promoción de una visión integral de la sexualidad como parte del ciclo vital completo.</p><p>Nuestros resultados también evidencian que la mayoría de los profesionales de salud no abordan el tema de la sexualidad a menos que el/la paciente lo mencione, situación ya advertida en investigaciones previas (Solway, 2018). Las razones incluyen la falta de tiempo en consulta, lo que se traduce en una atención centrada en lo biomédico. Por tanto, se recomienda generar instancias específicas —como talleres o atenciones programadas en CESFAM, urología, geriatría o medicina general— donde se aborde abiertamente la sexualidad de personas mayores, considerando sus necesidades particulares.</p><p>Es esencial que el matrón o la matrona garanticen la educación sexual para toda la población, especialmente en la vejez, mediante talleres, charlas o consejerías en centros educativos o de salud. Esto debe realizarse bajo un enfoque de empoderamiento en salud, el cual busca fortalecer la autonomía, la confianza y la capacidad de autogestión en las decisiones relacionadas con el autocuidado. Para lograrlo, se requiere: acceso a información clara y equilibrada; herramientas que apoyen la toma de decisiones (como entrega de medicamentos, talleres o derivación oportuna); y una atención por parte de profesionales de salud empáticos, bien informados y dispuestos a escuchar, promoviendo un modelo de decisiones compartidas</p></div></section><section id="s5" class="article-section level-1 main-section surface"><header class="section-header"><h2 class="section-heading"><span class="section-number">5.</span><span class="section-title">Limitaciones</span></h2></header><div class="section-body"><p>Una de las principales limitaciones fue la falta de espacios completamente privados para las entrevistas. Esta situación pudo haber inhibido la expresión plena de pensamientos o experiencias por parte de los participantes, afectando potencialmente la profundidad, riqueza y autenticidad de los datos recogidos. Para futuros estudios, se recomienda coordinar previamente la disponibilidad de espacios cerrados que garanticen mayor confidencialidad.</p><p>Otra limitación fue la posible distorsión relacional derivada de la diferencia etaria y la condición de externas de las investigadoras, lo que pudo haber condicionado la confianza y apertura de los entrevistados. Para minimizar este efecto, se sugiere una estancia más prolongada en el campo, que permita fortalecer el vínculo entre entrevistadoras y entrevistados y mejorar la credibilidad del proceso investigativo.</p><p>Finalmente, los resultados están limitados al contexto de dos comunas de mediana y baja prioridad social, lo que restringe la transferibilidad de los hallazgos. Ampliar el muestreo a comunas con distintas características permitiría explorar posibles contrastes y enriquecer la comprensión del fenómeno estudiado. Además, se reconoce que el marco del estudio no incluyó directamente la visión del personal de salud, lo cual podría enriquecer los hallazgos en estudios posteriores.</p></div></section><section id="s6" class="article-section level-1 main-section surface"><header class="section-header"><h2 class="section-heading"><span class="section-number">6.</span><span class="section-title">Conclusiones</span></h2></header><div class="section-body"><p>Existe deseo y actividad sexual en la tercera edad, pero para potenciarla es crucial normalizar su existencia en la sociedad y proporcionar una adecuada información respecto a sexualidad, donde el rol educativo de los matrones y las matronas es primordial y se debe enfatizar a través de actividades de promoción y prevención de enfermedades e ITS y cambios fisiológicos, para lograr que las personas mayores se empoderen en la toma de decisiones.</p><p>Debido a que las consejerías abordadas en la atención de climaterio no involucran a varones, la educación sexual debería entregarse en servicios donde su asistencia es mayor, como medicina, urología, o dentro de programas cardiovasculares.</p><p>Los CAM son espacios ideales para promover educación sexual y aclarar dudas colectivamente.</p><p>Las implicancias prácticas de este estudio resaltan la necesidad de capacitar a los equipos de salud para brindar una atención integral y sensible a la diversidad de experiencias en la vejez.</p></div></section>
           </div>
         </section>
         
@@ -823,6 +857,14 @@ body[data-theme="dark"] .toc-marker {
   
       </main>
     </div>
+    <button id="scrollTopButton" class="floating-button floating-top" type="button" aria-label="Volver al inicio">
+      <span class="icon" aria-hidden="true">&uarr;</span>
+      <span class="label">Arriba</span>
+    </button>
+    <button id="floatingMenuButton" class="floating-button floating-menu" type="button" aria-label="Mostrar índice flotante" aria-controls="sidebar" aria-expanded="false">
+      <span class="icon" aria-hidden="true">&#9776;</span>
+      <span class="label">Índice</span>
+    </button>
   </div>
   <script>
 (function () {
@@ -833,6 +875,8 @@ body[data-theme="dark"] .toc-marker {
   const sidebar = document.getElementById('sidebar');
   const sidebarClose = document.getElementById('sidebarClose');
   const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+  const scrollTopButton = document.getElementById('scrollTopButton');
+  const floatingMenuButton = document.getElementById('floatingMenuButton');
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const storedTheme = localStorage.getItem('jats-theme');
   const storedContrast = localStorage.getItem('jats-contrast');
@@ -873,6 +917,7 @@ body[data-theme="dark"] .toc-marker {
   function updateSidebarAria(isOpen) {
     sidebarToggle?.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
     sidebar?.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+    floatingMenuButton?.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
   }
 
   function openSidebar() {
@@ -921,6 +966,33 @@ body[data-theme="dark"] .toc-marker {
       closeSidebar();
     });
   });
+
+  scrollTopButton?.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  if (floatingMenuButton) {
+    floatingMenuButton.addEventListener('click', () => {
+      if (body.classList.contains('sidebar-open')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
+    });
+  }
+
+  function handleScroll() {
+    const shouldShow = window.scrollY > 240;
+    if (scrollTopButton) {
+      scrollTopButton.classList.toggle('visible', shouldShow);
+    }
+    if (floatingMenuButton) {
+      floatingMenuButton.classList.toggle('visible', shouldShow);
+    }
+  }
+
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  handleScroll();
 })();
 </script>
 </body>
