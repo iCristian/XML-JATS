@@ -1,0 +1,782 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.3 20210610//EN" "JATS-publishing-1-3.dtd">
+l
+<?xml version="1.0" encoding="UTF-8"?>
+<article xmlns:xlink="http://www.w3.org/1999/xlink" xml:lang="es" article-type="scoping-review" dtd-version="1.3">
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="publisher-id">matronactual</journal-id>
+      <journal-title-group>
+        <journal-title>Matronería Actual</journal-title>
+      </journal-title-group>
+      <issn pub-type="epub">0000-0000</issn>
+      <publisher>
+        <publisher-name>SciELO</publisher-name>
+      </publisher>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="doi">10.0000/matronactual.00000</article-id>
+      <article-categories>
+        <subj-group subj-group-type="heading">
+          <subject>Revisión</subject>
+        </subj-group>
+      </article-categories>
+      <title-group>
+        <article-title>Leche humana donada y su impacto en la prevención de enterocolitis necrotizante en prematuros de alto riesgo: una revisión de alcance (2013-2023)</article-title>
+        <trans-title-group xml:lang="en">
+          <trans-title>Donated human milk and the prevention of necrotizing enterocolitis in high-risk premature infants: a scoping review (2013-2023)</trans-title>
+        </trans-title-group>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Fredes Ortiz</surname>
+            <given-names>Cecilia</given-names>
+          </name>
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0007-0263-1702</contrib-id>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Rodriguez Rivas</surname>
+            <given-names>Maria Loretto</given-names>
+          </name>
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0002-1858-0325</contrib-id>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Villarroel García</surname>
+            <given-names>Valeria</given-names>
+          </name>
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0004-7807-6168</contrib-id>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Contreras Huequemán</surname>
+            <given-names>Héctor Enrique</given-names>
+          </name>
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0002-8480-7954</contrib-id>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Cornejo Ruiz</surname>
+            <given-names>Michelle Carolina</given-names>
+          </name>
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0005-8890-8594</contrib-id>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Riffo Vargas</surname>
+            <given-names>Florencia Damaris Rocío</given-names>
+          </name>
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0002-8546-3276</contrib-id>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Sepúlveda Valdés</surname>
+            <given-names>Daphne María Étienne</given-names>
+          </name>
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0004-6061-5506</contrib-id>
+        </contrib>
+      </contrib-group>
+      <author-notes>
+        <p>Matrona Mg. Cecilia Fredes Ortiz</p>
+        <fn fn-type="con">
+          <p><bold>Autorías CRediT</bold></p>
+          <p><bold>Cecilia Fredes Ortiz:</bold> Conceptualización, Curación de Datos, Análisis formal, Metodología, Administración del proyecto, Recursos, Supervisión, Visualización, Redacción, revisión y edición.</p>
+          <p><bold>Valeria Villarroel García:</bold> Conceptualización, Curación de Datos, Análisis formal, Metodología, Administración del proyecto, Recursos, Visualización, Redacción, revisión y edición.</p>
+          <p><bold>Maria Loretto Rodriguez:</bold> Conceptualización, Curación de Datos, Análisis formal, Metodología, Administración del proyecto, Recursos, Visualización, Redacción, revisión y edición.</p>
+          <p><bold>Héctor Enrique Contreras Huequemán:</bold> Conceptualización, Curación de Datos, Análisis formal, Investigación, Metodología, Recursos, Redacción del borrador original.</p>
+          <p><bold>Michelle Carolina Cornejo Ruiz:</bold> Conceptualización, Curación de Datos, Análisis formal, Investigación, Metodología, Recursos, Redacción del borrador original.</p>
+          <p><bold>Florencia Damaris Rocío Riffo Vargas:</bold> Conceptualización, Curación de Datos, Análisis formal, Investigación, Metodología, Recursos, Redacción del borrador original.</p>
+          <p><bold>Daphne María Étienne Sepúlveda Valdés:</bold> Conceptualización, Curación de Datos, Análisis formal, Investigación, Metodología, Recursos, Redacción del borrador original.</p>
+        </fn>
+      </author-notes>
+      <pub-date pub-type="epub">
+        <day>01</day>
+        <month>01</month>
+        <year>2024</year>
+      </pub-date>
+      <abstract>
+        <title>Resumen</title>
+        <p><bold>Objetivo:</bold> analizar la evidencia científica publicada entre 2013 y 2023 sobre el uso de leche humana donada (LHD) y el impacto en la prevención de enterocolitis necrotizante (ECN) en neonatos prematuros de alto riesgo.</p>
+        <p><bold>Metodología:</bold> se realizó una revisión de alcance (scoping review) de estudios publicados en las bases de datos PubMed, Scopus y Web of Science. Se examinaron ensayos clínicos, estudios de cohortes y otros diseños observacionales que evaluaron el impacto de la LHD en la reducción de ECN y otras complicaciones asociadas en prematuros. La selección siguió la metodología PRISMA.</p>
+        <p><bold>Resultados:</bold> se incluyeron trece estudios. La evidencia indica que el uso de LHD disminuye significativamente la incidencia de ECN en comparación con la alimentación con fórmula artificial, promoviendo un desarrollo intestinal más favorable y reforzando el sistema inmunológico del neonato. La prematurez y la alimentación con fórmula son factores de riesgo consistentes para ECN. La pasteurización Holder, aunque reduce algunos componentes bioactivos, es crucial para la seguridad microbiológica.</p>
+        <p><bold>Conclusiones:</bold> la LHD es una estrategia efectiva para reducir la incidencia de ECN en prematuros de alto riesgo. Es fundamental promover su uso y optimizar los procesos en los bancos de leche para maximizar sus beneficios. Se requieren más investigaciones para abordar desafíos logísticos y optimizar su aplicación clínica.</p>
+      </abstract>
+      <trans-abstract xml:lang="en">
+        <title>Abstract</title>
+        <p><bold>Objective:</bold> to analyze scientific evidence published between 2013 and 2023 on the use of donor human milk (DHM) in preventing necrotizing enterocolitis (NEC) in high-risk premature neonates, identifying benefits, mechanisms of action, and limitations. (Adapted from )</p>
+        <p><bold>Methodology:</bold> a scoping review of studies published in PubMed, Scopus, and Web of Science databases was conducted. Clinical trials, cohort studies, and other observational designs evaluating the impact of DHM on reducing NEC and other associated complications in premature infants were examined. Study selection followed the PRISMA methodology. (Adapted from )</p>
+        <p><bold>Results:</bold> thirteen studies were included. Evidence indicates that DHM use significantly decreases NEC incidence compared to formula feeding, promoting more favorable intestinal development and strengthening the neonatal immune system. Prematurity and formula feeding are consistent risk factors for NEC. Holder pasteurization, while reducing some bioactive components, is crucial for microbiological safety. (Adapted from )</p>
+        <p><bold>Conclusions:</bold> DHM is an effective strategy to reduce NEC incidence in high-risk premature neonates. Promoting its use and optimizing milk bank processes to maximize its benefits is essential. Further research is needed to address logistical challenges and optimize its clinical application. (Adapted from )</p>
+      </trans-abstract>
+      <kwd-group xml:lang="es">
+        <title>Palabras clave</title>
+        <kwd>leche humana</kwd>
+        <kwd>enterocolitis necrotizante</kwd>
+        <kwd>recién nacido prematuro</kwd>
+        <kwd>bancos de leche</kwd>
+      </kwd-group>
+      <kwd-group xml:lang="en">
+        <title>Keywords</title>
+        <kwd>milk human</kwd>
+        <kwd>enterocolitis necrotizing</kwd>
+        <kwd>infant premature</kwd>
+        <kwd>milk banks</kwd>
+      </kwd-group>
+      <funding-group>
+        <funding-statement>El presente estudio no recibió financiación externa.</funding-statement>
+      </funding-group>
+      <fn-group>
+        <fn fn-type="COI-statement">
+          <p>Los autores declaran no tener conflictos de interés.</p>
+        </fn>
+        <fn fn-type="presented-at">
+          <p>Este artículo no ha sido presentado previamente en ningún congreso o reunión científica.</p>
+        </fn>
+      </fn-group>
+      <notes>
+        <title>Declaración de Origen</title>
+        <p>Este artículo se deriva de la tesina de pregrado titulada "LECHE HUMANA DONADA Y LA PREVENCIÓN DE ENTEROCOLITIS NECROTIZANTE EN PREMATUROS DE ALTO RIESGO (2013-2023)", presentada por Héctor Contreras Huequemán, Michelle Cornejo Ruiz, Florencia Riffo Vargas y Daphne Sepúlveda Valdés para optar al grado de Licenciado en Obstetricia y Matronería, Universidad San Sebastián, Chile, 2024.</p>
+      </notes>
+    </article-meta>
+  </front>
+  <body>
+    <sec id="s1">
+      <title>Introducción</title>
+      <p>La enterocolitis necrotizante (ECN) es una enfermedad gastrointestinal grave y una de las principales causas de morbilidad y mortalidad en recién nacidos prematuros (RNPT). Su fisiopatología es multifactorial, involucrando isquemia intestinal, colonización bacteriana patológica e inflamación exagerada, especialmente en un intestino inmaduro. Los RNPT, particularmente aquellos con muy bajo peso al nacer (&lt;1500g) o nacidos antes de las 32 semanas de gestación, presentan el mayor riesgo. En Chile, la ECN es responsable de un porcentaje significativo de la mortalidad en menores de un año, afectando predominantemente a este grupo vulnerable.</p>
+      <p>La leche materna (LM) es universalmente reconocida como el alimento óptimo para todos los recién nacidos, incluidos los prematuros, debido a su composición única de nutrientes, factores de crecimiento, componentes inmunológicos y propiedades antiinflamatorias. Sin embargo, no siempre la leche de la propia madre está disponible o es suficiente, especialmente en casos de prematuridad extrema o enfermedad materna. En estas situaciones, la leche humana donada (LHD), procesada en Bancos de Leche Humana (BLH), emerge como la mejor alternativa a la LM, por sobre las fórmulas artificiales (FA).</p>
+      <p>Diversos estudios sugieren que la LHD puede reducir la incidencia de ECN, debido a sus componentes bioactivos que promueven la maduración intestinal, modulan la microbiota y ofrecen protección inmunológica. A pesar de los beneficios, existen desafíos relacionados con la disponibilidad, el procesamiento (principalmente la pasteurización, que puede afectar algunos componentes termolábiles), y la implementación de programas de LHD.</p>
+      <p>Esta revisión de alcance tiene como objetivo general determinar el impacto protector de la leche humana donada en prematuros de alto riesgo asociado a enterocolitis necrotizante, a través del análisis de la evidencia científica publicada entre los años 2013 y 2023, identificando los factores de riesgo para ECN, evaluando el impacto de la pasteurización en la LHD y describiendo los beneficios de la LHD como agente protector.</p>
+    </sec>
+    <sec id="s2">
+      <title>Metodología</title>
+      <p>Se realizó una revisión de alcance (scoping review) y la declaración PRISMA. El objetivo fue mapear la evidencia existente sobre el rol de la LHD en la prevención de ECN en RNPT de alto riesgo durante el período 2013-2023.</p>
+      <p><bold>Estrategia de Búsqueda:</bold> se realizó una búsqueda sistemática en tres bases de datos electrónicas: PubMed, Scopus y Web of Science. Se utilizaron combinaciones de palabras clave y descriptores MeSH/DeCS, incluyendo: "human milk bank", "donated human milk", "necrotizing enterocolitis", "NEC", "premature", "high risk premature", y "prevention", adaptando las ecuaciones de búsqueda a cada base de datos. La búsqueda se limitó a artículos publicados entre el 1 de enero de 2013 y el 31 de diciembre de 2023.</p>
+      <p><bold>Criterios de inclusión y exclusión:</bold> se incluyeron estudios originales (ensayos clínicos, estudios de cohorte, casos y controles, estudios observacionales descriptivos y transversales) que evaluaran el uso de LHD y su relación con la ECN en RNPT de alto riesgo. Los artículos debían estar publicados en inglés, español o portugués. Se excluyeron revisiones sistemáticas, metaanálisis, editoriales, cartas al editor, protocolos de estudio y artículos cuyo texto completo no estuviera disponible o requiriera pago.</p>
+      <p><bold>Selección de estudios y extracción de datos:</bold> dos revisores independientes (H.C.H. y M.C.C.R.) examinaron los títulos y resúmenes de los artículos identificados. Los artículos potencialmente elegibles fueron revisados a texto completo. Las discrepancias se resolvieron mediante consenso o con la participación de un tercer revisor (F.D.R.V.). Se utilizó un formulario estandarizado para extraer datos relevantes: autor, año, país, tipo de estudio, población, intervención (uso de LHD), comparador (ej. fórmula, leche materna propia), y resultados principales relacionados con ECN, factores de riesgo, y efectos de la pasteurización.</p>
+    </sec>
+    <sec id="s3">
+      <title>Resultados y discusión</title>
+      <p>La búsqueda inicial identificó 733 registros. Tras eliminar duplicados (n=147) y registros por otros motivos (n=44), se examinaron 542 resúmenes. Se excluyeron 414 por título y 19 por ser estudios secundarios. De los 69 informes evaluados para elegibilidad a texto completo se excluyeron 56 (44 por no coincidir el resumen con los parámetros y doce por no responder a preguntas CASPe o criterios de calidad metodológica). Finalmente, trece estudios cumplieron con los criterios de inclusión y fueron analizados en esta revisión (ver <xref ref-type="fig" rid="f1">Figura 1</xref>).</p>
+      <fig id="f1">
+        <label>Figura 1</label>
+        <caption>
+          <p>Diagrama de flujo PRISMA. Este diagrama de flujo PRISMA detalla el proceso de identificación, cribado, elegibilidad e inclusión de los estudios en la revisión de alcance.</p>
+        </caption>
+        <graphic mimetype="image" xlink:href="prisma_flow_diagram.png"/>
+      </fig>
+      <p>Los trece estudios seleccionados incluyeron diseños observacionales retrospectivos, prospectivos, de cohorte, comparativos y experimentales, provenientes de diversos países como EE. UU., Irán, India, España, Colombia y China. (Ver <xref ref-type="table" rid="t1">Tabla 1</xref>).</p>
+      <table-wrap id="t1">
+        <label>Tabla 1</label>
+        <caption>
+          <p>Características de los estudios incluidos en la revisión sobre LHD y prevención de ECN (2013-2023). A continuación se presenta la tabla formateada según las directrices del estilo APA, utilizando la información proporcionada en los Estudios sobre Leche Humana Donada (LHD) y Enterocolitis Necrotizante (ECN)</p>
+        </caption>
+        <table>
+          <thead>
+            <tr>
+              <th>Autores / Año</th>
+              <th>País</th>
+              <th>Tipo de Estudio</th>
+              <th>Población de Estudio</th>
+              <th>Hallazgos Clave sobre LHD y ECN / Pasteurización</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Herrmann &amp; Carroll, 2014</td>
+              <td>EE.UU.</td>
+              <td>Observacional</td>
+              <td>RNPT</td>
+              <td>Dieta exclusiva de leche humana reduce ECN. Riesgo de ECN relacionado con elección de leche (origen bovino).</td>
+            </tr>
+            <tr>
+              <td>Hosseini et al., 2021</td>
+              <td>Irán</td>
+              <td>Retrospectivo</td>
+              <td>RNPT en UCIN</td>
+              <td>LHD disminuyó incidencia de ECN. Alimentación con fórmula aumentó incidencia de ECN.</td>
+            </tr>
+            <tr>
+              <td>Mane et al., 2022</td>
+              <td>India</td>
+              <td>Observacional, comparativo, transversal</td>
+              <td>RNPT</td>
+              <td>LHD disminuyó incidencia de ECN y sepsis en comparación con fórmula.</td>
+            </tr>
+            <tr>
+              <td>Parra-Lorca et al., 2018</td>
+              <td>España</td>
+              <td>Cohorte unicéntrico, observacional, prospectivo</td>
+              <td>RNPT</td>
+              <td>Microbioma intestinal de RNPT alimentados con LHD con menor porcentaje de bacterias potencialmente patógenas vs fórmula. Prematurez como factor de riesgo.</td>
+            </tr>
+            <tr>
+              <td>Torres-Muñoz et al., 2021</td>
+              <td>Colombia</td>
+              <td>Descriptivo, observacional, transversal</td>
+              <td>RNPT &lt;37 semanas</td>
+              <td>Implementación de BLH asoció con disminución de estancia hospitalaria. Prematurez como factor de riesgo.</td>
+            </tr>
+            <tr>
+              <td>Meredith-Dennis et al., 2018</td>
+              <td>EE.UU.</td>
+              <td>Experimental</td>
+              <td>Muestras de LHD</td>
+              <td>Concentraciones altas de lactoferrina, α-lactoalbúmina post-pasteurización Holder. Proteínas mayores con Holder vs otros métodos. No influye en carbohidratos.</td>
+            </tr>
+            <tr>
+              <td>Piñeiro-Ramos et al., 2021</td>
+              <td>España</td>
+              <td>Cohorte prospectivo, observacional</td>
+              <td>RNPT</td>
+              <td>Disminución significativa de lactosa post-pasteurización (en LHD).</td>
+            </tr>
+            <tr>
+              <td>Pitino et al., 2019</td>
+              <td>Canadá</td>
+              <td>Experimental</td>
+              <td>Muestras de LHD</td>
+              <td>Pasteurización Holder: BSSL eliminada; reducción lactoferrina, lisozima, folato, Vit C. Macronutrientes sin cambios significativos.</td>
+            </tr>
+            <tr>
+              <td>Quitadamo et al., 2021</td>
+              <td>Italia</td>
+              <td>Experimental</td>
+              <td>Muestras de LHD</td>
+              <td>Pasteurización Holder: descenso en proteínas, grasa, calorías; lactosa estable.</td>
+            </tr>
+            <tr>
+              <td>Rodríguez-Camejo et al., 2020</td>
+              <td>Uruguay</td>
+              <td>Descriptivo</td>
+              <td>Muestras de LHD</td>
+              <td>Pasteurización Holder: IgA disminuyó 34%, IgG 20%; sCD14 destruida (99%); EGT y TGF-β2 disminuyeron 44-59%.</td>
+            </tr>
+            <tr>
+              <td>Fang et al., 2021</td>
+              <td>China</td>
+              <td>Cohorte prospectivo unicéntrico</td>
+              <td>RNMBPN</td>
+              <td>LHD reduce tasa de ECN, presenta factores protectores, reduce intolerancia alimentaria vs fórmula.</td>
+            </tr>
+            <tr>
+              <td>Wang et al., 2023</td>
+              <td>China</td>
+              <td>Retrospectivo</td>
+              <td>RNPT</td>
+              <td>LHD disminuyó incidencia en el desarrollo de ECN.</td>
+            </tr>
+            <tr>
+              <td>Zozaya et al., 2020</td>
+              <td>España</td>
+              <td>Retrospectivo (datos de red)</td>
+              <td>RN &lt;32 semanas</td>
+              <td>LHD disminuye incidencia ECN; puede evitar efectos tóxicos de fórmula sobre células epiteliales intestinales y disminuye permeabilidad intestinal.</td>
+            </tr>
+          </tbody>
+        </table>
+        <table-wrap-foot>
+          <p>BLH = Banco de Leche Humana; BSSL = Lipasa Estimulada por Sales Biliares (Bile Salt-Stimulated Lipase); ECN = Enterocolitis Necrotizante; EE.UU. = Estados Unidos; EGT = Ergotioneína; IgA = Inmunoglobulina A; IgG = Inmunoglobulina G; LHD = Leche Humana Donada; RNMBPN = Recién Nacido de Muy Bajo Peso al Nacer; RNPT = Recién Nacido Pretérmino; sCD14 = CD14 soluble; TGF-β2 = Factor de Crecimiento Transformante beta 2; UCIN = Unidad de Cuidados Intensivos Neonatales; Vit C = Vitamina C</p>
+        </table-wrap-foot>
+      </table-wrap>
+      <sec id="s3.1">
+        <title>Factores de Riesgo para ECN</title>
+        <p>La prematurez y la alimentación con fórmula artificial fueron consistentemente identificadas como los principales factores de riesgo para el desarrollo de ECN. La inmadurez del sistema gastrointestinal e inmunológico en RNPT los hace particularmente susceptibles, mientras que la fórmula carece de los componentes bioactivos y protectores presentes en la leche humana, pudiendo incluso tener efectos proinflamatorios o alterar negativamente la microbiota intestinal. Estudios como el de Herrmann y Carroll (2014) y Hosseini et al. (2021) resaltaron esta asociación.</p>
+      </sec>
+      <sec id="s3.2">
+        <title>Impacto de la Pasteurización en la LHD</title>
+        <p>La pasteurización, principalmente el método Holder (62.5°C por 30 minutos), es un paso esencial para garantizar la seguridad microbiológica de la LHD. Sin embargo, la evidencia recopilada demuestra que este proceso térmico puede afectar la concentración y actividad de diversos componentes nutricionales e inmunológicos.</p>
+        <p>Estudios como los de Pitino et al. (2019) y Rodríguez-Camejo et al. (2020) reportaron reducciones en la actividad de enzimas como la lipasa BSSL, disminución de proteínas inmunológicas como IgA, IgG, lactoferrina y lisozima, así como de factores de crecimiento (TGF-β2) y sCD14. También se observó una disminución en micronutrientes como folato y vitamina C. A pesar de esto, los macronutrientes (carbohidratos, lípidos totales) y el contenido calórico general parecen ser menos afectados o se mantienen en niveles adecuados, aunque algunas investigaciones como la de Quitadamo et al. (2021) mostraron un descenso en proteínas y grasas.</p>
+        <p>Es importante destacar que, pese a estas reducciones, la LHD pasteurizada sigue siendo superior a la fórmula en términos de protección contra la ECN. Investigaciones como la de Meredith-Dennis et al. (2018) sugieren que la pasteurización Holder puede incluso preservar o concentrar ciertas proteínas.</p>
+      </sec>
+      <sec id="s3.3">
+        <title>Beneficios de la LHD como Agente Protector contra ECN</title>
+        <p>La totalidad de los estudios que evaluaron este aspecto concluyeron que la LHD reduce significativamente la incidencia de ECN en RNPT de alto riesgo. Fang et al. (2021) y Mane et al. (2022) encontraron una menor tasa de ECN y de sepsis en neonatos alimentados con LHD en comparación con aquellos alimentados con fórmula.</p>
+        <p>Los mecanismos protectores de la LHD son múltiples e incluyen la modulación de la microbiota intestinal hacia un perfil más beneficioso (menor porcentaje de bacterias patógenas, como lo indica Parra-Lorca et al., 2018), el fortalecimiento de la barrera intestinal, la provisión de factores inmunológicos (anticuerpos, lactoferrina) y antiinflamatorios, y la promoción de la maduración intestinal. Zozaya et al. (2020) sugieren que la LHD puede evitar efectos tóxicos directos de la fórmula sobre las células epiteliales intestinales y disminuir la permeabilidad intestinal.</p>
+      </sec>
+      <sec id="s3.4">
+        <title>Discusión general y limitaciones</title>
+        <p>Los hallazgos de esta revisión de alcance reafirman el papel relevante de la LHD como una intervención preventiva primordial contra la ECN en la población neonatal vulnerable. La superioridad de la LHD sobre la FA en la reducción del riesgo de ECN está bien documentada en la literatura incluida.</p>
+        <p>A pesar de la alteración de algunos componentes bioactivos por la pasteurización Holder, los beneficios inmunológicos y tróficos de la LHD pasteurizada superan los riesgos asociados con la alimentación con fórmula en prematuros. No obstante, la investigación sobre métodos alternativos de pasteurización (ej. alta presión hidrostática) que puedan preservar mejor estos componentes es un área de interés creciente, como lo indica el estudio de Pitino et al. (2019), que mostró mejor preservación de algunos compuestos bioactivos con este método.</p>
+        <p>Las limitaciones de esta revisión incluyen la heterogeneidad de los estudios en términos de diseño, población y definiciones. Además, al ser una revisión de alcance, no se realizó una evaluación formal de la calidad metodológica de cada estudio para la síntesis de evidencia (aunque sí se usaron criterios para la selección inicial). La mayoría de los estudios provienen de países con sistemas de salud desarrollados, lo que podría limitar la generalización de algunos hallazgos a contextos de bajos recursos. Se identificó una escasez de estudios longitudinales que evalúen los efectos a largo plazo de la LHD en esta población específica.</p>
+      </sec>
+    </sec>
+    <sec id="s4">
+      <title>Conclusión</title>
+      <p>La leche humana donada (LHD) pasteurizada se consolida como una intervención protectora fundamental y la segunda mejor opción después de la leche de la propia madre para la nutrición de recién nacidos prematuros de alto riesgo, disminuyendo significativamente la incidencia de enterocolitis necrotizante (ECN) y otras comorbilidades asociadas. Su uso se asocia con una mejor tolerancia digestiva, una microbiota intestinal más saludable y un menor riesgo de sepsis neonatal en comparación con la alimentación con fórmula artificial.</p>
+      <p>Aunque la pasteurización Holder es necesaria para garantizar la seguridad microbiológica y afecta parcialmente la composición bioactiva de la LHD, sus beneficios protectores contra la ECN siguen siendo clínicamente relevantes.</p>
+      <p>Para la práctica de la matronería, estos hallazgos subrayan la importancia de abogar por el acceso y uso de LHD en las unidades de cuidados intensivos neonatales. Esto incluye la promoción de la donación de leche humana, el apoyo a la creación y sostenibilidad de Bancos de Leche Humana (BLH), y la educación continua al personal de salud y a las familias sobre los beneficios de la LHD.</p>
+      <p>Se sugiere la necesidad de investigaciones futuras enfocadas en:</p>
+      <p>Optimizar los métodos de procesamiento y pasteurización de la LHD para preservar al máximo sus componentes bioactivos sin comprometer la seguridad.</p>
+      <p>Realizar estudios multicéntricos y longitudinales, especialmente en países de medianos y bajos ingresos, para evaluar el impacto a largo plazo de la LHD y las estrategias más costo-efectivas para su implementación.</p>
+      <p>Desarrollar políticas públicas que fortalezcan las redes de BLH y fomenten la cultura de donación de leche humana.</p>
+      <p>La implementación de programas de LHD, adecuadamente gestionados, representa una estrategia clave para mejorar la supervivencia y la calidad de vida de los neonatos prematuros de alto riesgo.</p>
+    </sec>
+  </body>
+  <back>
+    <ack>
+      <title>Agradecimientos</title>
+      <p>Damos las gracias a la Escuela de Obstetricia de la Universidad San Sebastián, sede de La Patagonia, por facilitar el desarrollo de la investigación de pregrado que da origen a este artículo. A todas las madres donantes cuya generosidad hace posible el funcionamiento de los Bancos de Leche Humana.</p>
+    </ack>
+    <ref-list>
+      <title>Referencias bibliográficas</title>
+      <ref id="ref1">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Herrmann</surname>
+              <given-names>K</given-names>
+            </name>
+            <name>
+              <surname>Carroll</surname>
+              <given-names>K</given-names>
+            </name>
+          </person-group>
+          <year>2014</year>
+          <article-title>An exclusively human milk diet reduces necrotizing enterocolitis</article-title>
+          <source>Breastfeed Med</source>
+          <volume>9</volume>
+          <issue>4</issue>
+          <fpage>184</fpage>
+          <lpage>190</lpage>
+        </element-citation>
+      </ref>
+      <ref id="ref2">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Hosseini</surname>
+              <given-names>M</given-names>
+            </name>
+            <name>
+              <surname>Farshbaf-Khalili</surname>
+              <given-names>A</given-names>
+            </name>
+            <name>
+              <surname>Seyyedzavvar</surname>
+              <given-names>A</given-names>
+            </name>
+            <name>
+              <surname>Fuladi</surname>
+              <given-names>N</given-names>
+            </name>
+            <name>
+              <surname>Hosseini</surname>
+              <given-names>N</given-names>
+            </name>
+            <name>
+              <surname>Talashi</surname>
+              <given-names>S</given-names>
+            </name>
+          </person-group>
+          <year>2021</year>
+          <article-title>Short-term outcomes of launching Mother’s milk bank in neonatal intensive care unit: A retrospective study</article-title>
+          <source>Arch Iran Med</source>
+          <volume>24</volume>
+          <issue>5</issue>
+          <fpage>397</fpage>
+          <lpage>404</lpage>
+        </element-citation>
+      </ref>
+      <ref id="ref3">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Mane</surname>
+              <given-names>SV</given-names>
+            </name>
+            <name>
+              <surname>Salunkhe</surname>
+              <given-names>S</given-names>
+            </name>
+            <name>
+              <surname>Agarkhedkar</surname>
+              <given-names>S</given-names>
+            </name>
+            <name>
+              <surname>Lakhwani</surname>
+              <given-names>P</given-names>
+            </name>
+            <name>
+              <surname>Malwade</surname>
+              <given-names>S</given-names>
+            </name>
+          </person-group>
+          <year>2022</year>
+          <article-title>Effect of Human Milk Banking on Immediate Neonatal Morbidity and Mortality: A Study in a Tertiary Care Center</article-title>
+          <source>Med J DY Patil Vidyapeeth</source>
+          <volume>15</volume>
+          <issue>5</issue>
+          <fpage>682</fpage>
+          <lpage>686</lpage>
+        </element-citation>
+      </ref>
+      <ref id="ref4">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Parra-Llorca</surname>
+              <given-names>A</given-names>
+            </name>
+            <name>
+              <surname>Gormaz</surname>
+              <given-names>M</given-names>
+            </name>
+            <name>
+              <surname>Alcántara</surname>
+              <given-names>C</given-names>
+            </name>
+            <name>
+              <surname>Cernada</surname>
+              <given-names>M</given-names>
+            </name>
+            <name>
+              <surname>Nuñez-Ramiro</surname>
+              <given-names>A</given-names>
+            </name>
+            <name>
+              <surname>Vento</surname>
+              <given-names>M</given-names>
+            </name>
+            <etal/>
+          </person-group>
+          <year>2018</year>
+          <article-title>Preterm gut microbiome depending on feeding type: Significance of donor human milk</article-title>
+          <source>Front Microbiol</source>
+          <volume>9</volume>
+          <elocation-id>1376</elocation-id>
+        </element-citation>
+      </ref>
+      <ref id="ref5">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Torres-Muñoz</surname>
+              <given-names>J</given-names>
+            </name>
+            <name>
+              <surname>Jimenez-Fernandez</surname>
+              <given-names>CA</given-names>
+            </name>
+            <name>
+              <surname>Murillo-Alvarado</surname>
+              <given-names>J</given-names>
+            </name>
+            <name>
+              <surname>Torres-Figueroa</surname>
+              <given-names>S</given-names>
+            </name>
+            <name>
+              <surname>Castro</surname>
+              <given-names>JP</given-names>
+            </name>
+          </person-group>
+          <year>2021</year>
+          <article-title>Clinical results of the implementation of a breast milk bank in premature infants (Under 37 weeks) at the hospital universitario del valle 2018–2020</article-title>
+          <source>Nutrients</source>
+          <volume>13</volume>
+          <issue>7</issue>
+          <elocation-id>2187</elocation-id>
+        </element-citation>
+      </ref>
+      <ref id="ref6">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Meredith-Dennis</surname>
+              <given-names>L</given-names>
+            </name>
+            <name>
+              <surname>Xu</surname>
+              <given-names>G</given-names>
+            </name>
+            <name>
+              <surname>Goonatilleke</surname>
+              <given-names>E</given-names>
+            </name>
+            <name>
+              <surname>Lebrilla</surname>
+              <given-names>CB</given-names>
+            </name>
+            <name>
+              <surname>Underwood</surname>
+              <given-names>MA</given-names>
+            </name>
+            <name>
+              <surname>Smilowitz</surname>
+              <given-names>JT</given-names>
+            </name>
+          </person-group>
+          <year>2018</year>
+          <article-title>Composition and variation of macronutrients, immune proteins, and human milk oligosaccharides in human milk from nonprofit and commercial milk banks</article-title>
+          <source>J Hum Lact</source>
+          <volume>34</volume>
+          <issue>1</issue>
+          <fpage>120</fpage>
+          <lpage>129</lpage>
+        </element-citation>
+      </ref>
+      <ref id="ref7">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Piñeiro-Ramos</surname>
+              <given-names>JD</given-names>
+            </name>
+            <name>
+              <surname>Parra-Llorca</surname>
+              <given-names>A</given-names>
+            </name>
+            <name>
+              <surname>Ten-Doménech</surname>
+              <given-names>I</given-names>
+            </name>
+            <name>
+              <surname>Gormaz</surname>
+              <given-names>M</given-names>
+            </name>
+            <name>
+              <surname>Ramón-Beltrán</surname>
+              <given-names>A</given-names>
+            </name>
+            <name>
+              <surname>Cernada</surname>
+              <given-names>M</given-names>
+            </name>
+            <etal/>
+          </person-group>
+          <year>2021</year>
+          <article-title>Effect of donor human milk on host-gut microbiota and metabolic interactions in preterm infants</article-title>
+          <source>Clin Nutr</source>
+          <volume>40</volume>
+          <issue>3</issue>
+          <fpage>1296</fpage>
+          <lpage>1309</lpage>
+          <comment>(Corresponde a Piñeiro-Ramos et al., 2020 en la tesis, pero la revista lo publicó en 2021)</comment>
+        </element-citation>
+      </ref>
+      <ref id="ref8">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Pitino</surname>
+              <given-names>MA</given-names>
+            </name>
+            <name>
+              <surname>Unger</surname>
+              <given-names>S</given-names>
+            </name>
+            <name>
+              <surname>Doyen</surname>
+              <given-names>A</given-names>
+            </name>
+            <name>
+              <surname>Pouliot</surname>
+              <given-names>Y</given-names>
+            </name>
+            <name>
+              <surname>Aufreiter</surname>
+              <given-names>S</given-names>
+            </name>
+            <name>
+              <surname>Stone</surname>
+              <given-names>D</given-names>
+            </name>
+            <etal/>
+          </person-group>
+          <year>2019</year>
+          <article-title>High hydrostatic pressure processing better preserves the nutrient and bioactive compound composition of human donor milk</article-title>
+          <source>J Nutr</source>
+          <volume>149</volume>
+          <issue>3</issue>
+          <fpage>497</fpage>
+          <lpage>504</lpage>
+        </element-citation>
+      </ref>
+      <ref id="ref9">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Quitadamo</surname>
+              <given-names>PA</given-names>
+            </name>
+            <name>
+              <surname>Sorrentino</surname>
+              <given-names>L</given-names>
+            </name>
+            <name>
+              <surname>Palumbo</surname>
+              <given-names>G</given-names>
+            </name>
+            <name>
+              <surname>Cianti</surname>
+              <given-names>L</given-names>
+            </name>
+            <name>
+              <surname>Copetti</surname>
+              <given-names>M</given-names>
+            </name>
+            <name>
+              <surname>Gentile</surname>
+              <given-names>MA</given-names>
+            </name>
+            <etal/>
+          </person-group>
+          <year>2021</year>
+          <article-title>Effect of Holder pasteurization on macronutrients and energy content of pooled donor human milk</article-title>
+          <source>J Pediatr Neonatal Individ Med</source>
+          <volume>10</volume>
+          <issue>2</issue>
+          <elocation-id>e100202</elocation-id>
+        </element-citation>
+      </ref>
+      <ref id="ref10">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Rodríguez-Camejo</surname>
+              <given-names>C</given-names>
+            </name>
+            <name>
+              <surname>Puyol</surname>
+              <given-names>A</given-names>
+            </name>
+            <name>
+              <surname>Fazio</surname>
+              <given-names>L</given-names>
+            </name>
+            <name>
+              <surname>Villamil</surname>
+              <given-names>E</given-names>
+            </name>
+            <name>
+              <surname>Arbildi</surname>
+              <given-names>P</given-names>
+            </name>
+            <name>
+              <surname>Sóñora</surname>
+              <given-names>C</given-names>
+            </name>
+            <etal/>
+          </person-group>
+          <year>2020</year>
+          <article-title>Impact of Holder pasteurization on immunological properties of human breast milk over the first year of lactation</article-title>
+          <source>Pediatr Res</source>
+          <volume>87</volume>
+          <issue>1</issue>
+          <fpage>32</fpage>
+          <lpage>41</lpage>
+        </element-citation>
+      </ref>
+      <ref id="ref11">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Fang</surname>
+              <given-names>L</given-names>
+            </name>
+            <name>
+              <surname>Zhang</surname>
+              <given-names>M</given-names>
+            </name>
+            <name>
+              <surname>Wu</surname>
+              <given-names>L</given-names>
+            </name>
+            <name>
+              <surname>Wang</surname>
+              <given-names>R</given-names>
+            </name>
+            <name>
+              <surname>Lin</surname>
+              <given-names>B</given-names>
+            </name>
+            <name>
+              <surname>Yao</surname>
+              <given-names>J</given-names>
+            </name>
+            <etal/>
+          </person-group>
+          <year>2021</year>
+          <article-title>Is preterm donor milk better than preterm formula for very-low-bir th-weight infants?</article-title>
+          <source>Food Nutr Res</source>
+          <volume>65</volume>
+        </element-citation>
+      </ref>
+      <ref id="ref12">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Wang</surname>
+              <given-names>H</given-names>
+            </name>
+            <name>
+              <surname>Hu</surname>
+              <given-names>XL</given-names>
+            </name>
+            <name>
+              <surname>Li</surname>
+              <given-names>QF</given-names>
+            </name>
+            <name>
+              <surname>Zhou</surname>
+              <given-names>J</given-names>
+            </name>
+            <name>
+              <surname>Wu</surname>
+              <given-names>MY</given-names>
+            </name>
+          </person-group>
+          <year>2023</year>
+          <article-title>Operation Status of the Mutual Aid Human Milk Bank for Preterm Infants and Data Analysis</article-title>
+          <source>J Multidiscip Healthc</source>
+          <volume>16</volume>
+          <fpage>3521</fpage>
+          <lpage>3530</lpage>
+        </element-citation>
+      </ref>
+      <ref id="ref13">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Zozaya</surname>
+              <given-names>C</given-names>
+            </name>
+            <name>
+              <surname>García González</surname>
+              <given-names>I</given-names>
+            </name>
+            <name>
+              <surname>Avila-Alvarez</surname>
+              <given-names>A</given-names>
+            </name>
+            <name>
+              <surname>Oikonomopoulou</surname>
+              <given-names>N</given-names>
+            </name>
+            <name>
+              <surname>Sánchez Tamayo</surname>
+              <given-names>T</given-names>
+            </name>
+            <name>
+              <surname>Salguero</surname>
+              <given-names>E</given-names>
+            </name>
+            <etal/>
+          </person-group>
+          <year>2020</year>
+          <trans-title-group xml:lang="es">
+            <trans-title>[Prevention, diagnosis and treatment of necrotising enterocolitis in newborns less than 32 weeks at birth in Spain]</trans-title>
+          </trans-title-group>
+          <source>An Pediatr (Barc)</source>
+          <volume>93</volume>
+          <issue>3</issue>
+          <fpage>161</fpage>
+          <lpage>169</lpage>
+          <comment>Spanish</comment>
+        </element-citation>
+      </ref>
+    </ref-list>
+  </back>
+</article>
