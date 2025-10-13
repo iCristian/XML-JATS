@@ -275,3 +275,145 @@ Error executing tool write_file: Tool "write_file" not found in registry. Tools 
       <p>En Chile, las personas mayores —definida como las de 60 o más años (SENAMA)— representan actualmente el 16,2 % de la población, proyectándose un aumento al 19 % para 2035 (Instituto Nacional de Estadísticas [INE], 2019). Este crecimiento implica un aumento en la demanda asistencial, por lo que resulta indispensable la actualización continua de los profesionales de salud, incluidos matrones y matronas, en la atención integral de las necesidades biopsicosociales de este grupo etario, considerando la sexualidad como un aspecto relevante.</p>
       <p>En este contexto, los lineamientos nacionales para mejorar la calidad de vida de las mujeres incluyen las Orientaciones Técnicas para la Atención Integral de la Mujer en Edad de Climaterio en el nivel de Atención Primaria de Salud (APS), dirigidas a mujeres de entre 45 y 64 años (Ministerio de Salud [MINSAL], 2014). Estas orientaciones promueven la salud s
 [2025-10-13 12:40:18] Proceso completado.
+[2025-10-13 13:11:28] Inicio de proceso para entrada: /Users/usuario/Library/CloudStorage/OneDrive-SharedLibraries-uv.cl/REVISTA MATRONERÍA ACTUAL - Documentos/MAQUETACIÓN/2025/25 - 4733-AO/4733 CORREGIDO.docx salida: 4733.xml
+[2025-10-13 13:11:28] Paso 1/5: Procesando para extraer contenido estructurado...
+[2025-10-13 13:11:28] Paso 2/5: Construyendo prompt avanzado para Gemini...
+[2025-10-13 13:11:28] Paso 3/5: Invocando a la IA de Gemini para la conversión (esto puede tardar)...
+[2025-10-13 13:13:54] Gemini returncode: 0 Elapsed: 145.95s
+[2025-10-13 13:13:54] Gemini stderr: Loaded cached credentials.
+[2025-10-13 13:13:54] Paso 4/5: Validando el XML generado contra el DTD de JATS...
+[2025-10-13 13:13:54] --- ADVERTENCIA: La validación del XML falló. ---
+[2025-10-13 13:13:54] El archivo se guardará, pero necesita correcciones manuales.
+[2025-10-13 13:13:54] Errores encontrados:
+[2025-10-13 13:13:54] - Fallo en la descarga del DTD: HTTP Error 404: Not Found
+[2025-10-13 13:13:54] Paso 5/5: Guardando el resultado...
+[2025-10-13 13:13:54] Resumen de tokens de Gemini:
+[2025-10-13 13:13:54] - No se encontró información de tokens en la salida de Gemini.
+[2025-10-13 13:13:54] --- TEXTO CRUDO DE GEMINI ---
+[2025-10-13 13:13:54] Loaded cached credentials.
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<article xmlns:xlink="http://www.w3.org/1999/xlink" xml:lang="es" article-type="research-article">
+<front>
+    <journal-meta>
+        <journal-id journal-id-type="publisher-id">revmat</journal-id>
+        <journal-title-group>
+            <journal-title>Revista Matronería Actual</journal-title>
+        </journal-title-group>
+        <issn pub-type="epub">0719-8789</issn> <!-- Asumido, reemplazar con el ISSN correcto -->
+        <publisher>
+            <publisher-name>Universidad de Valparaíso</publisher-name> <!-- Asumido, reemplazar si es incorrecto -->
+        </publisher>
+    </journal-meta>
+    <article-meta>
+        <article-id pub-id-type="doi">10.22370/revmat.1.2025.4733</article-id>
+        <title-group>
+            <article-title>Percepción del adulto mayor sobre su sexualidad: rol profesional de matronas y matrones</article-title>
+            <trans-title-group xml:lang="en">
+                <trans-title>Perception of older adults about their sexuality: professional role of midwives</trans-title>
+            </trans-title-group>
+        </title-group>
+        <contrib-group>
+            <contrib contrib-type="author" corresp="yes">
+                <name>
+                    <surname>Hernández Ferrer</surname>
+                    <given-names>Karina</given-names>
+                </name>
+                <xref ref-type="aff" rid="aff1">1</xref>
+            </contrib>
+            <contrib contrib-type="author">
+                <name>
+                    <surname>Moreno Rojas</surname>
+                    <given-names>Francisca</given-names>
+                </name>
+                <xref ref-type="aff" rid="aff2">2</xref>
+                <xref ref-type="fn" rid="fn_deceased">†</xref>
+            </contrib>
+            <contrib contrib-type="author">
+                <name>
+                    <surname>Binfa</surname>
+                    <given-names>Lorena Mercedes</given-names>
+                </name>
+                <xref ref-type="aff" rid="aff3">3</xref>
+            </contrib>
+        </contrib-group>
+        <aff id="aff1">
+            <label>1</label>
+            <institution content-type="original">Matrona, Departamento de Promoción de la Salud de la Mujer y el Recién Nacido, Universidad de Chile. Av. Independencia 1027, Independencia Santiago, Chile.</institution>
+            <institution>Universidad de Chile</institution>
+            <addr-line>
+                <email>inakarina1999@gmail.com</email>
+            </addr-line>
+        </aff>
+        <aff id="aff2">
+            <label>2</label>
+            <institution content-type="original">Licenciada en Obstetricia y Puericultura, Departamento de Promoción de la Salud de la Mujer y el Recién Nacido, Universidad de Chile. Av. Independencia 1027, Independencia, Santiago, Chile.</institution>
+            <institution>Universidad de Chile</institution>
+        </aff>
+        <aff id="aff3">
+            <label>3</label>
+            <institution content-type="original">Prof. Lorena Binfa. MSP. PhD. Departamento de Promoción de la Salud de la Mujer y el Recién Nacido, Universidad de Chile. Av. Independencia 1027, Independencia, Santiago, Chile.</institution>
+            <institution>Universidad de Chile</institution>
+            <addr-line>
+                <email>lbinfa@uchile.cl</email>
+            </addr-line>
+        </aff>
+        <author-notes>
+            <corresp id="c1">*Autor para correspondencia: <email>inakarina1999@gmail.com</email></corresp>
+            <fn id="fn_deceased"><p>† Fallecida</p></fn>
+        </author-notes>
+        <pub-date pub-type="epub-ppub">
+            <day>04</day>
+            <month>08</month>
+            <year>2025</year>
+        </pub-date>
+        <history>
+            <date date-type="received">
+                <day>25</day>
+                <month>01</month>
+                <year>2025</year>
+            </date>
+        </history>
+        <abstract xml:lang="es">
+            <title>Resumen</title>
+            <p><bold>Objetivo:</bold> describir la percepción de las personas mayores sobre su sexualidad y la forma en que la experimentan y el rol educativo que los profesionales de la matronería deberían desempeñar en este ámbito, junto con proponer acciones pertinentes basadas en los resultados obtenidos.</p>
+            <p><bold>Material y métodos:</bold> estudio cualitativo descriptivo. La recolección de datos se realizó a través de entrevistas semiestructuradas, aplicadas a participantes de los Centros del Adulto Mayor (CAM) de las comunas de Independencia y de San Miguel, en la Región Metropolitana. Para el procesamiento de datos se utilizó el análisis de contenido.</p>
+            <p><bold>Resultados:</bold> se realizaron doce entrevistas. En ellas, la mayoría de las personas mayores refieren mantener relaciones sólidas de amistad, gran parte de ellos se sienten afectados por los cambios físicos vividos con los años, pero a la vez los aceptan. En general la persona mayor relaciona el concepto de sexualidad con actividad sexual en sí. En cuanto al deseo sexual, existe una semejanza de cantidad entre los relatos que mencionan que éste no ha disminuido y los que señalan que su deseo sexual disminuyó con la vejez o, incluso, que estaba ausente. La actividad sexual es más frecuente en aquellas personas mayores con pareja que en los solteros. Predominantemente, las personas mayores no se sienten satisfechas con la atención otorgada por el personal de salud en cuanto a salud sexual.</p>
+            <p><bold>Conclusión:</bold> el deseo y la actividad sexual son elementos que existen en la tercera edad. Es crucial normalizar la sexualidad de las personas mayores en la sociedad en general. Los CAM representan puntos estratégicos ideales para promover la educación sexual y ofrecer respuestas a sus dudas.</p>
+        </abstract>
+        <kwd-group xml:lang="es">
+            <title>Palabras claves</title>
+            <kwd>persona mayor</kwd>
+            <kwd>envejecimiento</kwd>
+            <kwd>sexualidad</kwd>
+            <kwd>rol profesional</kwd>
+            <kwd>salud sexual</kwd>
+        </kwd-group>
+        <trans-abstract xml:lang="en">
+            <title>Abstract</title>
+            <p><bold>Objective:</bold> to describe the perception of older adults regarding their sexuality and how they experience it, as well as to determine the educational role that the midwife should assume and to propose pertinent actions based on the findings obtained.</p>
+            <p><bold>Materials and methods:</bold> a descriptive qualitative study was conducted. Data collection was carried out through semi-structured interviews with participants from the Older Adults Centers of Independencia and San Miguel. Content analysis was used for data processing.</p>
+            <p><bold>Results:</bold> a total of twelve interviews were conducted. Most older adults reported maintaining strong friendships; many expressed being affected by the physical changes experienced with aging, although they also indicated acceptance of these changes. In general, older adults associated the concept of sexuality primarily with sexual activity itself. Regarding sexual desire, an equal number of participants mentioned that their sexual desire had not diminished, while others reported a decrease or even an absence of desire with aging. Sexual activity was more frequent among those with a partner compared to single individuals. Predominantly, older adults expressed dissatisfaction with the sexual health care provided by health personnel.</p>
+            <p><bold>Conclusion:</bold> sexual desire and sexual activity persist in older age. It is crucial to normalize the sexuality of older adults within society. Older Adults Centers represent strategic spaces to promote sexual education and to provide responses to their concerns.</p>
+        </trans-abstract>
+        <kwd-group xml:lang="en">
+            <title>Keywords</title>
+            <kwd>aged</kwd>
+            <kwd>aging</kwd>
+            <kwd>sexuality</kwd>
+            <kwd>professional role</kwd>
+            <kwd>sexual health</kwd>
+        </kwd-group>
+        <counts>
+            <p>Recuento de palabras del cuerpo del escrito: 3988.</p>
+            <p>Recuento de palabras del resumen: 480 (español e inglés).</p>
+        </counts>
+    </article-meta>
+</front>
+<body>
+    <sec sec-type="intro">
+        <title>Introducción</title>
+        <p>La sexualidad es una dimensión presente a lo largo de toda la vida, incluida la tercera edad. Según la Organización Mundial de la Salud (<xref ref-type="bibr" rid="ref1">OMS, 2018</xref>) ésta abarca “el sexo, las identidades y los roles de género, la orientación sexual, el erotismo, el placer, la intimidad y la reproducción” Sin embargo, “la existencia de prejuicios sociales (…) propicia una desinformación permanente de la temática sexual en la edad geriátrica” (<xref ref-type="bibr" rid="ref2">Martínez, 2008</xref>). Los prejuicios más frecuentes señalan que no tienen vida sexual activa y que no están interesados en las relaciones románticas (<xref ref-type="bibr" rid="ref3">Llanes, 2013</xref>). Estas concepciones afectan la forma en que las personas mayores experimentan su sexualidad y se relacionan con su entorno.</p>
+        <p>Durante esta etapa, factores como los cambios fisiológicos, las enfermedades crónicas, la demencia y la depresión pueden influir en la vivencia de la sexualidad (<xref ref-type="bibr" rid="ref4">Olivera Carmenates &amp; Bujardón Mendoza, 2010</xref>). No obstante, la sexualidad continúa siendo un derecho humano y una necesidad emocional esencial (<xref ref-type="bibr" rid="ref5">Servicio Nacional del Adulto Mayor [SENAMA], 2017</xref>).</p>
+        <p>En Chile, las personas mayores —definida como las de 60 o más años (<xref ref-type="bibr" rid="ref6">SENAMA</xref>)— representan actualmente el 16,2 % de la población, proyectándose un aumento al 19 % para 2035 (<xref ref-type="
+[2025-10-13 13:13:54] Proceso completado.

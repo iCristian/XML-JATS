@@ -130,6 +130,7 @@ def construir_prompt_avanzado(texto_articulo: str) -> str:
     2.  **Sección <front>:** Etiqueta `<article-title>`, `<contrib-group>` para autores (`<given-names>`, `<surname>`), `<abstract>`, y `<kwd-group>`.
     3.  **Sección <body>:**
         *   Usa `<sec>` para secciones con un `<title>`. Los párrafos deben ir en `<p>`.
+        *   **Referencias en el cuerpo:** Identifica citas bibliográficas en formato numérico (Vancouver: `1`, `[1]`, `1-3`, etc.) y en formato autor-fecha (APA: `(Apellido, 2020)`, `(Apellido & Otro, 2019)`, etc.). Normaliza la cita reemplazando el texto original por elementos `<xref ref-type="bibr" rid="ID_DE_REFERENCIA">`. El contenido textual del `<xref>` debe reflejar el estilo original (por ejemplo, `[1]` o `(Apellido, 2020)`). Cada `<xref>` debe apuntar al `id` del `<ref>` correspondiente en la sección de bibliografía.
         *   **Manejo de Placeholders:**
             *   **Imágenes:** Si encuentras `[IMAGEN-PLACEHOLDER file="..." caption="..."]`, conviértelo a la siguiente estructura JATS:
                 ```xml
@@ -166,7 +167,7 @@ def construir_prompt_avanzado(texto_articulo: str) -> str:
                 </table-wrap>
                 ```
                 Interpreta la primera fila del contenido como `<thead>` con `<th>` y las siguientes como `<tbody>` con `<td>`.
-    4.  **Sección <back>:** Usa `<ref-list>` y `<ref>` para la bibliografía, desglosando con `<element-citation>`.
+    4.  **Sección <back>:** Usa `<ref-list>` y `<ref>` para la bibliografía, desglosando con `<element-citation>`. Asegúrate de que cada `<ref>` tenga un `id` único (por ejemplo `ref1`, `ref2`, …) y que coincida con los atributos `rid` utilizados en los `<xref>` del cuerpo. Si detectas múltiples citas que apuntan a la misma referencia, reutiliza el mismo `id`.
     5.  **Reglas Finales:**
         *   El XML debe ser perfectamente bien formado.
         *   No incluyas explicaciones en la salida, solo el código XML.
