@@ -1272,12 +1272,12 @@ body[data-theme="dark"] .floating-button {
     doi_value = doc.get("doi") or ""
     meta_values = [
         ("Fecha de publicación", escape(doc.get("pub_date") or "Pendiente")),
-        ("Volumen", escape(doc.get("volume") or "N/D")),
-        ("Número", escape(doc.get("issue") or "N/D")),
-        (
-            "Páginas",
-            escape(" - ".join(filter(None, [doc.get("fpage"), doc.get("lpage")])) or "N/D"),
-        ),
+        #("Volumen", escape(doc.get("volume") or "N/D")),
+        #("Número", escape(doc.get("issue") or "N/D")),
+        #(
+        #    "Páginas",
+        #    escape(" - ".join(filter(None, [doc.get("fpage"), doc.get("lpage")])) or "N/D"),
+        #),
         (
             "DOI",
             (
