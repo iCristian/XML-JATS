@@ -12,6 +12,7 @@ from typing import Any, Dict, Iterable, List, Tuple
 from lxml import etree
 
 _XML_ID = "{http://www.w3.org/XML/1998/namespace}id"
+_XLINK_HREF = "{http://www.w3.org/1999/xlink}href"
 _SANITIZE_ENTITY_RE = re.compile(r"&(?![a-zA-Z]+;|#\d+;|#x[0-9a-fA-F]+;)")
 
 
@@ -28,6 +29,45 @@ def _node_text(node: etree._Element) -> str:
         if child.tail:
             parts.append(child.tail)
     return _clean_whitespace("".join(parts))
+
+
+def _inline_children_html(node: etree._Element) -> str:
+  segments: List[str] = []
+  if node.text:
+    segments.append(escape(node.text))
+  for child in node:
+    segments.append(_inline_element_html(child))
+    if child.tail:
+      segments.append(escape(child.tail))
+  return "".join(segments)
+
+
+def _inline_element_html(element: etree._Element) -> str:
+  tag = etree.QName(element).localname.lower()
+  if tag == "xref" and (element.get("ref-type") or "").lower() == "bibr":
+    rid_attr = (element.get("rid") or "").strip()
+    first_target = rid_attr.split()[0] if rid_attr else ""
+    label_html = _inline_children_html(element) or escape(element.text or "")
+    href_attr = f"#{escape(first_target)}" if first_target else "#"
+    data_attr = escape(rid_attr)
+    return f"<a class=\"citation\" href=\"{href_attr}\" data-rid=\"{data_attr}\">{label_html}</a>"
+  if tag in {"italic", "i"}:
+    return f"<em>{_inline_children_html(element)}</em>"
+  if tag in {"bold", "b", "strong"}:
+    return f"<strong>{_inline_children_html(element)}</strong>"
+  if tag in {"underline", "u"}:
+    return f"<span class=\"underline\">{_inline_children_html(element)}</span>"
+  if tag == "sup":
+    return f"<sup>{_inline_children_html(element)}</sup>"
+  if tag == "sub":
+    return f"<sub>{_inline_children_html(element)}</sub>"
+  if tag == "ext-link":
+    href = element.get(_XLINK_HREF) or element.get("href") or ""
+    label = _inline_children_html(element) or escape(element.text or href)
+    if href:
+      return f"<a class=\"external-link\" href=\"{escape(href)}\" target=\"_blank\" rel=\"noopener\">{label}</a>"
+    return label
+  return _inline_children_html(element)
 
 
 def _xpath(node: etree._Element, expression: str, namespaces: Dict[str, str]) -> List[Any]:
@@ -213,9 +253,9 @@ def _extract_authors(article_meta: etree._Element, namespaces: Dict[str, str]) -
 def _extract_paragraphs(parent: etree._Element, expression: str, namespaces: Dict[str, str]) -> List[str]:
     paragraphs: List[str] = []
     for element in _xpath(parent, expression, namespaces):
-        text = _node_text(element)
-        if text:
-            paragraphs.append(text)
+        html = _inline_children_html(element)
+        if html:
+            paragraphs.append(html)
     return paragraphs
 
 
@@ -287,9 +327,11 @@ def _extract_tables(body: etree._Element, namespaces: Dict[str, str]) -> List[Di
 def _extract_references(back: etree._Element, namespaces: Dict[str, str]) -> List[Dict[str, str]]:
     references: List[Dict[str, str]] = []
     for ref in _xpath(back, ".//j:ref-list/j:ref", namespaces):
+        ref_id = ref.get(_XML_ID) or ref.get("id") or ""
         label = _first_text(ref, "./j:label", namespaces)
-        text = _node_text(ref)
-        references.append({"label": label, "text": text})
+        citation_node = ref.find("./j:mixed-citation", namespaces) or ref.find("./j:element-citation", namespaces)
+        body_html = _inline_children_html(citation_node) if citation_node is not None else _inline_children_html(ref)
+        references.append({"id": ref_id, "label": label, "html": body_html})
     return references
 
 
@@ -337,7 +379,7 @@ def _render_authors(authors: List[Dict[str, Any]]) -> str:
 
 
 def _render_paragraphs(paragraphs: Iterable[str]) -> str:
-    return "".join(f"<p>{escape(paragraph)}</p>" for paragraph in paragraphs if paragraph)
+  return "".join(f"<p>{paragraph}</p>" for paragraph in paragraphs if paragraph)
 
 
 def _render_sections(sections: List[Dict[str, Any]], depth: int = 1, prefix: str = "") -> str:
@@ -439,22 +481,24 @@ def _render_tables(tables: List[Dict[str, Any]]) -> str:
 
 
 def _render_references(references: List[Dict[str, str]]) -> str:
-  if not references:
-    return ""
-  items: List[str] = []
-  for ref in references:
-    label = escape(ref.get("label") or "")
-    text = escape(ref.get("text") or "")
-    if label:
-      items.append(f"<li><span class=\"reference-label\">{label}</span> {text}</li>")
-    else:
-      items.append(f"<li>{text}</li>")
-  return """
-  <section class=\"panel\" id=\"references\">
-    <h3>Referencias</h3>
-    <ol class=\"reference-list\">{items}</ol>
-  </section>
-  """.replace("{items}", "".join(items))
+    if not references:
+        return ""
+    items: List[str] = []
+    for ref in references:
+        label = escape(ref.get("label") or "")
+        body = ref.get("html") or ""
+        item_id = escape(ref.get("id") or "")
+        id_attr = f" id=\"{item_id}\"" if item_id else ""
+        if label:
+            items.append(f"<li{id_attr}><span class=\"reference-label\">{label}</span> {body}</li>")
+        else:
+            items.append(f"<li{id_attr}>{body}</li>")
+    return """
+    <section class=\"panel\" id=\"references\">
+      <h3>Referencias</h3>
+      <ol class=\"reference-list\">{items}</ol>
+    </section>
+    """.replace("{items}", "".join(items))
 
 
 def _render_sidebar(doc: Dict[str, Any]) -> str:

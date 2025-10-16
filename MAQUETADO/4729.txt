@@ -1,0 +1,464 @@
+[2025-10-10 15:46:46] Inicio de proceso para entrada: /Users/usuario/Library/CloudStorage/OneDrive-SharedLibraries-uv.cl/REVISTA MATRONERÍA ACTUAL - Documentos/MAQUETACIÓN/2025/24 - 4729-RS/4729 OK.docx salida: 4729.xml
+[2025-10-10 15:46:46] Paso 1/5: Procesando para extraer contenido estructurado...
+[2025-10-10 15:46:46] Paso 2/5: Construyendo prompt avanzado para Gemini...
+[2025-10-10 15:46:46] Paso 3/5: Invocando a la IA de Gemini para la conversión (esto puede tardar)...
+[2025-10-10 15:48:18] Gemini returncode: 0 Elapsed: 92.47s
+[2025-10-10 15:48:18] Gemini stderr: Loaded cached credentials.
+[2025-10-10 15:48:18] Paso 4/5: Validando el XML generado contra el DTD de JATS...
+[2025-10-10 15:48:19] --- ADVERTENCIA: La validación del XML falló. ---
+[2025-10-10 15:48:19] El archivo se guardará, pero necesita correcciones manuales.
+[2025-10-10 15:48:19] Errores encontrados:
+[2025-10-10 15:48:19] - Fallo en la descarga del DTD: HTTP Error 404: Not Found
+[2025-10-10 15:48:19] Paso 5/5: Guardando el resultado...
+[2025-10-10 15:48:19] Resumen de tokens de Gemini:
+[2025-10-10 15:48:19] - No se encontró información de tokens en la salida de Gemini.
+[2025-10-10 15:48:19] --- TEXTO CRUDO DE GEMINI ---
+[2025-10-10 15:48:19] Loaded cached credentials.
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<article xmlns:xlink="http://www.w3.org/1999/xlink" xml:lang="es" article-type="scoping-review" dtd-version="1.3">
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="publisher-id">matronactual</journal-id>
+      <journal-title-group>
+        <journal-title>Matronería Actual</journal-title>
+      </journal-title-group>
+      <issn pub-type="epub">0000-0000</issn>
+      <publisher>
+        <publisher-name>SciELO</publisher-name>
+      </publisher>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="doi">10.0000/matronactual.00000</article-id>
+      <article-categories>
+        <subj-group subj-group-type="heading">
+          <subject>Revisión</subject>
+        </subj-group>
+      </article-categories>
+      <title-group>
+        <article-title>Leche humana donada y su impacto en la prevención de enterocolitis necrotizante en prematuros de alto riesgo: una revisión de alcance (2013-2023)</article-title>
+        <trans-title-group xml:lang="en">
+          <trans-title>Donated human milk and the prevention of necrotizing enterocolitis in high-risk premature infants: a scoping review (2013-2023)</trans-title>
+        </trans-title-group>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Fredes Ortiz</surname>
+            <given-names>Cecilia</given-names>
+          </name>
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0007-0263-1702</contrib-id>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Rodriguez Rivas</surname>
+            <given-names>Maria Loretto</given-names>
+          </name>
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0002-1858-0325</contrib-id>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Villarroel García</surname>
+            <given-names>Valeria</given-names>
+          </name>
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0004-7807-6168</contrib-id>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Contreras Huequemán</surname>
+            <given-names>Héctor Enrique</given-names>
+          </name>
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0002-8480-7954</contrib-id>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Cornejo Ruiz</surname>
+            <given-names>Michelle Carolina</given-names>
+          </name>
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0005-8890-8594</contrib-id>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Riffo Vargas</surname>
+            <given-names>Florencia Damaris Rocío</given-names>
+          </name>
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0002-8546-3276</contrib-id>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Sepúlveda Valdés</surname>
+            <given-names>Daphne María Étienne</given-names>
+          </name>
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0004-6061-5506</contrib-id>
+        </contrib>
+      </contrib-group>
+      <author-notes>
+        <p>Matrona Mg. Cecilia Fredes Ortiz</p>
+        <fn fn-type="con">
+          <p><bold>Autorías CRediT</bold></p>
+          <p><bold>Cecilia Fredes Ortiz:</bold> Conceptualización, Curación de Datos, Análisis formal, Metodología, Administración del proyecto, Recursos, Supervisión, Visualización, Redacción, revisión y edición.</p>
+          <p><bold>Valeria Villarroel García:</bold> Conceptualización, Curación de Datos, Análisis formal, Metodología, Administración del proyecto, Recursos, Visualización, Redacción, revisión y edición.</p>
+          <p><bold>Maria Loretto Rodriguez:</bold> Conceptualización, Curación de Datos, Análisis formal, Metodología, Administración del proyecto, Recursos, Visualización, Redacción, revisión y edición.</p>
+          <p><bold>Héctor Enrique Contreras Huequemán:</bold> Conceptualización, Curación de Datos, Análisis formal, Investigación, Metodología, Recursos, Redacción del borrador original.</p>
+          <p><bold>Michelle Carolina Cornejo Ruiz:</bold> Conceptualización, Curación de Datos, Análisis formal, Investigación, Metodología, Recursos, Redacción del borrador original.</p>
+          <p><bold>Florencia Damaris Rocío Riffo Vargas:</bold> Conceptualización, Curación de Datos, Análisis formal, Investigación, Metodología, Recursos, Redacción del borrador original.</p>
+          <p><bold>Daphne María Étienne Sepúlveda Valdés:</bold> Conceptualización, Curación de Datos, Análisis formal, Investigación, Metodología, Recursos, Redacción del borrador original.</p>
+        </fn>
+      </author-notes>
+      <pub-date pub-type="epub">
+        <day>01</day>
+        <month>01</month>
+        <year>2024</year>
+      </pub-date>
+      <abstract>
+        <title>Resumen</title>
+        <p><bold>Objetivo:</bold> analizar la evidencia científica publicada entre 2013 y 2023 sobre el uso de leche humana donada (LHD) y el impacto en la prevención de enterocolitis necrotizante (ECN) en neonatos prematuros de alto riesgo.</p>
+        <p><bold>Metodología:</bold> se realizó una revisión de alcance (scoping review) de estudios publicados en las bases de datos PubMed, Scopus y Web of Science. Se examinaron ensayos clínicos, estudios de cohortes y otros diseños observacionales que evaluaron el impacto de la LHD en la reducción de ECN y otras complicaciones asociadas en prematuros. La selección siguió la metodología PRISMA.</p>
+        <p><bold>Resultados:</bold> se incluyeron trece estudios. La evidencia indica que el uso de LHD disminuye significativamente la incidencia de ECN en comparación con la alimentación con fórmula artificial, promoviendo un desarrollo intestinal más favorable y reforzando el sistema inmunológico del neonato. La prematurez y la alimentación con fórmula son factores de riesgo consistentes para ECN. La pasteurización Holder, aunque reduce algunos componentes bioactivos, es crucial para la seguridad microbiológica.</p>
+        <p><bold>Conclusiones:</bold> la LHD es una estrategia efectiva para reducir la incidencia de ECN en prematuros de alto riesgo. Es fundamental promover su uso y optimizar los procesos en los bancos de leche para maximizar sus beneficios. Se requieren más investigaciones para abordar desafíos logísticos y optimizar su aplicación clínica.</p>
+      </abstract>
+      <trans-abstract xml:lang="en">
+        <title>Abstract</title>
+        <p><bold>Objective:</bold> to analyze scientific evidence published between 2013 and 2023 on the use of donor human milk (DHM) in preventing necrotizing enterocolitis (NEC) in high-risk premature neonates, identifying benefits, mechanisms of action, and limitations. (Adapted from )</p>
+        <p><bold>Methodology:</bold> a scoping review of studies published in PubMed, Scopus, and Web of Science databases was conducted. Clinical trials, cohort studies, and other observational designs evaluating the impact of DHM on reducing NEC and other associated complications in premature infants were examined. Study selection followed the PRISMA methodology. (Adapted from )</p>
+        <p><bold>Results:</bold> thirteen studies were included. Evidence indicates that DHM use significantly decreases NEC incidence compared to formula feeding, promoting more favorable intestinal development and strengthening the neonatal immune system. Prematurity and formula feeding are consistent risk factors for NEC. Holder pasteurization, while reducing some bioactive components, is crucial for microbiological safety. (Adapted from )</p>
+        <p><bold>Conclusions:</bold> DHM is an effective strategy to reduce NEC incidence in high-risk premature neonates. Promoting its use and optimizing milk bank processes to maximize its benefits is essential. Further research is needed to address logistical challenges and optimize its clinical application. (Adapted from )</p>
+      </trans-abstract>
+      <kwd-group xml:lang="es">
+        <title>Palabras clave</title>
+        <kwd>leche humana</kwd>
+        <kwd>enterocolitis necrotizante</kwd>
+        <kwd>recién nacido prematuro</kwd>
+        <kwd>bancos de leche</kwd>
+      </kwd-group>
+      <kwd-group xml:lang="en">
+        <title>Keywords</title>
+        <kwd>milk human</kwd>
+        <kwd>enterocolitis necrotizing</kwd>
+        <kwd>infant premature</kwd>
+        <kwd>milk banks</kwd>
+      </kwd-group>
+      <funding-group>
+        <funding-statement>El presente estudio no recibió financiación externa.</funding-statement>
+      </funding-group>
+      <fn-group>
+        <fn fn-type="COI-statement">
+          <p>Los autores declaran no tener conflictos de interés.</p>
+        </fn>
+        <fn fn-type="presented-at">
+          <p>Este artículo no ha sido presentado previamente en ningún congreso o reunión científica.</p>
+        </fn>
+      </fn-group>
+      <notes>
+        <title>Declaración de Origen</title>
+        <p>Este artículo se deriva de la tesina de pregrado titulada "LECHE HUMANA DONADA Y LA PREVENCIÓN DE ENTEROCOLITIS NECROTIZANTE EN PREMATUROS DE ALTO RIESGO (2013-2023)", presentada por Héctor Contreras Huequemán, Michelle Cornejo Ruiz, Florencia Riffo Vargas y Daphne Sepúlveda Valdés para optar al grado de Licenciado en Obstetricia y Matronería, Universidad San Sebastián, Chile, 2024.</p>
+      </notes>
+    </article-meta>
+  </front>
+  <body>
+    <sec id="s1">
+      <title>Introducción</title>
+      <p>La enterocolitis necrotizante (ECN) es una enfermedad gastrointestinal grave y una de las principales causas de morbilidad y mortalidad en recién nacidos prematuros (RNPT). Su fisiopatología es multifactorial, involucrando isquemia intestinal, colonización bacteriana pat
+[2025-10-10 15:48:19] Proceso completado.
+[2025-10-16 10:15:13] Inicio de proceso para entrada: /Users/usuario/Library/CloudStorage/OneDrive-SharedLibraries-uv.cl/REVISTA MATRONERÍA ACTUAL - Documentos/MAQUETACIÓN/2025/24 - 4729-RS/4729 OK.docx salida: 4729.xml
+[2025-10-16 10:15:13] Paso 1/5: Procesando para extraer contenido estructurado...
+[2025-10-16 10:15:13] Paso 2/5: Construyendo prompt avanzado para Gemini...
+[2025-10-16 10:15:13] Paso 3/5: Invocando a la IA de Gemini para la conversión (esto puede tardar)...
+[2025-10-16 10:19:26] Gemini returncode: 0 Elapsed: 252.52s
+[2025-10-16 10:19:26] Gemini stderr: Loaded cached credentials.
+Error executing tool write_file: Tool "write_file" not found in registry. Tools must use the exact names that are registered. Did you mean one of: "read_file", "web_fetch", "glob"?
+[2025-10-16 10:19:26] Paso 4/5: Validando el XML generado contra el DTD de JATS...
+[2025-10-16 10:19:27] --- ADVERTENCIA: La validación del XML falló. ---
+[2025-10-16 10:19:27] El archivo se guardará, pero necesita correcciones manuales.
+[2025-10-16 10:19:27] Errores encontrados:
+[2025-10-16 10:19:27] - Fallo en la descarga del DTD: HTTP Error 404: Not Found
+[2025-10-16 10:19:27] Paso 5/5: Guardando el resultado...
+[2025-10-16 10:19:27] Resumen de tokens de Gemini:
+[2025-10-16 10:19:27] - No se encontró información de tokens en la salida de Gemini.
+[2025-10-16 10:19:27] --- TEXTO CRUDO DE GEMINI ---
+[2025-10-16 10:19:27] Loaded cached credentials.
+Error executing tool write_file: Tool "write_file" not found in registry. Tools must use the exact names that are registered. Did you mean one of: "read_file", "web_fetch", "glob"?
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.3 20210610//EN" "JATS-publishing-1-3.dtd">
+<article xmlns:xlink="http://www.w3.org/1999/xlink" xml:lang="es" dtd-version="1.3">
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="publisher-id">matronactual</journal-id>
+      <journal-title-group>
+        <journal-title>Matronería Actual</journal-title>
+      </journal-title-group>
+      <issn pub-type="epub">0719-8789</issn>
+      <publisher>
+        <publisher-name>Universidad de Valparaíso</publisher-name>
+      </publisher>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="doi">10.22370/matronactual.2025.XX.4733</article-id>
+      <article-categories>
+        <subj-group subj-group-type="heading">
+          <subject>Artículo de Revisión</subject>
+        </subj-group>
+      </article-categories>
+      <title-group>
+        <article-title>Leche humana donada y su impacto en la prevención de enterocolitis necrotizante en prematuros de alto riesgo: una revisión de alcance (2013-2023)</article-title>
+        <trans-title-group xml:lang="en">
+          <trans-title>Donated human milk and the prevention of necrotizing enterocolitis in high-risk premature infants: a scoping review (2013-2023)</trans-title>
+        </trans-title-group>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0007-0263-1702</contrib-id>
+          <name>
+            <surname>Fredes Ortiz</surname>
+            <given-names>Cecilia</given-names>
+          </name>
+        </contrib>
+        <contrib contrib-type="author">
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0002-1858-0325</contrib-id>
+          <name>
+            <surname>Rodriguez Rivas</surname>
+            <given-names>Maria Loretto</given-names>
+          </name>
+        </contrib>
+        <contrib contrib-type="author">
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0004-7807-6168</contrib-id>
+          <name>
+            <surname>Villarroel García</surname>
+            <given-names>Valeria</given-names>
+          </name>
+        </contrib>
+        <contrib contrib-type="author">
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0002-8480-7954</contrib-id>
+          <name>
+            <surname>Contreras Huequemán</surname>
+            <given-names>Héctor Enrique</given-names>
+          </name>
+        </contrib>
+        <contrib contrib-type="author">
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0005-8890-8594</contrib-id>
+          <name>
+            <surname>Cornejo Ruiz</surname>
+            <given-names>Michelle Carolina</given-names>
+          </name>
+        </contrib>
+        <contrib contrib-type="author">
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0002-8546-3276</contrib-id>
+          <name>
+            <surname>Riffo Vargas</surname>
+            <given-names>Florencia Damaris Rocío</given-names>
+          </name>
+        </contrib>
+        <contrib contrib-type="author">
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0004-6061-5506</contrib-id>
+          <name>
+            <surname>Étienne Sepúlveda Valdés</surname>
+            <given-names>Daphne María</given-names>
+          </name>
+        </contrib>
+      </contrib-group>
+      <pub-date pub-type="epub-ppub">
+        <day>01</day>
+        <month>10</month>
+        <year>2025</year>
+      </pub-date>
+      <history>
+        <date date-type="received">
+          <day>23</day>
+          <month>01</month>
+          <year>2025</year>
+        </date>
+      </history>
+      <abstract>
+        <title>Resumen</title>
+        <p>Objetivo: analizar la evidencia científica publicada entre 2013 y 2023 sobre el uso de leche humana donada (LHD) y el impacto en la prevención de enterocolitis necrotizante (ECN) en neonatos prematuros de alto riesgo.</p>
+        <p>Metodología: se realizó una revisión de alcance (scoping review) de estudios publicados en las bases de datos PubMed, Scopus y Web of Science. Se examinaron ensayos clínicos, estudios de cohortes y otros diseños observacionales que evaluaron el impacto de la LHD en la reducción de ECN y otras complicaciones asociadas en prematuros. La selección siguió la metodología PRISMA.</p>
+        <p>Resultados: se incluyeron trece estudios. La evidencia indica que el uso de LHD disminuye significativamente la incidencia de ECN en comparación con la alimentación con fórmula artificial, promoviendo un desarrollo intestinal más favorable y reforzando el sistema inmunológico del neonato. La prematurez y la alimentación con fórmula son factores de riesgo consistentes para ECN. La pasteurización Holder, aunque reduce algunos componentes bioactivos, es crucial para la seguridad microbiológica.</p>
+        <p>Conclusiones: la LHD es una estrategia efectiva para reducir la incidencia de ECN en prematuros de alto riesgo. Es fundamental promover su uso y optimizar los procesos en los bancos de leche para maximizar sus beneficios. Se requieren más investigaciones para abordar desafíos logísticos y optimizar su aplicación clínica.</p>
+      </abstract>
+      <kwd-group>
+        <title>Palabras clave</title>
+        <kwd>leche humana</kwd>
+        <kwd>enterocolitis necrotizante</kwd>
+        <kwd>recién nacido prematuro</kwd>
+        <kwd>bancos de leche</kwd>
+      </kwd-group>
+      <trans-abstract xml:lang="en">
+        <title>Abstract</title>
+        <p>Objective: to analyze scientific evidence published between 2013 and 2023 on the use of donor human milk (DHM) in preventing necrotizing enterocolitis (NEC) in high-risk premature neonates, identifying benefits, mechanisms of action, and limitations.</p>
+        <p>Methodology: a scoping review of studies published in PubMed, Scopus, and Web of Science databases was conducted. Clinical trials, cohort studies, and other observational designs evaluating the impact of DHM on reducing NEC and other associated complications in premature infants were examined. Study selection followed the PRISMA methodology.</p>
+        <p>Results: thirteen studies were included. Evidence indicates that DHM use significantly decreases NEC incidence compared to formula feeding, promoting more favorable intestinal development and strengthening the neonatal immune system. Prematurity and formula feeding are consistent risk factors for NEC. Holder pasteurization, while reducing some bioactive components, is crucial for microbiological safety.</p>
+        <p>Conclusions: DHM is an effective strategy to reduce NEC incidence in high-risk premature neonates. Promoting its use and optimizing milk bank processes to maximize its benefits is essential. Further research is needed to address logistical challenges and optimize its clinical application.</p>
+      </trans-abstract>
+      <kwd-group xml:lang="en">
+        <title>Keywords</title>
+        <kwd>human milk</kwd>
+        <kwd>necrotizing enterocolitis</kwd>
+        <kwd>premature infant</kwd>
+        <kwd>milk banks</kwd>
+      </kwd-group>
+      <funding-group>
+        <p>Financiación: El presente estudio no recibió financiación externa.</p>
+      </funding-group>
+      <fn-group>
+        <fn fn-type="COI-statement">
+          <p>Conflictos de Interés: Los autores declaran no tener conflictos de interés.</p>
+        </fn>
+        <fn>
+          <p>Presentación Previa: Este artículo no ha sido presentado previamente en ningún congreso o reunión científica.</p>
+        </fn>
+        <fn>
+          <p>Declaración de Origen: Este artículo se deriva de la tesina de pregrado titulada "LECHE HUMANA DONADA Y LA PREVENCIÓN DE ENTEROCOLITIS NECROTIZANTE EN PREMATUROS DE ALTO RIESGO (2013-2023)", presentada por Héctor Contreras Huequemán, Michelle Cornejo Ruiz, Florencia Riffo Vargas y Daphne Sepúlveda Valdés para optar al grado de Licenciado en Obstetricia y Matronería, Universidad San Sebastián, Chile, 2024.</p>
+        </fn>
+      </fn-group>
+    </article-meta>
+  </front>
+  <body>
+    <sec id="s1">
+      <title>Introducción</title>
+      <p>La enterocolitis necrotizante (ECN) es una enfermedad gastrointestinal grave y una de las principales causas de morbilidad y mortalidad en recién nacidos prematuros (RNPT). Su fisiopatología es multifactorial, involucrando isquemia intestinal, colonización bacteriana patológica e inflamación exagerada, especialmente en un intestino inmaduro. Los RNPT, particularmente aquellos con muy bajo peso al nacer (1500g) o nacidos antes de las 32 semanas de gestación, presentan el mayor riesgo. En Chile, la ECN es responsable de un porcentaje significativo de la mortalidad en menores de un año, afectando predominantemente a este grupo vulnerable.</p>
+      <p>La leche materna (LM) es universalmente reconocida como el alimento óptimo para todos los recién nacidos, incluidos los prematuros, debido a su composición única de nutrientes, factores de crecimiento, componentes inmunológicos y propiedades antiinflamatorias. Sin embargo, no siempre la leche de la propia madre está disponible o es suficiente, especialmente en casos de prematuridad extrema o enfermedad materna. En estas situaciones, la leche humana donada (LHD), procesada en Bancos de Leche Humana (BLH), emerge como la mejor alternativa a la LM, por sobre las fórmulas artificiales (FA).</p>
+      <p>Diversos estudios sugieren que la LHD puede reducir la incidencia de ECN, debido a sus componentes bioactivos que promueven la maduración intestinal, modulan la microbiota y ofrecen protección inmunológica. A pesar de los beneficios, existen desafíos relacionados con la disponibilidad, el procesamiento (principalmen
+[2025-10-16 10:19:27] Proceso completado.
+[2025-10-16 10:25:39] Inicio de proceso para entrada: /Users/usuario/Library/CloudStorage/OneDrive-SharedLibraries-uv.cl/REVISTA MATRONERÍA ACTUAL - Documentos/MAQUETACIÓN/2025/24 - 4729-RS/4729.docx salida: 4729.xml
+[2025-10-16 10:25:39] Paso 1/5: Procesando para extraer contenido estructurado...
+[2025-10-16 10:25:39] Paso 2/5: Construyendo prompt avanzado para Gemini...
+[2025-10-16 10:25:39] Paso 3/5: Invocando a la IA de Gemini para la conversión (esto puede tardar)...
+[2025-10-16 10:30:15] Gemini returncode: 0 Elapsed: 275.72s
+[2025-10-16 10:30:15] Gemini stderr: Loaded cached credentials.
+Error executing tool write_file: Tool "write_file" not found in registry. Tools must use the exact names that are registered. Did you mean one of: "read_file", "web_fetch", "glob"?
+[2025-10-16 10:30:15] Paso 4/5: Validando el XML generado contra el DTD de JATS...
+[2025-10-16 10:30:17] --- ADVERTENCIA: La validación del XML falló. ---
+[2025-10-16 10:30:17] El archivo se guardará, pero necesita correcciones manuales.
+[2025-10-16 10:30:17] Errores encontrados:
+[2025-10-16 10:30:17] - Fallo en la descarga del DTD: HTTP Error 404: Not Found
+[2025-10-16 10:30:17] Paso 5/5: Guardando el resultado...
+[2025-10-16 10:30:17] Resumen de tokens de Gemini:
+[2025-10-16 10:30:17] - No se encontró información de tokens en la salida de Gemini.
+[2025-10-16 10:30:17] --- TEXTO CRUDO DE GEMINI ---
+[2025-10-16 10:30:17] Loaded cached credentials.
+Error executing tool write_file: Tool "write_file" not found in registry. Tools must use the exact names that are registered. Did you mean one of: "read_file", "web_fetch", "glob"?
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.3 20210610//EN" "JATS-publishing-1-3.dtd">
+<article xmlns:xlink="http://www.w3.org/1999/xlink" xml:lang="es">
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="publisher-id">matroneria-actual</journal-id>
+      <journal-title-group>
+        <journal-title>Matronería Actual</journal-title>
+      </journal-title-group>
+      <issn pub-type="epub">0719-8789</issn>
+      <publisher>
+        <publisher-name>Universidad de Valparaíso</publisher-name>
+      </publisher>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="publisher-id">4733</article-id>
+      <pub-date date-type="pub" publication-format="electronic" iso-8601-date="2025-10-01">
+        <day>01</day>
+        <month>10</month>
+        <year>2025</year>
+      </pub-date>
+      <pub-date date-type="received" iso-8601-date="2025-01-23">
+        <day>23</day>
+        <month>01</month>
+        <year>2025</year>
+      </pub-date>
+      <title-group>
+        <article-title>Leche humana donada y su impacto en la prevención de enterocolitis necrotizante en prematuros de alto riesgo: una revisión de alcance (2013-2023)</article-title>
+        <trans-title-group xml:lang="en">
+          <trans-title>human milk and the prevention of necrotizing enterocolitis in high Donated -risk premature infants: a scoping review (2013-2023)</trans-title>
+        </trans-title-group>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0007-0263-1702</contrib-id>
+          <name>
+            <surname>Fredes Ortiz</surname>
+            <given-names>Cecilia</given-names>
+          </name>
+        </contrib>
+        <contrib contrib-type="author">
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0002-1858-0325</contrib-id>
+          <name>
+            <surname>Rodriguez Rivas</surname>
+            <given-names>Maria Loretto</given-names>
+          </name>
+        </contrib>
+        <contrib contrib-type="author">
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0004-7807-6168</contrib-id>
+          <name>
+            <surname>Villarroel García</surname>
+            <given-names>Valeria</given-names>
+          </name>
+        </contrib>
+        <contrib contrib-type="author">
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0002-8480-7954</contrib-id>
+          <name>
+            <surname>Contreras Huequemán</surname>
+            <given-names>Héctor Enrique</given-names>
+          </name>
+        </contrib>
+        <contrib contrib-type="author">
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0005-8890-8594</contrib-id>
+          <name>
+            <surname>Cornejo Ruiz</surname>
+            <given-names>Michelle Carolina</given-names>
+          </name>
+        </contrib>
+        <contrib contrib-type="author">
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0002-8546-3276</contrib-id>
+          <name>
+            <surname>Riffo Vargas</surname>
+            <given-names>Florencia Damaris Rocío</given-names>
+          </name>
+        </contrib>
+        <contrib contrib-type="author">
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0009-0004-6061-5506</contrib-id>
+          <name>
+            <surname>Sepúlveda Valdés</surname>
+            <given-names>Daphne María Étienne</given-names>
+          </name>
+        </contrib>
+      </contrib-group>
+      <abstract>
+        <p><strong>Objetivo:</strong> analizar la evidencia científica publicada entre 2013 y 2023 sobre el uso de leche humana donada (LHD) y el impacto en la prevención de enterocolitis necrotizante (ECN) en neonatos prematuros de alto riesgo. <strong>Metodología:</strong> se realizó una revisión de alcance (scoping review) de estudios publicados en las bases de datos PubMed, Scopus y Web of Science. Se examinaron ensayos clínicos, estudios de cohortes y otros diseños observacionales que evaluaron el impacto de la LHD en la reducción de ECN y otras complicaciones asociadas en prematuros. La selección siguió la metodología PRISMA. <strong>Resultados:</strong> se incluyeron trece estudios. La evidencia indica que el uso de LHD disminuye significativamente la incidencia de ECN en comparación con la alimentación con fórmula artificial, promoviendo un desarrollo intestinal más favorable y reforzando el sistema inmunológico del neonato. La prematurez y la alimentación con fórmula son factores de riesgo consistentes para ECN. La pasteurización Holder, aunque reduce algunos componentes bioactivos, es crucial para la seguridad microbiológica. <strong>Conclusiones:</strong> la LHD es una estrategia efectiva para reducir la incidencia de ECN en prematuros de alto riesgo. Es fundamental promover su uso y optimizar los procesos en los bancos de leche para maximizar sus beneficios. Se requieren más investigaciones para abordar desafíos logísticos y optimizar su aplicación clínica.</p>
+      </abstract>
+      <kwd-group kwd-group-type="author">
+        <kwd>leche humana</kwd>
+        <kwd>enterocolitis necrotizante</kwd>
+        <kwd>recién nacido prematuro</kwd>
+        <kwd>bancos de leche</kwd>
+      </kwd-group>
+      <trans-abstract xml:lang="en">
+        <p><strong>Objective:</strong> to analyze scientific evidence published between 2013 and 2023 on the use of donor human milk (DHM) in preventing necrotizing enterocolitis (NEC) in high-risk premature neonates, identifying benefits, mechanisms of action, and limitations. (Adapted from ) <strong>Methodology:</strong> a scoping review of studies published in PubMed, Scopus, and Web of Science databases was conducted. Clinical trials, cohort studies, and other observational designs evaluating the impact of DHM on reducing NEC and other associated complications in premature infants were examined. Study selection followed the PRISMA methodology. (Adapted from ) <strong>Results:</strong> thirteen studies were included. Evidence indicates that DHM use significantly decreases NEC incidence compared to formula feeding, promoting more favorable intestinal development and strengthening the neonatal immune system. Prematurity and formula feeding are consistent risk factors for NEC. Holder pasteurization, while reducing some bioactive components, is crucial for microbiological safety. (Adapted from ) <strong>Conclusions:</strong> DHM is an effective strategy to reduce NEC incidence in high-risk premature neonates. Promoting its use and optimizing milk bank processes to maximize its benefits is essential. Further research is needed to address logistical challenges and optimize its clinical application. (Adapted from )</p>
+      </trans-abstract>
+      <kwd-group kwd-group-type="author" xml:lang="en">
+        <kwd>milk human</kwd>
+        <kwd>enterocolitis necrotizing</kwd>
+        <kwd>infant premature</kwd>
+        <kwd>milk banks</kwd>
+      </kwd-group>
+      <fn-group>
+        <fn fn-type="financial-disclosure">
+          <p>El presente estudio no recibió financiación externa.</p>
+        </fn>
+        <fn fn-type="conflict">
+          <p>Los autores declaran no tener conflictos de interés.</p>
+        </fn>
+        <fn fn-type="con">
+          <p>Este artículo no ha sido presentado previamente en ningún congreso o reunión científica.</p>
+        </fn>
+        <fn fn-type="other">
+          <p>Este artículo se deriva de la tesina de pregrado titulada "LECHE HUMANA DONADA Y LA PREVENCIÓN DE ENTEROCOLITIS NECROTIZANTE EN PREMATUROS DE ALTO RIESGO (2013-2023)", presentada por Héctor Contreras Huequemán, Michelle Cornejo Ruiz, Florencia Riffo Vargas y Daphne Sepúlveda Valdés para optar al grado de Licenciado en Obstetricia y Matronería, Universidad San Sebastián, Chile, 2024.</p>
+        </fn>
+      </fn-group>
+    </article-meta>
+  </front>
+  <body>
+    <sec>
+      <title>Introducción</title>
+      <p>La enterocolitis necrotizante (ECN) es una enfermedad gastrointestinal grave y una de las principales causas de morbilidad y mortalidad en recién nacidos prematuros (RNPT). Su fisiopatología es multifactorial, involucrando isquemia intestinal, colonización bacteriana patológica e inflamación exagerada, especialmente en un intestino inmaduro. Los RNPT, particularmente aquellos con muy bajo peso al nacer (1500g) o nacidos antes de las 32 semanas de gestación, presentan el mayor riesgo. En Chile, la ECN es responsable de un porcentaje significativo de la mortalidad en menores de un año, afectando predominantemente a este grupo vulnerable.</p>
+      <p>La leche materna (LM) es universalmente reconocida como el alimento óptimo para todos los recién nacidos, incluidos los prematuros, debido a su composición única de nutrientes, factores de crecimiento, componentes inmunológicos y propiedades antiinflamatorias. Sin embargo, no siempre la leche de la propia madre está disponible o es suficiente, especialmente en casos de prematuridad extrema o enfermedad materna. En estas situaciones, la leche humana donada (LHD), procesada en Bancos de Leche Humana (BLH), emerge como la mejor alternativa a la LM, por sobre las fórmulas artificiales (FA).</p>
+      <p>Diversos estudios sugieren que la LHD puede reducir la incidencia de ECN, debido a sus componentes bioactivos que promueven la maduración intestinal, modulan la microbiota y ofrecen protección inmunológica. A pesar de los beneficios, existen desafíos relacionados con la disponibilidad, el procesamiento (principalmente la pasteurización, que puede afectar algunos componentes termolábiles), y la implementación de programas de LHD.</p>
+      <p>Esta revisión de alcance tiene como objetivo general det
+[2025-10-16 10:30:17] Proceso completado.
