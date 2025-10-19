@@ -208,46 +208,74 @@ def _extract_keywords(article_meta: etree._Element, namespaces: Dict[str, str]) 
 
 
 def _extract_authors(article_meta: etree._Element, namespaces: Dict[str, str]) -> List[Dict[str, Any]]:
-    affiliations: Dict[str, str] = {}
-    for aff in _xpath(article_meta, ".//j:aff", namespaces):
-        aff_id = aff.get(_XML_ID) or aff.get("id")
-        if aff_id:
-            affiliations[aff_id] = _node_text(aff)
+  affiliations: Dict[str, str] = {}
+  for aff in _xpath(article_meta, ".//j:aff", namespaces):
+    aff_id = aff.get(_XML_ID) or aff.get("id")
+    if aff_id:
+      affiliations[aff_id] = _node_text(aff)
 
-    authors: List[Dict[str, Any]] = []
-    for contrib in _xpath(article_meta, ".//j:contrib-group/j:contrib[@contrib-type='author']", namespaces):
-        surname = _first_text(contrib, "./j:name/j:surname", namespaces)
-        given = _first_text(contrib, "./j:name/j:given-names", namespaces)
-        collective = _first_text(contrib, "./j:collab", namespaces)
-        full_name = collective or " ".join(part for part in [given, surname] if part)
-        if not full_name:
-            continue
+  corresp_notes: Dict[str, str] = {}
+  for cor in _xpath(article_meta, ".//j:author-notes/j:corresp", namespaces):
+    cor_id = cor.get(_XML_ID) or cor.get("id")
+    email_value = _first_text(cor, ".//j:email", namespaces) or _node_text(cor)
+    if cor_id and email_value:
+      corresp_notes[cor_id] = email_value
 
-        author_affs: List[str] = []
-        for xref in _xpath(contrib, ".//j:xref[@ref-type='aff']", namespaces):
-            rid = xref.get("rid")
-            if rid and rid in affiliations:
-                author_affs.append(affiliations[rid])
-        if not author_affs:
-            inline_aff = contrib.find(".//{*}aff")
-            inline_text = _node_text(inline_aff) if inline_aff is not None else ""
-            if inline_text:
-                author_affs.append(inline_text)
+  authors: List[Dict[str, Any]] = []
+  for contrib in _xpath(article_meta, ".//j:contrib-group/j:contrib[@contrib-type='author']", namespaces):
+    surname = _first_text(contrib, "./j:name/j:surname", namespaces)
+    given = _first_text(contrib, "./j:name/j:given-names", namespaces)
+    collective = _first_text(contrib, "./j:collab", namespaces)
+    full_name = collective or " ".join(part for part in [given, surname] if part)
+    if not full_name:
+      continue
 
-        emails: List[str] = []
-        for email in _xpath(contrib, ".//j:email", namespaces):
-            value = _node_text(email)
-            if value:
-                emails.append(value)
+    is_corresponding = contrib.get("corresp", "").lower() == "yes"
+    corresp_rids = [xref.get("rid") for xref in _xpath(contrib, ".//j:xref[@ref-type='corresp']", namespaces) if xref.get("rid")]
 
-        authors.append(
-            {
-                "full": full_name,
-                "affiliations": author_affs,
-                "emails": emails,
-            }
-        )
-    return authors
+    author_affs: List[str] = []
+    for xref in _xpath(contrib, ".//j:xref[@ref-type='aff']", namespaces):
+      rid = xref.get("rid")
+      if rid and rid in affiliations:
+        author_affs.append(affiliations[rid])
+    if not author_affs:
+      inline_aff = contrib.find(".//{*}aff")
+      inline_text = _node_text(inline_aff) if inline_aff is not None else ""
+      if inline_text:
+        author_affs.append(inline_text)
+
+    emails: List[str] = []
+    for email in _xpath(contrib, ".//j:email", namespaces):
+      value = _node_text(email)
+      if value:
+        emails.append(value)
+
+    if corresp_rids:
+      for cor_id in corresp_rids:
+        note_email = corresp_notes.get(cor_id)
+        if note_email and note_email not in emails:
+          emails.append(note_email)
+
+    orcid_value = ""
+    for contrib_id in _xpath(contrib, ".//j:contrib-id[@contrib-id-type='orcid']", namespaces):
+      raw = _node_text(contrib_id)
+      if raw:
+        orcid_value = raw.strip()
+        break
+
+    if not is_corresponding:
+      is_corresponding = bool(corresp_rids or contrib.get("corresp"))
+
+    authors.append(
+      {
+        "full": full_name,
+        "affiliations": author_affs,
+        "emails": emails,
+        "orcid": orcid_value,
+        "corresponding": is_corresponding,
+      }
+    )
+  return authors
 
 
 def _extract_paragraphs(parent: etree._Element, expression: str, namespaces: Dict[str, str]) -> List[str]:
@@ -358,24 +386,53 @@ def _render_keywords(keywords: Iterable[str]) -> str:
 
 
 def _render_authors(authors: List[Dict[str, Any]]) -> str:
-    if not authors:
-        return ""
-    author_items = []
-    for author in authors:
-        parts = [f"<span class=\"author-name\">{escape(author['full'])}</span>"]
-        if author.get("affiliations"):
-            affs = "; ".join(escape(aff) for aff in author["affiliations"] if aff)
-            parts.append(f"<span class=\"author-affiliations\">{affs}</span>")
-        if author.get("emails"):
-            emails = ", ".join(f"<a href=\"mailto:{escape(email)}\">{escape(email)}</a>" for email in author["emails"] if email)
-            parts.append(f"<span class=\"author-emails\">{emails}</span>")
-        author_items.append(f"<li class=\"author\">{'<br>'.join(parts)}</li>")
-    return """
-    <section class=\"panel\">
-      <h3>Autores</h3>
-      <ul class=\"author-list\">{items}</ul>
-    </section>
-    """.replace("{items}", "".join(author_items))
+  if not authors:
+    return ""
+  author_items: List[str] = []
+  for author in authors:
+    name_classes = ["author-name"]
+    if author.get("corresponding"):
+      name_classes.append("author-name--corresponding")
+    header_parts = [f"<span class=\"{' '.join(name_classes)}\">{escape(author['full'])}</span>"]
+    if author.get("corresponding"):
+      header_parts.append("<span class=\"author-corresponding\">Autor de correspondencia</span>")
+    sections: List[str] = [f"<div class=\"author-header\">{''.join(header_parts)}</div>"]
+
+    if author.get("affiliations"):
+      affs = "; ".join(escape(aff) for aff in author["affiliations"] if aff)
+      if affs:
+        sections.append(f"<div class=\"author-affiliations\">{affs}</div>")
+
+    contact_links: List[str] = []
+    orcid_value = (author.get("orcid") or "").strip()
+    if orcid_value:
+      orcid_url = orcid_value if orcid_value.lower().startswith("http") else f"https://orcid.org/{orcid_value}"
+      orcid_display = orcid_url.rstrip("/").split("/")[-1] or orcid_url
+      contact_links.append(
+        f"<a class=\"author-link author-orcid\" href=\"{escape(orcid_url)}\" target=\"_blank\" rel=\"noopener\">ORCID: {escape(orcid_display)}</a>"
+      )
+
+    for email in author.get("emails", []):
+      if email:
+        email_classes = ["author-link", "author-email"]
+        if author.get("corresponding"):
+          email_classes.append("author-email--corresponding")
+        contact_links.append(
+          f"<a class=\"{' '.join(email_classes)}\" href=\"mailto:{escape(email)}\">Email: {escape(email)}</a>"
+        )
+
+    if contact_links:
+      link_items = "".join(f"<span class=\"author-link-item\">{link}</span>" for link in contact_links)
+      sections.append(f"<div class=\"author-links\">{link_items}</div>")
+
+    author_items.append(f"<li class=\"author\">{''.join(sections)}</li>")
+
+  return """
+  <section class=\"panel\">
+    <h3>Autores</h3>
+    <ul class=\"author-list\">{items}</ul>
+  </section>
+  """.replace("{items}", "".join(author_items))
 
 
 def _render_paragraphs(paragraphs: Iterable[str]) -> str:
@@ -1012,13 +1069,61 @@ body.sidebar-open .sidebar {
   display: grid;
   gap: 16px;
 }
+.author {
+  padding: 18px;
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  background: var(--bg-soft);
+}
+.author-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
 .author-name {
   font-weight: 600;
   color: var(--text-main);
 }
-.author-affiliations, .author-emails {
+.author-name--corresponding {
+  color: var(--accent);
+}
+.author-corresponding {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent-secondary);
+  background: var(--accent-soft);
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+.author-affiliations {
   color: var(--text-subtle);
   font-size: 0.95rem;
+  margin-bottom: 6px;
+}
+.author-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+.author-link-item {
+  display: inline-flex;
+}
+.author-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent-secondary);
+  font-weight: 500;
+}
+.author-link:hover {
+  text-decoration: underline;
+}
+.author-email--corresponding {
+  font-weight: 600;
+  color: var(--accent);
 }
 .abstract p {
   font-size: 1.05rem;

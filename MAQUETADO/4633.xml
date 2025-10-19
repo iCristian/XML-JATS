@@ -1,0 +1,758 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.3 20210610//EN" "JATS-publishing-1-3.dtd">
+l
+<?xml version="1.0" encoding="UTF-8"?>
+<article xmlns:xlink="http://www.w3.org/1999/xlink" xml:lang="es">
+  <front>
+    <journal-meta>
+      <journal-title-group>
+        <journal-title>REVISTA MATRONERÍA ACTUAL</journal-title>
+      </journal-title-group>
+      <issn pub-type="epub">0719-8785</issn>
+      <publisher>
+        <publisher-name>Universidad de Chile</publisher-name>
+      </publisher>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="doi"/>
+      <article-categories>
+        <subj-group subj-group-type="heading">
+          <subject>Artículos Originales</subject>
+        </subj-group>
+      </article-categories>
+      <title-group>
+        <article-title>Percepción de académicas sobre la participación de los hombres en la crianza de los hijos durante la Pandemia</article-title>
+        <trans-title-group xml:lang="en">
+          <trans-title>Perception of female academics on men's involvement in child-rearing during the Pandemic</trans-title>
+        </trans-title-group>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author" corresp="yes">
+          <xref ref-type="corresp" rid="cor1">*</xref>
+          <name>
+            <surname>Cornejo-Aravena</surname>
+            <given-names>Claudia</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1"/>
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0000-0002-0452-9011</contrib-id>
+          <email>claudiacornejo@uchile.cl</email>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Aliste-Garate</surname>
+            <given-names>Catalina</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff2"/>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Arcos Olivos</surname>
+            <given-names>Silvana</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff2"/>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Bustamante-Tóncio</surname>
+            <given-names>Francisco</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1"/>
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0000-0001-8013-5359</contrib-id>
+        </contrib>
+      </contrib-group>
+      <aff id="aff1">
+        <label>1</label>
+        <institution content-type="original">Profesora Asistente del Departamento de Promoción de la Salud de la Mujer y el Recién Nacido, Facultad de Medicina, Universidad de Chile</institution>
+      </aff>
+      <aff id="aff2">
+        <label>2</label>
+        <institution content-type="original">Matrona, Licenciada en Obstetricia y Puericultura, Universidad de Chile</institution>
+      </aff>
+      <author-notes>
+        <corresp id="cor1">
+          <label>*</label>
+          <email>claudiacornejo@uchile.cl</email>
+        </corresp>
+        <fn fn-type="other">
+          <p>El presente artículo deriva de una tesis de pregrado para obtener el Título de Matrona.</p>
+        </fn>
+      </author-notes>
+      <pub-date pub-type="epub-ppub">
+        <season>2023</season>
+      </pub-date>
+      <abstract>
+        <title>Resumen</title>
+        <p>El presente estudio explora la percepción de académicas sobre la participación de los hombres en la crianza de los hijos durante la pandemia.</p>
+        <p>La mayoría de las mujeres trabajadoras enfrenta discriminación laboral, falta de reconocimiento de derechos, autonomía limitada en la crianza de sus hijos y doble jornada laboral entre empleo y hogar, en contraste con los hombres. Aunque hay esfuerzos nacionales e internacionales por la igualdad, aún persisten brechas que limitan su autonomía y acceso a mejores condiciones laborales y oportunidades.</p>
+        <p>Se desarrolló un estudio cualitativo con enfoque fenomenológico, de tipo exploratorio. La recolección de datos se llevó a cabo mediante entrevistas semiestructuradas a ocho académicas, analizándose la información a través del análisis narrativo de contenido.</p>
+        <p>Si bien las participantes reconocen haber crecido en un modelo familiar tradicional, muchas de ellas han reproducido esta dinámica en sus propios hogares de manera implícita. La pandemia permitió visibilizar con mayor claridad las diferencias en los roles de cuidado, evidenciando que la responsabilidad principal sigue recayendo en las mujeres.</p>
+        <p>En conclusión, la crianza en familias nucleares refuerza roles de género aprendidos. Durante la pandemia, muchas mujeres asumieron más tareas, aumentando su estrés y evidenciando desigualdades, ya que la paternidad sigue viéndose como apoyo.</p>
+      </abstract>
+      <kwd-group>
+        <title>Palabras clave</title>
+        <kwd>mujer</kwd>
+        <kwd>trabajo</kwd>
+        <kwd>teletrabajo</kwd>
+        <kwd>crianza</kwd>
+        <kwd>roles de género</kwd>
+      </kwd-group>
+      <trans-abstract xml:lang="en">
+        <title>ABSTRACT</title>
+        <p>The present study explores academics' perceptions of men's participation in raising children during the pandemic.</p>
+        <p>Working women face discrimination at work, lack of recognition of rights, limited autonomy in raising their children, and double working hours between work and home, in contrast to men. Although there are national and international efforts for equality, gaps persist that limit their autonomy and access to better working conditions and opportunities.</p>
+        <p>Qualitative study was developed using a phenomenological, exploratory approach. Data was collected through semi-structured interviews with eight academics, and the information was analyzed through narrative content analysis.</p>
+        <p>Although the participants acknowledge having grown up in a traditional family model, many of them have implicitly reproduced this dynamic in their own homes. The pandemic made it possible to make the differences in care roles more clearly visible, showing that the main responsibility continues to fall on women.</p>
+        <p>In conclusion, growing up in nuclear families reinforces learned gender roles. During the pandemic, many women took on more tasks, increasing their stress and evidencing inequalities, since parenthood continues to be seen as support.</p>
+      </trans-abstract>
+      <kwd-group xml:lang="en">
+        <title>Keywords</title>
+        <kwd>women</kwd>
+        <kwd>work</kwd>
+        <kwd>telework</kwd>
+        <kwd>childcare</kwd>
+        <kwd>gender roles</kwd>
+      </kwd-group>
+      <counts>
+        <p>Recuento de palabras del resumen: 198 palabras</p>
+        <p>Recuento de palabras del cuerpo del manuscrito, excluidas la bibliografía y las tablas: 3753 palabras</p>
+      </counts>
+    </article-meta>
+  </front>
+  <body>
+    <sec>
+      <title>INTRODUCCIÓN</title>
+      <p>A lo largo de la historia, la capacidad y libertad de desarrollo personal que han adquirido las mujeres ha evolucionado en función de las necesidades sociales y del contexto histórico. En el pasado, la mujer era considerada un ser sin derechos ni voz que estaba destinado exclusivamente a las labores del hogar y a la crianza de los hijos. Sin embargo, la Revolución Industrial marcó un punto de inflexión, permitiendo que algunas mujeres se incorporaran al mercado laboral.</p>
+      <p>Este cambio fue impulsado por la necesidad de mantener la productividad de las empresas, especialmente cuando los hombres fueron llamados a la guerra, convirtiendo a las mujeres en las nuevas proveedoras del hogar (<xref ref-type="bibr" rid="ref19">Sandua, 2023</xref>). No obstante, esta integración no estuvo exenta de controversia. En un mundo liderado por hombres, las mujeres trabajadoras continuaron enfrentando discriminación laboral, sin reconocimiento de sus derechos ni horarios de descanso o libertad para la crianza de sus hijos. Además, sus remuneraciones eran considerablemente inferiores a las de los hombres que realizaban las mismas tareas.</p>
+      <p>Un hito importante en la lucha por los derechos laborales de las mujeres ocurrió el 8 de marzo de 1857, cuando trabajadoras de fábricas textiles en Nueva York, Estados Unidos, se manifestaron exigiendo mejores condiciones laborales y la erradicación del trabajo infantil (<xref ref-type="bibr" rid="ref19">Sandua, 2023</xref>). Otro suceso clave fue el incendio en la fábrica textil Triangle Shirtwaist, que cobró la vida de numerosas trabajadoras y marcó un punto de inflexión en la lucha por sus derechos (<xref ref-type="bibr" rid="ref25">El Periódico, 2023</xref>).</p>
+      <p>En Chile, históricamente la mujer ha sido vista como ama de casa y esposa, relegada a labores domésticas y de crianza, manteniéndola en una posición de vulnerabilidad laboral y social (<xref ref-type="bibr" rid="ref4">Caamaño, 2010</xref>).</p>
+      <p>La Organización Internacional del Trabajo (OIT) ha trabajado para regular estas situaciones a través de la ratificación de diversos convenios, entre los que destacan:</p>
+      <p>- Convenio C100 sobre igualdad de remuneración (1951). Establece que los empleadores deben otorgar salarios equitativos por la misma labor, sin distinción de género (<xref ref-type="bibr" rid="ref7">Mestre, 2019</xref>).</p>
+      <p>- Convenio C111 sobre la discriminación en el empleo y la ocupación (1958). Prohíbe cualquier tipo de preferencia o exclusión basada en raza, sexo, religión, origen u opinión política (<xref ref-type="bibr" rid="ref8">Díaz, 2020</xref>).</p>
+      <p>- Convenio C156 sobre trabajadores con responsabilidades familiares (1981). Busca garantizar la igualdad de oportunidades para trabajadores con hijos u otros familiares a su cargo, evitando la discriminación (<xref ref-type="bibr" rid="ref8">Díaz, 2020</xref>).</p>
+      <p>- Convenio C003 sobre la protección de la maternidad (1919). Regula el derecho a descanso prenatal y postnatal, asegurando la estabilidad laboral y la protección económica de las gestantes (<xref ref-type="bibr" rid="ref6">Aldana, 2019</xref>).</p>
+      <p>Si bien en los últimos años se ha impulsado el desarrollo de la mujer en distintos ámbitos, todavía persisten barreras que dificultan su crecimiento profesional. Por ejemplo, según la Comisión Económica para América Latina y el Caribe (CEPAL), en su informe especial sobre el COVID-19 N°9, la autonomía económica de las mujeres en la recuperación sostenible y con igualdad, la participación laboral femenina en 2020 fue del 46%, mientras que la de los hombres alcanzó el 69%. En comparación con el año previo a la pandemia, cuando la participación femenina era del 52%, se observa que muchas mujeres abandonaron el mercado laboral para dedicarse al cuidado del hogar (<xref ref-type="bibr" rid="ref5">CEPAL, 2021</xref>).</p>
+      <p>En Chile, el Instituto Nacional de Estadísticas (INE), en su boletín Género y empleo: impacto de la crisis económica por COVID-19, reportó que durante los meses más críticos del confinamiento, la tasa de empleo femenina cayó al 41,2%, mientras que la masculina se mantuvo en 62,7%, evidenciando un aumento en la brecha de género (<xref ref-type="bibr" rid="ref12">INE, 2021</xref>).</p>
+      <p>A partir de lo anteriormente mencionado, el objetivo de este estudio fue explorar la percepción de las académicas de la Escuela de Obstetricia y Puericultura de la Universidad de Chile sobre la participación de los hombres en la crianza de los hijos durante la pandemia de COVID-19. Se considera que estas mujeres eran trabajadoras remuneradas que debieron compatibilizar sus roles laborales con el cuidado de sus hijos y familias en el mismo espacio físico durante el confinamiento, generando un impacto de la pandemia en la distribución de roles de género en la crianza de los hijos, así como también visualizar la influencia de las condiciones de confinamiento para conciliar las responsabilidades laborales y familiares en un contexto de crisis sanitaria y fomentar la corresponsabilidad en la crianza.</p>
+    </sec>
+    <sec>
+      <title>MATERIAL Y MÉTODO</title>
+      <sec>
+        <title>Lugar de estudio</title>
+        <p>Se realizó en la Facultad de Medicina de la Universidad de Chile, en la Región Metropolitana, durante el período 2022-2023.</p>
+      </sec>
+      <sec>
+        <title>Diseño</title>
+        <p>Se adoptó un enfoque cualitativo, con paradigma fenomenológico con una metodología de carácter exploratoria, cuyo propósito fue indagar en las diversas perspectivas y experiencias relacionadas con un mismo fenómeno, utilizándose el paradigma interpretativo (<xref ref-type="bibr" rid="ref10">Da Silva, 2006</xref>).</p>
+      </sec>
+      <sec>
+        <title>Población de estudio</title>
+        <p>Para la selección de las participantes, se envió una invitación por correo electrónico detallando los criterios de inclusión, los cuales fueron: ser académica de la Facultad de Medicina de la Universidad de Chile, ser madre de niños y haber trabajado a distancia desde el hogar familiar entre 2020 y 2022, tener hijos entre 4 y 15 años con clases en modalidad online, contar con la participación del padre en la crianza del niño durante la pandemia.</p>
+        <p>Se excluyeron a las mujeres cuyos hijos hubieran estado al cuidado de terceras personas (familiares, tutores legales o cuidadores contratados).</p>
+      </sec>
+      <sec>
+        <title>Variables</title>
+        <p>Las variables que guiaron la realización de las entrevistas incluyeron: conocimientos en sexualidad, dinámica familiar durante la infancia, trabajo a distancia, crianza en pandemia, actividades recreativas, salud física y mental.</p>
+      </sec>
+      <sec>
+        <title>Recolección de datos</title>
+        <p>Las investigadoras diseñaron una pauta de entrevista individual semiestructurada, la cual fue revisada por dos expertos en investigación y por el Comité de Ética de Seres Humanos de la Facultad de Medicina de la Universidad de Chile. A cada participante se le solicitó la lectura y firma de un consentimiento informado para resguardar la voluntariedad de participación. Las entrevistas se realizaron mediante la plataforma Hangouts Meet de Google, lo que permitió su desarrollo independiente del contexto sanitario del país.</p>
+        <p>El estudio fue aprobado por el Comité de Ética de Seres Humanos de la Facultad de Medicina de la Universidad de Chile (N° 054-2022), en conformidad con las normas vigentes de la Asociación Médica Mundial y la Declaración de Helsinki (<xref ref-type="bibr" rid="ref15">Manzini, 2000</xref>).</p>
+        <p>Para resguardar la confidencialidad, los nombres de las entrevistadas se reemplazaron por códigos, y al finalizar la investigación se eliminaron los registros de audio y documentos escritos.</p>
+      </sec>
+      <sec>
+        <title>Análisis de datos</title>
+        <p>Se utilizó la técnica de análisis narrativo del contenido, que permite examinar directamente las entrevistas y extraer su significado, generando categorías y subcategorías de forma independiente por las integrantes del equipo para favorecer la triangulación de los datos. La información se analizó de manera continua para generar interpretaciones con una mayor integración de los datos obtenidos, sin la utilización de software o programa.</p>
+      </sec>
+    </sec>
+    <sec>
+      <title>RESULTADOS</title>
+      <sec>
+        <title>Participantes</title>
+        <p>La muestra estuvo compuesta por 8 académicas de la Escuela de Obstetricia y Puericultura de la Universidad de Chile. Las características generales de las participantes del estudio se encuentran en la Tabla 1 presentada a continuación.</p>
+        <table-wrap id="t_1">
+          <label>Tabla 1</label>
+          <caption>
+            <p>Características de las entrevistadas</p>
+          </caption>
+          <table>
+            <thead>
+              <tr>
+                <th>Características</th>
+                <th>Alternativas</th>
+                <th>Número de entrevistados</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Edad</td>
+                <td>Menores de 35 años Mayores de 35 años</td>
+                <td>0 8</td>
+              </tr>
+              <tr>
+                <td>Previsión</td>
+                <td>Fonasa Isapre</td>
+                <td>3 5</td>
+              </tr>
+              <tr>
+                <td>Hijos</td>
+                <td>1 – 2 3 &gt;3</td>
+                <td>7 0 1</td>
+              </tr>
+              <tr>
+                <td>Pareja</td>
+                <td>Si No</td>
+                <td>7 1</td>
+              </tr>
+            </tbody>
+          </table>
+        </table-wrap>
+      </sec>
+      <sec>
+        <title>Conocimientos sobre sexualidad</title>
+        <p>En cuanto a conceptos sobre sexualidad, se observa que las respuestas son muy personales y tienen relación con las vivencias de las participantes.</p>
+        <p>“Los roles que se atribuyen socialmente” (M1S1.2)</p>
+        <p>“El género es un constructo social que nos determina finalmente las cosas o las actividades que tenemos que hacer hombres y mujeres” (M2S1.2)</p>
+        <p>Respecto a los estereotipos de género, se visualiza la perpetuación de estos impuestos durante la etapa escolar.</p>
+        <p>“En el colegio a mi como mujer me enseñaron a cocinar, tejer, bordar, a mi hermano le enseñaron a usar herramientas … a los hombres no se les permitía entrar a la cocina” (M6S1.2)</p>
+      </sec>
+      <sec>
+        <title>Dinámica familiar durante la niñez</title>
+        <p>Al ser consultadas por cómo eran las relaciones familiares durante su infancia, se exponen casos medianamente similares, un padre trabajador con perfil de proveedor y una madre dueña de casa.</p>
+        <p>“... Mi papá llegaba muy tarde … los fines de semana salíamos. Con mi mamá no recuerdo actividades puntuales, ya que éramos 4 y era difícil hacer una actividad con una sola”. (M1S1.2)</p>
+        <p>“Mi mamá supervisaba las tareas … ella cocinaba, ella nos servía el almuerzo, lavaba”. (M6S1.3)</p>
+        <p>Las entrevistadas exponen tener recuerdos recreativos asociados a la figura paterna, mientras que con la figura materna se compartían actividades relacionadas al quehacer doméstico.</p>
+        <p>“Mi mamá estaba más a cargo de actividades del hogar y mi papá lo recreativo”. (M3S1.3)</p>
+        <p>En cuanto a la relación entre hermanos, existe una percepción de diferencias en la exigencia o realización de actividades.</p>
+        <p>“...Conmigo fueron super restrictivos, en cambio con mi hermano fueron super permisivos, su justificación era que a mí me podía pasar algo y me debía cuidar”. (M3S1.3)</p>
+        <p>A pesar de que en general la dinámica familiar era similar en todas las entrevistadas, surge un relato en el cual la dinámica familiar y los estereotipos impuestos por la sociedad, eran totalmente distintos.</p>
+        <p>“Mi mamá tenía muy integrado esto de no estereotipar. Lo que no pasaba con mi abuela, por ejemplo, porque como siempre nos quedábamos con ella yo y mi primo cuando éramos más chicos (...) ella hacía diferencia”. (M8S1.3)</p>
+      </sec>
+      <sec>
+        <title>Ocupación y trabajo a distancia</title>
+        <p>Respecto a este tema, surgieron respuestas diversas, se expuso que no existió mayores complicaciones al momento de gestionar el ámbito laboral con las clases online de su hijo.</p>
+        <p>“No se vio muy afectada ya que era media jornada”. (M1S2.2)</p>
+        <p>Sin embargo, también surge que se produjeron dificultades para coordinar todas las responsabilidades, teniendo que modificar horarios laborales para poder prestar atención a las clases.</p>
+        <p>“Fue súper complicado porque mi marido también es profesor universitario entonces estábamos igual los dos super demandados, … entonces con paciencia trabajando hasta tarde, ... porque había que darle prioridad también a todo el tema académico de los niños”. (M2S2.2)</p>
+        <p>“Yo recuerdo haber estado hasta las 9 de la noche trabajando, si no alcanzas en el horario hasta las 5 se hacía fuera de horario no más.” (M6S2.1)</p>
+        <p>Profundizando en cómo se compatibiliza las labores domésticas con el teletrabajo, aparece lo complejo que puede ser cumplir con ambas tareas al mismo tiempo y cómo puede afectar a la salud.</p>
+        <p>“Yo sentía que no podía seguir con el trabajo, el orden de la casa, las cosas de los chiquillos y más los estudios, así que ahí pedí ayuda teniendo terapia psicosocial y farmacológica” (M7S2.2)</p>
+        <p>Un tópico que surge durante la investigación es que compatibilizar la crianza con el crecimiento personal es sumamente difícil, muchas veces teniendo que elegir la crianza por sobre el trabajo o actividades personales.</p>
+        <p>“Cuando dicen que se puede compatibilizar la maternidad, la crianza con el crecimiento laboral, no es así, o sea si tú me haces elegir entre mi magister o mis hijos, prefiero a mis hijos, o sea no se valora la crianza” (M4S2.2)</p>
+      </sec>
+      <sec>
+        <title>Crianza</title>
+        <p>En general, las entrevistadas concordaron que, durante el tiempo de cuarentena, tenían que estar más pendiente de las clases y actividades del colegio, ya que eran de forma remota.</p>
+        <p>“Había que recordarle y estar pendiente de que no se metiera en otras cosas”. (M1S3.1)</p>
+        <p>Las madres que tienen hijos adolescentes reflexionan en que ellos no necesitaban tanta inspección para que se conectaran a sus clases virtuales.</p>
+        <p>“Los dos son super responsables, entonces más que decirles “oye conéctate” era lo contrario, “oye desconéctate, no pueden estar todo el día en la pieza”.” (M7S3.1)</p>
+        <p>Respecto a si los niños contaban con los implementos para las clases online, se concluye que había hogares que contaban con los implementos necesarios para realizar las conexiones a clases, mientras que en otras se producía todo lo contrario y tenían que compartir equipos.</p>
+        <p>“Al principio tuvimos que compartir (...), tuvimos que comprar 2 computadores finalmente para que pudiéramos tener los cuatro un computador”. (M2S3.1)</p>
+        <p>“Si lo mío era una reunión yo me podía conectar con el celular, pero si mi hija tenía la clase entonces ella debía tener computador… El que tiene siempre más seguro el computador era mi hijo mayor”. (M2S3.1)</p>
+        <p>En razón a la percepción de las entrevistadas sobre la crianza del padre de sus hijos, las afirmaciones fueron distintas entre las participantes, dejando entrever distintos tipos de participación de los padres.</p>
+        <p>“(...) yo creo que con suerte sabe que va en 8vo. Si bien lo ve los fines de semana, no se preocupa de las tareas”. (M1S3.2)</p>
+        <p>“Está basado en el respeto, el cariño, en la comprensión y en las risas porque él es super divertido, es bueno para tirar bromas, los tira para arriba, … tiene como muy claro su norte entonces como que si los niños se desvían siempre los vuelve al camino”. (M2S3.2)</p>
+        <p>“A pesar de que mi esposo, obviamente por su carrera gana mucho más que yo, tiene un trabajo mucho más estable al final igual tiene ese rol como masculino de la sociedad de proveedor, pero no quita que se involucre en la crianza”. (M8S3.2)</p>
+      </sec>
+      <sec>
+        <title>Actividades recreativas/ extraprogramáticas</title>
+        <p>En general las participantes del estudio buscan distintas actividades de distracción para cambiar la rutina diaria. Las actividades de esparcimiento, no necesariamente resultaron ser actividades realizadas de manera individual, sino, que también realizadas en conjunto con sus familias.</p>
+        <p>“A veces hago pilates, yoga, pero no otra ocupación”. (M1S4.1)</p>
+        <p>“Así como continua o que la pueda seguir siempre, no. Esporádicamente salgo a andar en bicicleta, caminar”. (M2S4.1)</p>
+        <p>“Yo practico deporte, hago bicicleta o aeróbica, tengo planes, pero cuando llegó la pandemia fue difícil de sostener” (M7.S4.1)</p>
+        <p>Se pudo extraer de las entrevistas que algunas destinaban este tiempo para realizar actividades de perfeccionamiento profesional, sin embargo, era dificultoso poder coordinar el estudio con la dinámica familiar.</p>
+        <p>“Cuando empezó la pandemia estaba estudiando, haciendo un magister y estaba en proceso de tesis, el segundo año colapsé … estuve con terapia psicológica”. (M7S4.1)</p>
+        <p>“Estoy estudiando de manera vespertina”. (M1S4.1)</p>
+      </sec>
+      <sec>
+        <title>Salud mental</title>
+        <p>Al indagar sobre este tema, se afirmó que el proceso vivido durante la cuarentena fue más estresante, con carga laboral y emocional constante, lo que llevó a posponer su salud física y mental, ya que el tiempo no alcanzaba y la salud propia era la última de las prioridades.</p>
+        <p>“...Afectó mi salud mental, definitivamente porque uno trata de cumplir… pero eso iba a costillas de mí misma pues, de mi salud. Me encantaría volver a andar en bicicleta, … tengo que hacerlo para estar mejor también física y mentalmente” (M2S4.2)</p>
+        <p>“No comía, no dormía, no alcanzaba a hacer el aseo, a cocinar, entonces colapsé. Pedí hora con psiquiatra y me dieron licencia 15 días, porque era demasiada carga mental…” (M4S4.2)</p>
+        <p>“… La concentración también se vio afectada. Me encontraba más lábil emocionalmente. Tenía como esa sensación de hastío, que ya no quería más “(M6S4.2)</p>
+        <p>“prioricé el trabajo y la casa, lo personal se vio afectado, o sea subí mucho de peso, estaba super estresada, dejé de hacer actividad física, andaba irritada…” (M7S4.2)</p>
+      </sec>
+    </sec>
+    <sec>
+      <title>DISCUSIÓN</title>
+      <p>El objetivo de esta investigación fue explorar la percepción de las académicas de la Escuela de Obstetricia y Puericultura de la Universidad de Chile sobre la participación de los hombres en la crianza de los hijos durante la pandemia de Covid-19 en el periodo 2022-2023. Para ello, se llevó a cabo un análisis de los resultados obtenidos en diversos ámbitos relacionados con la crianza y la distribución de roles en el hogar.</p>
+      <p>Uno de los principales hallazgos se relaciona con el conocimiento sobre sexualidad, el cual está influenciado tanto por la educación recibida en la infancia como por la formación profesional de las participantes. Sus definiciones personales coinciden con las descritas en la guía del Ministerio de la Mujer y la Equidad de Género, que señala que las desigualdades surgen a partir de los roles socioculturalmente asignados a cada sexo (<xref ref-type="bibr" rid="ref17">Ministerio de la Mujer y la Equidad de Género, 2020</xref>; <xref ref-type="bibr" rid="ref21">Liliana, 2017</xref>). Asimismo, la manera en que abordan estos conceptos está estrechamente relacionada con sus vivencias personales, en línea con lo expuesto por <xref ref-type="bibr" rid="ref23">Vargas et al. (2020)</xref> quien menciona que la percepción propia influye significativamente en la forma en que hombres y mujeres se desenvuelven en la sociedad desde la infancia y perpetúan los roles de género.</p>
+      <p>Los resultados indican que las entrevistadas crecieron en estructuras familiares de carácter patriarcal, en las que el padre asumía el rol de principal proveedor económico, mientras que la madre se encargaba del hogar y del cuidado de los hijos. Esta organización responde a lo descrito en la literatura, donde se destaca que las mujeres han estado históricamente relegadas al ámbito privado, desempeñando labores domésticas y de crianza, mientras que los hombres han ocupado espacios en el ámbito público como proveedores del hogar (<xref ref-type="bibr" rid="ref20">Smaldone, 2017</xref>; <xref ref-type="bibr" rid="ref11">Ferreyra, 2021</xref>)</p>
+      <p>Si bien las participantes reconocen haber crecido en un modelo familiar tradicional, en muchos casos han replicado esta dinámica en sus propios hogares de manera implícita. La pandemia permitió visibilizar con mayor claridad esta distribución de roles: mientras que las académicas debían simultáneamente encargarse de sus responsabilidades laborales, las tareas domésticas y la educación de sus hijos, sus parejas mantuvieron principalmente el rol de proveedores sin asumir una carga equitativa en la crianza y el hogar, por tanto, con una participación menor o de ayuda al rol principal asumido por ellas.</p>
+      <p>La gestión del hogar no fue experimentada de la misma manera por todas las participantes. Algunas lograron organizarse eficientemente para cumplir con todas sus responsabilidades, mientras que otras enfrentaron dificultades para conciliar el trabajo académico con el hogar y la educación de sus hijos. La edad de los niños también influyó significativamente en la carga asumida por las madres, pues aquellos en etapas escolares requerían mayor apoyo durante las clases en línea.</p>
+      <p>Este fenómeno ha sido documentado por la <xref ref-type="bibr" rid="ref5">CEPAL (2021)</xref>, señalando que la pandemia impactó negativamente en las condiciones laborales de las mujeres, obligando a muchas a retirarse del mercado laboral debido al cierre de colegios y jardines infantiles. Al mismo tiempo, en Chile reportó un aumento en el número de mujeres que dejaron de trabajar para asumir el cuidado de sus hijos y las tareas del hogar (<xref ref-type="bibr" rid="ref12">INE, 2021</xref>).</p>
+      <p>La literatura sobre el impacto de la pandemia en las mujeres ha puesto énfasis en la carga doméstica y el abandono del empleo, pero rara vez aborda las implicancias en el crecimiento personal y profesional. En este estudio, se observó que muchas entrevistadas debieron posponer o abandonar sus estudios y proyectos de desarrollo profesional debido a la falta de tiempo.</p>
+      <p>En términos de crianza, los resultados revelan que las académicas reproducen patrones vividos en su niñez, asumiendo la gestión operativa del hogar y la crianza, mientras que sus parejas continúan desempeñando principalmente el rol de sostenedores económicos. A pesar de que el modelo tradicional de paternidad ha evolucionado, la participación de los hombres en la crianza sigue siendo periférica, característica de los llamados "padres ayudantes pasivos", según lo descrito por <xref ref-type="bibr" rid="ref22">Valdés (2009)</xref>.</p>
+      <p>Otro de los efectos observados durante la pandemia fue la afectación en el aprendizaje de los hijos: la falta de acceso a dispositivos electrónicos y la imposibilidad de asistir presencialmente a la escuela generaron dificultades académicas. Las entrevistadas reportaron una disminución en el rendimiento escolar de sus hijos, fenómeno que ha sido corroborado por el Ministerio de Educación al comparar los resultados del SIMCE y la PAES pre y post Covid-19 (<xref ref-type="bibr" rid="ref16">MINEDUC, 2023</xref>). Además, se observó que la brecha de género en los resultados académicos se amplió, afectando principalmente a las niñas, quienes asumieron un rol más activo en la ayuda con las tareas domésticas (<xref ref-type="bibr" rid="ref18">Ponce et al., 2020</xref>).</p>
+      <p>En relación con las actividades de esparcimiento, se identificó que las académicas intentaban destinar tiempo a la práctica de deportes u otras actividades personales, pero la continuidad de estas rutinas dependía de su disponibilidad de tiempo. La necesidad de equilibrar su jornada laboral, las responsabilidades del hogar y la crianza las obligaba a priorizar otras tareas sobre su propio bienestar. Esta dificultad también se extendía a su desarrollo profesional, ya que muchas se vieron en la disyuntiva de elegir entre dedicarse al trabajo, la maternidad o su crecimiento personal y académico. La literatura confirma que las mujeres enfrentan múltiples obstáculos para desarrollar su autonomía debido a estas dinámicas (<xref ref-type="bibr" rid="ref11">Ferreyra, 2021</xref>; <xref ref-type="bibr" rid="ref14">Llanes &amp; Pacheco, 2021</xref>).</p>
+      <p>Finalmente, la sobrecarga a la que estuvieron expuestas las entrevistadas durante la pandemia generó altos niveles de estrés y desgaste físico y emocional. En algunos casos, estas situaciones derivaron en la necesidad de atención psicológica o licencias médicas. Investigaciones internacionales han evidenciado que la paternidad en contexto de pandemia ha sido una fuente importante de estrés, afectando principalmente a las mujeres debido a la multifuncionalidad que se les exige (<xref ref-type="bibr" rid="ref2">Almeida, 2020</xref>; <xref ref-type="bibr" rid="ref1">Aguiar, 2023</xref>; <xref ref-type="bibr" rid="ref3">Batthyány et al., 2022</xref>).</p>
+      <p>Como hallazgo emergente, se identificó que la falta de interacción presencial con sus compañeros de escuela afectó emocionalmente a los hijos e hijas de las participantes, experimentando altos niveles de estrés y dificultades para gestionar sus emociones, lo que en ciertos casos requirió apoyo psicológico. Estos efectos han sido documentados en estudios previos que han analizado el impacto emocional del confinamiento en niños y adolescentes (<xref ref-type="bibr" rid="ref24">Wang et al., 2020</xref>; <xref ref-type="bibr" rid="ref13">Jiao et al., 2020</xref>).</p>
+      <p>Los resultados de este estudio reflejan que, si bien la pandemia puso en evidencia la desigual distribución de responsabilidades en el hogar, también representó una oportunidad para reflexionar sobre la necesidad de una mayor equidad en la crianza y las labores domésticas. La sobrecarga experimentada por las mujeres académicas refuerza la importancia de avanzar en políticas que promuevan la corresponsabilidad parental y laboral, con el fin de generar cambios estructurales en la dinámica familiar y profesional.</p>
+    </sec>
+    <sec>
+      <title>CONCLUSIÓN</title>
+      <p>Al analizar los resultados de esta investigación se observa que la crianza en familias nucleares está estrechamente relacionada con la perpetuación de patrones aprendidos en la infancia. La asignación de roles no es una cualidad innata, sino un proceso que se configura a lo largo de la vida y puede modificarse con el tiempo.</p>
+      <p>La reorganización de la dinámica familiar durante la pandemia llevó a que muchas mujeres asumieran múltiples tareas, lo que incrementó los niveles de estrés y agotamiento. Esta situación evidenció la persistencia de desigualdades de género, ya que las mujeres perciben que la participación de los hombres en la crianza sigue siendo menor y se concibe más como un acto de apoyo o ayuda, en lugar de un rol compartido de manera equitativa entre ambos. Por ello, es fundamental seguir trabajando para reducir la brecha de género en la distribución de responsabilidades familiares.</p>
+      <p>Entre las limitaciones del estudio, se identificó la dificultad para realizar entrevistas debido a la escasa disponibilidad de tiempo de las participantes, lo cual coincide con los resultados obtenidos.</p>
+      <p>A partir de estos hallazgos, surgen nuevas líneas de investigación, como el impacto de la pandemia en la salud mental de las mujeres, el rendimiento escolar en el contexto postpandemia y la participación en actividades recreativas durante la crisis sanitaria, entre otros.</p>
+    </sec>
+  </body>
+  <back>
+    <ack>
+      <title>Agradecimientos</title>
+      <p>Agradecimientos a las académicas que participaron en esta investigación con sus relatos, percepciones y su tiempo personal.</p>
+    </ack>
+    <ref-list>
+      <title>REFERENCIAS</title>
+      <ref id="ref1">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Aguiar</surname>
+              <given-names>S. F. B. D.</given-names>
+            </name>
+            <name>
+              <surname>Oliveira</surname>
+              <given-names>F. B. D.</given-names>
+            </name>
+            <name>
+              <surname>Hryniewicz</surname>
+              <given-names>L. G. C.</given-names>
+            </name>
+            <name>
+              <surname>Sant'Anna</surname>
+              <given-names>A. D. S.</given-names>
+            </name>
+          </person-group>
+          <year>2023</year>
+          <article-title>Teletrabajo y mujeres: percepciones del equilibrio entre la vida profesional y familiar</article-title>
+          <source>Cadernos EBAPE. BR</source>
+          <volume>20</volume>
+          <fpage>836</fpage>
+          <lpage>850</lpage>
+          <pub-id pub-id-type="doi">10.1590/1679-395120210244</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="ref2">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Almeida</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Shrestha</surname>
+              <given-names>A. D.</given-names>
+            </name>
+            <name>
+              <surname>Stojanac</surname>
+              <given-names>D.</given-names>
+            </name>
+            <name>
+              <surname>Miller</surname>
+              <given-names>L. J.</given-names>
+            </name>
+          </person-group>
+          <year>2020</year>
+          <article-title>The impact of the COVID-19 pandemic on women’s mental health</article-title>
+          <source>Archives of women's mental health</source>
+          <volume>23</volume>
+          <fpage>741</fpage>
+          <lpage>748</lpage>
+          <pub-id pub-id-type="doi">10.1007/s00737-020-01092-2</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="ref3">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Batthyány</surname>
+              <given-names>Karina</given-names>
+            </name>
+            <name>
+              <surname>Katzkowicz</surname>
+              <given-names>Sharon</given-names>
+            </name>
+            <name>
+              <surname>Scavino-Solari</surname>
+              <given-names>Sol</given-names>
+            </name>
+          </person-group>
+          <year>2022</year>
+          <article-title>Género y teletrabajo: El caso de las trabajadoras del programa Uruguay Crece Contigo</article-title>
+          <source>Psicoperspectivas</source>
+          <volume>21</volume>
+          <issue>3</issue>
+          <fpage>92</fpage>
+          <lpage>104</lpage>
+          <pub-id pub-id-type="doi">10.5027/psicoperspectivas-vol21-issue3-fulltext-2600</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="ref4">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Caamaño Rojo</surname>
+              <given-names>Eduardo</given-names>
+            </name>
+          </person-group>
+          <year>2010</year>
+          <article-title>Mujer y trabajo: origen y ocaso del modelo del padre proveedor y la madre cuidadora</article-title>
+          <source>Revista de derecho (Valparaíso)</source>
+          <issue>34</issue>
+          <fpage>179</fpage>
+          <lpage>209</lpage>
+          <pub-id pub-id-type="doi">10.4067/S0718-68512010000100005</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="ref5">
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <collab>CEPAL, N.</collab>
+          </person-group>
+          <year>2021</year>
+          <source>La autonomía económica de las mujeres en la recuperación sostenible y con igualdad</source>
+          <publisher-name>CEPAL</publisher-name>
+        </element-citation>
+      </ref>
+      <ref id="ref6">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Aldana</surname>
+              <given-names>R. K. A.</given-names>
+            </name>
+          </person-group>
+          <year>2019</year>
+          <article-title>Convenio sobre la protección de la maternidad, 1919 (núm. 3)</article-title>
+          <source>Relaciones Laborales y Derecho del Empleo</source>
+          <ext-link ext-link-type="uri" xlink:href="https://ejcls.adapt.it/index.php/rlde_adapt/article/view/736">https://ejcls.adapt.it/index.php/rlde_adapt/article/view/736</ext-link>
+        </element-citation>
+      </ref>
+      <ref id="ref7">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Mestre</surname>
+              <given-names>J. M. R.</given-names>
+            </name>
+          </person-group>
+          <year>2019</year>
+          <article-title>Convenio sobre igualdad de remuneración, 1951 (núm. 100)</article-title>
+          <source>Relaciones Laborales y Derecho del Empleo</source>
+          <ext-link ext-link-type="uri" xlink:href="https://ejcls.adapt.it/index.php/rlde_adapt/article/view/725">https://ejcls.adapt.it/index.php/rlde_adapt/article/view/725</ext-link>
+        </element-citation>
+      </ref>
+      <ref id="ref8">
+        <element-citation publication-type="report">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Diaz</surname>
+              <given-names>J.</given-names>
+            </name>
+          </person-group>
+          <year>2020</year>
+          <source>X - Aplicación de las normas internacionales del trabajo, 2020 - Informe de la Comisión de Expertos</source>
+          <publisher-name>International Labour Organisation</publisher-name>
+          <publisher-loc>Switzerland</publisher-loc>
+          <ext-link ext-link-type="uri" xlink:href="https://coilink.org/20.500.12592/z612jmk">https://coilink.org/20.500.12592/z612jmk</ext-link>
+        </element-citation>
+      </ref>
+      <ref id="ref10">
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Da Silva</surname>
+              <given-names>M. R. F.</given-names>
+            </name>
+          </person-group>
+          <year>2006</year>
+          <source>Introducción a las técnicas cualitativas de investigación aplicadas en salud: cursos GRAAL 5</source>
+          <volume>168</volume>
+          <publisher-name>Univ. Autònoma de Barcelona</publisher-name>
+        </element-citation>
+      </ref>
+      <ref id="ref11">
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Ferreyra Beltrán</surname>
+              <given-names>M. C.</given-names>
+            </name>
+          </person-group>
+          <year>2021</year>
+          <source>Desigualdades y brechas de género en tiempos de pandemia</source>
+          <publisher-name>Centro de Investigaciones Interdisciplinarias en Ciencias y Humanidades, UNAM</publisher-name>
+        </element-citation>
+      </ref>
+      <ref id="ref12">
+        <element-citation publication-type="web">
+          <person-group person-group-type="author">
+            <collab>INE</collab>
+          </person-group>
+          <month>marzo</month>
+          <year>2021</year>
+          <article-title>Género y empleo: impacto de la crisis económica por COVID-19, boletín informativo</article-title>
+          <ext-link ext-link-type="uri" xlink:href="https://www.ine.gob.cl/docs/default-source/genero/documentos-de-an%C3%A1lisis/documentos/g%C3%A9nero-y-empleo-impacto-de-la-crisis-econ%C3%B3mica-por-covid19.pdf">https://www.ine.gob.cl/docs/default-source/genero/documentos-de-an%C3%A1lisis/documentos/g%C3%A9nero-y-empleo-impacto-de-la-crisis-econ%C3%B3mica-por-covid19.pdf</ext-link>
+        </element-citation>
+      </ref>
+      <ref id="ref13">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Jiao</surname>
+              <given-names>W. Y.</given-names>
+            </name>
+            <name>
+              <surname>Wang</surname>
+              <given-names>L. N.</given-names>
+            </name>
+            <name>
+              <surname>Liu</surname>
+              <given-names>J.</given-names>
+            </name>
+            <name>
+              <surname>Fang</surname>
+              <given-names>S. F.</given-names>
+            </name>
+            <name>
+              <surname>Jiao</surname>
+              <given-names>F. Y.</given-names>
+            </name>
+            <name>
+              <surname>Pettoello-Mantovani</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Somekh</surname>
+              <given-names>E.</given-names>
+            </name>
+          </person-group>
+          <year>2020</year>
+          <article-title>Behavioral and emotional disorders in children during the COVID-19 epidemic</article-title>
+          <source>The Journal of Pediatrics</source>
+          <volume>221</volume>
+          <fpage>264</fpage>
+          <lpage>266</lpage>
+          <pub-id pub-id-type="doi">10.1016/j.jpeds.2020.03.013</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="ref14">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Llanes Díaz</surname>
+              <given-names>Nathaly</given-names>
+            </name>
+            <name>
+              <surname>Pacheco Gómez Muñoz</surname>
+              <given-names>Edith</given-names>
+            </name>
+          </person-group>
+          <year>2021</year>
+          <article-title>Maternidad y trabajo no remunerado en el contexto del Covid-19</article-title>
+          <source>Revista mexicana de sociología</source>
+          <volume>83</volume>
+          <issue>spe</issue>
+          <fpage>61</fpage>
+          <lpage>92</lpage>
+          <pub-id pub-id-type="doi">10.22201/iis.01882503p.2021.0.60069</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="ref15">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Manzini</surname>
+              <given-names>Jorge Luis</given-names>
+            </name>
+          </person-group>
+          <year>2000</year>
+          <article-title>DECLARACIÓN DE HELSINKI: PRINCIPIOS ÉTICOS PARA LA INVESTIGACIÓN MÉDICA SOBRE SUJETOS HUMANOS</article-title>
+          <source>Acta bioethica</source>
+          <volume>6</volume>
+          <issue>2</issue>
+          <fpage>321</fpage>
+          <lpage>334</lpage>
+          <pub-id pub-id-type="doi">10.4067/S1726-569X2000000200010</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="ref16">
+        <element-citation publication-type="web">
+          <person-group person-group-type="author">
+            <collab>MINEDUC</collab>
+          </person-group>
+          <day>15</day>
+          <month>junio</month>
+          <year>2023</year>
+          <article-title>Resultados del Simce 2022</article-title>
+          <ext-link ext-link-type="uri" xlink:href="https://www.mineduc.cl/resultados-del-simce-2022/">https://www.mineduc.cl/resultados-del-simce-2022/</ext-link>
+        </element-citation>
+      </ref>
+      <ref id="ref17">
+        <element-citation publication-type="web">
+          <person-group person-group-type="author">
+            <collab>Ministerio de la mujer y la equidad de género</collab>
+          </person-group>
+          <year>2020</year>
+          <article-title>Corresponsabilidad en los hogares</article-title>
+          <ext-link ext-link-type="uri" xlink:href="https://minmujeryeg.gob.cl/wp-content/uploads/2020/11/GUIA-CORRESPONSABILIDAD.pdf">https://minmujeryeg.gob.cl/wp-content/uploads/2020/11/GUIA-CORRESPONSABILIDAD.pdf</ext-link>
+        </element-citation>
+      </ref>
+      <ref id="ref18">
+        <element-citation publication-type="web">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Ponce</surname>
+              <given-names>T.</given-names>
+            </name>
+            <name>
+              <surname>Bellei</surname>
+              <given-names>C.</given-names>
+            </name>
+            <name>
+              <surname>Vielma</surname>
+              <given-names>C.</given-names>
+            </name>
+          </person-group>
+          <year>2020</year>
+          <article-title>Experiencias educativas en casa de niñas y niños durante la pandemia COVID-19</article-title>
+          <ext-link ext-link-type="uri" xlink:href="https://www.ciperchile.cl/wp-content/uploads/CIAE-EXP-EDU-final.pdf">https://www.ciperchile.cl/wp-content/uploads/CIAE-EXP-EDU-final.pdf</ext-link>
+        </element-citation>
+      </ref>
+      <ref id="ref19">
+        <element-citation publication-type="book-chapter">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Sandua</surname>
+              <given-names>D.</given-names>
+            </name>
+          </person-group>
+          <year>2023</year>
+          <chapter-title>Los albores del feminismo</chapter-title>
+          <person-group person-group-type="editor">
+            <collab>Amazon Digital Services LLC – Kdp</collab>
+          </person-group>
+          <source>La evolución del feminismo y la lucha por la igualdad de género</source>
+          <fpage>21</fpage>
+          <lpage>38</lpage>
+          <publisher-name>Independently Published</publisher-name>
+        </element-citation>
+      </ref>
+      <ref id="ref20">
+        <element-citation publication-type="conf-proc">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Smaldone</surname>
+              <given-names>M.</given-names>
+            </name>
+          </person-group>
+          <year>2017</year>
+          <article-title>La dicotomía público/privado, las mujeres y el trabajo doméstico" invisible"</article-title>
+          <conf-name>XI Seminário Internacional Fazendo Gênero y XIII Women’s Worlds Congress</conf-name>
+          <conf-loc>Florianópolis, Brasil</conf-loc>
+          <conf-date>30 de julio al 4 de agosto de 2017</conf-date>
+          <ext-link ext-link-type="uri" xlink:href="http://sedici.unlp.edu.ar/handle/10915/111625">http://sedici.unlp.edu.ar/handle/10915/111625</ext-link>
+        </element-citation>
+      </ref>
+      <ref id="ref21">
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Liliana</surname>
+              <given-names>H.</given-names>
+            </name>
+          </person-group>
+          <year>2017</year>
+          <source>Comunicación, infancia y adolescencia: Guía para periodistas</source>
+          <ext-link ext-link-type="uri" xlink:href="https://repositorio.dpe.gob.ec/handle/39000/2740">https://repositorio.dpe.gob.ec/handle/39000/2740</ext-link>
+        </element-citation>
+      </ref>
+      <ref id="ref22">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Valdés</surname>
+              <given-names>X.</given-names>
+            </name>
+          </person-group>
+          <year>2009</year>
+          <article-title>El lugar que habita el padre en Chile contemporáneo. Estudio de las representaciones sobre la paternidad en distintos grupos sociales</article-title>
+          <source>Polis. Revista Latinoamericana</source>
+          <issue>23</issue>
+          <ext-link ext-link-type="uri" xlink:href="http://journals.openedition.org/polis/1859">http://journals.openedition.org/polis/1859</ext-link>
+        </element-citation>
+      </ref>
+      <ref id="ref23">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Vargas</surname>
+              <given-names>C.</given-names>
+            </name>
+            <name>
+              <surname>Lutz</surname>
+              <given-names>M.</given-names>
+            </name>
+            <name>
+              <surname>Papuzinski</surname>
+              <given-names>C.</given-names>
+            </name>
+            <name>
+              <surname>Arancibia</surname>
+              <given-names>M.</given-names>
+            </name>
+          </person-group>
+          <year>2020</year>
+          <article-title>Género, mujeres e investigación científica</article-title>
+          <source>Medwave</source>
+          <volume>20</volume>
+          <issue>02</issue>
+          <pub-id pub-id-type="doi">10.5867/medwave.2020.02.7857</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="ref24">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Wang</surname>
+              <given-names>G.</given-names>
+            </name>
+            <name>
+              <surname>Zhang</surname>
+              <given-names>Y.</given-names>
+            </name>
+            <name>
+              <surname>Zhao</surname>
+              <given-names>J.</given-names>
+            </name>
+            <name>
+              <surname>Zhang</surname>
+              <given-names>J.</given-names>
+            </name>
+            <name>
+              <surname>Jiang</surname>
+              <given-names>F.</given-names>
+            </name>
+          </person-group>
+          <year>2020</year>
+          <article-title>Mitigate the effects of home confinement on children during the COVID-19 outbreak</article-title>
+          <source>The Lancet</source>
+          <volume>395</volume>
+          <issue>10228</issue>
+          <fpage>945</fpage>
+          <lpage>947</lpage>
+          <pub-id pub-id-type="doi">10.1016/S0140-6736(20)30547-X</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="ref25">
+        <element-citation publication-type="newspaper">
+          <person-group person-group-type="author">
+            <collab>El Periódico</collab>
+          </person-group>
+          <year>2023</year>
+          <article-title>Incendio en la fábrica textil Triangle Shirtwaist</article-title>
+        </element-citation>
+      </ref>
+    </ref-list>
+  </back>
+</article>

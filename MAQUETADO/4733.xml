@@ -15,10 +15,10 @@ l
 </publisher>
 </journal-meta>
 <article-meta>
-<article-id pub-id-type="doi">https://doi.org/10.22370/revmat.1.2025.4733</article-id>
+<article-id pub-id-type="doi">10.22370/revmat.1.2025.4733</article-id>
 <article-categories>
 <subj-group subj-group-type="heading">
-<subject>Artículo Original</subject>
+<subject>Artículos Originales</subject>
 </subj-group>
 </article-categories>
 <title-group>
@@ -29,41 +29,48 @@ l
 </title-group>
 <contrib-group>
 <contrib contrib-type="author">
-<contrib-id contrib-id-type="orcid">https://orcid.org/0009-0002-1291-1429</contrib-id>
+<xref ref-type="aff" rid="aff1">1</xref>
 <name>
 <surname>Hernández Ferrer</surname>
 <given-names>Karina</given-names>
 </name>
-<xref ref-type="aff" rid="aff1"/>
-<xref ref-type="corresp" rid="c1"/>
+<contrib-id contrib-id-type="orcid">https://orcid.org/0009-0002-1291-1429</contrib-id>
 </contrib>
-<contrib contrib-type="author">
+<contrib contrib-type="author" corresp="yes">
+<xref ref-type="corresp" rid="cor1">*</xref>
+<xref ref-type="aff" rid="aff2">2</xref>
 <name>
 <surname>Moreno Rojas</surname>
 <given-names>Francisca</given-names>
 </name>
-<xref ref-type="aff" rid="aff2"/>
+<email>inakarina1999@gmail.com</email>
 </contrib>
 <contrib contrib-type="author">
-<contrib-id contrib-id-type="orcid">https://orcid.org/0000-0002-2336-3379</contrib-id>
+<xref ref-type="aff" rid="aff3">3</xref>
 <name>
 <surname>Binfa</surname>
 <given-names>Lorena Mercedes</given-names>
 </name>
-<xref ref-type="aff" rid="aff3"/>
+<contrib-id contrib-id-type="orcid">https://orcid.org/0000-0002-2336-3379</contrib-id>
+<email>lbinfa@uchile.cl</email>
 </contrib>
 </contrib-group>
 <aff id="aff1">
-<label>1</label> Matrona, Departamento de Promoción de la Salud de la Mujer y el Recién Nacido, Universidad de Chile. Av. Independencia 1027, Independencia Santiago, Chile. Correo: inakarina1999@gmail.com
+<label>1</label>
+<institution content-type="original">Matrona, Departamento de Promoción de la Salud de la Mujer y el Recién Nacido, Universidad de Chile. Av. Independencia 1027, Independencia Santiago, Chile.</institution>
 </aff>
 <aff id="aff2">
-<label>2</label> Licenciada en Obstetricia y Puericultura, Departamento de Promoción de la Salud de la Mujer y el Recién Nacido, Universidad de Chile. Av. Independencia 1027, Independencia, Santiago, Chile.
+<label>2</label>
+<institution content-type="original">Licenciada en Obstetricia y Puericultura, Departamento de Promoción de la Salud de la Mujer y el Recién Nacido, Universidad de Chile. Av. Independencia 1027, Independencia, Santiago, Chile.</institution>
 </aff>
 <aff id="aff3">
-<label>3</label> Prof. Lorena Binfa. MSP. PhD. Departamento de Promoción de la Salud de la Mujer y el Recién Nacido, Universidad de Chile. Av. Independencia 1027, Independencia, Santiago, Chile. Correo: lbinfa@uchile.cl
+<label>3</label>
+<institution content-type="original">Prof. Lorena Binfa. MSP. PhD. Departamento de Promoción de la Salud de la Mujer y el Recién Nacido, Universidad de Chile. Av. Independencia 1027, Independencia, Santiago, Chile.</institution>
 </aff>
 <author-notes>
-<corresp id="c1">*Autor para correspondencia: Correo: inakarina1999@gmail.com</corresp>
+<corresp id="cor1">
+<label>*</label>Autor para correspondencia: <email>inakarina1999@gmail.com</email>
+</corresp>
 <fn fn-type="other">
 <p>Artículo derivado de tesis de pregrado.</p>
 </fn>
@@ -76,23 +83,32 @@ l
 <month>08</month>
 <year>2025</year>
 </pub-date>
-<history>
-<date date-type="received">
+<pub-date pub-type="received">
 <day>25</day>
 <month>01</month>
 <year>2025</year>
-</date>
-</history>
+</pub-date>
 <counts>
-<p>Recuento de palabras del cuerpo del escrito: 3988.</p>
-<p>Recuento de palabras del resumen: 480 (español e inglés).</p>
+<fig-count count="0"/>
+<table-count count="1"/>
+<equation-count count="0"/>
+<ref-count count="23"/>
+<page-count count="0"/>
 </counts>
 <abstract>
 <title>Resumen</title>
-<p><bold>Objetivo:</bold> describir la percepción de las personas mayores sobre su sexualidad y la forma en que la experimentan y el rol educativo que los profesionales de la matronería deberían desempeñar en este ámbito, junto con proponer acciones pertinentes basadas en los resultados obtenidos.</p>
-<p><bold>Material y métodos:</bold> estudio cualitativo descriptivo. La recolección de datos se realizó a través de entrevistas semiestructuradas, aplicadas a participantes de los Centros del Adulto Mayor (CAM) de las comunas de Independencia y de San Miguel, en la Región Metropolitana. Para el procesamiento de datos se utilizó el análisis de contenido.</p>
-<p><bold>Resultados:</bold> se realizaron doce entrevistas. En ellas, la mayoría de las personas mayores refieren mantener relaciones sólidas de amistad, gran parte de ellos se sienten afectados por los cambios físicos vividos con los años, pero a la vez los aceptan. En general la persona mayor relaciona el concepto de sexualidad con actividad sexual en sí. En cuanto al deseo sexual, existe una semejanza de cantidad entre los relatos que mencionan que éste no ha disminuido y los que señalan que su deseo sexual disminuyó con la vejez o, incluso, que estaba ausente. La actividad sexual es más frecuente en aquellas personas mayores con pareja que en los solteros. Predominantemente, las personas mayores no se sienten satisfechas con la atención otorgada por el personal de salud en cuanto a salud sexual.</p>
-<p><bold>Conclusión:</bold> el deseo y la actividad sexual son elementos que existen en la tercera edad. Es crucial normalizar la sexualidad de las personas mayores en la sociedad en general. Los CAM representan puntos estratégicos ideales para promover la educación sexual y ofrecer respuestas a sus dudas.</p>
+<p>
+<bold>Objetivo:</bold> describir la percepción de las personas mayores sobre su sexualidad y la forma en que la experimentan y el rol educativo que los profesionales de la matronería deberían desempeñar en este ámbito, junto con proponer acciones pertinentes basadas en los resultados obtenidos.
+</p>
+<p>
+<bold>Material y métodos:</bold> estudio cualitativo descriptivo. La recolección de datos se realizó a través de entrevistas semiestructuradas, aplicadas a participantes de los Centros del Adulto Mayor (CAM) de las comunas de Independencia y de San Miguel, en la Región Metropolitana. Para el procesamiento de datos se utilizó el análisis de contenido.
+</p>
+<p>
+<bold>Resultados:</bold> se realizaron doce entrevistas. En ellas, la mayoría de las personas mayores refieren mantener relaciones sólidas de amistad, gran parte de ellos se sienten afectados por los cambios físicos vividos con los años, pero a la vez los aceptan. En general la persona mayor relaciona el concepto de sexualidad con actividad sexual en sí. En cuanto al deseo sexual, existe una semejanza de cantidad entre los relatos que mencionan que éste no ha disminuido y los que señalan que su deseo sexual disminuyó con la vejez o, incluso, que estaba ausente. La actividad sexual es más frecuente en aquellas personas mayores con pareja que en los solteros. Predominantemente, las personas mayores no se sienten satisfechas con la atención otorgada por el personal de salud en cuanto a salud sexual.
+</p>
+<p>
+<bold>Conclusión:</bold> el deseo y la actividad sexual son elementos que existen en la tercera edad. Es crucial normalizar la sexualidad de las personas mayores en la sociedad en general. Los CAM representan puntos estratégicos ideales para promover la educación sexual y ofrecer respuestas a sus dudas.
+</p>
 </abstract>
 <kwd-group>
 <title>Palabras claves</title>
@@ -104,10 +120,18 @@ l
 </kwd-group>
 <trans-abstract xml:lang="en">
 <title>Abstract</title>
-<p><bold>Objective:</bold> to describe the perception of older adults regarding their sexuality and how they experience it, as well as to determine the educational role that the midwife should assume and to propose pertinent actions based on the findings obtained.</p>
-<p><bold>Materials and methods:</bold> a descriptive qualitative study was conducted. Data collection was carried out through semi-structured interviews with participants from the Older Adults Centers of Independencia and San Miguel. Content analysis was used for data processing.</p>
-<p><bold>Results:</bold> a total of twelve interviews were conducted. Most older adults reported maintaining strong friendships; many expressed being affected by the physical changes experienced with aging, although they also indicated acceptance of these changes. In general, older adults associated the concept of sexuality primarily with sexual activity itself. Regarding sexual desire, an equal number of participants mentioned that their sexual desire had not diminished, while others reported a decrease or even an absence of desire with aging. Sexual activity was more frequent among those with a partner compared to single individuals. Predominantly, older adults expressed dissatisfaction with the sexual health care provided by health personnel.</p>
-<p><bold>Conclusion:</bold> sexual desire and sexual activity persist in older age. It is crucial to normalize the sexuality of older adults within society. Older Adults Centers represent strategic spaces to promote sexual education and to provide responses to their concerns.</p>
+<p>
+<bold>Objective:</bold> to describe the perception of older adults regarding their sexuality and how they experience it, as well as to determine the educational role that the midwife should assume and to propose pertinent actions based on the findings obtained.
+</p>
+<p>
+<bold>Materials and methods:</bold> a descriptive qualitative study was conducted. Data collection was carried out through semi-structured interviews with participants from the Older Adults Centers of Independencia and San Miguel. Content analysis was used for data processing.
+</p>
+<p>
+<bold>Results:</bold> a total of twelve interviews were conducted. Most older adults reported maintaining strong friendships; many expressed being affected by the physical changes experienced with aging, although they also indicated acceptance of these changes. In general, older adults associated the concept of sexuality primarily with sexual activity itself. Regarding sexual desire, an equal number of participants mentioned that their sexual desire had not diminished, while others reported a decrease or even an absence of desire with aging. Sexual activity was more frequent among those with a partner compared to single individuals. Predominantly, older adults expressed dissatisfaction with the sexual health care provided by health personnel.
+</p>
+<p>
+<bold>Conclusion:</bold> sexual desire and sexual activity persist in older age. It is crucial to normalize the sexuality of older adults within society. Older Adults Centers represent strategic spaces to promote sexual education and to provide responses to their concerns.
+</p>
 </trans-abstract>
 <kwd-group xml:lang="en">
 <title>Keywords</title>
@@ -120,31 +144,41 @@ l
 </article-meta>
 </front>
 <body>
-<sec>
+<sec sec-type="intro">
 <title>Introducción</title>
 <p>La sexualidad es una dimensión presente a lo largo de toda la vida, incluida la tercera edad. Según la Organización Mundial de la Salud (<xref ref-type="bibr" rid="ref1">OMS, 2018</xref>) ésta abarca “el sexo, las identidades y los roles de género, la orientación sexual, el erotismo, el placer, la intimidad y la reproducción” Sin embargo, “la existencia de prejuicios sociales (…) propicia una desinformación permanente de la temática sexual en la edad geriátrica” (<xref ref-type="bibr" rid="ref2">Martínez, 2008</xref>). Los prejuicios más frecuentes señalan que no tienen vida sexual activa y que no están interesados en las relaciones románticas (<xref ref-type="bibr" rid="ref3">Llanes, 2013</xref>). Estas concepciones afectan la forma en que las personas mayores experimentan su sexualidad y se relacionan con su entorno.</p>
 <p>Durante esta etapa, factores como los cambios fisiológicos, las enfermedades crónicas, la demencia y la depresión pueden influir en la vivencia de la sexualidad (<xref ref-type="bibr" rid="ref4">Olivera Carmenates &amp; Bujardón Mendoza, 2010</xref>). No obstante, la sexualidad continúa siendo un derecho humano y una necesidad emocional esencial (<xref ref-type="bibr" rid="ref5">Servicio Nacional del Adulto Mayor [SENAMA], 2017</xref>).</p>
-<p>En Chile, las personas mayores —definida como las de 60 o más años (<xref ref-type="bibr" rid="ref6\">SENAMA</xref>)— representan actualmente el 16,2 % de la población, proyectándose un aumento al 19 % para 2035 (<xref ref-type="bibr" rid="ref7\">Instituto Nacional de Estadísticas [INE], 2019</xref>). Este crecimiento implica un aumento en la demanda asistencial, por lo que resulta indispensable la actualización continua de los profesionales de salud, incluidos matrones y matronas, en la atención integral de las necesidades biopsicosociales de este grupo etario, considerando la sexualidad como un aspecto relevante.</p>
-<p>En este contexto, los lineamientos nacionales para mejorar la calidad de vida de las mujeres incluyen las Orientaciones Técnicas para la Atención Integral de la Mujer en Edad de Climaterio en el nivel de Atención Primaria de Salud (APS), dirigidas a mujeres de entre 45 y 64 años (<xref ref-type="bibr" rid="ref8\">Ministerio de Salud [MINSAL], 2014</xref>). Estas orientaciones promueven la salud sexual mediante talleres y consejerías, abordando temas como cambios en la libido, lubricación genital y dificultades de pareja, entre otros. Sin embargo, en el caso de las personas de 65 años o más, el Examen de Medicina Preventiva del Adulto Mayor (EMPAM) (<xref ref-type="bibr" rid="ref9">Subsecretaría de Salud Pública, 2012</xref>) se enfoca en la evaluación funcional para detectar factores de riesgo, sin incluir aspectos relacionados con la sexualidad.</p>
+<p>En Chile, las personas mayores —definida como las de 60 o más años (<xref ref-type="bibr" rid="ref6">SENAMA</xref>)— representan actualmente el 16,2 % de la población, proyectándose un aumento al 19 % para 2035 (<xref ref-type="bibr" rid="ref7">Instituto Nacional de Estadísticas [INE], 2019</xref>). Este crecimiento implica un aumento en la demanda asistencial, por lo que resulta indispensable la actualización continua de los profesionales de salud, incluidos matrones y matronas, en la atención integral de las necesidades biopsicosociales de este grupo etario, considerando la sexualidad como un aspecto relevante.</p>
+<p>En este contexto, los lineamientos nacionales para mejorar la calidad de vida de las mujeres incluyen las Orientaciones Técnicas para la Atención Integral de la Mujer en Edad de Climaterio en el nivel de Atención Primaria de Salud (APS), dirigidas a mujeres de entre 45 y 64 años (<xref ref-type="bibr" rid="ref8">Ministerio de Salud [MINSAL], 2014</xref>). Estas orientaciones promueven la salud sexual mediante talleres y consejerías, abordando temas como cambios en la libido, lubricación genital y dificultades de pareja, entre otros. Sin embargo, en el caso de las personas de 65 años o más, el Examen de Medicina Preventiva del Adulto Mayor (EMPAM) (<xref ref-type="bibr" rid="ref9">Subsecretaría de Salud Pública, 2012</xref>) se enfoca en la evaluación funcional para detectar factores de riesgo, sin incluir aspectos relacionados con la sexualidad.</p>
 <p>Aunque existen investigaciones sobre la sexualidad en la vejez, en Chile estos estudios son escasos y carecen de actualizaciones recientes. Frente a este escenario y considerando los cambios en el perfil demográfico, el presente estudio plantea como objetivos generales: i) describir la percepción de las personas mayores pertenecientes a los CAM de San Miguel e Independencia, respecto a su sexualidad y la manera en que la vivencian; y de acuerdo a esto, ii) describir desde la percepción de los usuarios el rol educativo que deben desempeñar los profesionales matrones y matronas, así como las acciones pertinentes para impactar positivamente en la sexualidad de este grupo etario.</p>
 </sec>
-<sec>
+<sec sec-type="methods">
 <title>Material y métodos</title>
-<p><bold>Diseño del estudio:</bold> cualitativo descriptivo con enfoque fenomenológico, elegido por su pertinencia para explorar la percepción subjetiva de las personas mayores sobre su sexualidad y el rol que asignan a los matrones/as. Este enfoque permite comprender los significados que las personas atribuyen a sus experiencias, en coherencia con los objetivos del estudio, orientados a describir cómo se vivencia la sexualidad en la vejez y qué acciones educativas son consideradas pertinentes por los propios usuarios.</p>
-<p><bold>Población y muestra:</bold> la población estuvo compuesta por personas de 60 años o más, asistentes a los CAM de atención ambulatoria diurna ubicados en las comunas de Independencia y San Miguel, Región Metropolitana (RM) de Chile. Estos centros tienen como objetivo promover la autonomía, independencia y permanencia de las personas mayores en su entorno familiar y comunitario, a través de actividades recreativas (<xref ref-type="bibr" rid="ref10">Ministerio de Desarrollo Social y Familia</xref>).</p>
+<p>
+<bold>Diseño del estudio:</bold> cualitativo descriptivo con enfoque fenomenológico, elegido por su pertinencia para explorar la percepción subjetiva de las personas mayores sobre su sexualidad y el rol que asignan a los matrones/as. Este enfoque permite comprender los significados que las personas atribuyen a sus experiencias, en coherencia con los objetivos del estudio, orientados a describir cómo se vivencia la sexualidad en la vejez y qué acciones educativas son consideradas pertinentes por los propios usuarios.
+</p>
+<p>
+<bold>Población y muestra:</bold> la población estuvo compuesta por personas de 60 años o más, asistentes a los CAM de atención ambulatoria diurna ubicados en las comunas de Independencia y San Miguel, Región Metropolitana (RM) de Chile. Estos centros tienen como objetivo promover la autonomía, independencia y permanencia de las personas mayores en su entorno familiar y comunitario, a través de actividades recreativas (<xref ref-type="bibr" rid="ref10">Ministerio de Desarrollo Social y Familia</xref>).
+</p>
 <p>Los criterios de inclusión fueron: ser persona de 60 años o más, asistir regularmente a alguno de los CAM seleccionados, comprender el propósito del estudio y firmar el consentimiento informado. Se excluyeron personas con diagnóstico de demencia senil u otras condiciones físicas o mentales que dificultaran significativamente la comunicación o participación en la entrevista.</p>
 <p>Para caracterizar a los participantes, se recogieron variables sociodemográficas relevantes, así como antecedentes sobre orientación sexual y acceso a atención en salud sexual.</p>
-<p><bold>Técnica de recolección de datos:</bold> se utilizó la entrevista semiestructurada como técnica principal de recolección de datos, aplicada de manera presencial por las investigadoras. El guion de entrevista fue elaborado a partir de los objetivos del estudio y abordó cinco dimensiones temáticas: relación de la persona mayor con su entorno, relaciones socioafectivas, relación consigo mismo, vivencia de la sexualidad y experiencia con la atención en salud. El número de entrevistados se definió en función del criterio de saturación de la información, es decir, se dejó de incorporar nuevos participantes cuando los datos comenzaron a repetirse y no surgieron categorías considerables adicionales.</p>
+<p>
+<bold>Técnica de recolección de datos:</bold> se utilizó la entrevista semiestructurada como técnica principal de recolección de datos, aplicada de manera presencial por las investigadoras. El guion de entrevista fue elaborado a partir de los objetivos del estudio y abordó cinco dimensiones temáticas: relación de la persona mayor con su entorno, relaciones socioafectivas, relación consigo mismo, vivencia de la sexualidad y experiencia con la atención en salud. El número de entrevistados se definió en función del criterio de saturación de la información, es decir, se dejó de incorporar nuevos participantes cuando los datos comenzaron a repetirse y no surgieron categorías considerables adicionales.
+</p>
 <p>Con el fin de asegurar el rigor metodológico, el guion fue sometido a un proceso de validación de contenido. Esta validación fue realizada por miembros del Comité de Ética de la Facultad de Medicina de la Universidad de Chile —como parte de la revisión ética—. Las observaciones aportadas permitieron mejorar la claridad, pertinencia y coherencia de las preguntas incluidas en la versión final.</p>
 <p>La estructura flexible de la entrevista permitió a las investigadoras introducir preguntas adicionales según la dinámica de cada conversación, lo que facilitó la profundización en los relatos y permitió captar elementos emergentes relevantes.</p>
-<p><bold>Análisis de la información:</bold> como medida de rigor, las entrevistas fueron grabadas en formato de audio —con consentimiento explícito— y transcritas íntegramente en formato Word para su posterior análisis.</p>
+<p>
+<bold>Análisis de la información:</bold> como medida de rigor, las entrevistas fueron grabadas en formato de audio —con consentimiento explícito— y transcritas íntegramente en formato Word para su posterior análisis.
+</p>
 <p>Los datos recolectados fueron procesados mediante la técnica de análisis de contenido, de forma manual, siguiendo los pasos del análisis de contenido descritos por <xref ref-type="bibr" rid="ref11">Granheim y Lundman (2004)</xref>. En primer lugar, se excluyó la información no pertinente a los objetivos del estudio. Luego, se aplicó codificación abierta de primer nivel, identificando unidades de análisis por párrafos, a las que se les asignaron códigos descriptivos que representaban los significados centrales expresados por los participantes.</p>
 <p>Posteriormente, los códigos fueron comparados entre sí y agrupados inductivamente en categorías y subcategorías según su similitud temática (<xref ref-type="bibr" rid="ref12">Hernández et al., 2014</xref>). Estos agrupamientos se registraron en una tabla elaborada por las investigadoras, organizada según las temáticas emergentes, lo que permitió estructurar los hallazgos de manera clara y coherente con los objetivos del estudio.</p>
 <p>Para reforzar la validez y confiabilidad del proceso, la codificación fue realizada por dos investigadoras de forma independiente y luego contrastada. Las discrepancias fueron discutidas hasta alcanzar consenso, asegurando la consistencia de las categorías. Además, se mantuvo una trazabilidad documental desde las transcripciones originales hasta la matriz final de resultados, lo que facilitó la auditabilidad del análisis.</p>
-<p><bold>Aspectos éticos:</bold> quienes participaron firmaron un consentimiento informado previo a su participación, garantizando la confidencialidad y el respeto a su integridad. El estudio fue aprobado por el Comité de Ética de la Investigación en Seres Humanos de la Facultad de Medicina de la Universidad de Chile (Acta N.º 208, Fecha: 14/03/2023).</p>
+<p>
+<bold>Aspectos éticos:</bold> quienes participaron firmaron un consentimiento informado previo a su participación, garantizando la confidencialidad y el respeto a su integridad. El estudio fue aprobado por el Comité de Ética de la Investigación en Seres Humanos de la Facultad de Medicina de la Universidad de Chile (Acta N.º 208, Fecha: 14/03/2023).
+</p>
 <p>Para resguardar el anonimato, se identificó a cada participante mediante un código compuesto por su sexo y un número correlativo.</p>
 </sec>
-<sec>
+<sec sec-type="results">
 <title>Resultados</title>
 <p>La muestra estuvo compuesta por 12 participantes (10 mujeres y 2 hombres), con edades entre 61 y 81 años (ver <xref ref-type="table" rid="t1">Tabla 1</xref>).</p>
 <p>A partir del análisis de contenido, se identificaron las siguientes categorías y subcategorías temáticas:</p>
@@ -240,7 +274,7 @@ l
 <table-wrap id="t1">
 <label>Tabla 1</label>
 <caption>
-<p>Caracterización de los participantes.</p>
+<p>Características sociodemográficas de los participantes.</p>
 </caption>
 <table>
 <thead>
@@ -391,19 +425,23 @@ l
 </tr>
 </tbody>
 </table>
-<attrib>Fuente: Elaboración propia</attrib>
+<table-wrap-foot>
+<fn>
+<p>Fuente: Elaboración propia</p>
+</fn>
+</table-wrap-foot>
 </table-wrap>
 </sec>
-<sec>
+<sec sec-type="discussion">
 <title>Discusión</title>
 <p>Los resultados muestran que la mayoría de las personas mayores mantiene una relación positiva con sus familias, aunque algunas mencionan un distanciamiento posterior a la muerte de sus progenitores. Esta situación se relaciona con el rol tradicional de los padres como articuladores del vínculo familiar, en línea con lo señalado por <xref ref-type="bibr" rid="ref13">Taylor et al. (2018)</xref>, quienes destacan que las relaciones familiares en la vejez se sustentan en la obligación y el deber. Sin embargo, nuestro estudio aporta una nueva perspectiva al evidenciar que, incluso en ausencia de vínculos familiares cercanos, las personas mayores desarrollan fuertes lazos de amistad, especialmente en espacios como los CAM, que funcionan como redes afectivas sustitutivas.</p>
 <p>Este hallazgo resulta especialmente relevante si se considera que, según el <xref ref-type="bibr" rid="ref14">Observatorio del Envejecimiento UC-Confuturo (2023)</xref>, un 32% de las personas mayores en Chile declara no tener amigos, lo cual puede impactar negativamente su salud física y mental. Así, nuestros resultados aportan evidencia cualitativa que respalda la importancia de fortalecer espacios comunitarios como los CAM para promover relaciones significativas en la vejez.</p>
-<p>En cuanto a la sexualidad, algunas mujeres atribuyen la falta de deseo sexual a un rol tradicional de cuidadora que desplaza el autocuidado, lo que coincide con lo que reportan <xref ref-type="bibr" rid="ref15">Vázquez et al. (2020)</xref>. Sin embargo, nuestro estudio amplía este punto al resaltar que la interacción de factores fisiológicos, como la menopausia y la disminución de estrógenos, también juega un papel fundamental en la disminución del deseo sexual (<xref ref-type="bibr" rid="ref16\">Montero; Carnerero, 2016</xref>). Además, se identificaron patologías características de la vejez, como la hipertensión, diabetes, y problemas articulares, que afectan la sexualidad al generar dolor, fatiga y limitaciones en la movilidad, lo que puede llevar a la disminución de la frecuencia y satisfacción en la actividad sexual. Este hallazgo refuerza la necesidad de un enfoque integral en el tratamiento y atención de las disfunciones sexuales en la vejez, que combine aspectos emocionales, fisiológicos y el manejo adecuado de las enfermedades crónicas.</p>
-<p>Respecto a la autoestima e imagen corporal, se observó que los participantes priorizan la higiene personal, lo cual es consistente con estudios previos que destacan la importancia de la educación sanitaria a lo largo del ciclo vital (<xref ref-type="bibr" rid="ref17\">Albert Cuñat et al., 2000</xref>). Sin embargo, nuestro estudio aporta una dimensión afectiva al señalar cómo la preocupación por el autocuidado también se vincula con la posibilidad de establecer vínculos afectivos y de pareja en esta etapa.</p>
-<p>En relación con la educación sexual, se evidenció una importante brecha generacional. Las personas mayores no recibieron formación adecuada durante su juventud, lo que podría explicar una visión restringida de la sexualidad centrada en el coito. Aunque en décadas recientes se han impulsado iniciativas como las Orientaciones Técnicas para la Atención Integral de la Mujer en Edad de Climaterio (<xref ref-type="bibr" rid="ref8\">MINSAL, 2014</xref>), estas siguen estando enfocadas casi exclusivamente en mujeres. Nuestros hallazgos refuerzan la necesidad de extender estas políticas a varones y de incorporar una mirada más amplia de la sexualidad, integrando aspectos afectivos, identitarios y relacionales.</p>
-<p>Un hallazgo significativo es que muchas personas mayores que refieren no tener deseo sexual también declaran no tener pareja. Esto se alinea con lo reportado por <xref ref-type="bibr" rid="ref19\">Cremé Lobaina et al. (2017)</xref> y <xref ref-type="bibr" rid="ref20\">Pino Álvarez et al. (2022)</xref>, quienes señalan que el deseo sexual tiende a mantenerse más activo en personas con pareja estable. Además, se constata que las mujeres son más propensas a consultar por disfunciones sexuales, lo que podría vincularse a diferencias culturales respecto al cuidado de la salud. De hecho, según <xref ref-type="bibr" rid="ref21\">Acevedo Ayala y Bartolucci Konga (2019)</xref>, las principales disfunciones sexuales en hombres mayores son la disfunción eréctil, la eyaculación precoz y la eyaculación retardada, mientras que en mujeres predominan el trastorno del interés y excitación sexual y la dispareunia. Nuestro estudio refuerza este patrón, al identificar que los hombres consultan menos por estos temas, lo que subraya la necesidad de sensibilizar al personal sanitario sobre las diferencias de género en el abordaje y vivencia de la salud sexual en la vejez.</p>
-<p>En cuanto a la percepción social, los participantes consideran que su sexualidad es invisibilizada, siendo culturalmente asociada solo a la juventud (<xref ref-type="bibr" rid="ref3\">Llanes, 2013</xref>; <xref ref-type="bibr" rid="ref22\">Torres Mencía &amp; Rodríguez Martín, 2019</xref>). Esto sugiere que el personal sanitario, en particular las matronas/es, debe jugar un rol activo en la promoción de una visión integral de la sexualidad como parte del ciclo vital completo.</p>
-<p>Nuestros resultados también evidencian que la mayoría de los profesionales de salud no abordan el tema de la sexualidad a menos que el/la paciente lo mencione, situación ya advertida en investigaciones previas (<xref ref-type="bibr" rid="ref23\">Solway, 2018</xref>). Las razones incluyen la falta de tiempo en consulta, lo que se traduce en una atención centrada en lo biomédico. Por tanto, se recomienda generar instancias específicas —como talleres o atenciones programadas en CESFAM, urología, geriatría o medicina general— donde se aborde abiertamente la sexualidad de personas mayores, considerando sus necesidades particulares.</p>
+<p>En cuanto a la sexualidad, algunas mujeres atribuyen la falta de deseo sexual a un rol tradicional de cuidadora que desplaza el autocuidado, lo que coincide con lo que reportan <xref ref-type="bibr" rid="ref15">Vázquez et al. (2020)</xref>. Sin embargo, nuestro estudio amplía este punto al resaltar que la interacción de factores fisiológicos, como la menopausia y la disminución de estrógenos, también juega un papel fundamental en la disminución del deseo sexual (<xref ref-type="bibr" rid="ref16">Montero; Carnerero, 2016</xref>). Además, se identificaron patologías características de la vejez, como la hipertensión, diabetes, y problemas articulares, que afectan la sexualidad al generar dolor, fatiga y limitaciones en la movilidad, lo que puede llevar a la disminución de la frecuencia y satisfacción en la actividad sexual. Este hallazgo refuerza la necesidad de un enfoque integral en el tratamiento y atención de las disfunciones sexuales en la vejez, que combine aspectos emocionales, fisiológicos y el manejo adecuado de las enfermedades crónicas.</p>
+<p>Respecto a la autoestima e imagen corporal, se observó que los participantes priorizan la higiene personal, lo cual es consistente con estudios previos que destacan la importancia de la educación sanitaria a lo largo del ciclo vital (<xref ref-type="bibr" rid="ref17">Albert Cuñat et al., 2000</xref>). Sin embargo, nuestro estudio aporta una dimensión afectiva al señalar cómo la preocupación por el autocuidado también se vincula con la posibilidad de establecer vínculos afectivos y de pareja en esta etapa.</p>
+<p>En relación con la educación sexual, se evidenció una importante brecha generacional. Las personas mayores no recibieron formación adecuada durante su juventud, lo que podría explicar una visión restringida de la sexualidad centrada en el coito. Aunque en décadas recientes se han impulsado iniciativas como las Orientaciones Técnicas para la Atención Integral de la Mujer en Edad de Climaterio (<xref ref-type="bibr" rid="ref8">MINSAL, 2014</xref>), estas siguen estando enfocadas casi exclusivamente en mujeres. Nuestros hallazgos refuerzan la necesidad de extender estas políticas a varones y de incorporar una mirada más amplia de la sexualidad, integrando aspectos afectivos, identitarios y relacionales.</p>
+<p>Un hallazgo significativo es que muchas personas mayores que refieren no tener deseo sexual también declaran no tener pareja. Esto se alinea con lo reportado por <xref ref-type="bibr" rid="ref23">Cremé Lobaina et al. (2017)</xref> y <xref ref-type="bibr" rid="ref19">Pino Álvarez et al. (2022)</xref>, quienes señalan que el deseo sexual tiende a mantenerse más activo en personas con pareja estable. Además, se constata que las mujeres son más propensas a consultar por disfunciones sexuales, lo que podría vincularse a diferencias culturales respecto al cuidado de la salud. De hecho, según <xref ref-type="bibr" rid="ref20">Acevedo Ayala y Bartolucci Konga (2019)</xref>, las principales disfunciones sexuales en hombres mayores son la disfunción eréctil, la eyaculación precoz y la eyaculación retardada, mientras que en mujeres predominan el trastorno del interés y excitación sexual y la dispareunia. Nuestro estudio refuerza este patrón, al identificar que los hombres consultan menos por estos temas, lo que subraya la necesidad de sensibilizar al personal sanitario sobre las diferencias de género en el abordaje y vivencia de la salud sexual en la vejez.</p>
+<p>En cuanto a la percepción social, los participantes consideran que su sexualidad es invisibilizada, siendo culturalmente asociada solo a la juventud (<xref ref-type="bibr" rid="ref3">Llanes, 2013</xref>; <xref ref-type="bibr" rid="ref21">Torres Mencía &amp; Rodríguez Martín, 2019</xref>). Esto sugiere que el personal sanitario, en particular las matronas/es, debe jugar un rol activo en la promoción de una visión integral de la sexualidad como parte del ciclo vital completo.</p>
+<p>Nuestros resultados también evidencian que la mayoría de los profesionales de salud no abordan el tema de la sexualidad a menos que el/la paciente lo mencione, situación ya advertida en investigaciones previas (<xref ref-type="bibr" rid="ref22">Solway, 2018</xref>). Las razones incluyen la falta de tiempo en consulta, lo que se traduce en una atención centrada en lo biomédico. Por tanto, se recomienda generar instancias específicas —como talleres o atenciones programadas en CESFAM, urología, geriatría o medicina general— donde se aborde abiertamente la sexualidad de personas mayores, considerando sus necesidades particulares.</p>
 <p>Es esencial que el matrón o la matrona garanticen la educación sexual para toda la población, especialmente en la vejez, mediante talleres, charlas o consejerías en centros educativos o de salud. Esto debe realizarse bajo un enfoque de empoderamiento en salud, el cual busca fortalecer la autonomía, la confianza y la capacidad de autogestión en las decisiones relacionadas con el autocuidado. Para lograrlo, se requiere: acceso a información clara y equilibrada; herramientas que apoyen la toma de decisiones (como entrega de medicamentos, talleres o derivación oportuna); y una atención por parte de profesionales de salud empáticos, bien informados y dispuestos a escuchar, promoviendo un modelo de decisiones compartidas</p>
 </sec>
 <sec>
@@ -412,7 +450,7 @@ l
 <p>Otra limitación fue la posible distorsión relacional derivada de la diferencia etaria y la condición de externas de las investigadoras, lo que pudo haber condicionado la confianza y apertura de los entrevistados. Para minimizar este efecto, se sugiere una estancia más prolongada en el campo, que permita fortalecer el vínculo entre entrevistadoras y entrevistados y mejorar la credibilidad del proceso investigativo.</p>
 <p>Finalmente, los resultados están limitados al contexto de dos comunas de mediana y baja prioridad social, lo que restringe la transferibilidad de los hallazgos. Ampliar el muestreo a comunas con distintas características permitiría explorar posibles contrastes y enriquecer la comprensión del fenómeno estudiado. Además, se reconoce que el marco del estudio no incluyó directamente la visión del personal de salud, lo cual podría enriquecer los hallazgos en estudios posteriores.</p>
 </sec>
-<sec>
+<sec sec-type="conclusions">
 <title>Conclusiones</title>
 <p>Existe deseo y actividad sexual en la tercera edad, pero para potenciarla es crucial normalizar su existencia en la sociedad y proporcionar una adecuada información respecto a sexualidad, donde el rol educativo de los matrones y las matronas es primordial y se debe enfatizar a través de actividades de promoción y prevención de enfermedades e ITS y cambios fisiológicos, para lograr que las personas mayores se empoderen en la toma de decisiones.</p>
 <p>Debido a que las consejerías abordadas en la atención de climaterio no involucran a varones, la educación sexual debería entregarse en servicios donde su asistencia es mayor, como medicina, urología, o dentro de programas cardiovasculares.</p>
@@ -425,18 +463,120 @@ l
 <title>Agradecimientos</title>
 <p>Se agradece a los integrantes del Centro de Adulto Mayor de San Miguel e Independencia por su participación en el estudio.</p>
 </ack>
-<sec>
+<contrib-group>
 <title>Contribuciones</title>
-<p><bold>Conceptualización:</bold> Karina Hernández-Ferrer, Francisca Moreno-Rojas, Lorena Binfa-Esbir.</p>
-<p><bold>Investigación:</bold> Karina Hernández-Ferrer, Francisca Moreno-Rojas.</p>
-<p><bold>Metodología:</bold> Karina Hernández-Ferrer, Francisca Moreno-Rojas, Lorena Binfa-Esbir.</p>
-<p><bold>Administración del proyecto:</bold> Karina Hernández-Ferrer, Francisca Moreno-Rojas.</p>
-<p><bold>Recursos:</bold> Karina Hernández-Ferrer, Francisca Moreno-Rojas, Lorena Binfa-Esbir.</p>
-<p><bold>Supervisión:</bold> Lorena Binfa-Esbir.</p>
-<p><bold>Validación:</bold> Karina Hernández-Ferrer, Francisca Moreno-Rojas, Lorena Binfa-Esbir.</p>
-<p><bold>Redacción – borrador original:</bold> Karina Hernández-Ferrer, Francisca Moreno-Rojas, Lorena Binfa-Esbir.</p>
-<p><bold>Redacción – revisión y edición:</bold> Karina Hernández-Ferrer.</p>
-</sec>
+<contrib contrib-type="author">
+<role>Conceptualización</role>
+<name>
+<surname>Hernández-Ferrer</surname>
+<given-names>Karina</given-names>
+</name>
+<name>
+<surname>Moreno-Rojas</surname>
+<given-names>Francisca</given-names>
+</name>
+<name>
+<surname>Binfa-Esbir</surname>
+<given-names>Lorena</given-names>
+</name>
+</contrib>
+<contrib contrib-type="author">
+<role>Investigación</role>
+<name>
+<surname>Hernández-Ferrer</surname>
+<given-names>Karina</given-names>
+</name>
+<name>
+<surname>Moreno-Rojas</surname>
+<given-names>Francisca</given-names>
+</name>
+</contrib>
+<contrib contrib-type="author">
+<role>Metodología</role>
+<name>
+<surname>Hernández-Ferrer</surname>
+<given-names>Karina</given-names>
+</name>
+<name>
+<surname>Moreno-Rojas</surname>
+<given-names>Francisca</given-names>
+</name>
+<name>
+<surname>Binfa-Esbir</surname>
+<given-names>Lorena</given-names>
+</name>
+</contrib>
+<contrib contrib-type="author">
+<role>Administración del proyecto</role>
+<name>
+<surname>Hernández-Ferrer</surname>
+<given-names>Karina</given-names>
+</name>
+<name>
+<surname>Moreno-Rojas</surname>
+<given-names>Francisca</given-names>
+</name>
+</contrib>
+<contrib contrib-type="author">
+<role>Recursos</role>
+<name>
+<surname>Hernández-Ferrer</surname>
+<given-names>Karina</given-names>
+</name>
+<name>
+<surname>Moreno-Rojas</surname>
+<given-names>Francisca</given-names>
+</name>
+<name>
+<surname>Binfa-Esbir</surname>
+<given-names>Lorena</given-names>
+</name>
+</contrib>
+<contrib contrib-type="author">
+<role>Supervisión</role>
+<name>
+<surname>Binfa-Esbir</surname>
+<given-names>Lorena</given-names>
+</name>
+</contrib>
+<contrib contrib-type="author">
+<role>Validación</role>
+<name>
+<surname>Hernández-Ferrer</surname>
+<given-names>Karina</given-names>
+</name>
+<name>
+<surname>Moreno-Rojas</surname>
+<given-names>Francisca</given-names>
+</name>
+<name>
+<surname>Binfa-Esbir</surname>
+<given-names>Lorena</given-names>
+</name>
+</contrib>
+<contrib contrib-type="author">
+<role>Redacción – borrador original</role>
+<name>
+<surname>Hernández-Ferrer</surname>
+<given-names>Karina</given-names>
+</name>
+<name>
+<surname>Moreno-Rojas</surname>
+<given-names>Francisca</given-names>
+</name>
+<name>
+<surname>Binfa-Esbir</surname>
+<given-names>Lorena</given-names>
+</name>
+</contrib>
+<contrib contrib-type="author">
+<role>Redacción – revisión y edición</role>
+<name>
+<surname>Hernández-Ferrer</surname>
+<given-names>Karina</given-names>
+</name>
+</contrib>
+</contrib-group>
 <ref-list>
 <title>Bibliografía</title>
 <ref id="ref1">
@@ -446,8 +586,9 @@ l
 </person-group>
 <year>2018</year>
 <source>La salud sexual y su relación con la salud reproductiva: un enfoque operativo</source>
-<comment>[Citado el 19 de abril de 2023]</comment>
-<ext-link ext-link-type="uri" xlink:href="https://apps.who.int/iris/handle/10665/274656">https://apps.who.int/iris/handle/10665/274656</ext-link>
+<comment>
+[Citado el 19 de abril de 2023] <ext-link ext-link-type="uri" xlink:href="https://apps.who.int/iris/handle/10665/274656">https://apps.who.int/iris/handle/10665/274656</ext-link>
+</comment>
 </element-citation>
 </ref>
 <ref id="ref2">
@@ -517,10 +658,11 @@ l
 <ref id="ref6">
 <element-citation publication-type="webpage">
 <person-group person-group-type="author">
-<collab>Servicio nacional del adulto mayor [SENAMA]</collab>
+<collab>Servicio nacional del adulto mayor</collab>
 </person-group>
-<comment>[Citado el 09 de octubre de 2023]</comment>
-<ext-link ext-link-type="uri" xlink:href="https://www.senama.gob.cl/servicio-nacional-del-adulto-mayor#:~:text=La%20Ley%20N%C2%BA%2019.828%20que,las%20personas%20mayores%20del%20pa%C3%ADs">https://www.senama.gob.cl/servicio-nacional-del-adulto-mayor#:~:text=La%20Ley%20N%C2%BA%2019.828%20que,las%20personas%20mayores%20del%20pa%C3%ADs</ext-link>
+<comment>
+[Citado el 09 de octubre de 2023]. <ext-link ext-link-type="uri" xlink:href="https://www.senama.gob.cl/servicio-nacional-del-adulto-mayor#:~:text=La%20Ley%20N%C2%BA%2019.828%20que,las%20personas%20mayores%20del%20pa%C3%ADs">https://www.senama.gob.cl/servicio-nacional-del-adulto-mayor#:~:text=La%20Ley%20N%C2%BA%2019.828%20que,las%20personas%20mayores%20del%20pa%C3%ADs</ext-link>
+</comment>
 </element-citation>
 </ref>
 <ref id="ref7">
@@ -559,8 +701,9 @@ l
 <collab>Ministerio de desarrollo social y familia</collab>
 </person-group>
 <source>Centros diurnos del adulto Mayor</source>
-<comment>[Citado el 23 de agosto de 2023]</comment>
-<ext-link ext-link-type="uri" xlink:href="https://www.desarrollosocialyfamilia.gob.cl/programas-sociales/adultos-mayores/centros-diurnos-del-adulto-mayor">https://www.desarrollosocialyfamilia.gob.cl/programas-sociales/adultos-mayores/centros-diurnos-del-adulto-mayor</ext-link>
+<comment>
+[Citado el 23 de agosto de 2023]. <ext-link ext-link-type="uri" xlink:href="https://www.desarrollosocialyfamilia.gob.cl/programas-sociales/adultos-mayores/centros-diurnos-del-adulto-mayor">https://www.desarrollosocialyfamilia.gob.cl/programas-sociales/adultos-mayores/centros-diurnos-del-adulto-mayor</ext-link>
+</comment>
 </element-citation>
 </ref>
 <ref id="ref11">
@@ -733,23 +876,12 @@ l
 </person-group>
 <year>2018</year>
 <source>Educación sexual en Chile: Orientaciones para una política pública</source>
-<comment>[Citado el 13 de octubre de 2023]</comment>
-<ext-link ext-link-type="uri" xlink:href="https://media.elmostrador.cl/2020/07/INFORME-EIS-CHIL-E-junio-.pdf">https://media.elmostrador.cl/2020/07/INFORME-EIS-CHIL-E-junio-.pdf</ext-link>
+<comment>
+[Citado el 13 de octubre de 2023]. <ext-link ext-link-type="uri" xlink:href="https://media.elmostrador.cl/2020/07/INFORME-EIS-CHIL-E-junio-.pdf">https://media.elmostrador.cl/2020/07/INFORME-EIS-CHIL-E-junio-.pdf</ext-link>
+</comment>
 </element-citation>
 </ref>
 <ref id="ref19">
-<element-citation publication-type="journal">
-<person-group person-group-type="author">
-<name>
-<surname>Cremé Lobaina</surname>
-<given-names>E.</given-names>
-</name>
-</person-group>
-<year>2017</year>
-<comment>This citation appears in the text but is not in the bibliography. I will add it here based on the text.</comment>
-</element-citation>
-</ref>
-<ref id="ref20">
 <element-citation publication-type="journal">
 <person-group person-group-type="author">
 <name>
@@ -790,7 +922,7 @@ l
 <pub-id pub-id-type="doi">10.22370/revmat3.2021.304</pub-id>
 </element-citation>
 </ref>
-<ref id="ref21">
+<ref id="ref20">
 <element-citation publication-type="book">
 <person-group person-group-type="author">
 <name>
@@ -807,7 +939,7 @@ l
 <publisher-name>Facultad de Medicina, Universidad de Chile</publisher-name>
 </element-citation>
 </ref>
-<ref id="ref22">
+<ref id="ref21">
 <element-citation publication-type="journal">
 <person-group person-group-type="author">
 <name>
@@ -827,7 +959,7 @@ l
 <ext-link ext-link-type="uri" xlink:href="http://scielo.isciii.es/scielo.php?script=sci_arttext&amp;pid=S1135-57272019000100105&amp;lng=es&amp;tlng=es">http://scielo.isciii.es/scielo.php?script=sci_arttext&amp;pid=S1135-57272019000100105&amp;lng=es&amp;tlng=es</ext-link>
 </element-citation>
 </ref>
-<ref id="ref23">
+<ref id="ref22">
 <element-citation publication-type="webpage">
 <person-group person-group-type="author">
 <name>
@@ -837,8 +969,19 @@ l
 </person-group>
 <year>2018</year>
 <source>Let’s talk about sex</source>
-<comment>[Citado el 23 de septiembre de 2023]</comment>
-<ext-link ext-link-type="uri" xlink:href="http://hdl.handle.net/2027.42/143212">http://hdl.handle.net/2027.42/143212</ext-link>
+<comment>
+[Citado el 23 de septiembre de 2023]. <ext-link ext-link-type="uri" xlink:href="http://hdl.handle.net/2027.42/143212">http://hdl.handle.net/2027.42/143212</ext-link>
+</comment>
+</element-citation>
+</ref>
+<ref id="ref23">
+<element-citation publication-type="journal">
+<person-group person-group-type="author">
+<name>
+<surname>Cremé Lobaina</surname>
+</name>
+</person-group>
+<year>2017</year>
 </element-citation>
 </ref>
 </ref-list>

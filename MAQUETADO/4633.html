@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Percepción de académicas sobre la participación de los hombres en la crianza de los hijos durante la Pandemia</title>
+  <style>
+:root {
+  color-scheme: light;
+  --font-sans: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  --bg-body: #f3f4f6;
+  --bg-card: #ffffff;
+  --accent: #1f3d7a;
+  --accent-secondary: #2f4f8f;
+  --accent-soft: rgba(31, 61, 122, 0.12);
+  --accent-soft-alt: rgba(31, 61, 122, 0.08);
+  --border-soft: rgba(15, 23, 42, 0.14);
+  --text-main: #1f2937;
+  --text-muted: #374151;
+  --text-subtle: #4b5563;
+  --shadow-soft: 0 24px 48px -32px rgba(15, 23, 42, 0.35);
+  --radius-md: 18px;
+  --focus-ring: 0 0 0 3px rgba(31, 61, 122, 0.35);
+  --bg-soft: rgba(15, 23, 42, 0.04);
+  --header-bg: linear-gradient(135deg, #f9fafc, #eef1f7);
+}
+body[data-theme="dark"] {
+  color-scheme: dark;
+  --bg-body: #0b1220;
+  --bg-card: #121a2f;
+  --accent: #7aa2ff;
+  --accent-secondary: #90b4ff;
+  --accent-soft: rgba(122, 162, 255, 0.22);
+  --accent-soft-alt: rgba(122, 162, 255, 0.12);
+  --border-soft: rgba(148, 163, 184, 0.35);
+  --text-main: #e2e8f0;
+  --text-muted: #cbd5f5;
+  --text-subtle: #a5b4d1;
+  --shadow-soft: 0 28px 56px -32px rgba(0, 0, 0, 0.65);
+  --focus-ring: 0 0 0 3px rgba(122, 162, 255, 0.5);
+  --bg-soft: rgba(122, 162, 255, 0.12);
+  --header-bg: linear-gradient(135deg, #10182b, #131f36);
+}
+body[data-contrast="high"] {
+  --bg-body: #ffffff;
+  --bg-card: #ffffff;
+  --accent: #0b1120;
+  --accent-secondary: #1f2937;
+  --accent-soft: rgba(11, 17, 32, 0.12);
+  --accent-soft-alt: rgba(11, 17, 32, 0.08);
+  --border-soft: rgba(11, 17, 32, 0.35);
+  --text-main: #0b1120;
+  --text-muted: #111827;
+  --text-subtle: #1f2937;
+  --shadow-soft: none;
+  --focus-ring: 0 0 0 3px rgba(11, 17, 32, 0.4);
+  --bg-soft: rgba(11, 17, 32, 0.08);
+  --header-bg: linear-gradient(135deg, #ffffff, #e5e7eb);
+}
+body[data-theme="dark"][data-contrast="high"] {
+  --bg-body: #020817;
+  --bg-card: #061226;
+  --accent: #f3c969;
+  --accent-secondary: #f0d893;
+  --accent-soft: rgba(243, 201, 105, 0.28);
+  --accent-soft-alt: rgba(243, 201, 105, 0.18);
+  --border-soft: rgba(243, 201, 105, 0.5);
+  --text-main: #f8fafc;
+  --text-muted: #e2e8f0;
+  --text-subtle: #cbd5f5;
+  --focus-ring: 0 0 0 3px rgba(243, 201, 105, 0.55);
+  --bg-soft: rgba(243, 201, 105, 0.18);
+  --header-bg: linear-gradient(135deg, #0b172c, #152441);
+}
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--bg-body);
+  color: var(--text-main);
+  transition: background 0.25s ease, color 0.25s ease;
+  overflow-x: hidden;
+}
+body.sidebar-lock {
+  overflow: hidden;
+}
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover, a:focus {
+  text-decoration: underline;
+}
+a:focus-visible, button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+button {
+  font: inherit;
+}
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.app-header {
+  padding: clamp(20px, 4vw, 36px) clamp(16px, 5vw, 48px) 12px;
+  background: var(--bg-body);
+  margin-bottom: clamp(16px, 4vw, 32px);
+}
+.header-panel {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 960px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  padding: clamp(24px, 3vw, 40px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 2.5vw, 24px);
+}
+.branding {
+  flex: 1 1 auto;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+.branding h1 {
+  font-size: clamp(2rem, 2.8vw, 2.75rem);
+  margin: 0;
+  letter-spacing: -0.02em;
+  color: var(--text-main);
+}
+.branding .translated-title {
+  margin: 8px 0 0;
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  color: var(--text-subtle);
+}
+.control-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  width: 100%;
+  border-top: 1px solid var(--border-soft);
+  padding-top: clamp(12px, 2vw, 18px);
+}
+.control-bar button {
+  background: transparent;
+  border: 1px solid var(--border-soft);
+  color: var(--text-main);
+  padding: 10px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.control-bar button:hover {
+  transform: translateY(-1px);
+  background: var(--accent-soft);
+  box-shadow: var(--shadow-soft);
+}
+.control-bar button .state {
+  font-weight: 500;
+}
+.layout {
+  position: relative;
+  padding: 0 clamp(16px, 4vw, 56px) 48px;
+  flex: 1 1 auto;
+}
+.sidebar {
+  width: min(340px, 82vw);
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 0 24px 24px 0;
+  box-shadow: var(--shadow-soft);
+  padding: 28px 24px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow: hidden auto;
+  transform: translateX(-110%);
+  transition: transform 0.32s ease;
+  backdrop-filter: blur(22px);
+  z-index: 22;
+}
+body.sidebar-open .sidebar {
+  transform: translateX(0);
+}
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.sidebar-header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: var(--accent);
+}
+.sidebar-close {
+  background: transparent;
+  border: none;
+  color: var(--text-subtle);
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.sidebar .panel {
+  margin-top: 24px;
+}
+.sidebar .panel h3 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-subtle);
+}
+.toc ul, .meta-list, .keyword-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+.toc-item a {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  color: var(--text-main);
+  background: transparent;
+  transition: background 0.2s ease, transform 0.2s ease;
+  line-height: 1.35;
+  font-weight: 500;
+}
+.toc-item a:hover {
+  background: var(--accent-soft);
+  transform: translateX(4px);
+}
+.toc-marker {
+  display: none;
+}
+.toc-number {
+  font-weight: 600;
+  color: var(--text-main);
+  min-width: 3ch;
+  font-size: 1rem;
+  font-variant-numeric: lining-nums;
+}
+.toc-number:empty {
+  display: none;
+}
+.toc-title {
+  color: var(--text-main);
+}
+.toc-item.level-2 {
+  margin-left: 12px;
+}
+.toc-item.level-3 {
+  margin-left: 24px;
+}
+.toc-item.level-4 {
+  margin-left: 36px;
+}
+.toc-item.level-2 a {
+  font-size: 0.95rem;
+}
+.toc-item.level-3 a {
+  font-size: 0.9rem;
+}
+.toc-item.level-4 a {
+  font-size: 0.85rem;
+}
+.meta-list span {
+  font-weight: 600;
+  display: block;
+  color: var(--text-subtle);
+}
+.keyword-list {
+  flex-wrap: wrap;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+.keyword-list li {
+  background: var(--bg-soft);
+  color: var(--text-main);
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+}
+.main {
+  background: transparent;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+.surface {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  padding: clamp(24px, 3vw, 48px);
+  margin-bottom: 32px;
+}
+.surface h2, .surface h3, .surface h4, .surface h5, .surface h6 {
+  margin-top: 48px;
+  margin-bottom: 16px;
+  scroll-margin-top: 120px;
+}
+.article-body {
+  margin-bottom: 32px;
+}
+.section-grid {
+  display: grid;
+  gap: clamp(18px, 2.8vw, 32px);
+  grid-template-columns: minmax(0, 1fr);
+}
+.article-section {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.article-section.main-section {
+  border-left: 6px solid var(--accent);
+  padding-left: clamp(24px, 3vw, 36px);
+}
+.article-section.main-section:hover {
+  box-shadow: 0 24px 48px -36px rgba(31, 61, 122, 0.35);
+}
+.section-header {
+  display: flex;
+  align-items: baseline;
+}
+.section-heading {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-main);
+}
+.section-number {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--accent);
+  font-variant-numeric: lining-nums;
+  line-height: 1;
+}
+.section-title {
+  font-weight: 600;
+}
+.section-body {
+  display: grid;
+  gap: 16px;
+  margin-top: 12px;
+}
+.section-body p {
+  line-height: 1.75;
+  font-size: 1.03rem;
+  color: var(--text-muted);
+}
+.subsection-group {
+  display: grid;
+  gap: 16px;
+  margin-top: 20px;
+  padding-left: clamp(14px, 1.8vw, 22px);
+  border-left: 3px solid var(--accent-soft);
+}
+.article-section.subsection {
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+.article-section.subsection .section-header h3,
+.article-section.subsection .section-header h4,
+.article-section.subsection .section-header h5,
+.article-section.subsection .section-header h6 {
+  color: var(--text-main);
+}
+.article-section.subsection .section-number {
+  color: var(--text-subtle);
+  font-size: 0.95rem;
+}
+.article-section.subsection .section-body p {
+  font-size: 1rem;
+}
+.article-section.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+}
+.article-section.empty-state p {
+  margin: 0;
+  color: var(--text-subtle);
+  text-align: center;
+}
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+.meta-grid .item {
+  padding: 16px;
+  background: var(--bg-soft);
+  border-radius: 12px;
+}
+.meta-grid .label {
+  display: block;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-subtle);
+  margin-bottom: 6px;
+}
+.author-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+}
+.author {
+  padding: 18px;
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  background: var(--bg-soft);
+}
+.author-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.author-name {
+  font-weight: 600;
+  color: var(--text-main);
+}
+.author-name--corresponding {
+  color: var(--accent);
+}
+.author-corresponding {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent-secondary);
+  background: var(--accent-soft);
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+.author-affiliations {
+  color: var(--text-subtle);
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+}
+.author-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+.author-link-item {
+  display: inline-flex;
+}
+.author-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent-secondary);
+  font-weight: 500;
+}
+.author-link:hover {
+  text-decoration: underline;
+}
+.author-email--corresponding {
+  font-weight: 600;
+  color: var(--accent);
+}
+.abstract p {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--text-muted);
+}
+.panel {
+  margin-bottom: 32px;
+  padding: 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+}
+.media {
+  margin: 0 0 24px;
+  background: var(--bg-soft);
+  padding: 16px;
+  border-radius: 12px;
+}
+.media img {
+  max-width: 100%;
+  display: block;
+  border-radius: 12px;
+}
+.media-label {
+  font-weight: 600;
+  color: var(--text-subtle);
+  margin-right: 8px;
+}
+.table-wrap {
+  margin: 0 0 24px;
+  background: var(--bg-soft);
+  padding: 16px;
+  border-radius: 12px;
+}
+.table-scroll {
+  overflow-x: auto;
+  border-radius: 12px;
+}
+.table-scroll table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 480px;
+}
+.table-scroll th, .table-scroll td {
+  padding: 12px 16px;
+  border: 1px solid var(--border-soft);
+  text-align: left;
+}
+.reference-list {
+  list-style: decimal;
+  margin: 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 12px;
+}
+.reference-label {
+  font-weight: 600;
+  color: var(--text-subtle);
+  margin-right: 8px;
+}
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+  z-index: 18;
+}
+.sidebar-backdrop.visible {
+  opacity: 1;
+  visibility: visible;
+}
+.floating-button {
+  position: fixed;
+  right: clamp(16px, 4vw, 40px);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--accent);
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 24;
+}
+.floating-button .icon {
+  font-weight: 700;
+  font-size: 1rem;
+}
+.floating-button.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.floating-button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+.floating-top {
+  bottom: 108px;
+}
+.floating-menu {
+  bottom: 44px;
+}
+body[data-theme="dark"] .floating-button {
+  color: #0b1220;
+}
+@media (max-width: 720px) {
+  .app-header {
+    padding-inline: 16px;
+  }
+  .layout {
+    padding-inline: 16px;
+  }
+  .surface {
+    padding: 20px;
+  }
+  .control-bar {
+    flex-wrap: wrap;
+  }
+}
+</style>
+</head>
+<body data-theme="light" data-contrast="normal">
+  <div class="app">
+    <header class="app-header">
+      <div class="header-panel">
+        <div class="branding">
+          <h1>Percepción de académicas sobre la participación de los hombres en la crianza de los hijos durante la Pandemia</h1>
+          
+        </div>
+        <div class="control-bar">
+          <button id="sidebarToggle" type="button" class="sidebar-toggle" aria-label="Mostrar índice" aria-controls="sidebar" aria-expanded="false">
+            <span>Índice</span>
+          </button>
+          <button id="themeToggle" aria-label="Cambiar tema"><span>Modo</span><span class="state">Modo oscuro</span></button>
+          <button id="contrastToggle" aria-label="Cambiar contraste"><span>Contraste</span><span class="state">Alto contraste</span></button>
+        </div>
+      </div>
+    </header>
+    <div class="layout">
+      
+  <aside class="sidebar" id="sidebar" aria-label="Índice de contenido" aria-hidden="false">
+      <div class="sidebar-header">
+        <h2>Contenido</h2>
+        <button class="sidebar-close" id="sidebarClose" aria-label="Cerrar índice">✕</button>
+      </div>
+      <nav class="toc">
+        <ul>
+            <li class="toc-item level-1">
+              <a href="#sec-1">
+                <span class="toc-marker" aria-hidden="true"></span>
+                <span class="toc-number">1</span>
+                <span class="toc-title">INTRODUCCIÓN</span>
+              </a>
+            </li>
+            
+            <li class="toc-item level-1">
+              <a href="#sec-2">
+                <span class="toc-marker" aria-hidden="true"></span>
+                <span class="toc-number">2</span>
+                <span class="toc-title">MATERIAL Y MÉTODO</span>
+              </a>
+            </li>
+            
+            <li class="toc-item level-2">
+              <a href="#sec-1">
+                <span class="toc-marker" aria-hidden="true"></span>
+                <span class="toc-number">2.1</span>
+                <span class="toc-title">Lugar de estudio</span>
+              </a>
+            </li>
+            
+            <li class="toc-item level-2">
+              <a href="#sec-2">
+                <span class="toc-marker" aria-hidden="true"></span>
+                <span class="toc-number">2.2</span>
+                <span class="toc-title">Diseño</span>
+              </a>
+            </li>
+            
+            <li class="toc-item level-2">
+              <a href="#sec-3">
+                <span class="toc-marker" aria-hidden="true"></span>
+                <span class="toc-number">2.3</span>
+                <span class="toc-title">Población de estudio</span>
+              </a>
+            </li>
+            
+            <li class="toc-item level-2">
+              <a href="#sec-4">
+                <span class="toc-marker" aria-hidden="true"></span>
+                <span class="toc-number">2.4</span>
+                <span class="toc-title">Variables</span>
+              </a>
+            </li>
+            
+            <li class="toc-item level-2">
+              <a href="#sec-5">
+                <span class="toc-marker" aria-hidden="true"></span>
+                <span class="toc-number">2.5</span>
+                <span class="toc-title">Recolección de datos</span>
+              </a>
+            </li>
+            
+            <li class="toc-item level-2">
+              <a href="#sec-6">
+                <span class="toc-marker" aria-hidden="true"></span>
+                <span class="toc-number">2.6</span>
+                <span class="toc-title">Análisis de datos</span>
+              </a>
+            </li>
+            
+            <li class="toc-item level-1">
+              <a href="#sec-3">
+                <span class="toc-marker" aria-hidden="true"></span>
+                <span class="toc-number">3</span>
+                <span class="toc-title">RESULTADOS</span>
+              </a>
+            </li>
+            
+            <li class="toc-item level-2">
+              <a href="#sec-1">
+                <span class="toc-marker" aria-hidden="true"></span>
+                <span class="toc-number">3.1</span>
+                <span class="toc-title">Participantes</span>
+              </a>
+            </li>
+            
+            <li class="toc-item level-2">
+              <a href="#sec-2">
+                <span class="toc-marker" aria-hidden="true"></span>
+                <span class="toc-number">3.2</span>
+                <span class="toc-title">Conocimientos sobre sexualidad</span>
+              </a>
+            </li>
+            
+            <li class="toc-item level-2">
+              <a href="#sec-3">
+                <span class="toc-marker" aria-hidden="true"></span>
+                <span class="toc-number">3.3</span>
+                <span class="toc-title">Dinámica familiar durante la niñez</span>
+              </a>
+            </li>
+            
+            <li class="toc-item level-2">
+              <a href="#sec-4">
+                <span class="toc-marker" aria-hidden="true"></span>
+                <span class="toc-number">3.4</span>
+                <span class="toc-title">Ocupación y trabajo a distancia</span>
+              </a>
+            </li>
+            
+            <li class="toc-item level-2">
+              <a href="#sec-5">
+                <span class="toc-marker" aria-hidden="true"></span>
+                <span class="toc-number">3.5</span>
+                <span class="toc-title">Crianza</span>
+              </a>
+            </li>
+            
+            <li class="toc-item level-2">
+              <a href="#sec-6">
+                <span class="toc-marker" aria-hidden="true"></span>
+                <span class="toc-number">3.6</span>
+                <span class="toc-title">Actividades recreativas/ extraprogramáticas</span>
+              </a>
+            </li>
+            
+            <li class="toc-item level-2">
+              <a href="#sec-7">
+                <span class="toc-marker" aria-hidden="true"></span>
+                <span class="toc-number">3.7</span>
+                <span class="toc-title">Salud mental</span>
+              </a>
+            </li>
+            
+            <li class="toc-item level-1">
+              <a href="#sec-4">
+                <span class="toc-marker" aria-hidden="true"></span>
+                <span class="toc-number">4</span>
+                <span class="toc-title">DISCUSIÓN</span>
+              </a>
+            </li>
+            
+            <li class="toc-item level-1">
+              <a href="#sec-5">
+                <span class="toc-marker" aria-hidden="true"></span>
+                <span class="toc-number">5</span>
+                <span class="toc-title">CONCLUSIÓN</span>
+              </a>
+            </li>
+            </ul>
+      </nav>
+      <section class="panel meta">
+        <h3>Ficha técnica</h3>
+        <ul class="meta-list"><li>Información no disponible</li></ul>
+      </section>
+      
+    <section class="panel">
+      <h3>Palabras clave</h3>
+      <ul class="keyword-list"><li>mujer</li><li>trabajo</li><li>teletrabajo</li><li>crianza</li><li>roles de género</li><li>women</li><li>work</li><li>telework</li><li>childcare</li><li>gender roles</li></ul>
+    </section>
+    
+    </aside>
+    
+      <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+      <main class="main">
+        <section class="surface metadata">
+          <h2>Información general</h2>
+          <div class="meta-grid">
+            <div class="item"><span class="label">Fecha de publicación</span>Pendiente</div><div class="item"><span class="label">DOI</span>N/D</div>
+          </div>
+        </section>
+        
+  <section class="panel">
+    <h3>Autores</h3>
+    <ul class="author-list"><li class="author"><div class="author-header"><span class="author-name author-name--corresponding">Claudia Cornejo-Aravena</span><span class="author-corresponding">Autor de correspondencia</span></div><div class="author-affiliations">1Profesora Asistente del Departamento de Promoción de la Salud de la Mujer y el Recién Nacido, Facultad de Medicina, Universidad de Chile</div><div class="author-links"><span class="author-link-item"><a class="author-link author-orcid" href="https://orcid.org/0000-0002-0452-9011" target="_blank" rel="noopener">ORCID: 0000-0002-0452-9011</a></span><span class="author-link-item"><a class="author-link author-email author-email--corresponding" href="mailto:claudiacornejo@uchile.cl">Email: claudiacornejo@uchile.cl</a></span></div></li><li class="author"><div class="author-header"><span class="author-name">Catalina Aliste-Garate</span></div><div class="author-affiliations">2Matrona, Licenciada en Obstetricia y Puericultura, Universidad de Chile</div></li><li class="author"><div class="author-header"><span class="author-name">Silvana Arcos Olivos</span></div><div class="author-affiliations">2Matrona, Licenciada en Obstetricia y Puericultura, Universidad de Chile</div></li><li class="author"><div class="author-header"><span class="author-name">Francisco Bustamante-Tóncio</span></div><div class="author-affiliations">1Profesora Asistente del Departamento de Promoción de la Salud de la Mujer y el Recién Nacido, Facultad de Medicina, Universidad de Chile</div><div class="author-links"><span class="author-link-item"><a class="author-link author-orcid" href="https://orcid.org/0000-0001-8013-5359" target="_blank" rel="noopener">ORCID: 0000-0001-8013-5359</a></span></div></li></ul>
+  </section>
+  
+        
+        <section class="surface abstract">
+          <h2>Resumen</h2>
+          <p>El presente estudio explora la percepción de académicas sobre la participación de los hombres en la crianza de los hijos durante la pandemia.</p><p>La mayoría de las mujeres trabajadoras enfrenta discriminación laboral, falta de reconocimiento de derechos, autonomía limitada en la crianza de sus hijos y doble jornada laboral entre empleo y hogar, en contraste con los hombres. Aunque hay esfuerzos nacionales e internacionales por la igualdad, aún persisten brechas que limitan su autonomía y acceso a mejores condiciones laborales y oportunidades.</p><p>Se desarrolló un estudio cualitativo con enfoque fenomenológico, de tipo exploratorio. La recolección de datos se llevó a cabo mediante entrevistas semiestructuradas a ocho académicas, analizándose la información a través del análisis narrativo de contenido.</p><p>Si bien las participantes reconocen haber crecido en un modelo familiar tradicional, muchas de ellas han reproducido esta dinámica en sus propios hogares de manera implícita. La pandemia permitió visibilizar con mayor claridad las diferencias en los roles de cuidado, evidenciando que la responsabilidad principal sigue recayendo en las mujeres.</p><p>En conclusión, la crianza en familias nucleares refuerza roles de género aprendidos. Durante la pandemia, muchas mujeres asumieron más tareas, aumentando su estrés y evidenciando desigualdades, ya que la paternidad sigue viéndose como apoyo.</p>
+        </section>
+        
+        
+        <section class="article-body">
+          <div class="section-grid">
+            <section id="sec-1" class="article-section level-1 main-section surface"><header class="section-header"><h2 class="section-heading"><span class="section-number">1.</span><span class="section-title">INTRODUCCIÓN</span></h2></header><div class="section-body"><p>A lo largo de la historia, la capacidad y libertad de desarrollo personal que han adquirido las mujeres ha evolucionado en función de las necesidades sociales y del contexto histórico. En el pasado, la mujer era considerada un ser sin derechos ni voz que estaba destinado exclusivamente a las labores del hogar y a la crianza de los hijos. Sin embargo, la Revolución Industrial marcó un punto de inflexión, permitiendo que algunas mujeres se incorporaran al mercado laboral.</p><p>Este cambio fue impulsado por la necesidad de mantener la productividad de las empresas, especialmente cuando los hombres fueron llamados a la guerra, convirtiendo a las mujeres en las nuevas proveedoras del hogar (<a class="citation" href="#ref19" data-rid="ref19">Sandua, 2023</a>). No obstante, esta integración no estuvo exenta de controversia. En un mundo liderado por hombres, las mujeres trabajadoras continuaron enfrentando discriminación laboral, sin reconocimiento de sus derechos ni horarios de descanso o libertad para la crianza de sus hijos. Además, sus remuneraciones eran considerablemente inferiores a las de los hombres que realizaban las mismas tareas.</p><p>Un hito importante en la lucha por los derechos laborales de las mujeres ocurrió el 8 de marzo de 1857, cuando trabajadoras de fábricas textiles en Nueva York, Estados Unidos, se manifestaron exigiendo mejores condiciones laborales y la erradicación del trabajo infantil (<a class="citation" href="#ref19" data-rid="ref19">Sandua, 2023</a>). Otro suceso clave fue el incendio en la fábrica textil Triangle Shirtwaist, que cobró la vida de numerosas trabajadoras y marcó un punto de inflexión en la lucha por sus derechos (<a class="citation" href="#ref25" data-rid="ref25">El Periódico, 2023</a>).</p><p>En Chile, históricamente la mujer ha sido vista como ama de casa y esposa, relegada a labores domésticas y de crianza, manteniéndola en una posición de vulnerabilidad laboral y social (<a class="citation" href="#ref4" data-rid="ref4">Caamaño, 2010</a>).</p><p>La Organización Internacional del Trabajo (OIT) ha trabajado para regular estas situaciones a través de la ratificación de diversos convenios, entre los que destacan:</p><p>- Convenio C100 sobre igualdad de remuneración (1951). Establece que los empleadores deben otorgar salarios equitativos por la misma labor, sin distinción de género (<a class="citation" href="#ref7" data-rid="ref7">Mestre, 2019</a>).</p><p>- Convenio C111 sobre la discriminación en el empleo y la ocupación (1958). Prohíbe cualquier tipo de preferencia o exclusión basada en raza, sexo, religión, origen u opinión política (<a class="citation" href="#ref8" data-rid="ref8">Díaz, 2020</a>).</p><p>- Convenio C156 sobre trabajadores con responsabilidades familiares (1981). Busca garantizar la igualdad de oportunidades para trabajadores con hijos u otros familiares a su cargo, evitando la discriminación (<a class="citation" href="#ref8" data-rid="ref8">Díaz, 2020</a>).</p><p>- Convenio C003 sobre la protección de la maternidad (1919). Regula el derecho a descanso prenatal y postnatal, asegurando la estabilidad laboral y la protección económica de las gestantes (<a class="citation" href="#ref6" data-rid="ref6">Aldana, 2019</a>).</p><p>Si bien en los últimos años se ha impulsado el desarrollo de la mujer en distintos ámbitos, todavía persisten barreras que dificultan su crecimiento profesional. Por ejemplo, según la Comisión Económica para América Latina y el Caribe (CEPAL), en su informe especial sobre el COVID-19 N°9, la autonomía económica de las mujeres en la recuperación sostenible y con igualdad, la participación laboral femenina en 2020 fue del 46%, mientras que la de los hombres alcanzó el 69%. En comparación con el año previo a la pandemia, cuando la participación femenina era del 52%, se observa que muchas mujeres abandonaron el mercado laboral para dedicarse al cuidado del hogar (<a class="citation" href="#ref5" data-rid="ref5">CEPAL, 2021</a>).</p><p>En Chile, el Instituto Nacional de Estadísticas (INE), en su boletín Género y empleo: impacto de la crisis económica por COVID-19, reportó que durante los meses más críticos del confinamiento, la tasa de empleo femenina cayó al 41,2%, mientras que la masculina se mantuvo en 62,7%, evidenciando un aumento en la brecha de género (<a class="citation" href="#ref12" data-rid="ref12">INE, 2021</a>).</p><p>A partir de lo anteriormente mencionado, el objetivo de este estudio fue explorar la percepción de las académicas de la Escuela de Obstetricia y Puericultura de la Universidad de Chile sobre la participación de los hombres en la crianza de los hijos durante la pandemia de COVID-19. Se considera que estas mujeres eran trabajadoras remuneradas que debieron compatibilizar sus roles laborales con el cuidado de sus hijos y familias en el mismo espacio físico durante el confinamiento, generando un impacto de la pandemia en la distribución de roles de género en la crianza de los hijos, así como también visualizar la influencia de las condiciones de confinamiento para conciliar las responsabilidades laborales y familiares en un contexto de crisis sanitaria y fomentar la corresponsabilidad en la crianza.</p></div></section><section id="sec-2" class="article-section level-1 main-section surface"><header class="section-header"><h2 class="section-heading"><span class="section-number">2.</span><span class="section-title">MATERIAL Y MÉTODO</span></h2></header><div class="subsection-group"><section id="sec-1" class="article-section level-2 subsection"><header class="section-header"><h3 class="section-heading"><span class="section-number">2.1.</span><span class="section-title">Lugar de estudio</span></h3></header><div class="section-body"><p>Se realizó en la Facultad de Medicina de la Universidad de Chile, en la Región Metropolitana, durante el período 2022-2023.</p></div></section><section id="sec-2" class="article-section level-2 subsection"><header class="section-header"><h3 class="section-heading"><span class="section-number">2.2.</span><span class="section-title">Diseño</span></h3></header><div class="section-body"><p>Se adoptó un enfoque cualitativo, con paradigma fenomenológico con una metodología de carácter exploratoria, cuyo propósito fue indagar en las diversas perspectivas y experiencias relacionadas con un mismo fenómeno, utilizándose el paradigma interpretativo (<a class="citation" href="#ref10" data-rid="ref10">Da Silva, 2006</a>).</p></div></section><section id="sec-3" class="article-section level-2 subsection"><header class="section-header"><h3 class="section-heading"><span class="section-number">2.3.</span><span class="section-title">Población de estudio</span></h3></header><div class="section-body"><p>Para la selección de las participantes, se envió una invitación por correo electrónico detallando los criterios de inclusión, los cuales fueron: ser académica de la Facultad de Medicina de la Universidad de Chile, ser madre de niños y haber trabajado a distancia desde el hogar familiar entre 2020 y 2022, tener hijos entre 4 y 15 años con clases en modalidad online, contar con la participación del padre en la crianza del niño durante la pandemia.</p><p>Se excluyeron a las mujeres cuyos hijos hubieran estado al cuidado de terceras personas (familiares, tutores legales o cuidadores contratados).</p></div></section><section id="sec-4" class="article-section level-2 subsection"><header class="section-header"><h3 class="section-heading"><span class="section-number">2.4.</span><span class="section-title">Variables</span></h3></header><div class="section-body"><p>Las variables que guiaron la realización de las entrevistas incluyeron: conocimientos en sexualidad, dinámica familiar durante la infancia, trabajo a distancia, crianza en pandemia, actividades recreativas, salud física y mental.</p></div></section><section id="sec-5" class="article-section level-2 subsection"><header class="section-header"><h3 class="section-heading"><span class="section-number">2.5.</span><span class="section-title">Recolección de datos</span></h3></header><div class="section-body"><p>Las investigadoras diseñaron una pauta de entrevista individual semiestructurada, la cual fue revisada por dos expertos en investigación y por el Comité de Ética de Seres Humanos de la Facultad de Medicina de la Universidad de Chile. A cada participante se le solicitó la lectura y firma de un consentimiento informado para resguardar la voluntariedad de participación. Las entrevistas se realizaron mediante la plataforma Hangouts Meet de Google, lo que permitió su desarrollo independiente del contexto sanitario del país.</p><p>El estudio fue aprobado por el Comité de Ética de Seres Humanos de la Facultad de Medicina de la Universidad de Chile (N° 054-2022), en conformidad con las normas vigentes de la Asociación Médica Mundial y la Declaración de Helsinki (<a class="citation" href="#ref15" data-rid="ref15">Manzini, 2000</a>).</p><p>Para resguardar la confidencialidad, los nombres de las entrevistadas se reemplazaron por códigos, y al finalizar la investigación se eliminaron los registros de audio y documentos escritos.</p></div></section><section id="sec-6" class="article-section level-2 subsection"><header class="section-header"><h3 class="section-heading"><span class="section-number">2.6.</span><span class="section-title">Análisis de datos</span></h3></header><div class="section-body"><p>Se utilizó la técnica de análisis narrativo del contenido, que permite examinar directamente las entrevistas y extraer su significado, generando categorías y subcategorías de forma independiente por las integrantes del equipo para favorecer la triangulación de los datos. La información se analizó de manera continua para generar interpretaciones con una mayor integración de los datos obtenidos, sin la utilización de software o programa.</p></div></section></div></section><section id="sec-3" class="article-section level-1 main-section surface"><header class="section-header"><h2 class="section-heading"><span class="section-number">3.</span><span class="section-title">RESULTADOS</span></h2></header><div class="subsection-group"><section id="sec-1" class="article-section level-2 subsection"><header class="section-header"><h3 class="section-heading"><span class="section-number">3.1.</span><span class="section-title">Participantes</span></h3></header><div class="section-body"><p>La muestra estuvo compuesta por 8 académicas de la Escuela de Obstetricia y Puericultura de la Universidad de Chile. Las características generales de las participantes del estudio se encuentran en la Tabla 1 presentada a continuación.</p></div></section><section id="sec-2" class="article-section level-2 subsection"><header class="section-header"><h3 class="section-heading"><span class="section-number">3.2.</span><span class="section-title">Conocimientos sobre sexualidad</span></h3></header><div class="section-body"><p>En cuanto a conceptos sobre sexualidad, se observa que las respuestas son muy personales y tienen relación con las vivencias de las participantes.</p><p>“Los roles que se atribuyen socialmente” (M1S1.2)</p><p>“El género es un constructo social que nos determina finalmente las cosas o las actividades que tenemos que hacer hombres y mujeres” (M2S1.2)</p><p>Respecto a los estereotipos de género, se visualiza la perpetuación de estos impuestos durante la etapa escolar.</p><p>“En el colegio a mi como mujer me enseñaron a cocinar, tejer, bordar, a mi hermano le enseñaron a usar herramientas … a los hombres no se les permitía entrar a la cocina” (M6S1.2)</p></div></section><section id="sec-3" class="article-section level-2 subsection"><header class="section-header"><h3 class="section-heading"><span class="section-number">3.3.</span><span class="section-title">Dinámica familiar durante la niñez</span></h3></header><div class="section-body"><p>Al ser consultadas por cómo eran las relaciones familiares durante su infancia, se exponen casos medianamente similares, un padre trabajador con perfil de proveedor y una madre dueña de casa.</p><p>“... Mi papá llegaba muy tarde … los fines de semana salíamos. Con mi mamá no recuerdo actividades puntuales, ya que éramos 4 y era difícil hacer una actividad con una sola”. (M1S1.2)</p><p>“Mi mamá supervisaba las tareas … ella cocinaba, ella nos servía el almuerzo, lavaba”. (M6S1.3)</p><p>Las entrevistadas exponen tener recuerdos recreativos asociados a la figura paterna, mientras que con la figura materna se compartían actividades relacionadas al quehacer doméstico.</p><p>“Mi mamá estaba más a cargo de actividades del hogar y mi papá lo recreativo”. (M3S1.3)</p><p>En cuanto a la relación entre hermanos, existe una percepción de diferencias en la exigencia o realización de actividades.</p><p>“...Conmigo fueron super restrictivos, en cambio con mi hermano fueron super permisivos, su justificación era que a mí me podía pasar algo y me debía cuidar”. (M3S1.3)</p><p>A pesar de que en general la dinámica familiar era similar en todas las entrevistadas, surge un relato en el cual la dinámica familiar y los estereotipos impuestos por la sociedad, eran totalmente distintos.</p><p>“Mi mamá tenía muy integrado esto de no estereotipar. Lo que no pasaba con mi abuela, por ejemplo, porque como siempre nos quedábamos con ella yo y mi primo cuando éramos más chicos (...) ella hacía diferencia”. (M8S1.3)</p></div></section><section id="sec-4" class="article-section level-2 subsection"><header class="section-header"><h3 class="section-heading"><span class="section-number">3.4.</span><span class="section-title">Ocupación y trabajo a distancia</span></h3></header><div class="section-body"><p>Respecto a este tema, surgieron respuestas diversas, se expuso que no existió mayores complicaciones al momento de gestionar el ámbito laboral con las clases online de su hijo.</p><p>“No se vio muy afectada ya que era media jornada”. (M1S2.2)</p><p>Sin embargo, también surge que se produjeron dificultades para coordinar todas las responsabilidades, teniendo que modificar horarios laborales para poder prestar atención a las clases.</p><p>“Fue súper complicado porque mi marido también es profesor universitario entonces estábamos igual los dos super demandados, … entonces con paciencia trabajando hasta tarde, ... porque había que darle prioridad también a todo el tema académico de los niños”. (M2S2.2)</p><p>“Yo recuerdo haber estado hasta las 9 de la noche trabajando, si no alcanzas en el horario hasta las 5 se hacía fuera de horario no más.” (M6S2.1)</p><p>Profundizando en cómo se compatibiliza las labores domésticas con el teletrabajo, aparece lo complejo que puede ser cumplir con ambas tareas al mismo tiempo y cómo puede afectar a la salud.</p><p>“Yo sentía que no podía seguir con el trabajo, el orden de la casa, las cosas de los chiquillos y más los estudios, así que ahí pedí ayuda teniendo terapia psicosocial y farmacológica” (M7S2.2)</p><p>Un tópico que surge durante la investigación es que compatibilizar la crianza con el crecimiento personal es sumamente difícil, muchas veces teniendo que elegir la crianza por sobre el trabajo o actividades personales.</p><p>“Cuando dicen que se puede compatibilizar la maternidad, la crianza con el crecimiento laboral, no es así, o sea si tú me haces elegir entre mi magister o mis hijos, prefiero a mis hijos, o sea no se valora la crianza” (M4S2.2)</p></div></section><section id="sec-5" class="article-section level-2 subsection"><header class="section-header"><h3 class="section-heading"><span class="section-number">3.5.</span><span class="section-title">Crianza</span></h3></header><div class="section-body"><p>En general, las entrevistadas concordaron que, durante el tiempo de cuarentena, tenían que estar más pendiente de las clases y actividades del colegio, ya que eran de forma remota.</p><p>“Había que recordarle y estar pendiente de que no se metiera en otras cosas”. (M1S3.1)</p><p>Las madres que tienen hijos adolescentes reflexionan en que ellos no necesitaban tanta inspección para que se conectaran a sus clases virtuales.</p><p>“Los dos son super responsables, entonces más que decirles “oye conéctate” era lo contrario, “oye desconéctate, no pueden estar todo el día en la pieza”.” (M7S3.1)</p><p>Respecto a si los niños contaban con los implementos para las clases online, se concluye que había hogares que contaban con los implementos necesarios para realizar las conexiones a clases, mientras que en otras se producía todo lo contrario y tenían que compartir equipos.</p><p>“Al principio tuvimos que compartir (...), tuvimos que comprar 2 computadores finalmente para que pudiéramos tener los cuatro un computador”. (M2S3.1)</p><p>“Si lo mío era una reunión yo me podía conectar con el celular, pero si mi hija tenía la clase entonces ella debía tener computador… El que tiene siempre más seguro el computador era mi hijo mayor”. (M2S3.1)</p><p>En razón a la percepción de las entrevistadas sobre la crianza del padre de sus hijos, las afirmaciones fueron distintas entre las participantes, dejando entrever distintos tipos de participación de los padres.</p><p>“(...) yo creo que con suerte sabe que va en 8vo. Si bien lo ve los fines de semana, no se preocupa de las tareas”. (M1S3.2)</p><p>“Está basado en el respeto, el cariño, en la comprensión y en las risas porque él es super divertido, es bueno para tirar bromas, los tira para arriba, … tiene como muy claro su norte entonces como que si los niños se desvían siempre los vuelve al camino”. (M2S3.2)</p><p>“A pesar de que mi esposo, obviamente por su carrera gana mucho más que yo, tiene un trabajo mucho más estable al final igual tiene ese rol como masculino de la sociedad de proveedor, pero no quita que se involucre en la crianza”. (M8S3.2)</p></div></section><section id="sec-6" class="article-section level-2 subsection"><header class="section-header"><h3 class="section-heading"><span class="section-number">3.6.</span><span class="section-title">Actividades recreativas/ extraprogramáticas</span></h3></header><div class="section-body"><p>En general las participantes del estudio buscan distintas actividades de distracción para cambiar la rutina diaria. Las actividades de esparcimiento, no necesariamente resultaron ser actividades realizadas de manera individual, sino, que también realizadas en conjunto con sus familias.</p><p>“A veces hago pilates, yoga, pero no otra ocupación”. (M1S4.1)</p><p>“Así como continua o que la pueda seguir siempre, no. Esporádicamente salgo a andar en bicicleta, caminar”. (M2S4.1)</p><p>“Yo practico deporte, hago bicicleta o aeróbica, tengo planes, pero cuando llegó la pandemia fue difícil de sostener” (M7.S4.1)</p><p>Se pudo extraer de las entrevistas que algunas destinaban este tiempo para realizar actividades de perfeccionamiento profesional, sin embargo, era dificultoso poder coordinar el estudio con la dinámica familiar.</p><p>“Cuando empezó la pandemia estaba estudiando, haciendo un magister y estaba en proceso de tesis, el segundo año colapsé … estuve con terapia psicológica”. (M7S4.1)</p><p>“Estoy estudiando de manera vespertina”. (M1S4.1)</p></div></section><section id="sec-7" class="article-section level-2 subsection"><header class="section-header"><h3 class="section-heading"><span class="section-number">3.7.</span><span class="section-title">Salud mental</span></h3></header><div class="section-body"><p>Al indagar sobre este tema, se afirmó que el proceso vivido durante la cuarentena fue más estresante, con carga laboral y emocional constante, lo que llevó a posponer su salud física y mental, ya que el tiempo no alcanzaba y la salud propia era la última de las prioridades.</p><p>“...Afectó mi salud mental, definitivamente porque uno trata de cumplir… pero eso iba a costillas de mí misma pues, de mi salud. Me encantaría volver a andar en bicicleta, … tengo que hacerlo para estar mejor también física y mentalmente” (M2S4.2)</p><p>“No comía, no dormía, no alcanzaba a hacer el aseo, a cocinar, entonces colapsé. Pedí hora con psiquiatra y me dieron licencia 15 días, porque era demasiada carga mental…” (M4S4.2)</p><p>“… La concentración también se vio afectada. Me encontraba más lábil emocionalmente. Tenía como esa sensación de hastío, que ya no quería más “(M6S4.2)</p><p>“prioricé el trabajo y la casa, lo personal se vio afectado, o sea subí mucho de peso, estaba super estresada, dejé de hacer actividad física, andaba irritada…” (M7S4.2)</p></div></section></div></section><section id="sec-4" class="article-section level-1 main-section surface"><header class="section-header"><h2 class="section-heading"><span class="section-number">4.</span><span class="section-title">DISCUSIÓN</span></h2></header><div class="section-body"><p>El objetivo de esta investigación fue explorar la percepción de las académicas de la Escuela de Obstetricia y Puericultura de la Universidad de Chile sobre la participación de los hombres en la crianza de los hijos durante la pandemia de Covid-19 en el periodo 2022-2023. Para ello, se llevó a cabo un análisis de los resultados obtenidos en diversos ámbitos relacionados con la crianza y la distribución de roles en el hogar.</p><p>Uno de los principales hallazgos se relaciona con el conocimiento sobre sexualidad, el cual está influenciado tanto por la educación recibida en la infancia como por la formación profesional de las participantes. Sus definiciones personales coinciden con las descritas en la guía del Ministerio de la Mujer y la Equidad de Género, que señala que las desigualdades surgen a partir de los roles socioculturalmente asignados a cada sexo (<a class="citation" href="#ref17" data-rid="ref17">Ministerio de la Mujer y la Equidad de Género, 2020</a>; <a class="citation" href="#ref21" data-rid="ref21">Liliana, 2017</a>). Asimismo, la manera en que abordan estos conceptos está estrechamente relacionada con sus vivencias personales, en línea con lo expuesto por <a class="citation" href="#ref23" data-rid="ref23">Vargas et al. (2020)</a> quien menciona que la percepción propia influye significativamente en la forma en que hombres y mujeres se desenvuelven en la sociedad desde la infancia y perpetúan los roles de género.</p><p>Los resultados indican que las entrevistadas crecieron en estructuras familiares de carácter patriarcal, en las que el padre asumía el rol de principal proveedor económico, mientras que la madre se encargaba del hogar y del cuidado de los hijos. Esta organización responde a lo descrito en la literatura, donde se destaca que las mujeres han estado históricamente relegadas al ámbito privado, desempeñando labores domésticas y de crianza, mientras que los hombres han ocupado espacios en el ámbito público como proveedores del hogar (<a class="citation" href="#ref20" data-rid="ref20">Smaldone, 2017</a>; <a class="citation" href="#ref11" data-rid="ref11">Ferreyra, 2021</a>)</p><p>Si bien las participantes reconocen haber crecido en un modelo familiar tradicional, en muchos casos han replicado esta dinámica en sus propios hogares de manera implícita. La pandemia permitió visibilizar con mayor claridad esta distribución de roles: mientras que las académicas debían simultáneamente encargarse de sus responsabilidades laborales, las tareas domésticas y la educación de sus hijos, sus parejas mantuvieron principalmente el rol de proveedores sin asumir una carga equitativa en la crianza y el hogar, por tanto, con una participación menor o de ayuda al rol principal asumido por ellas.</p><p>La gestión del hogar no fue experimentada de la misma manera por todas las participantes. Algunas lograron organizarse eficientemente para cumplir con todas sus responsabilidades, mientras que otras enfrentaron dificultades para conciliar el trabajo académico con el hogar y la educación de sus hijos. La edad de los niños también influyó significativamente en la carga asumida por las madres, pues aquellos en etapas escolares requerían mayor apoyo durante las clases en línea.</p><p>Este fenómeno ha sido documentado por la <a class="citation" href="#ref5" data-rid="ref5">CEPAL (2021)</a>, señalando que la pandemia impactó negativamente en las condiciones laborales de las mujeres, obligando a muchas a retirarse del mercado laboral debido al cierre de colegios y jardines infantiles. Al mismo tiempo, en Chile reportó un aumento en el número de mujeres que dejaron de trabajar para asumir el cuidado de sus hijos y las tareas del hogar (<a class="citation" href="#ref12" data-rid="ref12">INE, 2021</a>).</p><p>La literatura sobre el impacto de la pandemia en las mujeres ha puesto énfasis en la carga doméstica y el abandono del empleo, pero rara vez aborda las implicancias en el crecimiento personal y profesional. En este estudio, se observó que muchas entrevistadas debieron posponer o abandonar sus estudios y proyectos de desarrollo profesional debido a la falta de tiempo.</p><p>En términos de crianza, los resultados revelan que las académicas reproducen patrones vividos en su niñez, asumiendo la gestión operativa del hogar y la crianza, mientras que sus parejas continúan desempeñando principalmente el rol de sostenedores económicos. A pesar de que el modelo tradicional de paternidad ha evolucionado, la participación de los hombres en la crianza sigue siendo periférica, característica de los llamados &quot;padres ayudantes pasivos&quot;, según lo descrito por <a class="citation" href="#ref22" data-rid="ref22">Valdés (2009)</a>.</p><p>Otro de los efectos observados durante la pandemia fue la afectación en el aprendizaje de los hijos: la falta de acceso a dispositivos electrónicos y la imposibilidad de asistir presencialmente a la escuela generaron dificultades académicas. Las entrevistadas reportaron una disminución en el rendimiento escolar de sus hijos, fenómeno que ha sido corroborado por el Ministerio de Educación al comparar los resultados del SIMCE y la PAES pre y post Covid-19 (<a class="citation" href="#ref16" data-rid="ref16">MINEDUC, 2023</a>). Además, se observó que la brecha de género en los resultados académicos se amplió, afectando principalmente a las niñas, quienes asumieron un rol más activo en la ayuda con las tareas domésticas (<a class="citation" href="#ref18" data-rid="ref18">Ponce et al., 2020</a>).</p><p>En relación con las actividades de esparcimiento, se identificó que las académicas intentaban destinar tiempo a la práctica de deportes u otras actividades personales, pero la continuidad de estas rutinas dependía de su disponibilidad de tiempo. La necesidad de equilibrar su jornada laboral, las responsabilidades del hogar y la crianza las obligaba a priorizar otras tareas sobre su propio bienestar. Esta dificultad también se extendía a su desarrollo profesional, ya que muchas se vieron en la disyuntiva de elegir entre dedicarse al trabajo, la maternidad o su crecimiento personal y académico. La literatura confirma que las mujeres enfrentan múltiples obstáculos para desarrollar su autonomía debido a estas dinámicas (<a class="citation" href="#ref11" data-rid="ref11">Ferreyra, 2021</a>; <a class="citation" href="#ref14" data-rid="ref14">Llanes &amp; Pacheco, 2021</a>).</p><p>Finalmente, la sobrecarga a la que estuvieron expuestas las entrevistadas durante la pandemia generó altos niveles de estrés y desgaste físico y emocional. En algunos casos, estas situaciones derivaron en la necesidad de atención psicológica o licencias médicas. Investigaciones internacionales han evidenciado que la paternidad en contexto de pandemia ha sido una fuente importante de estrés, afectando principalmente a las mujeres debido a la multifuncionalidad que se les exige (<a class="citation" href="#ref2" data-rid="ref2">Almeida, 2020</a>; <a class="citation" href="#ref1" data-rid="ref1">Aguiar, 2023</a>; <a class="citation" href="#ref3" data-rid="ref3">Batthyány et al., 2022</a>).</p><p>Como hallazgo emergente, se identificó que la falta de interacción presencial con sus compañeros de escuela afectó emocionalmente a los hijos e hijas de las participantes, experimentando altos niveles de estrés y dificultades para gestionar sus emociones, lo que en ciertos casos requirió apoyo psicológico. Estos efectos han sido documentados en estudios previos que han analizado el impacto emocional del confinamiento en niños y adolescentes (<a class="citation" href="#ref24" data-rid="ref24">Wang et al., 2020</a>; <a class="citation" href="#ref13" data-rid="ref13">Jiao et al., 2020</a>).</p><p>Los resultados de este estudio reflejan que, si bien la pandemia puso en evidencia la desigual distribución de responsabilidades en el hogar, también representó una oportunidad para reflexionar sobre la necesidad de una mayor equidad en la crianza y las labores domésticas. La sobrecarga experimentada por las mujeres académicas refuerza la importancia de avanzar en políticas que promuevan la corresponsabilidad parental y laboral, con el fin de generar cambios estructurales en la dinámica familiar y profesional.</p></div></section><section id="sec-5" class="article-section level-1 main-section surface"><header class="section-header"><h2 class="section-heading"><span class="section-number">5.</span><span class="section-title">CONCLUSIÓN</span></h2></header><div class="section-body"><p>Al analizar los resultados de esta investigación se observa que la crianza en familias nucleares está estrechamente relacionada con la perpetuación de patrones aprendidos en la infancia. La asignación de roles no es una cualidad innata, sino un proceso que se configura a lo largo de la vida y puede modificarse con el tiempo.</p><p>La reorganización de la dinámica familiar durante la pandemia llevó a que muchas mujeres asumieran múltiples tareas, lo que incrementó los niveles de estrés y agotamiento. Esta situación evidenció la persistencia de desigualdades de género, ya que las mujeres perciben que la participación de los hombres en la crianza sigue siendo menor y se concibe más como un acto de apoyo o ayuda, en lugar de un rol compartido de manera equitativa entre ambos. Por ello, es fundamental seguir trabajando para reducir la brecha de género en la distribución de responsabilidades familiares.</p><p>Entre las limitaciones del estudio, se identificó la dificultad para realizar entrevistas debido a la escasa disponibilidad de tiempo de las participantes, lo cual coincide con los resultados obtenidos.</p><p>A partir de estos hallazgos, surgen nuevas líneas de investigación, como el impacto de la pandemia en la salud mental de las mujeres, el rendimiento escolar en el contexto postpandemia y la participación en actividades recreativas durante la crisis sanitaria, entre otros.</p></div></section>
+          </div>
+        </section>
+        
+        
+        
+    <section class="panel" id="tables">
+      <h3>Tablas</h3>
+      
+            <figure id="t_1" class="table-wrap">
+              <figcaption><span class="media-label">Tabla 1</span> Características de las entrevistadas</figcaption>
+              <div class="table-scroll">
+                <table><tr><td>Características</td><td>Alternativas</td><td>Número de entrevistados</td></tr><tr><td>Edad</td><td>Menores de 35 años Mayores de 35 años</td><td>0 8</td></tr><tr><td>Previsión</td><td>Fonasa Isapre</td><td>3 5</td></tr><tr><td>Hijos</td><td>1 – 2 3 &gt;3</td><td>7 0 1</td></tr><tr><td>Pareja</td><td>Si No</td><td>7 1</td></tr></table>
+              </div>
+            </figure>
+            
+    </section>
+    
+        
+    <section class="panel" id="references">
+      <h3>Referencias</h3>
+      <ol class="reference-list"><li id="ref1">AguiarS. F. B. D.OliveiraF. B. D.HryniewiczL. G. C.Sant&#x27;AnnaA. D. S.2023Teletrabajo y mujeres: percepciones del equilibrio entre la vida profesional y familiarCadernos EBAPE. BR2083685010.1590/1679-395120210244</li><li id="ref2">AlmeidaM.ShresthaA. D.StojanacD.MillerL. J.2020The impact of the COVID-19 pandemic on women’s mental healthArchives of women&#x27;s mental health2374174810.1007/s00737-020-01092-2</li><li id="ref3">BatthyányKarinaKatzkowiczSharonScavino-SolariSol2022Género y teletrabajo: El caso de las trabajadoras del programa Uruguay Crece ContigoPsicoperspectivas2139210410.5027/psicoperspectivas-vol21-issue3-fulltext-2600</li><li id="ref4">Caamaño RojoEduardo2010Mujer y trabajo: origen y ocaso del modelo del padre proveedor y la madre cuidadoraRevista de derecho (Valparaíso)3417920910.4067/S0718-68512010000100005</li><li id="ref5">CEPAL, N.2021La autonomía económica de las mujeres en la recuperación sostenible y con igualdadCEPAL</li><li id="ref6">AldanaR. K. A.2019Convenio sobre la protección de la maternidad, 1919 (núm. 3)Relaciones Laborales y Derecho del Empleo<a class="external-link" href="https://ejcls.adapt.it/index.php/rlde_adapt/article/view/736" target="_blank" rel="noopener">https://ejcls.adapt.it/index.php/rlde_adapt/article/view/736</a></li><li id="ref7">MestreJ. M. R.2019Convenio sobre igualdad de remuneración, 1951 (núm. 100)Relaciones Laborales y Derecho del Empleo<a class="external-link" href="https://ejcls.adapt.it/index.php/rlde_adapt/article/view/725" target="_blank" rel="noopener">https://ejcls.adapt.it/index.php/rlde_adapt/article/view/725</a></li><li id="ref8">DiazJ.2020X - Aplicación de las normas internacionales del trabajo, 2020 - Informe de la Comisión de ExpertosInternational Labour OrganisationSwitzerland<a class="external-link" href="https://coilink.org/20.500.12592/z612jmk" target="_blank" rel="noopener">https://coilink.org/20.500.12592/z612jmk</a></li><li id="ref10">Da SilvaM. R. F.2006Introducción a las técnicas cualitativas de investigación aplicadas en salud: cursos GRAAL 5168Univ. Autònoma de Barcelona</li><li id="ref11">Ferreyra BeltránM. C.2021Desigualdades y brechas de género en tiempos de pandemiaCentro de Investigaciones Interdisciplinarias en Ciencias y Humanidades, UNAM</li><li id="ref12">INEmarzo2021Género y empleo: impacto de la crisis económica por COVID-19, boletín informativo<a class="external-link" href="https://www.ine.gob.cl/docs/default-source/genero/documentos-de-an%C3%A1lisis/documentos/g%C3%A9nero-y-empleo-impacto-de-la-crisis-econ%C3%B3mica-por-covid19.pdf" target="_blank" rel="noopener">https://www.ine.gob.cl/docs/default-source/genero/documentos-de-an%C3%A1lisis/documentos/g%C3%A9nero-y-empleo-impacto-de-la-crisis-econ%C3%B3mica-por-covid19.pdf</a></li><li id="ref13">JiaoW. Y.WangL. N.LiuJ.FangS. F.JiaoF. Y.Pettoello-MantovaniM.SomekhE.2020Behavioral and emotional disorders in children during the COVID-19 epidemicThe Journal of Pediatrics22126426610.1016/j.jpeds.2020.03.013</li><li id="ref14">Llanes DíazNathalyPacheco Gómez MuñozEdith2021Maternidad y trabajo no remunerado en el contexto del Covid-19Revista mexicana de sociología83spe619210.22201/iis.01882503p.2021.0.60069</li><li id="ref15">ManziniJorge Luis2000DECLARACIÓN DE HELSINKI: PRINCIPIOS ÉTICOS PARA LA INVESTIGACIÓN MÉDICA SOBRE SUJETOS HUMANOSActa bioethica6232133410.4067/S1726-569X2000000200010</li><li id="ref16">MINEDUC15junio2023Resultados del Simce 2022<a class="external-link" href="https://www.mineduc.cl/resultados-del-simce-2022/" target="_blank" rel="noopener">https://www.mineduc.cl/resultados-del-simce-2022/</a></li><li id="ref17">Ministerio de la mujer y la equidad de género2020Corresponsabilidad en los hogares<a class="external-link" href="https://minmujeryeg.gob.cl/wp-content/uploads/2020/11/GUIA-CORRESPONSABILIDAD.pdf" target="_blank" rel="noopener">https://minmujeryeg.gob.cl/wp-content/uploads/2020/11/GUIA-CORRESPONSABILIDAD.pdf</a></li><li id="ref18">PonceT.BelleiC.VielmaC.2020Experiencias educativas en casa de niñas y niños durante la pandemia COVID-19<a class="external-link" href="https://www.ciperchile.cl/wp-content/uploads/CIAE-EXP-EDU-final.pdf" target="_blank" rel="noopener">https://www.ciperchile.cl/wp-content/uploads/CIAE-EXP-EDU-final.pdf</a></li><li id="ref19">SanduaD.2023Los albores del feminismoAmazon Digital Services LLC – KdpLa evolución del feminismo y la lucha por la igualdad de género2138Independently Published</li><li id="ref20">SmaldoneM.2017La dicotomía público/privado, las mujeres y el trabajo doméstico&quot; invisible&quot;XI Seminário Internacional Fazendo Gênero y XIII Women’s Worlds CongressFlorianópolis, Brasil30 de julio al 4 de agosto de 2017<a class="external-link" href="http://sedici.unlp.edu.ar/handle/10915/111625" target="_blank" rel="noopener">http://sedici.unlp.edu.ar/handle/10915/111625</a></li><li id="ref21">LilianaH.2017Comunicación, infancia y adolescencia: Guía para periodistas<a class="external-link" href="https://repositorio.dpe.gob.ec/handle/39000/2740" target="_blank" rel="noopener">https://repositorio.dpe.gob.ec/handle/39000/2740</a></li><li id="ref22">ValdésX.2009El lugar que habita el padre en Chile contemporáneo. Estudio de las representaciones sobre la paternidad en distintos grupos socialesPolis. Revista Latinoamericana23<a class="external-link" href="http://journals.openedition.org/polis/1859" target="_blank" rel="noopener">http://journals.openedition.org/polis/1859</a></li><li id="ref23">VargasC.LutzM.PapuzinskiC.ArancibiaM.2020Género, mujeres e investigación científicaMedwave200210.5867/medwave.2020.02.7857</li><li id="ref24">WangG.ZhangY.ZhaoJ.ZhangJ.JiangF.2020Mitigate the effects of home confinement on children during the COVID-19 outbreakThe Lancet3951022894594710.1016/S0140-6736(20)30547-X</li><li id="ref25">El Periódico2023Incendio en la fábrica textil Triangle Shirtwaist</li></ol>
+    </section>
+    
+      </main>
+    </div>
+    <button id="scrollTopButton" class="floating-button floating-top" type="button" aria-label="Volver al inicio">
+      <span class="icon" aria-hidden="true">&uarr;</span>
+      <span class="label">Arriba</span>
+    </button>
+    <button id="floatingMenuButton" class="floating-button floating-menu" type="button" aria-label="Mostrar índice flotante" aria-controls="sidebar" aria-expanded="false">
+      <span class="icon" aria-hidden="true">&#9776;</span>
+      <span class="label">Índice</span>
+    </button>
+  </div>
+  <script>
+(function () {
+  const body = document.body;
+  const themeToggle = document.getElementById('themeToggle');
+  const contrastToggle = document.getElementById('contrastToggle');
+  const sidebarToggle = document.getElementById('sidebarToggle');
+  const sidebar = document.getElementById('sidebar');
+  const sidebarClose = document.getElementById('sidebarClose');
+  const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+  const scrollTopButton = document.getElementById('scrollTopButton');
+  const floatingMenuButton = document.getElementById('floatingMenuButton');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const storedTheme = localStorage.getItem('jats-theme');
+  const storedContrast = localStorage.getItem('jats-contrast');
+
+  function applyTheme(theme) {
+    body.setAttribute('data-theme', theme);
+    localStorage.setItem('jats-theme', theme);
+    if (themeToggle) {
+      themeToggle.querySelector('span.state').textContent = theme === 'dark' ? 'Modo claro' : 'Modo oscuro';
+    }
+  }
+
+  function applyContrast(contrast) {
+    body.setAttribute('data-contrast', contrast);
+    localStorage.setItem('jats-contrast', contrast);
+    if (contrastToggle) {
+      contrastToggle.querySelector('span.state').textContent = contrast === 'high' ? 'Contraste normal' : 'Alto contraste';
+    }
+  }
+
+  applyTheme(storedTheme || (prefersDark ? 'dark' : 'light'));
+  applyContrast(storedContrast || 'normal');
+
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const current = body.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  if (contrastToggle) {
+    contrastToggle.addEventListener('click', () => {
+      const current = body.getAttribute('data-contrast') === 'high' ? 'high' : 'normal';
+      applyContrast(current === 'high' ? 'normal' : 'high');
+    });
+  }
+
+  function updateSidebarAria(isOpen) {
+    sidebarToggle?.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    sidebar?.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+    floatingMenuButton?.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  }
+
+  function openSidebar() {
+    if (!sidebar) {
+      return;
+    }
+    body.classList.add('sidebar-open', 'sidebar-lock');
+    sidebarBackdrop?.classList.add('visible');
+    updateSidebarAria(true);
+  }
+
+  function closeSidebar() {
+    if (!sidebar) {
+      return;
+    }
+    body.classList.remove('sidebar-open');
+    setTimeout(() => body.classList.remove('sidebar-lock'), 250);
+    sidebarBackdrop?.classList.remove('visible');
+    updateSidebarAria(false);
+  }
+
+  updateSidebarAria(false);
+
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', () => {
+      if (body.classList.contains('sidebar-open')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
+    });
+  }
+
+  sidebarClose?.addEventListener('click', closeSidebar);
+  sidebarBackdrop?.addEventListener('click', closeSidebar);
+
+  window.addEventListener('keyup', (event) => {
+    if (event.key === 'Escape') {
+      closeSidebar();
+    }
+  });
+
+  const tocLinks = sidebar?.querySelectorAll('.toc a') || [];
+  tocLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+      closeSidebar();
+    });
+  });
+
+  scrollTopButton?.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  if (floatingMenuButton) {
+    floatingMenuButton.addEventListener('click', () => {
+      if (body.classList.contains('sidebar-open')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
+    });
+  }
+
+  function handleScroll() {
+    const shouldShow = window.scrollY > 240;
+    if (scrollTopButton) {
+      scrollTopButton.classList.toggle('visible', shouldShow);
+    }
+    if (floatingMenuButton) {
+      floatingMenuButton.classList.toggle('visible', shouldShow);
+    }
+  }
+
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  handleScroll();
+})();
+</script>
+</body>
+</html>

@@ -127,7 +127,12 @@ def construir_prompt_avanzado(texto_articulo: str) -> str:
 
     INSTRUCCIONES Y MEJORES PRÁCTICAS:
     1.  **Estructura General:** Raíz `<article>` con `xmlns:xlink="http://www.w3.org/1999/xlink"` y `xml:lang="es"`. Debe contener `<front>`, `<body>`, y `<back>`.
-    2.  **Sección <front>:** Etiqueta `<article-title>`, `<contrib-group>` para autores (`<given-names>`, `<surname>`), `<abstract>`, y `<kwd-group>`.
+    2.  **Sección <front>:**
+        *   Incluye `<article-title>` y, si está disponible en el texto, `<article-id pub-id-type="doi">`.
+        *   En `<contrib-group>` declara cada autor con `<contrib contrib-type="author">`, colocando al inicio los superíndices (`<xref ref-type="aff" rid="affX">X</xref>`) que apunten a sus afiliaciones.
+        *   Crea un `<aff>` por cada filiación, con `id` (`aff1`, `aff2`, ...) y un `<label>` numérico que coincida con los superíndices.
+    *   Si el autor cuenta con correo electrónico, añádelo dentro del `<contrib>` como `<email>autor@dominio</email>`. Marca al responsable de correspondencia con `corresp="yes"`, coloca un `<xref ref-type="corresp" rid="cor1">*</xref>` al inicio, y registra el dato en `<author-notes><corresp id="cor1"><email>...</email></corresp></author-notes>`.
+        *   Mantén `<abstract>` y `<kwd-group>` como en la especificación original.
     3.  **Sección <body>:**
         *   Usa `<sec>` para secciones con un `<title>`. Los párrafos deben ir en `<p>`.
         *   **Referencias en el cuerpo:** Identifica citas bibliográficas en formato numérico (Vancouver: `1`, `[1]`, `1-3`, etc.) y en formato autor-fecha (APA: `(Apellido, 2020)`, `(Apellido & Otro, 2019)`, etc.). Normaliza la cita reemplazando el texto original por elementos `<xref ref-type="bibr" rid="ID_DE_REFERENCIA">`. El contenido textual del `<xref>` debe reflejar el estilo original (por ejemplo, `[1]` o `(Apellido, 2020)`). Cada `<xref>` debe apuntar al `id` del `<ref>` correspondiente en la sección de bibliografía.

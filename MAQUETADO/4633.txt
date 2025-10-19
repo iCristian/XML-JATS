@@ -1,0 +1,147 @@
+[2025-10-19 13:40:30] Inicio de proceso para entrada: /Users/usuario/Library/CloudStorage/OneDrive-SharedLibraries-uv.cl/REVISTA MATRONERÍA ACTUAL - Documentos/MAQUETACIÓN/2025/21 - 4633-AO/4633 COMPLETO.docx salida: 4633.xml
+[2025-10-19 13:40:30] Paso 1/5: Procesando para extraer contenido estructurado...
+[2025-10-19 13:40:30] Paso 2/5: Construyendo prompt avanzado para Gemini...
+[2025-10-19 13:40:30] Paso 3/5: Invocando a la IA de Gemini para la conversión (esto puede tardar)...
+[2025-10-19 13:42:57] Gemini returncode: 0 Elapsed: 146.60s
+[2025-10-19 13:42:57] Gemini stderr: Loaded cached credentials.
+[2025-10-19 13:42:57] Paso 4/5: Validando el XML generado contra el DTD de JATS...
+[2025-10-19 13:42:58] --- ADVERTENCIA: La validación del XML falló. ---
+[2025-10-19 13:42:58] El archivo se guardará, pero necesita correcciones manuales.
+[2025-10-19 13:42:58] Errores encontrados:
+[2025-10-19 13:42:58] - Fallo en la descarga del DTD: HTTP Error 404: Not Found
+[2025-10-19 13:42:58] Paso 5/5: Guardando el resultado...
+[2025-10-19 13:42:58] Resumen de tokens de Gemini:
+[2025-10-19 13:42:58] - No se encontró información de tokens en la salida de Gemini.
+[2025-10-19 13:42:58] --- TEXTO CRUDO DE GEMINI ---
+[2025-10-19 13:42:58] Loaded cached credentials.
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<article xmlns:xlink="http://www.w3.org/1999/xlink" xml:lang="es">
+  <front>
+    <journal-meta>
+      <journal-title-group>
+        <journal-title>REVISTA MATRONERÍA ACTUAL</journal-title>
+      </journal-title-group>
+      <issn pub-type="epub">0719-8785</issn>
+      <publisher>
+        <publisher-name>Universidad de Chile</publisher-name>
+      </publisher>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="doi"/>
+      <article-categories>
+        <subj-group subj-group-type="heading">
+          <subject>Artículos Originales</subject>
+        </subj-group>
+      </article-categories>
+      <title-group>
+        <article-title>Percepción de académicas sobre la participación de los hombres en la crianza de los hijos durante la Pandemia</article-title>
+        <trans-title-group xml:lang="en">
+          <trans-title>Perception of female academics on men's involvement in child-rearing during the Pandemic</trans-title>
+        </trans-title-group>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author" corresp="yes">
+          <xref ref-type="corresp" rid="cor1">*</xref>
+          <name>
+            <surname>Cornejo-Aravena</surname>
+            <given-names>Claudia</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1"/>
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0000-0002-0452-9011</contrib-id>
+          <email>claudiacornejo@uchile.cl</email>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Aliste-Garate</surname>
+            <given-names>Catalina</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff2"/>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Arcos Olivos</surname>
+            <given-names>Silvana</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff2"/>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Bustamante-Tóncio</surname>
+            <given-names>Francisco</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1"/>
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0000-0001-8013-5359</contrib-id>
+        </contrib>
+      </contrib-group>
+      <aff id="aff1">
+        <label>1</label>
+        <institution content-type="original">Profesora Asistente del Departamento de Promoción de la Salud de la Mujer y el Recién Nacido, Facultad de Medicina, Universidad de Chile</institution>
+      </aff>
+      <aff id="aff2">
+        <label>2</label>
+        <institution content-type="original">Matrona, Licenciada en Obstetricia y Puericultura, Universidad de Chile</institution>
+      </aff>
+      <author-notes>
+        <corresp id="cor1">
+          <label>*</label>
+          <email>claudiacornejo@uchile.cl</email>
+        </corresp>
+        <fn fn-type="other">
+          <p>El presente artículo deriva de una tesis de pregrado para obtener el Título de Matrona.</p>
+        </fn>
+      </author-notes>
+      <pub-date pub-type="epub-ppub">
+        <season>2023</season>
+      </pub-date>
+      <abstract>
+        <title>Resumen</title>
+        <p>El presente estudio explora la percepción de académicas sobre la participación de los hombres en la crianza de los hijos durante la pandemia.</p>
+        <p>La mayoría de las mujeres trabajadoras enfrenta discriminación laboral, falta de reconocimiento de derechos, autonomía limitada en la crianza de sus hijos y doble jornada laboral entre empleo y hogar, en contraste con los hombres. Aunque hay esfuerzos nacionales e internacionales por la igualdad, aún persisten brechas que limitan su autonomía y acceso a mejores condiciones laborales y oportunidades.</p>
+        <p>Se desarrolló un estudio cualitativo con enfoque fenomenológico, de tipo exploratorio. La recolección de datos se llevó a cabo mediante entrevistas semiestructuradas a ocho académicas, analizándose la información a través del análisis narrativo de contenido.</p>
+        <p>Si bien las participantes reconocen haber crecido en un modelo familiar tradicional, muchas de ellas han reproducido esta dinámica en sus propios hogares de manera implícita. La pandemia permitió visibilizar con mayor claridad las diferencias en los roles de cuidado, evidenciando que la responsabilidad principal sigue recayendo en las mujeres.</p>
+        <p>En conclusión, la crianza en familias nucleares refuerza roles de género aprendidos. Durante la pandemia, muchas mujeres asumieron más tareas, aumentando su estrés y evidenciando desigualdades, ya que la paternidad sigue viéndose como apoyo.</p>
+      </abstract>
+      <kwd-group>
+        <title>Palabras clave</title>
+        <kwd>mujer</kwd>
+        <kwd>trabajo</kwd>
+        <kwd>teletrabajo</kwd>
+        <kwd>crianza</kwd>
+        <kwd>roles de género</kwd>
+      </kwd-group>
+      <trans-abstract xml:lang="en">
+        <title>ABSTRACT</title>
+        <p>The present study explores academics' perceptions of men's participation in raising children during the pandemic.</p>
+        <p>Working women face discrimination at work, lack of recognition of rights, limited autonomy in raising their children, and double working hours between work and home, in contrast to men. Although there are national and international efforts for equality, gaps persist that limit their autonomy and access to better working conditions and opportunities.</p>
+        <p>Qualitative study was developed using a phenomenological, exploratory approach. Data was collected through semi-structured interviews with eight academics, and the information was analyzed through narrative content analysis.</p>
+        <p>Although the participants acknowledge having grown up in a traditional family model, many of them have implicitly reproduced this dynamic in their own homes. The pandemic made it possible to make the differences in care roles more clearly visible, showing that the main responsibility continues to fall on women.</p>
+        <p>In conclusion, growing up in nuclear families reinforces learned gender roles. During the pandemic, many women took on more tasks, increasing their stress and evidencing inequalities, since parenthood continues to be seen as support.</p>
+      </trans-abstract>
+      <kwd-group xml:lang="en">
+        <title>Keywords</title>
+        <kwd>women</kwd>
+        <kwd>work</kwd>
+        <kwd>telework</kwd>
+        <kwd>childcare</kwd>
+        <kwd>gender roles</kwd>
+      </kwd-group>
+      <counts>
+        <p>Recuento de palabras del resumen: 198 palabras</p>
+        <p>Recuento de palabras del cuerpo del manuscrito, excluidas la bibliografía y las tablas: 3753 palabras</p>
+      </counts>
+    </article-meta>
+  </front>
+  <body>
+    <sec>
+      <title>INTRODUCCIÓN</title>
+      <p>A lo largo de la historia, la capacidad y libertad de desarrollo personal que han adquirido las mujeres ha evolucionado en función de las necesidades sociales y del contexto histórico. En el pasado, la mujer era considerada un ser sin derechos ni voz que estaba destinado exclusivamente a las labores del hogar y a la crianza de los hijos. Sin embargo, la Revolución Industrial marcó un punto de inflexión, permitiendo que algunas mujeres se incorporaran al mercado laboral.</p>
+      <p>Este cambio fue impulsado por la necesidad de mantener la productividad de las empresas, especialmente cuando los hombres fueron llamados a la guerra, convirtiendo a las mujeres en las nuevas proveedoras del hogar (<xref ref-type="bibr" rid="ref19">Sandua, 2023</xref>). No obstante, esta integración no estuvo exenta de controversia. En un mundo liderado por hombres, las mujeres trabajadoras continuaron enfrentando discriminación laboral, sin reconocimiento de sus derechos ni horarios de descanso o libertad para la crianza de sus hijos. Además, sus remuneraciones eran considerablemente inferiores a las de los hombres que realizaban las mismas tareas.</p>
+      <p>Un hito importante en la lucha por los derechos laborales de las mujeres ocurrió el 8 de marzo de 1857, cuando trabajadoras de fábricas textiles en Nueva York, Estados Unidos, se manifestaron exigiendo mejores condiciones laborales y la erradicación del trabajo infantil (<xref ref-type="bibr" rid="ref19">Sandua, 2023</xref>). Otro suceso clave fue el incendio en la fábrica textil Triangle Shirtwaist, que cobró la vida de numerosas trabajadoras y marcó un punto de inflexión en la lucha por sus derechos (<xref ref-type="bibr" rid="ref25">El Periódico, 2023</xref>).</p>
+      <p>En Chile, históricamente la mujer ha sido vista como ama de casa y esposa, relegada a labores domésticas y de crianza, manteniéndola en una posición de vulnerabilidad laboral y social (<xref ref-type="bibr" rid="ref4">Caamaño, 2010</xref>).</p>
+      <p>La Organización Internacional del Trabajo (OIT) ha trabajado para regular estas situaciones a través de la ratificación de diversos convenios, entre los que destacan:</p>
+      <p>- Convenio C100 sobre igualdad de remuneración (1951). Establece que los empleadores deben otorgar salarios equitativos por la misma labor, sin distinción de género (<xref ref-type="bibr" rid="ref7">Mestre, 2019</xref>).</p>
+      <p>- Convenio C111 sobre la discriminación en el empleo y la ocupación (1958). Prohíbe cualquier tipo de preferencia o exclusión basada en raza, sexo, religión, origen u opinión política (<xref ref-type="bibr" rid="ref8">Díaz, 2020</xref>).</p>
+      <p>- Convenio C156 sobre trabajadores con responsabilidades familiares (1981). Busca garantizar la igualdad de oportunidades para trabajadores con hijos u otros familiares a su cargo, evitando la discriminación (<xref ref-type="bibr" rid="ref8">Díaz, 2020</xref>).</p>
+      <p>- Convenio C003 sobre la protección de la maternidad (1919). Regula el derecho a descanso prenatal y postnatal, asegurando la estabilidad laboral y la protección económica de
+[2025-10-19 13:42:58] Proceso completado.
