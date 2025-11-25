@@ -31,14 +31,17 @@ import sys
 import time
 import urllib.request
 from datetime import datetime
+from pathlib import Path
 
 from docx import Document
 from lxml import etree
 
 # --- Constantes ---
 DTD_URL = "https://jats.nlm.nih.gov/publishing/1.3/JATS-publishing-1-3.dtd"
-DTD_LOCAL_FILE = "JATS-publishing-1-3.dtd"
-IMAGE_OUTPUT_DIR = "imagenes_extraidas"
+WORKSPACE_ROOT = Path(__file__).resolve().parent
+DTD_FILENAME = "JATS-publishing-1-3.dtd"
+DTD_LOCAL_FILE = WORKSPACE_ROOT / DTD_FILENAME
+IMAGE_OUTPUT_DIR = WORKSPACE_ROOT / "imagenes_extraidas"
 
 
 def extraer_contenido_estructurado(docx_path: str) -> str:
@@ -60,8 +63,7 @@ def extraer_contenido_estructurado(docx_path: str) -> str:
         image_counter = 1
 
         # Crear directorio para imágenes si no existe
-        if not os.path.exists(IMAGE_OUTPUT_DIR):
-            os.makedirs(IMAGE_OUTPUT_DIR)
+        IMAGE_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
         # Usamos un iterador para procesar elementos del cuerpo (párrafos y tablas)
         for element in doc.element.body:
@@ -78,7 +80,7 @@ def extraer_contenido_estructurado(docx_path: str) -> str:
                         
                         # Guardar la imagen
                         image_filename = f"imagen_{image_counter}.{image_part.content_type.split('/')[-1]}"
-                        image_path = os.path.join(IMAGE_OUTPUT_DIR, image_filename)
+                        image_path = IMAGE_OUTPUT_DIR / image_filename
                         with open(image_path, "wb") as f:
                             f.write(image_part.blob)
                         
@@ -186,37 +188,64 @@ def construir_prompt_avanzado(texto_articulo: str) -> str:
     return prompt
 
 
-def invocar_gemini_cli(prompt: str) -> dict:
-    """
-    Invoca la CLI de Gemini pasando el prompt y devuelve un dict con:
-      - stdout (str)
-      - stderr (str)
-      - returncode (int)
-      - elapsed (float) segundos
-    """
-    try:
-        # Usar -p/--prompt para pasar el prompt y -o text para salida en texto.
-        command = ["gemini", "-p", prompt, "-o", "text"]
-        start = time.time()
-        result = subprocess.run(
-            command, capture_output=True, text=True,
-            check=False, encoding='utf-8'
-        )
-        elapsed = time.time() - start
-        return {
-            'stdout': result.stdout.strip() if result.stdout else '',
-            'stderr': result.stderr.strip() if result.stderr else '',
-            'returncode': result.returncode,
-            'elapsed': elapsed
-        }
-    except FileNotFoundError:
-        msg = "Error: El comando 'gemini' no se encontró."
-        print(msg, file=sys.stderr)
-        return {'stdout': '', 'stderr': msg, 'returncode': 127, 'elapsed': 0.0}
-    except Exception as e:
-        msg = f"Error inesperado al invocar a Gemini: {e}"
-        print(msg, file=sys.stderr)
-        return {'stdout': '', 'stderr': msg, 'returncode': 1, 'elapsed': 0.0}
+def _should_retry_gemini(stderr: str, stdout: str) -> bool:
+    combined = f"{stderr}\n{stdout}".lower()
+    retry_tokens = (
+        "429",
+        "ratelimit",
+        "resource has been exhausted",
+        "resource exhausted",
+        "error when talking to gemini api",
+    )
+    return any(token in combined for token in retry_tokens)
+
+
+def invocar_gemini_cli(prompt: str, max_attempts: int = 3, base_backoff: int = 20) -> dict:
+    """Invoca la CLI de Gemini con reintentos controlados y devuelve metadatos de la ejecución."""
+
+    command = ["gemini", "-p", prompt, "-o", "text"]
+    last_result: dict = {'stdout': '', 'stderr': '', 'returncode': 1, 'elapsed': 0.0}
+
+    for attempt in range(1, max_attempts + 1):
+        try:
+            start = time.time()
+            result = subprocess.run(
+                command,
+                capture_output=True,
+                text=True,
+                check=False,
+                encoding="utf-8",
+                cwd=str(WORKSPACE_ROOT),
+            )
+            elapsed = time.time() - start
+        except FileNotFoundError:
+            msg = "Error: El comando 'gemini' no se encontró."
+            print(msg, file=sys.stderr)
+            return {'stdout': '', 'stderr': msg, 'returncode': 127, 'elapsed': 0.0}
+        except Exception as exc:
+            msg = f"Error inesperado al invocar a Gemini: {exc}"
+            print(msg, file=sys.stderr)
+            return {'stdout': '', 'stderr': msg, 'returncode': 1, 'elapsed': 0.0}
+
+        stdout = result.stdout.strip() if result.stdout else ''
+        stderr = result.stderr.strip() if result.stderr else ''
+        last_result = {'stdout': stdout, 'stderr': stderr, 'returncode': result.returncode, 'elapsed': elapsed}
+
+        if stdout and not _should_retry_gemini(stderr, stdout):
+            return last_result
+
+        if attempt >= max_attempts:
+            break
+
+        if _should_retry_gemini(stderr, stdout):
+            wait_time = base_backoff * attempt
+            print(f"Aviso: la respuesta de Gemini indicó un límite de recursos. Reintentando en {wait_time} segundos...", file=sys.stderr)
+            time.sleep(wait_time)
+            continue
+
+        break
+
+    return last_result
 
 
 def extraer_resumen_tokens(gemini_meta: dict) -> dict:
@@ -282,10 +311,10 @@ def validar_jats_xml(xml_content: str) -> tuple[bool, list]:
                            y una lista de errores si falló.
     """
     # Descargar DTD si es necesario
-    if not os.path.exists(DTD_LOCAL_FILE):
+    if not DTD_LOCAL_FILE.exists():
         try:
             print(f"Descargando el DTD de JATS desde {DTD_URL}...")
-            urllib.request.urlretrieve(DTD_URL, DTD_LOCAL_FILE)
+            urllib.request.urlretrieve(DTD_URL, str(DTD_LOCAL_FILE))
             print("DTD descargado exitosamente.")
         except Exception as e:
             print(f"No se pudo descargar el DTD. No se puede validar. Error: {e}", file=sys.stderr)
@@ -294,11 +323,11 @@ def validar_jats_xml(xml_content: str) -> tuple[bool, list]:
     try:
         # Asegurarse de que el contenido XML es bytes codificados en utf-8
         xml_bytes = xml_content.encode('utf-8')
-        
+
         # Parsear el XML y el DTD
         parser = etree.XMLParser(dtd_validation=True, no_network=False)
         xml_tree = etree.fromstring(xml_bytes, parser)
-        dtd = etree.DTD(DTD_LOCAL_FILE)
+        dtd = etree.DTD(str(DTD_LOCAL_FILE))
 
         # Validar
         is_valid = dtd.validate(xml_tree)
@@ -316,7 +345,7 @@ def guardar_salida_xml(xml_content: str, output_path: str):
     try:
         with open(output_path, 'w', encoding='utf-8') as f:
             # Añadir la declaración DOCTYPE para que los validadores sepan qué DTD usar
-            doctype_declaration = f'<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.3 20210610//EN" "{DTD_LOCAL_FILE}">'
+            doctype_declaration = f'<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.3 20210610//EN" "{DTD_FILENAME}">' 
             # Limpiar cualquier XML declaration que Gemini pudiera añadir
             if xml_content.startswith('<?xml'):
                 xml_content = xml_content.split('?>', 1)[-1].strip()
