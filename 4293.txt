@@ -1,0 +1,1198 @@
+[2025-11-27 10:12:46] Inicio de proceso para entrada: 4293.docx salida: 4293.xml
+[2025-11-27 10:12:46] Paso 1/5: Procesando para extraer contenido estructurado...
+[2025-11-27 10:12:46] Paso 2/5: Construyendo prompt avanzado para Gemini...
+[2025-11-27 10:12:46] Paso 3/5: Invocando a la IA de Gemini para la conversión (esto puede tardar)...
+[2025-11-27 10:16:24] Gemini returncode: 0 Elapsed: 217.74s
+[2025-11-27 10:16:24] Gemini stderr: Loaded cached credentials.
+[ERROR] [IDEClient] Failed to connect to IDE companion extension. Please ensure the extension is running. To install the extension, run /ide install.
+[2025-11-27 10:16:24] Paso 4/5: Validando el XML generado contra el DTD de JATS...
+[2025-11-27 10:16:25] --- ADVERTENCIA: La validación del XML falló. ---
+[2025-11-27 10:16:25] El archivo se guardará, pero necesita correcciones manuales.
+[2025-11-27 10:16:25] Errores encontrados:
+[2025-11-27 10:16:25] - Fallo en la descarga del DTD: HTTP Error 404: Not Found
+[2025-11-27 10:16:25] Paso 5/5: Guardando el resultado...
+[2025-11-27 10:16:25] Resumen de tokens de Gemini:
+[2025-11-27 10:16:25] - No se encontró información de tokens en la salida de Gemini.
+[2025-11-27 10:16:25] --- TEXTO CRUDO DE GEMINI ---
+[2025-11-27 10:16:25] Loaded cached credentials.
+[ERROR] [IDEClient] Failed to connect to IDE companion extension. Please ensure the extension is running. To install the extension, run /ide install.
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<article xmlns:xlink="http://www.w3.org/1999/xlink" xml:lang="es" article-type="research-article">
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="publisher-id">rma</journal-id>
+      <journal-title-group>
+        <journal-title>Revista Matronería Actual</journal-title>
+      </journal-title-group>
+      <issn pub-type="epub">0000-0000</issn>
+      <publisher>
+        <publisher-name>Universidad de Valparaíso</publisher-name>
+      </publisher>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="doi">10.0000/rma.2025.00.00</article-id>
+      <title-group>
+        <article-title>Diástasis de los rectos abdominales en el posparto: relación con sexualidad y estado nutricional</article-title>
+        <trans-title-group xml:lang="en">
+          <trans-title>Diastasis of the rectus abdominis muscles and sexuality in postpartum women</trans-title>
+        </trans-title-group>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author" corresp="yes">
+          <name>
+            <surname>Estrada</surname>
+            <given-names>Jusselit T.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+          <xref ref-type="aff" rid="aff2">2</xref>
+          <xref ref-type="corresp" rid="cor1">*</xref>
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0000-0002-0721-965X</contrib-id>
+          <email>jusselit.estrada@uss.cl</email>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Ochar</surname>
+            <given-names>Judith T.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Salas</surname>
+            <given-names>Catalina A.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Guzmán</surname>
+            <given-names>Camila B.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Rubilar</surname>
+            <given-names>Fabiola I.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+      </contrib-group>
+      <aff id="aff1">
+        <label>1</label>
+        <institution content-type="original">Carrera de Obstetricia y Matronería. Facultad de Ciencias para el Cuidado de la Salud. Universidad San Sebastián, Concepción, Chile.</institution>
+        <institution content-type="normalized">Universidad San Sebastián</institution>
+        <addr-line>
+          <city>Concepción</city>
+        </addr-line>
+        <country country="CL">Chile</country>
+      </aff>
+      <aff id="aff2">
+        <label>2</label>
+        <institution content-type="original">Doctorado en Ciencias Morfológicas, Facultad de Medicina. Universidad de la Frontera, Temuco, Chile.</institution>
+        <institution content-type="normalized">Universidad de la Frontera</institution>
+        <addr-line>
+          <city>Temuco</city>
+        </addr-line>
+        <country country="CL">Chile</country>
+      </aff>
+      <author-notes>
+        <corresp id="cor1">
+          <label>*</label>Correspondencia: Jusselit Estrada. Código postal 4080871. Email: <email>jusselit.estrada@uss.cl</email>.
+        </corresp>
+      </author-notes>
+      <pub-date date-type="pub" publication-format="electronic">
+        <day>07</day>
+        <month>10</month>
+        <year>2025</year>
+      </pub-date>
+      <history>
+        <date date-type="received">
+          <day>29</day>
+          <month>05</month>
+          <year>2024</year>
+        </date>
+        <date date-type="accepted">
+          <day>07</day>
+          <month>10</month>
+          <year>2025</year>
+        </date>
+      </history>
+      <abstract>
+        <title>RESUMEN</title>
+        <p><bold>Introducción:</bold> durante la gestación se separan los músculos rectos del abdomen, fenómeno denominado diástasis abdominal.</p>
+        <p><bold>Objetivo:</bold> relacionar la presencia de diástasis de rectos abdominales (DRA) con la función sexual femenina en el posparto y el estado nutricional.</p>
+        <p><bold>Material y Método:</bold> estudio correlacional de corte transversal en una muestra de 99 mujeres mayores de 18 años en control, en la provincia de Arauco, hasta seis meses postparto. Se diseñó un cuestionario para recolectar los datos demográficos y obstétricos y se utilizó la técnica de palpación de los músculos rectos abdominales. Por último, se aplicó la encuesta IFSF. Se excluyeron las mujeres con pérdida reproductiva durante la gestación, con contraindicación de actividad física y con discapacidad motora</p>
+        <p><bold>Resultados:</bold> la diástasis supraumbilical y umbilical fueron de 1,9 cm y 1,63 cm a nivel infraumbilical, respectivamente. En cuanto al funcionamiento sexual, el dominio de satisfacción tuvo un puntaje de 5,3, seguido de la lubricación con 4,9. El puntaje del IFSF fue 27,5. Se halló una relación estadísticamente significativa entre el dominio del dolor y la medición de la diástasis, así como también entre el dominio del dolor y la satisfacción sexual. El 78,7 % de las pacientes tenía mal nutrición por exceso y no hubo relación significativa entre DRA y el estado nutricional.</p>
+        <p><bold>Conclusiones:</bold> la detección de DRA mediante palpación es una modalidad de bajo costo, útil en el posparto, posible de implementar para evaluar el funcionamiento sexual durante estos controles y que posibilita educar precozmente a las usuarias.</p>
+      </abstract>
+      <trans-abstract xml:lang="en">
+        <title>ABSTRACT</title>
+        <p><bold>Introduction:</bold> during pregnancy, the rectus abdominis muscles separate, a condition known as abdominal diastasis.</p>
+        <p><bold>Objective:</bold> to relate the presence of abdominal rectus diastasis (DRA) with female sexual function in the postpartum period and nutritional status.</p>
+        <p><bold>Materials and Methods:</bold> q cross-sectional correlational study was conducted with a sample of 99 women over 18 years of age, followed up in the province of Arauco up to 6 months postpartum. A questionnaire was designed to collect demographic and obstetric data, and the palpation technique was used to assess the abdominal rectus muscles. The IFSF survey was also administered. Women with reproductive loss during pregnancy, contraindications for physical activity, and those with motor disabilities were excluded.</p>
+        <p><bold>Results:</bold> the supraumbilical and umbilical diastasis measured 1.9 cm and 1.63 cm at the infraumbilical level, respectively. Regarding sexual function, the satisfaction domain scored 5.3, followed by lubrication with a score of 4.9. The IFSF score was 27.5. A statistically significant relationship was found between the pain domain and the measurement of diastasis, as well as between sexual satisfaction. 78.7% of the patients were found to be overweight nutrition, and there was no significant relationship between DRA and nutritional status.</p>
+        <p><bold>Conclusions:</bold> detection of DRA through palpation is a low-cost modality that is useful in the postpartum period. Implementing and evaluating sexual function during these follow-ups will allow for early education of the users.</p>
+      </trans-abstract>
+      <kwd-group xml:lang="es">
+        <kwd>período posparto</kwd>
+        <kwd>sexualidad</kwd>
+        <kwd>diástasis muscular</kwd>
+        <kwd>abdomen</kwd>
+        <kwd>estado nutricional</kwd>
+      </kwd-group>
+      <kwd-group xml:lang="en">
+        <kwd>postpartum period</kwd>
+        <kwd>sexuality</kwd>
+        <kwd>muscular diastasis</kwd>
+        <kwd>abdomen</kwd>
+        <kwd>nutritional status</kwd>
+      </kwd-group>
+    </article-meta>
+  </front>
+  <body>
+    <sec sec-type="intro">
+      <title>INTRODUCCIÓN</title>
+      <p>La gestación es un proceso que conlleva numerosos cambios, que incluyen adaptaciones tanto físicas como psicológicas. Entre las adaptaciones físicas se encuentra la separación de los músculos rectos del abdomen<xref ref-type="bibr" rid="ref1">1</xref>, que tienen su origen en la sínfisis y la cresta del pubis, e insertan en el proceso xifoides y en los cartílagos costales, del quinto al séptimo<xref ref-type="bibr" rid="ref2">2</xref>. El crecimiento del útero y la regulación de las hormonas propias del embarazo determinan la separación de estos músculos en la línea media del abdomen, conocida como línea alba, fenómeno denominado diástasis<xref ref-type="bibr" rid="ref3">3</xref> (acrónimo DRA: diástasis de los músculos rectos del abdomen).</p>
+      <p>Esta zona está constituida también por la fusión de la aponeurosis de los músculos oblicuos y transversos, lo que provoca un ensanchamiento y adelgazamiento de la línea alba<xref ref-type="bibr" rid="ref1">1</xref>. Además de la gestación, existen otros factores que pueden desencadenar la diástasis, tales como el aumento de peso, la hiperlaxitud articular, el alto índice de masa corporal, la falta de ejercicio antes y durante el embarazo<xref ref-type="bibr" rid="ref4">4</xref>,<xref ref-type="bibr" rid="ref5">5</xref>, la multiparidad, la tos crónica, la constipación crónica y la obesidad<xref ref-type="bibr" rid="ref6">6</xref>.</p>
+      <p>Actualmente, se considera que una medición es patológica cuando supera los 2,5 cm<xref ref-type="bibr" rid="ref6">6</xref> en cualquier zona de la línea alba. Sin embargo, no existe consenso sobre los puntos de corte para el diagnostico<xref ref-type="bibr" ri
+[2025-11-27 10:16:25] Proceso completado.
+[2025-11-27 10:38:46] Inicio de proceso para entrada: 4293.docx salida: 4293.xml
+[2025-11-27 10:38:46] Paso 1/5: Procesando para extraer contenido estructurado...
+[2025-11-27 10:38:46] Paso 2/5: Construyendo prompt avanzado para Gemini...
+[2025-11-27 10:38:46] Paso 3/5: Invocando a la IA de Gemini para la conversión (esto puede tardar)...
+[2025-11-27 10:42:21] Gemini returncode: 0 Elapsed: 214.84s
+[2025-11-27 10:42:21] Gemini stderr: Loaded cached credentials.
+[ERROR] [IDEClient] Failed to connect to IDE companion extension. Please ensure the extension is running. To install the extension, run /ide install.
+[2025-11-27 10:42:21] Paso 4/5: Validando el XML generado contra el DTD de JATS...
+[2025-11-27 10:42:21] --- ADVERTENCIA: La validación del XML falló. ---
+[2025-11-27 10:42:21] El archivo se guardará, pero necesita correcciones manuales.
+[2025-11-27 10:42:21] Errores encontrados:
+[2025-11-27 10:42:21] - Error de sintaxis XML (mal formado): Start tag expected, '<' not found, line 1, column 1 (<string>, line 1)
+[2025-11-27 10:42:21] Paso 5/5: Guardando el resultado...
+[2025-11-27 10:42:21] Resumen de tokens de Gemini:
+[2025-11-27 10:42:21] - No se encontró información de tokens en la salida de Gemini.
+[2025-11-27 10:42:21] --- TEXTO CRUDO DE GEMINI ---
+[2025-11-27 10:42:21] Loaded cached credentials.
+[ERROR] [IDEClient] Failed to connect to IDE companion extension. Please ensure the extension is running. To install the extension, run /ide install.
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.3 20210610//EN" "JATS-journalpublishing1-3.dtd">
+<article xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML" dtd-version="1.3" xml:lang="es" article-type="research-article">
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="publisher-id">rma</journal-id>
+      <journal-title-group>
+        <journal-title>Revista Matronería Actual</journal-title>
+      </journal-title-group>
+      <issn publication-format="electronic">0719-XXX</issn>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="doi">10.0000/rma.2025.000</article-id>
+      <title-group>
+        <article-title xml:lang="es">Diástasis de los rectos abdominales en el posparto: relación con sexualidad y estado nutricional</article-title>
+        <trans-title-group xml:lang="en">
+          <trans-title>Diastasis of the rectus abdominis muscles and sexuality in postpartum women</trans-title>
+        </trans-title-group>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author" corresp="yes">
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0000-0002-0721-965X</contrib-id>
+          <name>
+            <surname>Estrada</surname>
+            <given-names>Jusselit T.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+          <xref ref-type="aff" rid="aff2">2</xref>
+          <xref ref-type="corresp" rid="cor1">*</xref>
+          <email>jusselit.estrada@uss.cl</email>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Ochar</surname>
+            <given-names>Judith T.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Salas</surname>
+            <given-names>Catalina A.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Guzmán</surname>
+            <given-names>Camila B.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Rubilar</surname>
+            <given-names>Fabiola I.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+      </contrib-group>
+      <aff id="aff1">
+        <label>1</label>
+        <institution-wrap>
+          <institution content-type="dept">Carrera de Obstetricia y Matronería. Facultad de Ciencias para el Cuidado de la Salud</institution>
+          <institution>Universidad San Sebastián</institution>
+        </institution-wrap>
+        <addr-line>
+          <city>Concepción</city>
+          <country>Chile</country>
+        </addr-line>
+      </aff>
+      <aff id="aff2">
+        <label>2</label>
+        <institution-wrap>
+          <institution content-type="dept">Doctorado en Ciencias Morfológicas, Facultad de Medicina</institution>
+          <institution>Universidad de la Frontera</institution>
+        </institution-wrap>
+        <addr-line>
+          <city>Temuco</city>
+          <country>Chile</country>
+        </addr-line>
+      </aff>
+      <author-notes>
+        <corresp id="cor1">
+          <label>*</label>Correspondencia Jusselit Estrada. Código postal 4080871. Email: <email>jusselit.estrada@uss.cl</email>.
+        </corresp>
+      </author-notes>
+      <pub-date date-type="pub" publication-format="electronic">
+        <day>27</day>
+        <month>11</month>
+        <year>2025</year>
+      </pub-date>
+      <history>
+        <date date-type="received">
+          <day>29</day>
+          <month>05</month>
+          <year>2024</year>
+        </date>
+        <date date-type="accepted">
+          <day>07</day>
+          <month>10</month>
+          <year>2025</year>
+        </date>
+      </history>
+      <abstract xml:lang="es">
+        <title>RESUMEN</title>
+        <sec>
+          <title>Introducción</title>
+          <p>Durante la gestación se separan los músculos rectos del abdomen, fenómeno denominado diástasis abdominal.</p>
+        </sec>
+        <sec>
+          <title>Objetivo</title>
+          <p>Relacionar la presencia de diástasis de rectos abdominales (DRA) con la función sexual femenina en el posparto y el estado nutricional.</p>
+        </sec>
+        <sec>
+          <title>Material y Método</title>
+          <p>Estudio correlacional de corte transversal en una muestra de 99 mujeres mayores de 18 años en control, en la provincia de Arauco, hasta seis meses postparto. Se diseñó un cuestionario para recolectar los datos demográficos y obstétricos y se utilizó la técnica de palpación de los músculos rectos abdominales. Por último, se aplicó la encuesta IFSF. Se excluyeron las mujeres con pérdida reproductiva durante la gestación, con contraindicación de actividad física y con discapacidad motora.</p>
+        </sec>
+        <sec>
+          <title>Resultados</title>
+          <p>La diástasis supraumbilical y umbilical fueron de 1,9 cm y 1,63 cm a nivel infraumbilical, respectivamente. En cuanto al funcionamiento sexual, el dominio de satisfacción tuvo un puntaje de 5,3, seguido de la lubricación con 4,9. El puntaje del IFSF fue 27,5. Se halló una relación estadísticamente significativa entre el dominio del dolor y la medición de la diástasis, así como también entre el dominio del dolor y la satisfacción sexual. El 78,7 % de las pacientes tenía mal nutrición por exceso y no hubo relación significativa entre DRA y el estado nutricional.</p>
+        </sec>
+        <sec>
+          <title>Conclusiones</title>
+          <p>La detección de DRA mediante palpación es una modalidad de bajo costo, útil en el posparto, posible de implementar para evaluar el funcionamiento sexual durante estos controles y que posibilita educar precozmente a las usuarias.</p>
+        </sec>
+      </abstract>
+      <trans-abstract xml:lang="en">
+        <title>ABSTRACT</title>
+        <sec>
+          <title>Introduction</title>
+          <p>During pregnancy, the rectus abdominis muscles separate, a condition known as abdominal diastasis.</p>
+        </sec>
+        <sec>
+          <title>Objective</title>
+          <p>To relate the presence of abdominal rectus diastasis (DRA) with female sexual function in the postpartum period and nutritional status.</p>
+        </sec>
+        <sec>
+          <title>Materials and Methods</title>
+          <p>A cross-sectional correlational study was conducted with a sample of 99 women over 18 years of age, followed up in the province of Arauco up to 6 months postpartum. A questionnaire was designed to collect demographic and obstetric data, and the palpation technique was used to assess the abdominal rectus muscles. The IFSF survey was also administered. Women with reproductive loss during pregnancy, contraindications for physical activity, and those with motor disabilities were excluded.</p>
+        </sec>
+        <sec>
+          <title>Results</title>
+          <p>The supraumbilical and umbilical diastasis measured 1.9 cm and 1.63 cm at the infraumbilical level, respectively. Regarding sexual function, the satisfaction domain scored 5.3, followed by lubrication with a score of 4.9. The IFSF score was 27.5. A statistically significant relationship was found between the pain domain and the measurement of diastasis, as well as between sexual satisfaction. 78.7% of the patients were found to be overweight nutrition, and there was no significant relationship between DRA and nutritional status.</p>
+        </sec>
+        <sec>
+          <title>Conclusions</title>
+          <p>Detection of DRA through palpation is a low-cost modality that is useful in the postpartum period. Implementing and evaluating sexual function during these follow-ups will allow for early education of the users.</p>
+        </sec>
+      </trans-abstract>
+      <kwd-group xml:lang="es">
+        <kwd>período posparto</kwd>
+        <kwd>sexualidad</kwd>
+        <kwd>diástasis muscular</kwd>
+        <kwd>abdomen</kwd>
+        <kwd>estado nutricional</kwd>
+      </kwd-group>
+      <kwd-group xml:lang="en">
+        <kwd>postpartum period</kwd>
+        <kwd>sexuality</kwd>
+        <kwd>muscular diastasis</kwd>
+        <kwd>abdomen</kwd>
+        <kwd>nutritional status</kwd>
+      </kwd-group>
+    </article-meta>
+  </front>
+  <body>
+    <sec>
+      <title>INTRODUCCIÓN</title>
+      <p>La gestación es un proceso que conlleva numerosos cambios, que incluyen adaptaciones tanto físicas como psicológicas. Entre las adaptaciones físicas se encuentra la separación de los músculos rectos del abdomen<xref ref-type="bibr" rid="ref1">1</xref>, que tienen su origen en la sínfisis y la cresta del pubis, e insertan en el proceso xifoides y en los cartílagos costales, del quinto al séptimo<xref ref-type="bibr" rid="ref2">2</xref>. El crecimiento del útero y la regulación de las hormonas propias del embarazo determinan la separación de estos músculos en la línea media del abdomen, conocida como línea alba, fenómeno denominado diástasis<xref ref-type="bibr" rid="ref3">3</xref> (acrónimo DRA: diástasis de los músculos rectos del abdomen).</p>
+      <p>Esta zona está constituida también por la fusión de la aponeurosis de los músculos oblicuos y transversos, lo que provoca un ensanchamiento y adelgazamiento de la línea alba<xref ref-type="bibr" rid="ref1">1</xref>. Además de la gestación, existen otros factores que pueden desencadenar la diástasis, tales como el aumento de peso, la hiperlaxitud articular, el alto índice de masa corporal, la falta de ejercicio antes y durante el em
+[2025-11-27 10:42:21] Proceso completado.
+[2025-11-27 10:43:11] Inicio de proceso para entrada: 4293.docx salida: 4293.xml
+[2025-11-27 10:43:11] Paso 1/5: Procesando para extraer contenido estructurado...
+[2025-11-27 10:43:11] Paso 2/5: Construyendo prompt avanzado para Gemini...
+[2025-11-27 10:43:11] Paso 3/5: Invocando a la IA de Gemini para la conversión (esto puede tardar)...
+[2025-11-27 10:46:43] Gemini returncode: 0 Elapsed: 211.83s
+[2025-11-27 10:46:43] Gemini stderr: Loaded cached credentials.
+[ERROR] [IDEClient] Failed to connect to IDE companion extension. Please ensure the extension is running. To install the extension, run /ide install.
+[2025-11-27 10:46:43] Paso 4/5: Validando el XML generado contra el DTD de JATS...
+[2025-11-27 10:46:43] --- ADVERTENCIA: La validación del XML falló. ---
+[2025-11-27 10:46:43] El archivo se guardará, pero necesita correcciones manuales.
+[2025-11-27 10:46:43] Errores encontrados:
+[2025-11-27 10:46:43] - Error de sintaxis XML (mal formado): Validation failed: no DTD found !, line 2, column 98 (<string>, line 2)
+[2025-11-27 10:46:43] Paso 5/5: Guardando el resultado...
+[2025-11-27 10:46:43] Resumen de tokens de Gemini:
+[2025-11-27 10:46:43] - No se encontró información de tokens en la salida de Gemini.
+[2025-11-27 10:46:43] --- TEXTO CRUDO DE GEMINI ---
+[2025-11-27 10:46:43] Loaded cached credentials.
+[ERROR] [IDEClient] Failed to connect to IDE companion extension. Please ensure the extension is running. To install the extension, run /ide install.
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<article xmlns:xlink="http://www.w3.org/1999/xlink" xml:lang="es" article-type="research-article">
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="publisher-id">rma</journal-id>
+      <journal-title-group>
+        <journal-title>Revista Matronería Actual</journal-title>
+      </journal-title-group>
+      <issn pub-type="epub">0000-0000</issn>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="doi">10.0000/placeholder.doi</article-id>
+      <title-group>
+        <article-title xml:lang="es">Diástasis de los rectos abdominales en el posparto: relación con sexualidad y estado nutricional</article-title>
+        <trans-title-group xml:lang="en">
+          <trans-title>Diastasis of the rectus abdominis muscles and sexuality in postpartum women</trans-title>
+        </trans-title-group>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author" corresp="yes">
+          <name>
+            <surname>Estrada</surname>
+            <given-names>Jusselit T.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+          <xref ref-type="aff" rid="aff2">2</xref>
+          <xref ref-type="corresp" rid="cor1">*</xref>
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0000-0002-0721-965X</contrib-id>
+          <email>jusselit.estrada@uss.cl</email>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Ochar</surname>
+            <given-names>Judith T.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Salas</surname>
+            <given-names>Catalina A.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Guzmán</surname>
+            <given-names>Camila B.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Rubilar</surname>
+            <given-names>Fabiola I.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+      </contrib-group>
+      <aff id="aff1">
+        <label>1</label>
+        <institution content-type="orgname">Universidad San Sebastián</institution>
+        <institution content-type="orgdiv1">Facultad de Ciencias para el Cuidado de la Salud</institution>
+        <institution content-type="orgdiv2">Carrera de Obstetricia y Matronería</institution>
+        <addr-line>
+          <city>Concepción</city>
+          <country country="CL">Chile</country>
+        </addr-line>
+      </aff>
+      <aff id="aff2">
+        <label>2</label>
+        <institution content-type="orgname">Universidad de la Frontera</institution>
+        <institution content-type="orgdiv1">Facultad de Medicina</institution>
+        <institution content-type="orgdiv2">Doctorado en Ciencias Morfológicas</institution>
+        <addr-line>
+          <city>Temuco</city>
+          <country country="CL">Chile</country>
+        </addr-line>
+      </aff>
+      <author-notes>
+        <corresp id="cor1">
+          <email>jusselit.estrada@uss.cl</email>
+        </corresp>
+      </author-notes>
+      <pub-date date-type="received" publication-format="electronic">
+        <day>29</day>
+        <month>05</month>
+        <year>2024</year>
+      </pub-date>
+      <pub-date date-type="accepted" publication-format="electronic">
+        <day>07</day>
+        <month>10</month>
+        <year>2025</year>
+      </pub-date>
+      <abstract xml:lang="es">
+        <title>RESUMEN</title>
+        <p><bold>Introducción:</bold> durante la gestación se separan los músculos rectos del abdomen, fenómeno denominado diástasis abdominal.</p>
+        <p><bold>Objetivo:</bold> relacionar la presencia de diástasis de rectos abdominales (DRA) con la función sexual femenina en el posparto y el estado nutricional.</p>
+        <p><bold>Material y Método:</bold> estudio correlacional de corte transversal en una muestra de 99 mujeres mayores de 18 años en control, en la provincia de Arauco, hasta seis meses postparto. Se diseñó un cuestionario para recolectar los datos demográficos y obstétricos y se utilizó la técnica de palpación de los músculos rectos abdominales. Por último, se aplicó la encuesta IFSF. Se excluyeron las mujeres con pérdida reproductiva durante la gestación, con contraindicación de actividad física y con discapacidad motora</p>
+        <p><bold>Resultados:</bold> la diástasis supraumbilical y umbilical fueron de 1,9 cm y 1,63 cm a nivel infraumbilical, respectivamente. En cuanto al funcionamiento sexual, el dominio de satisfacción tuvo un puntaje de 5,3, seguido de la lubricación con 4,9. El puntaje del IFSF fue 27,5. Se halló una relación estadísticamente significativa entre el dominio del dolor y la medición de la diástasis, así como también entre el dominio del dolor y la satisfacción sexual. El 78,7 % de las pacientes tenía mal nutrición por exceso y no hubo relación significativa entre DRA y el estado nutricional.</p>
+        <p><bold>Conclusiones:</bold> la detección de DRA mediante palpación es una modalidad de bajo costo, útil en el posparto, posible de implementar para evaluar el funcionamiento sexual durante estos controles y que posibilita educar precozmente a las usuarias.</p>
+      </abstract>
+      <trans-abstract xml:lang="en">
+        <title>ABSTRACT</title>
+        <p><bold>Introduction:</bold> during pregnancy, the rectus abdominis muscles separate, a condition known as abdominal diastasis.</p>
+        <p><bold>Objective:</bold> to relate the presence of abdominal rectus diastasis (DRA) with female sexual function in the postpartum period and nutritional status.</p>
+        <p><bold>Materials and Methods:</bold> q cross-sectional correlational study was conducted with a sample of 99 women over 18 years of age, followed up in the province of Arauco up to 6 months postpartum. A questionnaire was designed to collect demographic and obstetric data, and the palpation technique was used to assess the abdominal rectus muscles. The IFSF survey was also administered. Women with reproductive loss during pregnancy, contraindications for physical activity, and those with motor disabilities were excluded.</p>
+        <p><bold>Results:</bold> the supraumbilical and umbilical diastasis measured 1.9 cm and 1.63 cm at the infraumbilical level, respectively. Regarding sexual function, the satisfaction domain scored 5.3, followed by lubrication with a score of 4.9. The IFSF score was 27.5. A statistically significant relationship was found between the pain domain and the measurement of diastasis, as well as between sexual satisfaction. 78.7% of the patients were found to be overweight nutrition, and there was no significant relationship between DRA and nutritional status.</p>
+        <p><bold>Conclusions:</bold> detection of DRA through palpation is a low-cost modality that is useful in the postpartum period. Implementing and evaluating sexual function during these follow-ups will allow for early education of the users.</p>
+      </trans-abstract>
+      <kwd-group xml:lang="es">
+        <kwd>período posparto</kwd>
+        <kwd>sexualidad</kwd>
+        <kwd>diástasis muscular</kwd>
+        <kwd>abdomen</kwd>
+        <kwd>estado nutricional</kwd>
+      </kwd-group>
+      <kwd-group xml:lang="en">
+        <kwd>postpartum period</kwd>
+        <kwd>sexuality</kwd>
+        <kwd>muscular diastasis</kwd>
+        <kwd>abdomen</kwd>
+        <kwd>nutritional status</kwd>
+      </kwd-group>
+    </article-meta>
+  </front>
+  <body>
+    <sec>
+      <title>INTRODUCCIÓN</title>
+      <p>La gestación es un proceso que conlleva numerosos cambios, que incluyen adaptaciones tanto físicas como psicológicas. Entre las adaptaciones físicas se encuentra la separación de los músculos rectos del abdomen<xref ref-type="bibr" rid="ref1">1</xref>, que tienen su origen en la sínfisis y la cresta del pubis, e insertan en el proceso xifoides y en los cartílagos costales, del quinto al séptimo<xref ref-type="bibr" rid="ref2">2</xref>. El crecimiento del útero y la regulación de las hormonas propias del embarazo determinan la separación de estos músculos en la línea media del abdomen, conocida como línea alba, fenómeno denominado diástasis<xref ref-type="bibr" rid="ref3">3</xref> (acrónimo DRA: diástasis de los músculos rectos del abdomen).</p>
+      <p>Esta zona está constituida también por la fusión de la aponeurosis de los músculos oblicuos y transversos, lo que provoca un ensanchamiento y adelgazamiento de la línea alba<xref ref-type="bibr" rid="ref1">1</xref>. Además de la gestación, existen otros factores que pueden desencadenar la diástasis, tales como el aumento de peso, la hiperlaxitud articular, el alto índice de masa corporal, la falta de ejercicio antes y durante el embarazo<xref ref-type="bibr" rid="ref4">4</xref>,<xref ref-type="bibr" rid="ref5">5</xref>, la multiparidad, la tos crónica, la constipación crónica y la obesidad<xref ref-type="bibr" rid="ref6">6</xref>.</p>
+      <p>Actualmente, se considera que una medición es patológica cuando supera los 2,5 cm<xref ref-type="bibr" rid="ref6">6</xref> en cualquier zona de la línea alba. Sin embargo, no existe consenso sobre los puntos de corte para el diagnostico<xref ref-type="bibr" rid="ref1">1</xref>. Algunos investigadores consideran que la DRA es fisiológica cuando se encuentra entre 1,6 a 2,0 cm debajo del ombligo<xref ref-type="bibr" rid="ref1">1</xref>,<xref ref-type="bibr" rid="ref6">6</xref>. Además, existe una disyuntiva sobre el lugar de la línea media d
+[2025-11-27 10:46:43] Proceso completado.
+[2025-11-27 10:47:26] Inicio de proceso para entrada: 4293.docx salida: 4293.xml
+[2025-11-27 10:47:26] Paso 1/5: Procesando para extraer contenido estructurado...
+[2025-11-27 10:47:26] Paso 2/5: Construyendo prompt avanzado para Gemini...
+[2025-11-27 10:47:26] Paso 3/5: Invocando a la IA de Gemini para la conversión (esto puede tardar)...
+[2025-11-27 10:51:14] Gemini returncode: 0 Elapsed: 227.71s
+[2025-11-27 10:51:14] Gemini stderr: Loaded cached credentials.
+[ERROR] [IDEClient] Failed to connect to IDE companion extension. Please ensure the extension is running. To install the extension, run /ide install.
+[2025-11-27 10:51:14] Paso 4/5: Validando el XML generado contra el DTD de JATS...
+[2025-11-27 10:51:14] --- ADVERTENCIA: La validación del XML falló. ---
+[2025-11-27 10:51:14] El archivo se guardará, pero necesita correcciones manuales.
+[2025-11-27 10:51:14] Errores encontrados:
+[2025-11-27 10:51:14] - Error inesperado durante la validación: Entity 'JATS-ali-namespace.ent' not defined, line 606, column 25
+[2025-11-27 10:51:14] Paso 5/5: Guardando el resultado...
+[2025-11-27 10:51:14] Resumen de tokens de Gemini:
+[2025-11-27 10:51:14] - No se encontró información de tokens en la salida de Gemini.
+[2025-11-27 10:51:14] --- TEXTO CRUDO DE GEMINI ---
+[2025-11-27 10:51:14] Loaded cached credentials.
+[ERROR] [IDEClient] Failed to connect to IDE companion extension. Please ensure the extension is running. To install the extension, run /ide install.
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.3 20210610//EN" "JATS-journalpublishing1-3.dtd">
+<article xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML" dtd-version="1.3" xml:lang="es" article-type="research-article">
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="publisher-id">SciELO</journal-id>
+      <journal-title-group>
+        <journal-title>Revista Matronería Actual</journal-title>
+      </journal-title-group>
+      <issn pub-type="ppub">0000-0000</issn>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="doi">10.0000/example.doi</article-id>
+      <title-group>
+        <article-title>Diástasis de los rectos abdominales en el posparto: relación con sexualidad y estado nutricional</article-title>
+        <trans-title-group xml:lang="en">
+          <trans-title>Diastasis of the rectus abdominis muscles and sexuality in postpartum women</trans-title>
+        </trans-title-group>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Estrada</surname>
+            <given-names>Jusselit T.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+          <xref ref-type="aff" rid="aff2">2</xref>
+          <xref ref-type="corresp" rid="cor1">*</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Ochar</surname>
+            <given-names>Judith T.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Salas</surname>
+            <given-names>Catalina A.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Guzmán</surname>
+            <given-names>Camila B.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Rubilar</surname>
+            <given-names>Fabiola I.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+      </contrib-group>
+      <aff id="aff1">
+        <label>1</label>
+        <institution content-type="orgdiv1">Carrera de Obstetricia y Matronería</institution>
+        <institution content-type="orgdiv2">Facultad de Ciencias para el Cuidado de la Salud</institution>
+        <institution content-type="orgname">Universidad San Sebastián</institution>
+        <addr-line>
+          <city>Concepción</city>
+        </addr-line>
+        <country country="CL">Chile</country>
+      </aff>
+      <aff id="aff2">
+        <label>2</label>
+        <institution content-type="orgdiv1">Doctorado en Ciencias Morfológicas</institution>
+        <institution content-type="orgdiv2">Facultad de Medicina</institution>
+        <institution content-type="orgname">Universidad de la Frontera</institution>
+        <addr-line>
+          <city>Temuco</city>
+        </addr-line>
+        <country country="CL">Chile</country>
+      </aff>
+      <author-notes>
+        <corresp id="cor1">
+          <label>*</label>Correspondencia: Jusselit Estrada. Código postal 4080871. Email: <email>jusselit.estrada@uss.cl</email>
+        </corresp>
+      </author-notes>
+      <pub-date date-type="pub" publication-format="electronic">
+        <day>01</day>
+        <month>01</month>
+        <year>2025</year>
+      </pub-date>
+      <history>
+        <date date-type="received">
+          <day>29</day>
+          <month>05</month>
+          <year>2024</year>
+        </date>
+        <date date-type="accepted">
+          <day>07</day>
+          <month>10</month>
+          <year>2025</year>
+        </date>
+      </history>
+      <abstract>
+        <title>RESUMEN</title>
+        <sec>
+          <title>Introducción</title>
+          <p>durante la gestación se separan los músculos rectos del abdomen, fenómeno denominado diástasis abdominal.</p>
+        </sec>
+        <sec>
+          <title>Objetivo</title>
+          <p>relacionar la presencia de diástasis de rectos abdominales (DRA) con la función sexual femenina en el posparto y el estado nutricional.</p>
+        </sec>
+        <sec>
+          <title>Material y Método</title>
+          <p>estudio correlacional de corte transversal en una muestra de 99 mujeres mayores de 18 años en control, en la provincia de Arauco, hasta seis meses postparto. Se diseñó un cuestionario para recolectar los datos demográficos y obstétricos y se utilizó la técnica de palpación de los músculos rectos abdominales. Por último, se aplicó la encuesta IFSF. Se excluyeron las mujeres con pérdida reproductiva durante la gestación, con contraindicación de actividad física y con discapacidad motora</p>
+        </sec>
+        <sec>
+          <title>Resultados</title>
+          <p>la diástasis supraumbilical y umbilical fueron de 1,9 cm y 1,63 cm a nivel infraumbilical, respectivamente. En cuanto al funcionamiento sexual, el dominio de satisfacción tuvo un puntaje de 5,3, seguido de la lubricación con 4,9. El puntaje del IFSF fue 27,5. Se halló una relación estadísticamente significativa entre el dominio del dolor y la medición de la diástasis, así como también entre el dominio del dolor y la satisfacción sexual. El 78,7 % de las pacientes tenía mal nutrición por exceso y no hubo relación significativa entre DRA y el estado nutricional.</p>
+        </sec>
+        <sec>
+          <title>Conclusiones</title>
+          <p>la detección de DRA mediante palpación es una modalidad de bajo costo, útil en el posparto, posible de implementar para evaluar el funcionamiento sexual durante estos controles y que posibilita educar precozmente a las usuarias.</p>
+        </sec>
+      </abstract>
+      <trans-abstract xml:lang="en">
+        <title>ABSTRACT</title>
+        <sec>
+          <title>Introduction</title>
+          <p>during pregnancy, the rectus abdominis muscles separate, a condition known as abdominal diastasis.</p>
+        </sec>
+        <sec>
+          <title>Objective</title>
+          <p>to relate the presence of abdominal rectus diastasis (DRA) with female sexual function in the postpartum period and nutritional status.</p>
+        </sec>
+        <sec>
+          <title>Materials and Methods</title>
+          <p>q cross-sectional correlational study was conducted with a sample of 99 women over 18 years of age, followed up in the province of Arauco up to 6 months postpartum. A questionnaire was designed to collect demographic and obstetric data, and the palpation technique was used to assess the abdominal rectus muscles. The IFSF survey was also administered. Women with reproductive loss during pregnancy, contraindications for physical activity, and those with motor disabilities were excluded.</p>
+        </sec>
+        <sec>
+          <title>Results</title>
+          <p>the supraumbilical and umbilical diastasis measured 1.9 cm and 1.63 cm at the infraumbilical level, respectively. Regarding sexual function, the satisfaction domain scored 5.3, followed by lubrication with a score of 4.9. The IFSF score was 27.5. A statistically significant relationship was found between the pain domain and the measurement of diastasis, as well as between sexual satisfaction. 78.7% of the patients were found to be overweight nutrition, and there was no significant relationship between DRA and nutritional status.</p>
+        </sec>
+        <sec>
+          <title>Conclusions</title>
+          <p>detection of DRA through palpation is a low-cost modality that is useful in the postpartum period. Implementing and evaluating sexual function during these follow-ups will allow for early education of the users.</p>
+        </sec>
+      </trans-abstract>
+      <kwd-group xml:lang="es">
+        <kwd>período posparto</kwd>
+        <kwd>sexualidad</kwd>
+        <kwd>diástasis muscular</kwd>
+        <kwd>abdomen</kwd>
+        <kwd>estado nutricional</kwd>
+      </kwd-group>
+      <kwd-group xml:lang="en">
+        <kwd>postpartum period</kwd>
+        <kwd>sexuality</kwd>
+        <kwd>muscular diastasis</kwd>
+        <kwd>abdomen</kwd>
+        <kwd>nutritional status</kwd>
+      </kwd-group>
+    </article-meta>
+  </front>
+  <body>
+    <sec sec-type="intro">
+      <title>INTRODUCCIÓN</title>
+      <p>La gestación es un proceso que conlleva numerosos cambios, que incluyen adaptaciones tanto físicas como psicológicas. Entre las adaptaciones físicas se encuentra la separación de los músculos rectos del abdomen<xref ref-type="bibr" rid="ref1">1</xref>, que tienen su origen en la sínfisis y la cresta del pubis, e insertan en el proceso xifoides y en los cartílagos costales, del quinto al séptimo<xref ref-type="bibr" rid="ref2">2</xref>. El crecimiento del útero y la regulación de las hormonas propias del embarazo determinan la separación de estos músculos en la línea media del abdomen, conocida como línea alba, fenómeno denominado diástasis<xref ref-type="bibr" rid="ref3">3</xref> (acrónimo DRA: diástasis de los músculos rectos del abdomen).</p>
+      <p>Esta zona está constituida también por la fusión de la aponeurosis de los músculos oblicuos y transversos, lo que provoca un ensanchamiento y adelgazamiento de la línea alba<xref ref-type="bibr" rid="ref1">1</xref>. Además de la gestación, existen otros factores que pueden desencadenar la diástasis, tales como el aumento de peso, la hiperlaxitud articular, el alto índice de masa corporal, la falta de ejercicio antes y durante el embarazo<xref ref-type="bibr" rid="ref4">4</xref>,<xref ref-type="bibr" rid="ref5">5</xref>, la multiparidad, la tos 
+[2025-11-27 10:51:14] Proceso completado.
+[2025-11-27 11:01:03] Inicio de proceso para entrada: 4293.docx salida: 4293.xml
+[2025-11-27 11:01:03] Paso 1/5: Procesando para extraer contenido estructurado...
+[2025-11-27 11:01:03] Paso 2/5: Construyendo prompt avanzado para Gemini...
+[2025-11-27 11:01:03] Paso 3/5: Invocando a la IA de Gemini para la conversión (esto puede tardar)...
+[2025-11-27 11:04:13] Gemini returncode: 0 Elapsed: 189.44s
+[2025-11-27 11:04:13] Gemini stderr: Loaded cached credentials.
+[ERROR] [IDEClient] Failed to connect to IDE companion extension. Please ensure the extension is running. To install the extension, run /ide install.
+[2025-11-27 11:04:13] Paso 4/5: Validando el XML generado contra el DTD de JATS...
+[2025-11-27 11:04:14] --- ADVERTENCIA: La validación del XML falló. ---
+[2025-11-27 11:04:14] El archivo se guardará, pero necesita correcciones manuales.
+[2025-11-27 11:04:14] Errores encontrados:
+[2025-11-27 11:04:14] - Error inesperado durante la validación: error parsing DTD
+[2025-11-27 11:04:14] Paso 5/5: Guardando el resultado...
+[2025-11-27 11:04:14] Resumen de tokens de Gemini:
+[2025-11-27 11:04:14] - No se encontró información de tokens en la salida de Gemini.
+[2025-11-27 11:04:14] --- TEXTO CRUDO DE GEMINI ---
+[2025-11-27 11:04:14] Loaded cached credentials.
+[ERROR] [IDEClient] Failed to connect to IDE companion extension. Please ensure the extension is running. To install the extension, run /ide install.
+Aquí tienes el archivo XML etiquetado bajo la norma JATS 1.3, siguiendo rigurosamente tus instrucciones para la estructura, metadatos, referencias cruzadas y conversión de tablas.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.3 20210610//EN" "JATS-journalpublishing1-3.dtd">
+<article xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML" dtd-version="1.3" article-type="research-article" xml:lang="es">
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="publisher-id">rma</journal-id>
+      <journal-title-group>
+        <journal-title>Revista Matronería Actual</journal-title>
+      </journal-title-group>
+      <issn pub-type="epub">0000-0000</issn>
+      <publisher>
+        <publisher-name>Universidad San Sebastián</publisher-name>
+      </publisher>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="doi">10.1234/rma.example</article-id>
+      <title-group>
+        <article-title xml:lang="es">Diástasis de los rectos abdominales en el posparto: relación con sexualidad y estado nutricional.</article-title>
+        <trans-title-group xml:lang="en">
+          <trans-title>Diastasis of the rectus abdominis muscles and sexuality in postpartum women.</trans-title>
+        </trans-title-group>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author" corresp="yes">
+          <name>
+            <surname>Estrada</surname>
+            <given-names>Jusselit T.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+          <xref ref-type="aff" rid="aff2">2</xref>
+          <xref ref-type="corresp" rid="cor1">*</xref>
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0000-0002-0721-965X</contrib-id>
+          <email>jusselit.estrada@uss.cl</email>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Ochar</surname>
+            <given-names>Judith T.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Salas</surname>
+            <given-names>Catalina A.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Guzmán</surname>
+            <given-names>Camila B.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Rubilar</surname>
+            <given-names>Fabiola I.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+      </contrib-group>
+      <aff id="aff1">
+        <label>1</label>
+        <institution-wrap>
+          <institution content-type="dept">Carrera de Obstetricia y Matronería, Facultad de Ciencias para el Cuidado de la Salud</institution>
+          <institution>Universidad San Sebastián</institution>
+        </institution-wrap>
+        <addr-line>
+          <city>Concepción</city>
+          <country country="CL">Chile</country>
+        </addr-line>
+      </aff>
+      <aff id="aff2">
+        <label>2</label>
+        <institution-wrap>
+          <institution content-type="dept">Doctorado en Ciencias Morfológicas, Facultad de Medicina</institution>
+          <institution>Universidad de la Frontera</institution>
+        </institution-wrap>
+        <addr-line>
+          <city>Temuco</city>
+          <country country="CL">Chile</country>
+        </addr-line>
+      </aff>
+      <author-notes>
+        <corresp id="cor1">
+          <label>*</label>Correspondencia: Jusselit Estrada. Código postal 4080871. Email: <email>jusselit.estrada@uss.cl</email>
+        </corresp>
+      </author-notes>
+      <pub-date date-type="pub" publication-format="electronic">
+        <day>07</day>
+        <month>10</month>
+        <year>2025</year>
+      </pub-date>
+      <history>
+        <date date-type="received">
+          <day>29</day>
+          <month>05</month>
+          <year>2024</year>
+        </date>
+        <date date-type="accepted">
+          <day>07</day>
+          <month>10</month>
+          <year>2025</year>
+        </date>
+      </history>
+      <abstract xml:lang="es">
+        <title>RESUMEN</title>
+        <p><bold>Introducción:</bold> durante la gestación se separan los músculos rectos del abdomen, fenómeno denominado diástasis abdominal. <bold>Objetivo:</bold> relacionar la presencia de diástasis de rectos abdominales (DRA) con la función sexual femenina en el posparto y el estado nutricional. <bold>Material y Método:</bold> estudio correlacional de corte transversal en una muestra de 99 mujeres mayores de 18 años en control, en la provincia de Arauco, hasta seis meses postparto. Se diseñó un cuestionario para recolectar los datos demográficos y obstétricos y se utilizó la técnica de palpación de los músculos rectos abdominales. Por último, se aplicó la encuesta IFSF. Se excluyeron las mujeres con pérdida reproductiva durante la gestación, con contraindicación de actividad física y con discapacidad motora. <bold>Resultados:</bold> la diástasis supraumbilical y umbilical fueron de 1,9 cm y 1,63 cm a nivel infraumbilical, respectivamente. En cuanto al funcionamiento sexual, el dominio de satisfacción tuvo un puntaje de 5,3, seguido de la lubricación con 4,9. El puntaje del IFSF fue 27,5. Se halló una relación estadísticamente significativa entre el dominio del dolor y la medición de la diástasis, así como también entre el dominio del dolor y la satisfacción sexual. El 78,7 % de las pacientes tenía mal nutrición por exceso y no hubo relación significativa entre DRA y el estado nutricional. <bold>Conclusiones:</bold> la detección de DRA mediante palpación es una modalidad de bajo costo, útil en el posparto, posible de implementar para evaluar el funcionamiento sexual durante estos controles y que posibilita educar precozmente a las usuarias.</p>
+      </abstract>
+      <trans-abstract xml:lang="en">
+        <title>ABSTRACT</title>
+        <p><bold>Introduction:</bold> during pregnancy, the rectus abdominis muscles separate, a condition known as abdominal diastasis. <bold>Objective:</bold> to relate the presence of abdominal rectus diastasis (DRA) with female sexual function in the postpartum period and nutritional status. <bold>Materials and Methods:</bold> q cross-sectional correlational study was conducted with a sample of 99 women over 18 years of age, followed up in the province of Arauco up to 6 months postpartum. A questionnaire was designed to collect demographic and obstetric data, and the palpation technique was used to assess the abdominal rectus muscles. The IFSF survey was also administered. Women with reproductive loss during pregnancy, contraindications for physical activity, and those with motor disabilities were excluded. <bold>Results:</bold> the supraumbilical and umbilical diastasis measured 1.9 cm and 1.63 cm at the infraumbilical level, respectively. Regarding sexual function, the satisfaction domain scored 5.3, followed by lubrication with a score of 4.9. The IFSF score was 27.5. A statistically significant relationship was found between the pain domain and the measurement of diastasis, as well as between sexual satisfaction. 78.7% of the patients were found to be overweight nutrition, and there was no significant relationship between DRA and nutritional status. <bold>Conclusions:</bold> detection of DRA through palpation is a low-cost modality that is useful in the postpartum period. Implementing and evaluating sexual function during these follow-ups will allow for early education of the users.</p>
+      </trans-abstract>
+      <kwd-group xml:lang="es">
+        <title>Palabras clave</title>
+        <kwd>período posparto</kwd>
+        <kwd>sexualidad</kwd>
+        <kwd>diástasis muscular</kwd>
+        <kwd>abdomen</kwd>
+        <kwd>estado nutricional</kwd>
+      </kwd-group>
+      <kwd-group xml:lang="en">
+        <title>Keywords</title>
+        <kwd>postpartum period</kwd>
+        <kwd>sexuality</kwd>
+        <kwd>muscular diastasis</kwd>
+        <kwd>abdomen</kwd>
+        <kwd>nutritional status</kwd>
+      </kwd-group>
+    </article-meta>
+  </front>
+  <body>
+    <sec sec-type="intro">
+      <title>INTRODUCCIÓN</title>
+      <p>La gestación es un proceso que conlleva numerosos cambios, que incluyen adaptaciones tanto físicas como psicológicas. Entre las adaptaciones físicas se encuentra la separación de los músculos rectos del abdomen<xref ref-type="bibr" rid="ref1">1</xref>, que tienen su origen en la sínfisis y la cresta del pubis, e insertan en el proceso xifoides y en los cartílagos costales, del quinto al séptimo<xref ref-type="bibr" rid="ref2">2</xref>. El crecimiento del útero y la regulación de las hormonas propias del embarazo determinan la separación de estos músculos en la línea media del abdomen, conocida como línea alba, fenómeno denominado diástasis<xref ref-type="bibr" rid="ref3">3</xref> (acrónimo DRA: diástasis de los músculos rectos del abdomen).</p>
+      <p>Esta zona está constituida también por la fusión de la aponeurosis de los músculos oblicuos y transversos, lo que provoca un ensanchamiento y adelgazamiento de la línea alba<xref ref-type="bibr" rid="ref1">1</xref>. Además de la gestación, existen otros factores que pueden desencadenar la diástasis, tales como el aumento de peso, la hiperlaxitud articular, el alto índice de masa corporal, la falta de ejercicio antes y durante el embarazo<xref ref-type="bibr" rid="ref4">4</xref>,<xref ref-type="bibr" rid="ref5">5</xref>, la multiparidad, la tos crónica, la constipación crónica y la obe
+[2025-11-27 11:04:14] Proceso completado.
+[2025-11-27 11:05:13] Inicio de proceso para entrada: 4293.docx salida: 4293.xml
+[2025-11-27 11:05:13] Paso 1/5: Procesando para extraer contenido estructurado...
+[2025-11-27 11:05:13] Paso 2/5: Construyendo prompt avanzado para Gemini...
+[2025-11-27 11:05:13] Paso 3/5: Invocando a la IA de Gemini para la conversión (esto puede tardar)...
+[2025-11-27 11:08:20] Gemini returncode: 0 Elapsed: 186.65s
+[2025-11-27 11:08:20] Gemini stderr: Loaded cached credentials.
+[ERROR] [IDEClient] Failed to connect to IDE companion extension. Please ensure the extension is running. To install the extension, run /ide install.
+[2025-11-27 11:08:20] Paso 4/5: Validando el XML generado contra el DTD de JATS...
+[2025-11-27 11:08:20] --- ADVERTENCIA: La validación del XML falló. ---
+[2025-11-27 11:08:20] El archivo se guardará, pero necesita correcciones manuales.
+[2025-11-27 11:08:20] Errores encontrados:
+[2025-11-27 11:08:20] - No se encontró el archivo JATS-journalpublishing1-3.dtd después de la extracción.
+[2025-11-27 11:08:20] Paso 5/5: Guardando el resultado...
+[2025-11-27 11:08:20] Resumen de tokens de Gemini:
+[2025-11-27 11:08:20] - No se encontró información de tokens en la salida de Gemini.
+[2025-11-27 11:08:20] --- TEXTO CRUDO DE GEMINI ---
+[2025-11-27 11:08:20] Loaded cached credentials.
+[ERROR] [IDEClient] Failed to connect to IDE companion extension. Please ensure the extension is running. To install the extension, run /ide install.
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.3 20210610//EN" "JATS-journalpublishing1-3.dtd">
+<article xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML" dtd-version="1.3" article-type="research-article" xml:lang="es">
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="publisher-id">rma</journal-id>
+      <journal-title-group>
+        <journal-title>Revista Matronería Actual</journal-title>
+      </journal-title-group>
+      <issn publication-format="electronic">xxxx-xxxx</issn>
+      <publisher>
+        <publisher-name>Universidad de Valparaíso</publisher-name>
+      </publisher>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="doi">10.28960/revmeduas.2007-8013.v13.n1.010</article-id>
+      <title-group>
+        <article-title>Diástasis de los rectos abdominales en el posparto: relación con sexualidad y estado nutricional</article-title>
+        <trans-title-group xml:lang="en">
+          <trans-title>Diastasis of the rectus abdominis muscles and sexuality in postpartum women</trans-title>
+        </trans-title-group>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <contrib-id contrib-id-type="orcid">http://orcid.org/0000-0002-0721-965X</contrib-id>
+          <name>
+            <surname>Estrada</surname>
+            <given-names>Jusselit T.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+          <xref ref-type="aff" rid="aff2">2</xref>
+          <xref ref-type="corresp" rid="cor1">*</xref>
+          <email>jusselit.estrada@uss.cl</email>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Ochar</surname>
+            <given-names>Judith T.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Salas</surname>
+            <given-names>Catalina A.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Guzmán</surname>
+            <given-names>Camila B.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Rubilar</surname>
+            <given-names>Fabiola I.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+      </contrib-group>
+      <aff id="aff1">
+        <label>1</label>
+        <institution content-type="original">Carrera de Obstetricia y Matronería. Facultad de Ciencias para el Cuidado de la Salud. Universidad San Sebastián, Concepción, Chile.</institution>
+        <institution content-type="orgdiv1">Carrera de Obstetricia y Matronería</institution>
+        <institution content-type="orgdiv2">Facultad de Ciencias para el Cuidado de la Salud</institution>
+        <institution content-type="orgname">Universidad San Sebastián</institution>
+        <addr-line>
+          <city>Concepción</city>
+        </addr-line>
+        <country country="CL">Chile</country>
+      </aff>
+      <aff id="aff2">
+        <label>2</label>
+        <institution content-type="original">Doctorado en Ciencias Morfológicas, Facultad de Medicina. Universidad de la Frontera, Temuco, Chile.</institution>
+        <institution content-type="orgdiv1">Doctorado en Ciencias Morfológicas</institution>
+        <institution content-type="orgdiv2">Facultad de Medicina</institution>
+        <institution content-type="orgname">Universidad de la Frontera</institution>
+        <addr-line>
+          <city>Temuco</city>
+        </addr-line>
+        <country country="CL">Chile</country>
+      </aff>
+      <author-notes>
+        <corresp id="cor1">
+          <label>*</label>Correspondencia: Jusselit Estrada. Código postal 4080871. Email: <email>jusselit.estrada@uss.cl</email>.
+        </corresp>
+      </author-notes>
+      <pub-date date-type="received" publication-format="electronic">
+        <day>29</day>
+        <month>05</month>
+        <year>2024</year>
+      </pub-date>
+      <pub-date date-type="accepted" publication-format="electronic">
+        <day>07</day>
+        <month>10</month>
+        <year>2025</year>
+      </pub-date>
+      <abstract>
+        <sec>
+          <title>Introducción</title>
+          <p>Durante la gestación se separan los músculos rectos del abdomen, fenómeno denominado diástasis abdominal.</p>
+        </sec>
+        <sec>
+          <title>Objetivo</title>
+          <p>Relacionar la presencia de diástasis de rectos abdominales (DRA) con la función sexual femenina en el posparto y el estado nutricional.</p>
+        </sec>
+        <sec>
+          <title>Material y Método</title>
+          <p>Estudio correlacional de corte transversal en una muestra de 99 mujeres mayores de 18 años en control, en la provincia de Arauco, hasta seis meses postparto. Se diseñó un cuestionario para recolectar los datos demográficos y obstétricos y se utilizó la técnica de palpación de los músculos rectos abdominales. Por último, se aplicó la encuesta IFSF. Se excluyeron las mujeres con pérdida reproductiva durante la gestación, con contraindicación de actividad física y con discapacidad motora.</p>
+        </sec>
+        <sec>
+          <title>Resultados</title>
+          <p>La diástasis supraumbilical y umbilical fueron de 1,9 cm y 1,63 cm a nivel infraumbilical, respectivamente. En cuanto al funcionamiento sexual, el dominio de satisfacción tuvo un puntaje de 5,3, seguido de la lubricación con 4,9. El puntaje del IFSF fue 27,5. Se halló una relación estadísticamente significativa entre el dominio del dolor y la medición de la diástasis, así como también entre el dominio del dolor y la satisfacción sexual. El 78,7 % de las pacientes tenía mal nutrición por exceso y no hubo relación significativa entre DRA y el estado nutricional.</p>
+        </sec>
+        <sec>
+          <title>Conclusiones</title>
+          <p>La detección de DRA mediante palpación es una modalidad de bajo costo, útil en el posparto, posible de implementar para evaluar el funcionamiento sexual durante estos controles y que posibilita educar precozmente a las usuarias.</p>
+        </sec>
+      </abstract>
+      <trans-abstract xml:lang="en">
+        <sec>
+          <title>Introduction</title>
+          <p>During pregnancy, the rectus abdominis muscles separate, a condition known as abdominal diastasis.</p>
+        </sec>
+        <sec>
+          <title>Objective</title>
+          <p>To relate the presence of abdominal rectus diastasis (DRA) with female sexual function in the postpartum period and nutritional status.</p>
+        </sec>
+        <sec>
+          <title>Materials and Methods</title>
+          <p>A cross-sectional correlational study was conducted with a sample of 99 women over 18 years of age, followed up in the province of Arauco up to 6 months postpartum. A questionnaire was designed to collect demographic and obstetric data, and the palpation technique was used to assess the abdominal rectus muscles. The IFSF survey was also administered. Women with reproductive loss during pregnancy, contraindications for physical activity, and those with motor disabilities were excluded.</p>
+        </sec>
+        <sec>
+          <title>Results</title>
+          <p>The supraumbilical and umbilical diastasis measured 1.9 cm and 1.63 cm at the infraumbilical level, respectively. Regarding sexual function, the satisfaction domain scored 5.3, followed by lubrication with a score of 4.9. The IFSF score was 27.5. A statistically significant relationship was found between the pain domain and the measurement of diastasis, as well as between sexual satisfaction. 78.7% of the patients were found to be overweight nutrition, and there was no significant relationship between DRA and nutritional status.</p>
+        </sec>
+        <sec>
+          <title>Conclusions</title>
+          <p>Detection of DRA through palpation is a low-cost modality that is useful in the postpartum period. Implementing and evaluating sexual function during these follow-ups will allow for early education of the users.</p>
+        </sec>
+      </trans-abstract>
+      <kwd-group xml:lang="es">
+        <kwd>período posparto</kwd>
+        <kwd>sexualidad</kwd>
+        <kwd>diástasis muscular</kwd>
+        <kwd>abdomen</kwd>
+        <kwd>estado nutricional</kwd>
+      </kwd-group>
+      <kwd-group xml:lang="en">
+        <kwd>postpartum period</kwd>
+        <kwd>sexuality</kwd>
+        <kwd>muscular diastasis</kwd>
+        <kwd>abdomen</kwd>
+        <kwd>nutritional status</kwd>
+      </kwd-group>
+    </article-meta>
+  </front>
+  <body>
+    <sec>
+      <title>INTRODUCCIÓN</title>
+      <p>La gestación es un proceso que conlleva numerosos cambios, que incluyen adaptaciones tanto físicas como psicológicas. Entre las adaptaciones físicas se encuentra la separación de los músculos rectos del abdomen<xref ref-type="bibr" rid="ref1">1</xref>, que tienen su origen en la sínfisis y la cresta del pubis, e insertan en el proceso xifoides y en los cartílagos costales, del quinto al séptimo<xref ref-type="bibr" rid="ref2">2</xref>. El crecimiento del útero y la regulación de las hormonas propias del embarazo determinan la separación de estos músculos en la línea media del abdomen, conocida como línea alba, fenómeno denominado diástasis<xref ref-type="bibr" rid="ref3">3</xref> (acrónimo DRA: diástasis de los músculos rectos del abdomen).</p>
+      <p>Esta zona está constituida también por la fusión de la aponeurosis de los músculos oblicuos y transversos, lo que provoca un
+[2025-11-27 11:08:20] Proceso completado.
+[2025-11-27 11:11:54] Inicio de proceso para entrada: 4293.docx salida: 4293.xml
+[2025-11-27 11:11:54] Paso 1/5: Procesando para extraer contenido estructurado...
+[2025-11-27 11:11:54] Paso 2/5: Construyendo prompt avanzado para Gemini...
+[2025-11-27 11:11:54] Paso 3/5: Invocando a la IA de Gemini para la conversión (esto puede tardar)...
+[2025-11-27 11:15:15] Gemini returncode: 0 Elapsed: 200.55s
+[2025-11-27 11:15:15] Gemini stderr: Loaded cached credentials.
+[ERROR] [IDEClient] Failed to connect to IDE companion extension. Please ensure the extension is running. To install the extension, run /ide install.
+[2025-11-27 11:15:15] Paso 4/5: Validando el XML generado contra el DTD de JATS...
+[2025-11-27 11:15:15] ¡Validación exitosa! El XML es conforme al DTD de JATS.
+[2025-11-27 11:15:15] Paso 5/5: Guardando el resultado...
+[2025-11-27 11:15:15] Resumen de tokens de Gemini:
+[2025-11-27 11:15:15] - No se encontró información de tokens en la salida de Gemini.
+[2025-11-27 11:15:15] --- TEXTO CRUDO DE GEMINI ---
+[2025-11-27 11:15:15] Loaded cached credentials.
+[ERROR] [IDEClient] Failed to connect to IDE companion extension. Please ensure the extension is running. To install the extension, run /ide install.
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.3 20210610//EN" "JATS-journalpublishing1-3.dtd">
+<article xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML" dtd-version="1.3" article-type="research-article" xml:lang="es">
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="publisher-id">rma</journal-id>
+      <journal-title-group>
+        <journal-title>Revista Matronería Actual</journal-title>
+      </journal-title-group>
+      <issn pub-type="epub">0000-0000</issn>
+      <publisher>
+        <publisher-name>Universidad de Valparaíso</publisher-name>
+      </publisher>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="publisher-id">00001</article-id>
+      <title-group>
+        <article-title>Diástasis de los rectos abdominales en el posparto: relación con sexualidad y estado nutricional</article-title>
+        <trans-title-group xml:lang="en">
+          <trans-title>Diastasis of the rectus abdominis muscles and sexuality in postpartum women</trans-title>
+        </trans-title-group>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author" corresp="yes">
+          <contrib-id contrib-id-type="orcid">https://orcid.org/0000-0002-0721-965X</contrib-id>
+          <name>
+            <surname>Estrada</surname>
+            <given-names>Jusselit T.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+          <xref ref-type="aff" rid="aff2">2</xref>
+          <xref ref-type="corresp" rid="cor1">*</xref>
+          <email>jusselit.estrada@uss.cl</email>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Ochar</surname>
+            <given-names>Judith T.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Salas</surname>
+            <given-names>Catalina A.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Guzmán</surname>
+            <given-names>Camila B.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Rubilar</surname>
+            <given-names>Fabiola I.</given-names>
+          </name>
+          <xref ref-type="aff" rid="aff1">1</xref>
+        </contrib>
+      </contrib-group>
+      <aff id="aff1">
+        <label>1</label>
+        <institution-wrap>
+          <institution content-type="orgdiv1">Carrera de Obstetricia y Matronería</institution>
+          <institution content-type="orgdiv2">Facultad de Ciencias para el Cuidado de la Salud</institution>
+          <institution content-type="orgname">Universidad San Sebastián</institution>
+        </institution-wrap>
+        <addr-line>
+          <city>Concepción</city>
+        </addr-line>
+        <country country="CL">Chile</country>
+      </aff>
+      <aff id="aff2">
+        <label>2</label>
+        <institution-wrap>
+          <institution content-type="orgdiv1">Doctorado en Ciencias Morfológicas</institution>
+          <institution content-type="orgdiv2">Facultad de Medicina</institution>
+          <institution content-type="orgname">Universidad de la Frontera</institution>
+        </institution-wrap>
+        <addr-line>
+          <city>Temuco</city>
+        </addr-line>
+        <country country="CL">Chile</country>
+      </aff>
+      <author-notes>
+        <corresp id="cor1">
+          <label>*</label>Correspondencia Jusselit Estrada. Código postal 4080871. Email: <email>jusselit.estrada@uss.cl</email>.
+        </corresp>
+      </author-notes>
+      <pub-date date-type="pub" publication-format="electronic">
+        <day>07</day>
+        <month>10</month>
+        <year>2025</year>
+      </pub-date>
+      <history>
+        <date date-type="received">
+          <day>29</day>
+          <month>05</month>
+          <year>2024</year>
+        </date>
+        <date date-type="accepted">
+          <day>07</day>
+          <month>10</month>
+          <year>2025</year>
+        </date>
+      </history>
+      <abstract xml:lang="es">
+        <title>RESUMEN</title>
+        <p><bold>Introducción:</bold> durante la gestación se separan los músculos rectos del abdomen, fenómeno denominado diástasis abdominal.</p>
+        <p><bold>Objetivo:</bold> relacionar la presencia de diástasis de rectos abdominales (DRA) con la función sexual femenina en el posparto y el estado nutricional.</p>
+        <p><bold>Material y Método:</bold> estudio correlacional de corte transversal en una muestra de 99 mujeres mayores de 18 años en control, en la provincia de Arauco, hasta seis meses postparto. Se diseñó un cuestionario para recolectar los datos demográficos y obstétricos y se utilizó la técnica de palpación de los músculos rectos abdominales. Por último, se aplicó la encuesta IFSF. Se excluyeron las mujeres con pérdida reproductiva durante la gestación, con contraindicación de actividad física y con discapacidad motora</p>
+        <p><bold>Resultados:</bold> la diástasis supraumbilical y umbilical fueron de 1,9 cm y 1,63 cm a nivel infraumbilical, respectivamente. En cuanto al funcionamiento sexual, el dominio de satisfacción tuvo un puntaje de 5,3, seguido de la lubricación con 4,9. El puntaje del IFSF fue 27,5. Se halló una relación estadísticamente significativa entre el dominio del dolor y la medición de la diástasis, así como también entre el dominio del dolor y la satisfacción sexual. El 78,7 % de las pacientes tenía mal nutrición por exceso y no hubo relación significativa entre DRA y el estado nutricional.</p>
+        <p><bold>Conclusiones:</bold> la detección de DRA mediante palpación es una modalidad de bajo costo, útil en el posparto, posible de implementar para evaluar el funcionamiento sexual durante estos controles y que posibilita educar precozmente a las usuarias.</p>
+      </abstract>
+      <abstract xml:lang="en">
+        <title>ABSTRACT</title>
+        <p><bold>Introduction:</bold> during pregnancy, the rectus abdominis muscles separate, a condition known as abdominal diastasis.</p>
+        <p><bold>Objective:</bold> to relate the presence of abdominal rectus diastasis (DRA) with female sexual function in the postpartum period and nutritional status.</p>
+        <p><bold>Materials and Methods:</bold> q cross-sectional correlational study was conducted with a sample of 99 women over 18 years of age, followed up in the province of Arauco up to 6 months postpartum. A questionnaire was designed to collect demographic and obstetric data, and the palpation technique was used to assess the abdominal rectus muscles. The IFSF survey was also administered. Women with reproductive loss during pregnancy, contraindications for physical activity, and those with motor disabilities were excluded.</p>
+        <p><bold>Results:</bold> the supraumbilical and umbilical diastasis measured 1.9 cm and 1.63 cm at the infraumbilical level, respectively. Regarding sexual function, the satisfaction domain scored 5.3, followed by lubrication with a score of 4.9. The IFSF score was 27.5. A statistically significant relationship was found between the pain domain and the measurement of diastasis, as well as between sexual satisfaction. 78.7% of the patients were found to be overweight nutrition, and there was no significant relationship between DRA and nutritional status.</p>
+        <p><bold>Conclusions:</bold> detection of DRA through palpation is a low-cost modality that is useful in the postpartum period. Implementing and evaluating sexual function during these follow-ups will allow for early education of the users.</p>
+      </abstract>
+      <kwd-group xml:lang="es">
+        <kwd>período posparto</kwd>
+        <kwd>sexualidad</kwd>
+        <kwd>diástasis muscular</kwd>
+        <kwd>abdomen</kwd>
+        <kwd>estado nutricional</kwd>
+      </kwd-group>
+      <kwd-group xml:lang="en">
+        <kwd>postpartum period</kwd>
+        <kwd>sexuality</kwd>
+        <kwd>muscular diastasis</kwd>
+        <kwd>abdomen</kwd>
+        <kwd>nutritional status</kwd>
+      </kwd-group>
+    </article-meta>
+  </front>
+  <body>
+    <sec>
+      <title>INTRODUCCIÓN</title>
+      <p>La gestación es un proceso que conlleva numerosos cambios, que incluyen adaptaciones tanto físicas como psicológicas. Entre las adaptaciones físicas se encuentra la separación de los músculos rectos del abdomen<xref ref-type="bibr" rid="ref1">1</xref>, que tienen su origen en la sínfisis y la cresta del pubis, e insertan en el proceso xifoides y en los cartílagos costales, del quinto al séptimo<xref ref-type="bibr" rid="ref2">2</xref>. El crecimiento del útero y la regulación de las hormonas propias del embarazo determinan la separación de estos músculos en la línea media del abdomen, conocida como línea alba, fenómeno denominado diástasis<xref ref-type="bibr" rid="ref3">3</xref> (acrónimo DRA: diástasis de los músculos rectos del abdomen).</p>
+      <p>Esta zona está constituida también por la fusión de la aponeurosis de los músculos oblicuos y transversos, lo que provoca un ensanchamiento y adelgazamiento de la línea alba<xref ref-type="bibr" rid="ref1">1</xref>. Además de la gestación, existen otros factores que pueden desencadenar la diástasis, tales como el aumento de peso, la hiperlaxitud articular, el alto índice de masa corporal, la falta de ejercicio antes y durante el embarazo<xref ref-type="bibr" rid="ref4">4</xref>,<xref ref-type="bibr" rid="ref5">5</xref>, la multiparidad, la tos crónica, la constipación crónica y la obesidad<xref ref-t
+[2025-11-27 11:15:15] Proceso completado.

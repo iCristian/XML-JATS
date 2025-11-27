@@ -30,6 +30,7 @@ import subprocess
 import sys
 import time
 import urllib.request
+import zipfile
 from datetime import datetime
 from pathlib import Path
 
@@ -37,9 +38,9 @@ from docx import Document
 from lxml import etree
 
 # --- Constantes ---
-DTD_URL = "https://jats.nlm.nih.gov/publishing/1.3/JATS-publishing-1-3.dtd"
+DTD_ZIP_URL = "https://public.nlm.nih.gov/projects/jats/publishing/1.3/JATS-Publishing-1-3-MathML3-DTD.zip"
 WORKSPACE_ROOT = Path(__file__).resolve().parent
-DTD_FILENAME = "JATS-publishing-1-3.dtd"
+DTD_FILENAME = "JATS-journalpublishing1-3-mathml3.dtd"
 DTD_LOCAL_FILE = WORKSPACE_ROOT / DTD_FILENAME
 IMAGE_OUTPUT_DIR = WORKSPACE_ROOT / "imagenes_extraidas"
 
@@ -310,24 +311,62 @@ def validar_jats_xml(xml_content: str) -> tuple[bool, list]:
         tuple[bool, list]: Un booleano indicando si la validación fue exitosa,
                            y una lista de errores si falló.
     """
-    # Descargar DTD si es necesario
-    if not DTD_LOCAL_FILE.exists():
+    # Descargar y extraer DTD si es necesario
+    # Verificar si el DTD existe en la raíz o en el subdirectorio estándar
+    possible_dtd_locations = [
+        WORKSPACE_ROOT / DTD_FILENAME,
+        WORKSPACE_ROOT / "JATS-Publishing-1-3-MathML3-DTD" / DTD_FILENAME
+    ]
+    
+    dtd_path = None
+    for path in possible_dtd_locations:
+        if path.exists():
+            dtd_path = path
+            break
+            
+    if not dtd_path:
         try:
-            print(f"Descargando el DTD de JATS desde {DTD_URL}...")
-            urllib.request.urlretrieve(DTD_URL, str(DTD_LOCAL_FILE))
-            print("DTD descargado exitosamente.")
+            zip_path = WORKSPACE_ROOT / "jats_dtd.zip"
+            if not zip_path.exists():
+                print(f"Descargando el paquete DTD de JATS desde {DTD_ZIP_URL}...")
+                urllib.request.urlretrieve(DTD_ZIP_URL, str(zip_path))
+                print("Paquete ZIP descargado.")
+
+            print("Extrayendo DTD...")
+            with zipfile.ZipFile(zip_path, 'r') as z:
+                z.extractall(WORKSPACE_ROOT)
+            print("DTD extraído exitosamente.")
+            
+            # Re-verificar ubicación
+            for path in possible_dtd_locations:
+                if path.exists():
+                    dtd_path = path
+                    break
         except Exception as e:
-            print(f"No se pudo descargar el DTD. No se puede validar. Error: {e}", file=sys.stderr)
-            return False, [f"Fallo en la descarga del DTD: {e}"]
+            print(f"No se pudo descargar/extraer el DTD. No se puede validar. Error: {e}", file=sys.stderr)
+            return False, [f"Fallo en la descarga/extracción del DTD: {e}"]
+
+    if not dtd_path:
+         return False, [f"No se encontró el archivo {DTD_FILENAME} después de la extracción."]
+
+    print(f"Usando DTD en: {dtd_path}")
 
     try:
         # Asegurarse de que el contenido XML es bytes codificados en utf-8
-        xml_bytes = xml_content.encode('utf-8')
+        # Patch DOCTYPE to match the DTD we have
+        xml_content_patched = re.sub(
+            r'<!DOCTYPE.*?>',
+            '<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD with MathML3 v1.3 20210610//EN" "JATS-journalpublishing1-3-mathml3.dtd">',
+            xml_content,
+            flags=re.DOTALL
+        )
+        
+        xml_bytes = xml_content_patched.encode('utf-8')
 
         # Parsear el XML y el DTD
-        parser = etree.XMLParser(dtd_validation=True, no_network=False)
+        parser = etree.XMLParser(dtd_validation=False, no_network=False)
         xml_tree = etree.fromstring(xml_bytes, parser)
-        dtd = etree.DTD(str(DTD_LOCAL_FILE))
+        dtd = etree.DTD(str(dtd_path))
 
         # Validar
         is_valid = dtd.validate(xml_tree)
@@ -404,11 +443,21 @@ def main():
 
     generated_xml = gemini_result.get('stdout')
 
-    # Limpieza preliminar: a veces la IA envuelve la salida en ```xml ... ```
-    if generated_xml.startswith("```xml"):
-        generated_xml = generated_xml[5:]
-    if generated_xml.endswith("```"):
-        generated_xml = generated_xml[:-3]
+    # Limpieza robusta: buscar bloque de código XML o contenido XML directo
+    # 1. Intentar buscar bloque markdown ```xml ... ```
+    match = re.search(r"```xml\s*(.*?)\s*```", generated_xml, re.DOTALL)
+    if match:
+        generated_xml = match.group(1)
+    else:
+        # 2. Si no hay bloque, intentar encontrar el inicio del XML (<?xml o <article)
+        # Buscar el primer '<' que parezca inicio de XML
+        match_xml = re.search(r"(<\?xml|<!DOCTYPE|<article).*", generated_xml, re.DOTALL)
+        if match_xml:
+            generated_xml = match_xml.group(0)
+            # Limpiar posible cierre de markdown si quedó colgado
+            if generated_xml.endswith("```"):
+                generated_xml = generated_xml[:-3]
+    
     generated_xml = generated_xml.strip()
 
     log("Paso 4/5: Validando el XML generado contra el DTD de JATS...")

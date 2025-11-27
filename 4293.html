@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diástasis de los rectos abdominales en el posparto: relación con sexualidad y estado nutricional</title>
+  <style>
+:root {
+  color-scheme: light;
+  --font-sans: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  --bg-body: #f3f4f6;
+  --bg-card: #ffffff;
+  --accent: #1f3d7a;
+  --accent-secondary: #2f4f8f;
+  --accent-soft: rgba(31, 61, 122, 0.12);
+  --accent-soft-alt: rgba(31, 61, 122, 0.08);
+  --border-soft: rgba(15, 23, 42, 0.14);
+  --text-main: #1f2937;
+  --text-muted: #374151;
+  --text-subtle: #4b5563;
+  --shadow-soft: 0 24px 48px -32px rgba(15, 23, 42, 0.35);
+  --radius-md: 18px;
+  --focus-ring: 0 0 0 3px rgba(31, 61, 122, 0.35);
+  --bg-soft: rgba(15, 23, 42, 0.04);
+  --header-bg: linear-gradient(135deg, #f9fafc, #eef1f7);
+}
+body[data-theme="dark"] {
+  color-scheme: dark;
+  --bg-body: #0b1220;
+  --bg-card: #121a2f;
+  --accent: #7aa2ff;
+  --accent-secondary: #90b4ff;
+  --accent-soft: rgba(122, 162, 255, 0.22);
+  --accent-soft-alt: rgba(122, 162, 255, 0.12);
+  --border-soft: rgba(148, 163, 184, 0.35);
+  --text-main: #e2e8f0;
+  --text-muted: #cbd5f5;
+  --text-subtle: #a5b4d1;
+  --shadow-soft: 0 28px 56px -32px rgba(0, 0, 0, 0.65);
+  --focus-ring: 0 0 0 3px rgba(122, 162, 255, 0.5);
+  --bg-soft: rgba(122, 162, 255, 0.12);
+  --header-bg: linear-gradient(135deg, #10182b, #131f36);
+}
+body[data-contrast="high"] {
+  --bg-body: #ffffff;
+  --bg-card: #ffffff;
+  --accent: #0b1120;
+  --accent-secondary: #1f2937;
+  --accent-soft: rgba(11, 17, 32, 0.12);
+  --accent-soft-alt: rgba(11, 17, 32, 0.08);
+  --border-soft: rgba(11, 17, 32, 0.35);
+  --text-main: #0b1120;
+  --text-muted: #111827;
+  --text-subtle: #1f2937;
+  --shadow-soft: none;
+  --focus-ring: 0 0 0 3px rgba(11, 17, 32, 0.4);
+  --bg-soft: rgba(11, 17, 32, 0.08);
+  --header-bg: linear-gradient(135deg, #ffffff, #e5e7eb);
+}
+body[data-theme="dark"][data-contrast="high"] {
+  --bg-body: #020817;
+  --bg-card: #061226;
+  --accent: #f3c969;
+  --accent-secondary: #f0d893;
+  --accent-soft: rgba(243, 201, 105, 0.28);
+  --accent-soft-alt: rgba(243, 201, 105, 0.18);
+  --border-soft: rgba(243, 201, 105, 0.5);
+  --text-main: #f8fafc;
+  --text-muted: #e2e8f0;
+  --text-subtle: #cbd5f5;
+  --focus-ring: 0 0 0 3px rgba(243, 201, 105, 0.55);
+  --bg-soft: rgba(243, 201, 105, 0.18);
+  --header-bg: linear-gradient(135deg, #0b172c, #152441);
+}
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--bg-body);
+  color: var(--text-main);
+  transition: background 0.25s ease, color 0.25s ease;
+  overflow-x: hidden;
+}
+body.sidebar-lock {
+  overflow: hidden;
+}
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover, a:focus {
+  text-decoration: underline;
+}
+a:focus-visible, button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+button {
+  font: inherit;
+}
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.app-header {
+  padding: clamp(20px, 4vw, 36px) clamp(16px, 5vw, 48px) 12px;
+  background: var(--bg-body);
+  margin-bottom: clamp(16px, 4vw, 32px);
+}
+.header-panel {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 960px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  padding: clamp(24px, 3vw, 40px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 2.5vw, 24px);
+}
+.branding {
+  flex: 1 1 auto;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+.branding h1 {
+  font-size: clamp(2rem, 2.8vw, 2.75rem);
+  margin: 0;
+  letter-spacing: -0.02em;
+  color: var(--text-main);
+}
+.branding .translated-title {
+  margin: 8px 0 0;
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  color: var(--text-subtle);
+}
+.control-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  width: 100%;
+  border-top: 1px solid var(--border-soft);
+  padding-top: clamp(12px, 2vw, 18px);
+}
+.control-bar button {
+  background: transparent;
+  border: 1px solid var(--border-soft);
+  color: var(--text-main);
+  padding: 10px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.control-bar button:hover {
+  transform: translateY(-1px);
+  background: var(--accent-soft);
+  box-shadow: var(--shadow-soft);
+}
+.control-bar button .state {
+  font-weight: 500;
+}
+.layout {
+  position: relative;
+  padding: 0 clamp(16px, 4vw, 56px) 48px;
+  flex: 1 1 auto;
+}
+.sidebar {
+  width: min(340px, 82vw);
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 0 24px 24px 0;
+  box-shadow: var(--shadow-soft);
+  padding: 28px 24px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow: hidden auto;
+  transform: translateX(-110%);
+  transition: transform 0.32s ease;
+  backdrop-filter: blur(22px);
+  z-index: 22;
+}
+body.sidebar-open .sidebar {
+  transform: translateX(0);
+}
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.sidebar-header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: var(--accent);
+}
+.sidebar-close {
+  background: transparent;
+  border: none;
+  color: var(--text-subtle);
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.sidebar .panel {
+  margin-top: 24px;
+}
+.sidebar .panel h3 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-subtle);
+}
+.toc ul, .meta-list, .keyword-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+.toc-item a {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  color: var(--text-main);
+  background: transparent;
+  transition: background 0.2s ease, transform 0.2s ease;
+  line-height: 1.35;
+  font-weight: 500;
+}
+.toc-item a:hover {
+  background: var(--accent-soft);
+  transform: translateX(4px);
+}
+.toc-marker {
+  display: none;
+}
+.toc-number {
+  font-weight: 600;
+  color: var(--text-main);
+  min-width: 3ch;
+  font-size: 1rem;
+  font-variant-numeric: lining-nums;
+}
+.toc-number:empty {
+  display: none;
+}
+.toc-title {
+  color: var(--text-main);
+}
+.toc-item.level-2 {
+  margin-left: 12px;
+}
+.toc-item.level-3 {
+  margin-left: 24px;
+}
+.toc-item.level-4 {
+  margin-left: 36px;
+}
+.toc-item.level-2 a {
+  font-size: 0.95rem;
+}
+.toc-item.level-3 a {
+  font-size: 0.9rem;
+}
+.toc-item.level-4 a {
+  font-size: 0.85rem;
+}
+.meta-list span {
+  font-weight: 600;
+  display: block;
+  color: var(--text-subtle);
+}
+.keyword-list {
+  flex-wrap: wrap;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+.keyword-list li {
+  background: var(--bg-soft);
+  color: var(--text-main);
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+}
+.main {
+  background: transparent;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+.surface {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  padding: clamp(24px, 3vw, 48px);
+  margin-bottom: 32px;
+}
+.surface h2, .surface h3, .surface h4, .surface h5, .surface h6 {
+  margin-top: 48px;
+  margin-bottom: 16px;
+  scroll-margin-top: 120px;
+}
+.article-body {
+  margin-bottom: 32px;
+}
+.section-grid {
+  display: grid;
+  gap: clamp(18px, 2.8vw, 32px);
+  grid-template-columns: minmax(0, 1fr);
+}
+.article-section {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.article-section.main-section {
+  border-left: 6px solid var(--accent);
+  padding-left: clamp(24px, 3vw, 36px);
+}
+.article-section.main-section:hover {
+  box-shadow: 0 24px 48px -36px rgba(31, 61, 122, 0.35);
+}
+.section-header {
+  display: flex;
+  align-items: baseline;
+}
+.section-heading {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-main);
+}
+.section-number {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--accent);
+  font-variant-numeric: lining-nums;
+  line-height: 1;
+}
+.section-title {
+  font-weight: 600;
+}
+.section-body {
+  display: grid;
+  gap: 16px;
+  margin-top: 12px;
+}
+.section-body p {
+  line-height: 1.75;
+  font-size: 1.03rem;
+  color: var(--text-muted);
+}
+.subsection-group {
+  display: grid;
+  gap: 16px;
+  margin-top: 20px;
+  padding-left: clamp(14px, 1.8vw, 22px);
+  border-left: 3px solid var(--accent-soft);
+}
+.article-section.subsection {
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+.article-section.subsection .section-header h3,
+.article-section.subsection .section-header h4,
+.article-section.subsection .section-header h5,
+.article-section.subsection .section-header h6 {
+  color: var(--text-main);
+}
+.article-section.subsection .section-number {
+  color: var(--text-subtle);
+  font-size: 0.95rem;
+}
+.article-section.subsection .section-body p {
+  font-size: 1rem;
+}
+.article-section.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+}
+.article-section.empty-state p {
+  margin: 0;
+  color: var(--text-subtle);
+  text-align: center;
+}
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+.meta-grid .item {
+  padding: 16px;
+  background: var(--bg-soft);
+  border-radius: 12px;
+}
+.meta-grid .label {
+  display: block;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-subtle);
+  margin-bottom: 6px;
+}
+.author-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+}
+.author {
+  padding: 18px;
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  background: var(--bg-soft);
+}
+.author-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.author-name {
+  font-weight: 600;
+  color: var(--text-main);
+}
+.author-name--corresponding {
+  color: var(--accent);
+}
+.author-corresponding {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent-secondary);
+  background: var(--accent-soft);
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+.author-affiliations {
+  color: var(--text-subtle);
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+}
+.author-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+.author-link-item {
+  display: inline-flex;
+}
+.author-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent-secondary);
+  font-weight: 500;
+}
+.author-link:hover {
+  text-decoration: underline;
+}
+.author-email--corresponding {
+  font-weight: 600;
+  color: var(--accent);
+}
+.abstract p {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--text-muted);
+}
+.panel {
+  margin-bottom: 32px;
+  padding: 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+}
+.media {
+  margin: 0 0 24px;
+  background: var(--bg-soft);
+  padding: 16px;
+  border-radius: 12px;
+}
+.media img {
+  max-width: 100%;
+  display: block;
+  border-radius: 12px;
+}
+.media-label {
+  font-weight: 600;
+  color: var(--text-subtle);
+  margin-right: 8px;
+}
+.table-wrap {
+  margin: 0 0 24px;
+  background: var(--bg-soft);
+  padding: 16px;
+  border-radius: 12px;
+}
+.table-scroll {
+  overflow-x: auto;
+  border-radius: 12px;
+}
+.table-scroll table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 480px;
+}
+.table-scroll th, .table-scroll td {
+  padding: 12px 16px;
+  border: 1px solid var(--border-soft);
+  text-align: left;
+}
+.reference-list {
+  list-style: decimal;
+  margin: 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 12px;
+}
+.reference-label {
+  font-weight: 600;
+  color: var(--text-subtle);
+  margin-right: 8px;
+}
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+  z-index: 18;
+}
+.sidebar-backdrop.visible {
+  opacity: 1;
+  visibility: visible;
+}
+.floating-button {
+  position: fixed;
+  right: clamp(16px, 4vw, 40px);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--accent);
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 24;
+}
+.floating-button .icon {
+  font-weight: 700;
+  font-size: 1rem;
+}
+.floating-button.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.floating-button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+.floating-top {
+  bottom: 108px;
+}
+.floating-menu {
+  bottom: 44px;
+}
+body[data-theme="dark"] .floating-button {
+  color: #0b1220;
+}
+@media (max-width: 720px) {
+  .app-header {
+    padding-inline: 16px;
+  }
+  .layout {
+    padding-inline: 16px;
+  }
+  .surface {
+    padding: 20px;
+  }
+  .control-bar {
+    flex-wrap: wrap;
+  }
+}
+</style>
+</head>
+<body data-theme="light" data-contrast="normal">
+  <div class="app">
+    <header class="app-header">
+      <div class="header-panel">
+        <div class="branding">
+          <h1>Diástasis de los rectos abdominales en el posparto: relación con sexualidad y estado nutricional</h1>
+          
+        </div>
+        <div class="control-bar">
+          <button id="sidebarToggle" type="button" class="sidebar-toggle" aria-label="Mostrar índice" aria-controls="sidebar" aria-expanded="false">
+            <span>Índice</span>
+          </button>
+          <button id="themeToggle" aria-label="Cambiar tema"><span>Modo</span><span class="state">Modo oscuro</span></button>
+          <button id="contrastToggle" aria-label="Cambiar contraste"><span>Contraste</span><span class="state">Alto contraste</span></button>
+        </div>
+      </div>
+    </header>
+    <div class="layout">
+      
+  <aside class="sidebar" id="sidebar" aria-label="Índice de contenido" aria-hidden="false">
+      <div class="sidebar-header">
+        <h2>Contenido</h2>
+        <button class="sidebar-close" id="sidebarClose" aria-label="Cerrar índice">✕</button>
+      </div>
+      <nav class="toc">
+        <ul>
+            <li class="toc-item level-1">
+              <a href="#sec-1">
+                <span class="toc-marker" aria-hidden="true"></span>
+                <span class="toc-number">1</span>
+                <span class="toc-title">INTRODUCCIÓN</span>
+              </a>
+            </li>
+            
+            <li class="toc-item level-1">
+              <a href="#sec-2">
+                <span class="toc-marker" aria-hidden="true"></span>
+                <span class="toc-number">2</span>
+                <span class="toc-title">MATERIAL Y MÉTODO</span>
+              </a>
+            </li>
+            
+            <li class="toc-item level-1">
+              <a href="#sec-3">
+                <span class="toc-marker" aria-hidden="true"></span>
+                <span class="toc-number">3</span>
+                <span class="toc-title">RESULTADOS</span>
+              </a>
+            </li>
+            
+            <li class="toc-item level-1">
+              <a href="#sec-4">
+                <span class="toc-marker" aria-hidden="true"></span>
+                <span class="toc-number">4</span>
+                <span class="toc-title">DISCUSIÓN</span>
+              </a>
+            </li>
+            
+            <li class="toc-item level-1">
+              <a href="#sec-5">
+                <span class="toc-marker" aria-hidden="true"></span>
+                <span class="toc-number">5</span>
+                <span class="toc-title">CONCLUSIÓN</span>
+              </a>
+            </li>
+            </ul>
+      </nav>
+      <section class="panel meta">
+        <h3>Ficha técnica</h3>
+        <ul class="meta-list"><li><span>Fecha:</span> 07/10/2025</li></ul>
+      </section>
+      
+    <section class="panel">
+      <h3>Palabras clave</h3>
+      <ul class="keyword-list"><li>período posparto</li><li>sexualidad</li><li>diástasis muscular</li><li>abdomen</li><li>estado nutricional</li><li>postpartum period</li><li>sexuality</li><li>muscular diastasis</li><li>abdomen</li><li>nutritional status</li></ul>
+    </section>
+    
+    </aside>
+    
+      <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+      <main class="main">
+        <section class="surface metadata">
+          <h2>Información general</h2>
+          <div class="meta-grid">
+            <div class="item"><span class="label">Fecha de publicación</span>07/10/2025</div><div class="item"><span class="label">DOI</span>N/D</div>
+          </div>
+        </section>
+        
+  <section class="panel">
+    <h3>Autores</h3>
+    <ul class="author-list"><li class="author"><div class="author-header"><span class="author-name author-name--corresponding">Jusselit T. Estrada</span><span class="author-corresponding">Autor de correspondencia</span></div><div class="author-affiliations">1Carrera de Obstetricia y MatroneríaFacultad de Ciencias para el Cuidado de la SaludUniversidad San SebastiánConcepciónChile; 2Doctorado en Ciencias MorfológicasFacultad de MedicinaUniversidad de la FronteraTemucoChile</div><div class="author-links"><span class="author-link-item"><a class="author-link author-orcid" href="https://orcid.org/0000-0002-0721-965X" target="_blank" rel="noopener">ORCID: 0000-0002-0721-965X</a></span><span class="author-link-item"><a class="author-link author-email author-email--corresponding" href="mailto:jusselit.estrada@uss.cl">Email: jusselit.estrada@uss.cl</a></span></div></li><li class="author"><div class="author-header"><span class="author-name">Judith T. Ochar</span></div><div class="author-affiliations">1Carrera de Obstetricia y MatroneríaFacultad de Ciencias para el Cuidado de la SaludUniversidad San SebastiánConcepciónChile</div></li><li class="author"><div class="author-header"><span class="author-name">Catalina A. Salas</span></div><div class="author-affiliations">1Carrera de Obstetricia y MatroneríaFacultad de Ciencias para el Cuidado de la SaludUniversidad San SebastiánConcepciónChile</div></li><li class="author"><div class="author-header"><span class="author-name">Camila B. Guzmán</span></div><div class="author-affiliations">1Carrera de Obstetricia y MatroneríaFacultad de Ciencias para el Cuidado de la SaludUniversidad San SebastiánConcepciónChile</div></li><li class="author"><div class="author-header"><span class="author-name">Fabiola I. Rubilar</span></div><div class="author-affiliations">1Carrera de Obstetricia y MatroneríaFacultad de Ciencias para el Cuidado de la SaludUniversidad San SebastiánConcepciónChile</div></li></ul>
+  </section>
+  
+        
+        <section class="surface abstract">
+          <h2>Resumen</h2>
+          <p><strong>Introducción:</strong> durante la gestación se separan los músculos rectos del abdomen, fenómeno denominado diástasis abdominal.</p><p><strong>Objetivo:</strong> relacionar la presencia de diástasis de rectos abdominales (DRA) con la función sexual femenina en el posparto y el estado nutricional.</p><p><strong>Material y Método:</strong> estudio correlacional de corte transversal en una muestra de 99 mujeres mayores de 18 años en control, en la provincia de Arauco, hasta seis meses postparto. Se diseñó un cuestionario para recolectar los datos demográficos y obstétricos y se utilizó la técnica de palpación de los músculos rectos abdominales. Por último, se aplicó la encuesta IFSF. Se excluyeron las mujeres con pérdida reproductiva durante la gestación, con contraindicación de actividad física y con discapacidad motora</p><p><strong>Resultados:</strong> la diástasis supraumbilical y umbilical fueron de 1,9 cm y 1,63 cm a nivel infraumbilical, respectivamente. En cuanto al funcionamiento sexual, el dominio de satisfacción tuvo un puntaje de 5,3, seguido de la lubricación con 4,9. El puntaje del IFSF fue 27,5. Se halló una relación estadísticamente significativa entre el dominio del dolor y la medición de la diástasis, así como también entre el dominio del dolor y la satisfacción sexual. El 78,7 % de las pacientes tenía mal nutrición por exceso y no hubo relación significativa entre DRA y el estado nutricional.</p><p><strong>Conclusiones:</strong> la detección de DRA mediante palpación es una modalidad de bajo costo, útil en el posparto, posible de implementar para evaluar el funcionamiento sexual durante estos controles y que posibilita educar precozmente a las usuarias.</p><p><strong>Introduction:</strong> during pregnancy, the rectus abdominis muscles separate, a condition known as abdominal diastasis.</p><p><strong>Objective:</strong> to relate the presence of abdominal rectus diastasis (DRA) with female sexual function in the postpartum period and nutritional status.</p><p><strong>Materials and Methods:</strong> q cross-sectional correlational study was conducted with a sample of 99 women over 18 years of age, followed up in the province of Arauco up to 6 months postpartum. A questionnaire was designed to collect demographic and obstetric data, and the palpation technique was used to assess the abdominal rectus muscles. The IFSF survey was also administered. Women with reproductive loss during pregnancy, contraindications for physical activity, and those with motor disabilities were excluded.</p><p><strong>Results:</strong> the supraumbilical and umbilical diastasis measured 1.9 cm and 1.63 cm at the infraumbilical level, respectively. Regarding sexual function, the satisfaction domain scored 5.3, followed by lubrication with a score of 4.9. The IFSF score was 27.5. A statistically significant relationship was found between the pain domain and the measurement of diastasis, as well as between sexual satisfaction. 78.7% of the patients were found to be overweight nutrition, and there was no significant relationship between DRA and nutritional status.</p><p><strong>Conclusions:</strong> detection of DRA through palpation is a low-cost modality that is useful in the postpartum period. Implementing and evaluating sexual function during these follow-ups will allow for early education of the users.</p>
+        </section>
+        
+        
+        <section class="article-body">
+          <div class="section-grid">
+            <section id="sec-1" class="article-section level-1 main-section surface"><header class="section-header"><h2 class="section-heading"><span class="section-number">1.</span><span class="section-title">INTRODUCCIÓN</span></h2></header><div class="section-body"><p>La gestación es un proceso que conlleva numerosos cambios, que incluyen adaptaciones tanto físicas como psicológicas. Entre las adaptaciones físicas se encuentra la separación de los músculos rectos del abdomen<a class="citation" href="#ref1" data-rid="ref1">1</a>, que tienen su origen en la sínfisis y la cresta del pubis, e insertan en el proceso xifoides y en los cartílagos costales, del quinto al séptimo<a class="citation" href="#ref2" data-rid="ref2">2</a>. El crecimiento del útero y la regulación de las hormonas propias del embarazo determinan la separación de estos músculos en la línea media del abdomen, conocida como línea alba, fenómeno denominado diástasis<a class="citation" href="#ref3" data-rid="ref3">3</a> (acrónimo DRA: diástasis de los músculos rectos del abdomen).</p><p>Esta zona está constituida también por la fusión de la aponeurosis de los músculos oblicuos y transversos, lo que provoca un ensanchamiento y adelgazamiento de la línea alba<a class="citation" href="#ref1" data-rid="ref1">1</a>. Además de la gestación, existen otros factores que pueden desencadenar la diástasis, tales como el aumento de peso, la hiperlaxitud articular, el alto índice de masa corporal, la falta de ejercicio antes y durante el embarazo<a class="citation" href="#ref4" data-rid="ref4">4</a>,<a class="citation" href="#ref5" data-rid="ref5">5</a>, la multiparidad, la tos crónica, la constipación crónica y la obesidad<a class="citation" href="#ref6" data-rid="ref6">6</a>.</p><p>Actualmente, se considera que una medición es patológica cuando supera los 2,5 cm<a class="citation" href="#ref6" data-rid="ref6">6</a> en cualquier zona de la línea alba. Sin embargo, no existe consenso sobre los puntos de corte para el diagnostico<a class="citation" href="#ref1" data-rid="ref1">1</a>. Algunos investigadores consideran que la DRA es fisiológica cuando se encuentra entre 1,6 a 2,0 cm debajo del ombligo<a class="citation" href="#ref1" data-rid="ref1">1</a>,<a class="citation" href="#ref6" data-rid="ref6">6</a>. Además, existe una disyuntiva sobre el lugar de la línea media donde se debe realizar la medición, así como posibles diferencias relacionadas con factores demográficos y antropométricos de los sujetos<a class="citation" href="#ref1" data-rid="ref1">1</a>,<a class="citation" href="#ref7" data-rid="ref7">7</a>.</p><p>La separación de los músculos abdominales desencadena hipotonía en estos y en los músculos del piso pélvico, lo que afecta directamente en su funcionalidad al provocar un desplazamiento de los vectores de presión dentro de la cavidad abdominal.</p><p>Cabe recordar que los músculos abdominales y los del suelo pélvico confluyen en la línea pectínea de la sínfisis del pubis<a class="citation" href="#ref2" data-rid="ref2">2</a>. La hipotonía genera una pérdida de capacidad de sostén de los órganos, lo que puede provocar consecuencias tales como: dolor abdominal, dolor lumbar y disfunciones propias del suelo pélvico, como incontinencia urinaria o fecal, prolapso genital y dolor pélvico<a class="citation" href="#ref8" data-rid="ref8">8</a>,<a class="citation" href="#ref9" data-rid="ref9">9</a>,<a class="citation" href="#ref10" data-rid="ref10">10</a>. Estos efectos pueden persistir durante años, afectando la calidad de vida de muchas mujeres<a class="citation" href="#ref11" data-rid="ref11">11</a>.</p><p>En mayo de 2013, durante el Congreso de la Sociedad Europea de Hernia en Gdansk (Polonia), se originó el acrónimo PPAWIS (Post-Partum Abdominal Wall Insufficiency Síndrome) para referirse a la insuficiencia de la pared abdominal posparto. Este concepto abarca todos los síntomas, incluyendo la laxitud general de la pared abdominal anterior junto con la diástasis de los músculos rectos del abdomen, así como un exceso de piel y panículo, lo que tiene importantes repercusiones en el contorno general del abdomen. La inestabilidad resultante del tronco se asocia con dolor lumbar y dolor de cadera, síntomas que a menudo se presentan después del embarazo<a class="citation" href="#ref12" data-rid="ref12">12</a>.</p><p>Para el estudio de esta condición se recomienda la ecografía abdominal, que mide de manera milimétrica la línea alba y se considera un método muy fiable<a class="citation" href="#ref13" data-rid="ref13">13</a>. También se utiliza la palpación abdominal, que no implica costos y -aunque la medición no es exacta- permite detectar la patología, especialmente si es realizada por un operador experimentado en la técnica, lo que contribuye a obtener resultados precisos y confiables.</p><p>La técnica consiste en ubicar las yemas del dedo índice y medio a nivel supraumbilical, umbilical e infraumbilical, invitando a la usuaria a realizar una flexión anterior de la cabeza y cuello. Esta evaluación debe llevarse a cabo en los distintos niveles de la línea alba, ya que la medición anormal puede variar por debajo del ombligo en comparación con la parte superior<a class="citation" href="#ref14" data-rid="ref14">14</a>,<a class="citation" href="#ref15" data-rid="ref15">15</a>. La clasificación más utilizada en la evaluación clínica considera: normal si es menor de 2,5 cm, leve entre 2,5 y 3,5 cm, moderado de 3,5 a 5,0 cm y severo si es mayor a 5,0 cm en cualquier zona<a class="citation" href="#ref6" data-rid="ref6">6</a>. Esta estandarización se ha realizado en mujeres europeas. Lamentablemente, no existen curvas en poblaciones con características similares a las chilenas.</p><p>Otros cambios que ocurren durante la gestación y en el postparto incluyen alteraciones en la respuesta sexual, como la disminución de la libido y variaciones en la lubricación<a class="citation" href="#ref16" data-rid="ref16">16</a>. Asimismo, las demandas de cuidado del recién nacido y las adaptaciones físicas y hormonales en el postparto pueden desencadenar la disminución de la lubricación y del deseo sexual, incluso provocando dispareunia en algunos casos<a class="citation" href="#ref17" data-rid="ref17">17</a>,<a class="citation" href="#ref18" data-rid="ref18">18</a>.</p><p>Existe escasa evidencia sobre la insuficiencia de la pared abdominal y sus efectos en la satisfacción sexual femenina. Un estudio realizado en Polonia encontró que el 59,5 %, de las mujeres (n=200) que padecía PPAWIS reportaban problemas en su vida sexual<a class="citation" href="#ref12" data-rid="ref12">12</a>, pero no detalla el tipo de disfunción sexual asociada. En Latinoamérica, en tanto, la información sobre la diástasis de los músculos rectos abdominales y su impacto en el funcionamiento sexual en el posparto es limitada.</p><p>El objetivo de este estudio fue determinar la DRA a través de la palpación manual, dado que el acceso a ecografía abdominal es difícil, optándose por un método que pueda replicarse en los distintos centros de salud. Además, se evaluó el &quot;Índice de Función Sexual Femenina&quot; (IFSF) en el postparto. Finalmente, se relacionaron ambas dimensiones y sus respectivos dominios, proporcionando información valiosa para diseñar estrategias de prevención de patologías y promoción de la salud pélvica femenina.</p></div></section><section id="sec-2" class="article-section level-1 main-section surface"><header class="section-header"><h2 class="section-heading"><span class="section-number">2.</span><span class="section-title">MATERIAL Y MÉTODO</span></h2></header><div class="section-body"><p>Esta investigación se abordó mediante un estudio correlacional de corte transversal, realizado en una muestra de 99 mujeres de un total de 180 ingresadas en control de planificación familiar en los centros de salud familiar de la provincia de Arauco. Se incluyeron mujeres hasta el sexto mes de postparto, mediante un muestreo no probabilístico y consecutivo. Los criterios de inclusión fueron: mujeres sin antecedente de hernia umbilical, o de cirugías abdominales y que tuvieran más de 18 años. Todas debían firmar previamente un consentimiento informado. Se excluyeron del estudio a las mujeres con pérdida reproductiva durante la gestación o con contraindicación para la actividad física y aquellas con discapacidad motora. La investigación fue aprobada por el Comité de Ética del Servicio de Salud de Arauco y del Hospital Dr. Rafael Avaria de Curanilahue.</p><p>Se diseñó un cuestionario para la recolección de datos demográficos y obstétricos, que incluyó: edad, peso, índice de masa corporal (IMC), paridad y presencia o ausencia de pareja actual.</p><p>Para obtener los valores de la medición de la DRA supraumbilical, umbilical e infraumbilical se utilizó la técnica de palpación, que consiste en palpar el abdomen de la usuaria recorriendo la línea media (Fig.1). Para ejecutar la técnica, la usuaria debe estar en posición supina, en reposo sobre la camilla, con las piernas flexionadas y los pies juntos en un ángulo de 90°, con los brazos apoyados a lo largo del cuerpo<a class="citation" href="#ref13" data-rid="ref13">13</a>. Luego, se le solicita que realice una contracción abdominal en posición supina, flexione su cabeza, levante los hombros de la camilla y lleve las manos a las rodillas.</p><p>El evaluador se ubica a nivel supraumbilical, presionando ligeramente con las yemas de los dedos de forma vertical sobre la línea alba de la usuaria, de modo que el ancho de los dedos puede ajustarse a la distancia entre los bordes internos de los músculos rectos abdominales (Fig.2). Este procedimiento se repite a nivel umbilical e infraumbilical. Finalmente, para valorar el grado de diástasis, el evaluador localiza el centro del ombligo como referencia y ubica la yema del dedo índice y medio en los músculos rectos abdominales. Luego, se invita a la paciente a realizar una flexión anterior de la cabeza y el cuello, lo que provoca un aumento de la presión intraabdominal, permitiendo así la palpación y la identificación de los músculos rectos abdominales.</p><p>Previo a la medición, se midió el ancho de los dedos, como referencia en cada medición, y se utilizó un bajalenguas graduado para colocar el dedo y cuantificar la medición (Fig.3).</p><p>Por último, se aplicó la encuesta de Índice de Función Sexual Femenina (IFSF) desarrollado por Rosen y cols<a class="citation" href="#ref19" data-rid="ref19">19</a> y validado en Chile<a class="citation" href="#ref20" data-rid="ref20">20</a>. El cuestionario consta de 19 preguntas agrupadas en seis dominios: deseo, excitación, lubricación, orgasmo, satisfacción y dolor. Cada pregunta presentó cinco o seis opciones, a las cuales se les asigna un puntaje que varía de 0 a 5. El puntaje de cada dominio se multiplica por un factor, y el resultado final es la suma aritmética de los dominios. A mayor puntaje, mejor el funcionamiento sexual, existiendo un puntaje de corte de 26. Un puntaje menor o igual a este valor indica un riesgo de disfunción sexual<a class="citation" href="#ref19" data-rid="ref19">19</a>,<a class="citation" href="#ref21" data-rid="ref21">21</a>. Este instrumento se aplica únicamente a mujeres que han tenido actividad sexual en las últimas cuatro semanas. Si no cumplían ese criterio, no era posible evaluar.</p><p>El análisis estadístico fue univariado y bivariado para correlacionar las variables cuantitativas, utilizando la prueba no paramétrica de Sperman, dado que las variables no presentaron distribución normal. Para las diferencias en las mediciones de diástasis según el IMC, se empleó la prueba de Kruskall – Wallis, y para el análisis entre la medición de la diástasis y el tipo de parto, se utilizó la prueba no paramétrica de Wilcoxon- Mann Whitney.</p><p>Los datos se tabularon en una planilla de Excel y se analizaron con el software estadístico Stata V.14. El nivel de significancia utilizado para todas las pruebas fue de un a=0,05. Por último, para resguardar la confidencialidad de los datos, los resultados se registraron de manera codificada, asegurando la anonimidad de las pacientes.</p></div></section><section id="sec-3" class="article-section level-1 main-section surface"><header class="section-header"><h2 class="section-heading"><span class="section-number">3.</span><span class="section-title">RESULTADOS</span></h2></header><div class="section-body"><p>La muestra estuvo conformada por 99 usuarias, con una edad promedio de 29±6 años (Min 18-Máx. 41). Se determinó el estado nutricional y el tipo de parto de las participantes. En cuanto al estado nutricional, se encontró que el 34,3 % (n=34) presentaron sobrepeso y el 44,4 % (n=44) obesidad, con un aumento de peso promedio durante la gestación de 8,7 kg (Min 5- Máx 24). Respecto al tipo de parto, se observó que el 52,5 % (n=52) tuvo cesárea. Además, se relacionaron el tipo de parto y el estado nutricional con la medición de la diástasis abdominal, obteniendo un nivel de significancia mayor a 0,05. Ver Tabla I y II.</p><p>En las mediciones de la diástasis abdominal, se observó que la medición supraumbilical tuvo un promedio de 1,92±0,79 cm, a nivel umbilical también fue de 1,92±0,79 cm, mientras que, a nivel infraumbilical, el promedio de la diástasis fue de 1,63±0,76 cm. Ver Tabla III.</p><p>La investigación determinó la actividad sexual de las mujeres en el postparto parto, revelando que el 72,7 % de las participantes había mantenido actividad sexual en las últimas cuatro semanas. Dentro de los dominios evaluados, la satisfacción sexual tuvo un promedio de 5,3±0,9 y la lubricación un promedio de 4,9±1,1. El puntaje del Índice de la función sexual femenina fue de 27,5±4 aplicable al 72,7 % de la muestra, ya que el 27,3 % no había tenido actividad sexual después del parto. Los detalles se presentan en la Tabla IV.</p><p>Al correlacionar las mediciones de diástasis con los dominios y puntaje del Índice de Función Sexual Femenina, se encontraron correlaciones con p-valores estadísticamente significativos. En particular, se identificó una correlación significativa entre la medición de diástasis a nivel umbilical y el dominio dolor, con un p-valor de 0,0496 y un coeficiente de correlación positivo de 0,2523. Además, se encontró una correlación estadísticamente significativa entre la medición de diástasis a nivel infraumbilical y el dominio satisfacción, con un p-valor 0,0216 y un coeficiente de correlación negativo (inverso) de -0,2704. Ver Tabla V.</p></div></section><section id="sec-4" class="article-section level-1 main-section surface"><header class="section-header"><h2 class="section-heading"><span class="section-number">4.</span><span class="section-title">DISCUSIÓN</span></h2></header><div class="section-body"><p>Se determinó el tipo de parto, predominando la vía cesárea con un 52,5 %, lo que supera la tasa a nivel nacional que indica un 47,7 %<a class="citation" href="#ref22" data-rid="ref22">22</a>. Esta variable no se relacionó con la medición de la diástasis abdominal, lo que difiere de un estudio realizado en mujeres de China, donde se encontró que aquellas que se habían sometido a una cesárea presentaban más riesgo de padecer diástasis de rectos abdominales (DRA) posparto<a class="citation" href="#ref9" data-rid="ref9">9</a>,<a class="citation" href="#ref10" data-rid="ref10">10</a>. En contraposición, se observó que la diástasis de los rectos abdominales no difiere en relación con el peso ni con el aumento de peso durante la gestación. En nuestro estudio, se describe que el 78,7 % de las participantes tiene sobrepeso y obesidad, lo que se pensaba que podría ser un factor para desarrollar diástasis abdominal. Sin embargo, la relación entre ambas variables no fue significativa, al igual que en la población china, coincidiendo que ambas poblaciones tienen una altura similar.</p><p>La clasificación de la medición de diástasis abdominal sigue siendo un desafío. Se ha descrito que una medición anormal debería considerarse un valor superior a 2,0 o 2,5 cm, estimación concluida en la valoración de la población de Canadá, Noruega y Polonia, cuyas mujeres presentaban características antropométricas muy dispares a las de la población chilena<a class="citation" href="#ref1" data-rid="ref1">1</a>,<a class="citation" href="#ref6" data-rid="ref6">6</a>,<a class="citation" href="#ref7" data-rid="ref7">7</a>,<a class="citation" href="#ref23" data-rid="ref23">23</a>. Esto puede explicar la discordancia en estos resultados, ya que en nuestro estudio la medición promedio de la diástasis supra y umbilical fue de 1,92 cm, mientras que el promedio del nivel infraumbilical fue de 1,63 cm.</p><p>El índice de función sexual en el postparto se ha estudiado en mujeres de diversas regiones, coincidiendo en que, tras el parto, se observa un deterioro en la función sexual femenina. Este deterioro se ha evaluado mediante el instrumento FSFI, donde se indica que las puntuaciones medias del FSFI están debajo del puntaje crítico de 26,55<a class="citation" href="#ref24" data-rid="ref24">24</a>,<a class="citation" href="#ref25" data-rid="ref25">25</a>. Lo que es muy similar a nuestro estudio con un 27,5±4 de puntaje en el índice de función femenina, con el dominio de mayor compromiso en el deseo y dolor, lo cual coincide con la literatura.<a class="citation" href="#ref16" data-rid="ref16">16</a>,<a class="citation" href="#ref17" data-rid="ref17">17</a>,<a class="citation" href="#ref18" data-rid="ref18">18</a>.</p><p>Cabe destacar que, a pesar de estas alteraciones, el dominio de la satisfacción sexual se mantiene relativamente alto, lo que se puede explicarse a través del modelo de Basson, que sugiere que la motivación de la mujer para tener relaciones sexuales es fundamental para su percepción de la respuesta sexual<a class="citation" href="#ref26" data-rid="ref26">26</a>. Además, en nuestro estudio relacionamos el índice de función sexual femenina con la diástasis abdominal, dado que los músculos rectos abdominales influyen en el funcionamiento del piso pélvico<a class="citation" href="#ref27" data-rid="ref27">27</a>. Encontramos una relación estadísticamente significativa entre el índice de función sexual femenina y el dominio del dolor, aunque este hallazgo se sitúa cerca de la incertidumbre, lo que indica la necesidad de ser cautelosos al interpretar estos datos.</p><p>También se analizó el dominio de la satisfacción sexual, mostrando una relación inversa estadísticamente significativa con la diástasis abdominal y un coeficiente de correlación negativo. Esto es relevante, ya que sugiere que la satisfacción sexual está estrechamente relacionada con el grado de diástasis de los músculos rectos abdominales, lo que podría ser considerado en el control postparto. Lamentablemente, no contamos con parámetros para relacionar estos resultados con otros estudios, dado que no se han explorado estas variables en conjunto. No obstante, se ha investigado la función sexual y los resultados postratamiento quirúrgico de la diástasis de los rectos abdominales, encontrando que las mujeres que se sometieron a corrección quirúrgica experimentaron una mejora estadísticamente significativa en su función sexual<a class="citation" href="#ref12" data-rid="ref12">12</a>. Esto refuerza la necesidad de investigar estas variables, ya que el ejercicio del suelo pélvico podría mejorar la función sexual, siendo una estrategia valiosa para abordar la disfunción muscular<a class="citation" href="#ref27" data-rid="ref27">27</a>.</p></div></section><section id="sec-5" class="article-section level-1 main-section surface"><header class="section-header"><h2 class="section-heading"><span class="section-number">5.</span><span class="section-title">CONCLUSIÓN</span></h2></header><div class="section-body"><p>La mayor parte de la muestra en este estudio presenta una mala nutrición por exceso y la modalidad de parto que predominó fue la cesárea. Aunque estas variables no mostraron relación con la DRA se recomienda seguir investigando en estos factores de riesgo y sus efectos en la salud pélvica y sexual de la mujer, especialmente en Latinoamérica, ya que los escasos estudios están en su mayoría en población europea. Dicha población presenta diferencias biológicas y socioculturales que podrían estar relacionadas con la diástasis de los rectos abdominales y la función sexual femenina.</p><p>Si bien la medición a través de la palpación con los dedos es una técnica sencilla, es fundamental que sea realizada por un profesional capacitado. La palpación es una modalidad de bajo costo que, aunque no supera la evaluación por ultrasonografía, puede ser una excelente forma de detección precoz y masiva en los controles postparto.</p><p>Un hallazgo innovador en este estudio es la evaluación de la función sexual femenina. Los resultados de cada dominio coinciden con lo descrito en la literatura, que indica cambios en el funcionamiento sexual femenino. Sin embargo, no existe una relación documentada entre esta condición y la diástasis de los rectos abdominales. En nuestro estudio, encontramos una relación estadística significativa entre el funcionamiento sexual femenino y la diástasis abdominal, especialmente en el dominio de la satisfacción. La DRA podría comprometer estos dominios, generando una insatisfacción en las mujeres en postparto. Debido a la multicausalidad de la satisfacción sexual, invitamos a otros investigadores a explorar estas condiciones, ya que los efectos de la diástasis abdominal de los rectos aún no están completamente dilucidados.</p><p>Una limitación de nuestro estudio es que no se conocía la función sexual previa a la gestación o durante este periodo, información que sería valiosa para comparar las diferencias en cada etapa y los cambios que presenta la mujer. También sería importante incluir en la evaluación los antecedentes de partos anteriores y el peso fetal. No obstante, nuestros resultados destacan la importancia de evaluar el funcionamiento sexual en el posparto, así como la posibilidad de detectar la diástasis de los rectos abdominales de manera precoz. Educar a nuestras usuarias sobre el ejercicio preconcepcional y postparto, así como mantener un estilo de vida saludable, podrían ser factores clave para mejorar la calidad de vida ginecológica de las mujeres. Además, se sugiere ampliar los estudios sobre esta temática a mujeres en otras etapas, como la perimenopausia y la menopausia.</p></div></section>
+          </div>
+        </section>
+        
+        
+        
+    <section class="panel" id="tables">
+      <h3>Tablas</h3>
+      
+            <figure id="t1" class="table-wrap">
+              <figcaption><span class="media-label">Tabla I</span> Diferencia de distribuciones de mediciones de diástasis abdominal según el tipo de parto.</figcaption>
+              <div class="table-scroll">
+                <table><tr><td>Tipo de parto</td><td>Tipo de parto</td><td>Tipo de parto</td><td>Tipo de parto</td><td>Tipo de parto</td><td>Tipo de parto</td></tr><tr><td>Vaginal</td><td>Vaginal</td><td>Vaginal</td><td>Cesárea</td><td>Cesárea</td><td>Cesárea</td></tr><tr><td>Media (D.E.)</td><td>Mediana</td><td>Mín-Máx</td><td>Media (D.E.)</td><td>Mediana</td><td>Mín-Máx</td><td>p-valor</td></tr><tr><td>Nivel supraumbilical</td><td>1,58(0,61)</td><td>1,5</td><td>0,5-3</td><td>1,45(0,56)</td><td>1,5</td><td>0-3</td><td>0,3936</td></tr><tr><td>Nivel umbilical</td><td>1,86(0,91)</td><td>1,5</td><td>0-4,5</td><td>1,98(0,67)</td><td>1,5</td><td>1-3</td><td>0,2451</td></tr><tr><td>Nivel infraumbilical</td><td>1,66(0,81)</td><td>1,5</td><td>0-4,5</td><td>1,6(0,72)</td><td>1,5</td><td>0-3</td><td>0,3936</td></tr></table>
+              </div>
+            </figure>
+            
+            <figure id="t2" class="table-wrap">
+              <figcaption><span class="media-label">Tabla II</span> Diferencia de distribuciones de las mediciones de DRA según IMC.</figcaption>
+              <div class="table-scroll">
+                <table><tr><td>IMC</td><td>IMC</td><td>IMC</td><td>IMC</td><td>IMC</td><td>IMC</td><td>IMC</td><td>IMC</td><td>IMC</td><td>IMC</td><td>IMC</td><td>IMC</td><td>IMC</td><td>IMC</td></tr><tr><td>Normal</td><td>Normal</td><td>Normal</td><td>Normal</td><td>Sobrepeso</td><td>Sobrepeso</td><td>Sobrepeso</td><td>Sobrepeso</td><td>Obesidad</td><td>Obesidad</td><td>Obesidad</td><td>Obesidad</td></tr><tr><td>n</td><td>Media (D.E.)</td><td>Me</td><td>Mín.-Máx.</td><td>n</td><td>Media (D.E.)</td><td>Me</td><td>Mín.-Máx.</td><td>n</td><td>Media (D.E.)</td><td>Me.</td><td>Mín.-Máx.</td><td>p-valor</td></tr><tr><td>Nivel supraumbilical</td><td>13</td><td>1,33(0,64)</td><td>1,5</td><td>0,5-3</td><td>37</td><td>1,47(0,58)</td><td>1,5</td><td>0-3</td><td>49</td><td>1,59(0,58)</td><td>1,5</td><td>0,5-3</td><td>0.1848</td></tr><tr><td>Nivel umbilical</td><td>13</td><td>1,5(0,79)</td><td>1,5</td><td>0-3</td><td>37</td><td>1,92(0,65)</td><td>1,5</td><td>0,5-3</td><td>49</td><td>2,04(0,87)</td><td>1,5</td><td>0,5-4,5</td><td>0.0718</td></tr><tr><td>Nivel infraumbilical</td><td>13</td><td>1,42(1,06)</td><td>1,5</td><td>0-4,5</td><td>37</td><td>1,48(0,69)</td><td>1,5</td><td>0-3</td><td>49</td><td>1,79(0,71)</td><td>1,5</td><td>0-3</td><td>0.0653</td></tr></table>
+              </div>
+            </figure>
+            
+            <figure id="t3" class="table-wrap">
+              <figcaption><span class="media-label">Tabla III</span> Mediciones de la diástasis supraumbilical, umbilical e infraumbilical</figcaption>
+              <div class="table-scroll">
+                <table><tr><td>n</td><td>Media (D.E.)</td><td>Mediana</td><td>Mín.-Máx.</td></tr><tr><td>Nivel Supraumbilical</td><td>99</td><td>1,92(0,79)</td><td>1,5</td><td>0-4,5</td></tr><tr><td>Nivel umbilical</td><td>99</td><td>1,92(0,79)</td><td>1,5</td><td>0-4,5</td></tr><tr><td>Nivel infraumbilical</td><td>99</td><td>1,63(0,76)</td><td>1,5</td><td>0-4,5</td></tr></table>
+              </div>
+            </figure>
+            
+            <figure id="t4" class="table-wrap">
+              <figcaption><span class="media-label">Tabla IV</span> Descripción de dominios e Índice de Función Sexual Femenina.</figcaption>
+              <div class="table-scroll">
+                <table><tr><td>n</td><td>Media (D.E.)</td><td>Mediana</td><td>Mín.-Máx.</td></tr><tr><td>Dominio deseo</td><td>72</td><td>3,3(1,1)</td><td>3,6</td><td>1,2-5,4</td></tr><tr><td>Dominio excitación</td><td>72</td><td>4,4(0,9)</td><td>4,5</td><td>2,1-6</td></tr><tr><td>Dominio lubricación</td><td>72</td><td>4,9(1,1)</td><td>5,1</td><td>1,5-6</td></tr><tr><td>Dominio orgasmo</td><td>72</td><td>4,8(0,9)</td><td>5,2</td><td>2,8-6</td></tr><tr><td>Dominio satisfacción</td><td>72</td><td>5,3(0,9)</td><td>5,6</td><td>1,6-6</td></tr><tr><td>Dominio dolor</td><td>72</td><td>4,7(1,3)</td><td>5</td><td>1,6-6</td></tr><tr><td>Índice función sexual</td><td>72</td><td>27,5(4)</td><td>28,1</td><td>17,3-35</td></tr></table>
+              </div>
+            </figure>
+            
+            <figure id="t5" class="table-wrap">
+              <figcaption><span class="media-label">Tabla V</span> Correlación de mediciones de diástasis con dominios y puntaje total del Índice de función sexual femenino.</figcaption>
+              <div class="table-scroll">
+                <table><tr><td>Medición Diástasis (cm)</td><td>Medición Diástasis (cm)</td><td>Medición Diástasis (cm)</td><td>Medición Diástasis (cm)</td><td>Medición Diástasis (cm)</td><td>Medición Diástasis (cm)</td></tr><tr><td>Nivel supraumbilical</td><td>Nivel supraumbilical</td><td>Nivel umbilical</td><td>Nivel umbilical</td><td>Nivel infraumbilical</td><td>Nivel infraumbilical</td></tr><tr><td>Coeficiente</td><td>p-valor</td><td>Coeficiente</td><td>p-valor</td><td>Coeficiente</td><td>p-valor</td></tr><tr><td>Dominio deseo</td><td>0,1093</td><td>0,2815</td><td>0,1367</td><td>0,1774</td><td>0,1155</td><td>0,2549</td></tr><tr><td>Dominio excitación</td><td>0,0347</td><td>0,7722</td><td>-0,056</td><td>0,6402</td><td>-0,1421</td><td>0,2338</td></tr><tr><td>Dominio lubricación</td><td>0,2226</td><td>0,0602</td><td>0,2028</td><td>0,0875</td><td>0,0978</td><td>0,4139</td></tr><tr><td>Dominio orgasmo</td><td>0,1598</td><td>0,18</td><td>0,118</td><td>0,3234</td><td>-0,1315</td><td>0,2710</td></tr><tr><td>Dominio satisfacción</td><td>-0,1367</td><td>0,2523</td><td>-0,118</td><td>0,3233</td><td>-0,2704</td><td>0,0216</td></tr><tr><td>Dominio dolor</td><td>0,0583</td><td>0,6269</td><td>0,2323</td><td>0,0496</td><td>0,0705</td><td>0,5563</td></tr><tr><td>Índice función sexual</td><td>0,092</td><td>0,4421</td><td>0,1137</td><td>0,3415</td><td>-0,0749</td><td>0,5317</td></tr></table>
+              </div>
+            </figure>
+            
+    </section>
+    
+        
+    <section class="panel" id="references">
+      <h3>Referencias</h3>
+      <ol class="reference-list"><li id="ref1">Bolívar-RodríguezMGaxiola-LópezCServín-UribeSCázarez-AguilarMMorgan-OrtizFDiástasis de músculos rectos abdominales. Revisión bibliográficaRevMedUAS2023131748910.28960/revmeduas.2007-8013.v13.n1.010</li><li id="ref2">MooreKDalleyAAgurAAnatomía con orientación clínica8ªMéxicoWolters Kluwer2018</li><li id="ref3">WuLGuYGuYWangYLuXZhuCLuZXuHDiastasis recti abdominis in adult women based on abdominal computed tomography imaging: Prevalence, risk factors and its impact on lifeJ Clin Nurs202102303-451852710.1111/jocn.15568</li><li id="ref4">Fernandes da MotaPGPascoalAGCaritaAIBøKPrevalence and risk factors of diastasis recti abdominis from late pregnancy to 6 months postpartum, and relationship with lumbo-pelvic painMan Ther20150220120020510.1016/j.math.2014.09.002</li><li id="ref5">JoueidiYVieillefosseSCardaillacCMortierAOppenheimerADeffieuxXThubertTImpact du diastasis des muscles droits de l’abdomen sur les symptômes pelvi-périnéaux : revue de la littérature [Impact of the diastasis of the rectus abdominis muscles on the pelvic-perineal symptoms: Review of the literature]Prog Urol20192911544559French10.1016/j.purol.2019.05.002</li><li id="ref6">CandidoGLoTJanssenPARisk factors for distasis of the rectis abdominisAssociation of Chartered Physiotherapists in women&#x27;s health20054954</li><li id="ref7">BeerGMSchusterASeifertBManestarMMihic-ProbstDWeberSAThe normal width of the linea alba in nulliparous womenClin Anat200922670671110.1002/ca.20836</li><li id="ref8">Uriarte TeránJIZorraquino GonzálezÁPérez-de-Villarreal AmilburuPGutiérrez FerrerasAIHierro-Olabarría SalgadoLUriarte VergaraBRoca DomínguezMBMartín GarcíaMGonzález de MiguelMGarcía HerreroSConsecuencias y opciones terapéuticas en la diástasis de rectos. Propuesta de algoritmo terapéuticoRev Hispanoam Hernia202082657110.20960/rhh.00215</li><li id="ref9">WangQYuXChenGSunXWangJDoes diastasis recti abdominis weaken pelvic floor function? A cross-sectional studyInt Urogynecol J20200231227728310.1007/s00192-019-04005-9</li><li id="ref10">ZhuYJiangLYeTLiuYSunLXiaoLRisk Factors and Patient-Reported Outcomes in Chinese Women with Postpartum Diastasis Recti Abdominis: An Observational StudyInt J Womens Health202401311617919210.2147/IJWH.S437088</li><li id="ref11">AugustinaSJSuganthirababuPRajagopalVKumaresanASrinivasanVRamanaKPelvic floor dysfunction and its impact on quality of life among female health care employeesWork20237431055105910.3233/WOR-211125</li><li id="ref12">ŚmietańskiMŚmietańskaIAZamkowskiMPost-partum abdominal wall insufficiency syndrome (PPAWIS): lessons learned from a single surgeon&#x27;s experience based on 200 casesBMC Surg2022080822130510.1186/s12893-022-01757-y</li><li id="ref13">MotaPPascoalAGSanchoFBøKTest-retest and intrarater reliability of 2-dimensional ultrasound measurements of distance between rectus abdominis in womenJ Orthop Sports Phys Ther201211421194094610.2519/jospt.2012.4115</li><li id="ref14">NahabedianMYManagement Strategies for Diastasis RectiSemin Plast Surg20180832314715410.1055/s-0038-1661380</li><li id="ref15">MichalskaARokitaWWolderDPogorzelskaJKaczmarczykKDiastasis recti abdominis - a review of treatment methodsGinekol Pol20188929710110.5603/GP.a2018.0016</li><li id="ref16">PaladineHLBlenningCEStrangasYPostpartum Care: An Approach to the Fourth TrimesterAm Fam Physician20191015100848549131613576</li><li id="ref17">GungorSBaserICeyhanSKarasahinEAcikelCHMode of delivery and subsequent long-term sexual function of primiparous womenInt J Impot Res200707Jul-Aug19435836510.1038/sj.ijir.3901546</li><li id="ref18">GrussuPViciniBQuatraroRMSexuality in the perinatal period: A systematic review of reviews and recommendations for practiceSex Reprod Healthc2021123010066810.1016/j.srhc.2021.100668</li><li id="ref19">RosenRBrownCHeimanJLeiblumSMestonCShabsighRThe Female Sexual Function Index (FSFI): a multidimensional self-report instrument for the assessment of female sexual functionJ Sex Marital Ther2000Apr-Jun26219120810.1080/009262300278597</li><li id="ref20">BlümelJEBinfaLCataldoPCarrascoAIzaguirreHSarráSÍndice de función sexual femenina: un test para evaluar la sexualidad de la mujerRevista chilena de obstetricia y ginecología200469211812510.4067/S0717-75262004000200006</li><li id="ref21">WiegelMMestonCRosenRThe female sexual function index (FSFI): cross-validation and development of clinical cutoff scoresJ Sex Marital Ther2005Jan-Feb31112010.1080/00926230590475206</li><li id="ref22">Olivares-AlbornozCEl rol histórico de la cesárea y su relación con la mortalidad maternaPerinatol. Reprod. Hum20213539910310.24875/per.20000020</li><li id="ref23">SperstadJBTennfjordMKHildeGEllström-EnghMBøKDiastasis recti abdominis during pregnancy and 12 months after childbirth: prevalence, risk factors and report of lumbopelvic painBr J Sports Med20160950171092109610.1136/bjsports-2016-096065</li><li id="ref24">LeemanLMRogersRGSex after childbirth: postpartum sexual functionObstet Gynecol201203119364765510.1097/AOG.0b013e3182479611</li><li id="ref25">MatthiesLMWallwienerMSohnCReckCMüllerMWallwienerSLa influencia de la calidad de la pareja y la lactancia materna en la función sexual femenina pospartoArch Gynecol Obstet2019299697710.1007/s00404-018-4925-z</li><li id="ref26">BassonRHuman sexual responseHandb Clin Neurol2015130111810.1016/B978-0-444-63247-0.00002-X</li><li id="ref27">SchützeSHeinlothMUhdeMSchützeJHünerBJanniWThe effect of pelvic floor muscle training on pelvic floor function and sexuality postpartum. A randomized study including 300 primiparousArch Gynecol Obstet202209306378579310.1007/s00404-022-06542-z</li></ol>
+    </section>
+    
+      </main>
+    </div>
+    <button id="scrollTopButton" class="floating-button floating-top" type="button" aria-label="Volver al inicio">
+      <span class="icon" aria-hidden="true">&uarr;</span>
+      <span class="label">Arriba</span>
+    </button>
+    <button id="floatingMenuButton" class="floating-button floating-menu" type="button" aria-label="Mostrar índice flotante" aria-controls="sidebar" aria-expanded="false">
+      <span class="icon" aria-hidden="true">&#9776;</span>
+      <span class="label">Índice</span>
+    </button>
+  </div>
+  <script>
+(function () {
+  const body = document.body;
+  const themeToggle = document.getElementById('themeToggle');
+  const contrastToggle = document.getElementById('contrastToggle');
+  const sidebarToggle = document.getElementById('sidebarToggle');
+  const sidebar = document.getElementById('sidebar');
+  const sidebarClose = document.getElementById('sidebarClose');
+  const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+  const scrollTopButton = document.getElementById('scrollTopButton');
+  const floatingMenuButton = document.getElementById('floatingMenuButton');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const storedTheme = localStorage.getItem('jats-theme');
+  const storedContrast = localStorage.getItem('jats-contrast');
+
+  function applyTheme(theme) {
+    body.setAttribute('data-theme', theme);
+    localStorage.setItem('jats-theme', theme);
+    if (themeToggle) {
+      themeToggle.querySelector('span.state').textContent = theme === 'dark' ? 'Modo claro' : 'Modo oscuro';
+    }
+  }
+
+  function applyContrast(contrast) {
+    body.setAttribute('data-contrast', contrast);
+    localStorage.setItem('jats-contrast', contrast);
+    if (contrastToggle) {
+      contrastToggle.querySelector('span.state').textContent = contrast === 'high' ? 'Contraste normal' : 'Alto contraste';
+    }
+  }
+
+  applyTheme(storedTheme || (prefersDark ? 'dark' : 'light'));
+  applyContrast(storedContrast || 'normal');
+
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const current = body.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  if (contrastToggle) {
+    contrastToggle.addEventListener('click', () => {
+      const current = body.getAttribute('data-contrast') === 'high' ? 'high' : 'normal';
+      applyContrast(current === 'high' ? 'normal' : 'high');
+    });
+  }
+
+  function updateSidebarAria(isOpen) {
+    sidebarToggle?.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    sidebar?.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+    floatingMenuButton?.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  }
+
+  function openSidebar() {
+    if (!sidebar) {
+      return;
+    }
+    body.classList.add('sidebar-open', 'sidebar-lock');
+    sidebarBackdrop?.classList.add('visible');
+    updateSidebarAria(true);
+  }
+
+  function closeSidebar() {
+    if (!sidebar) {
+      return;
+    }
+    body.classList.remove('sidebar-open');
+    setTimeout(() => body.classList.remove('sidebar-lock'), 250);
+    sidebarBackdrop?.classList.remove('visible');
+    updateSidebarAria(false);
+  }
+
+  updateSidebarAria(false);
+
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', () => {
+      if (body.classList.contains('sidebar-open')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
+    });
+  }
+
+  sidebarClose?.addEventListener('click', closeSidebar);
+  sidebarBackdrop?.addEventListener('click', closeSidebar);
+
+  window.addEventListener('keyup', (event) => {
+    if (event.key === 'Escape') {
+      closeSidebar();
+    }
+  });
+
+  const tocLinks = sidebar?.querySelectorAll('.toc a') || [];
+  tocLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+      closeSidebar();
+    });
+  });
+
+  scrollTopButton?.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  if (floatingMenuButton) {
+    floatingMenuButton.addEventListener('click', () => {
+      if (body.classList.contains('sidebar-open')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
+    });
+  }
+
+  function handleScroll() {
+    const shouldShow = window.scrollY > 240;
+    if (scrollTopButton) {
+      scrollTopButton.classList.toggle('visible', shouldShow);
+    }
+    if (floatingMenuButton) {
+      floatingMenuButton.classList.toggle('visible', shouldShow);
+    }
+  }
+
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  handleScroll();
+})();
+</script>
+</body>
+</html>
