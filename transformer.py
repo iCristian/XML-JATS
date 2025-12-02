@@ -132,9 +132,15 @@ def construir_prompt_avanzado(texto_articulo: str) -> str:
     1.  **Estructura General:** Raíz `<article>` con `xmlns:xlink="http://www.w3.org/1999/xlink"` y `xml:lang="es"`. Debe contener `<front>`, `<body>`, y `<back>`.
     2.  **Sección <front>:**
         *   Incluye `<article-title>` y, si está disponible en el texto, `<article-id pub-id-type="doi">`.
-        *   En `<contrib-group>` declara cada autor con `<contrib contrib-type="author">`, colocando al inicio los superíndices (`<xref ref-type="aff" rid="affX">X</xref>`) que apunten a sus afiliaciones.
-        *   Crea un `<aff>` por cada filiación, con `id` (`aff1`, `aff2`, ...) y un `<label>` numérico que coincida con los superíndices.
-    *   Si el autor cuenta con correo electrónico, añádelo dentro del `<contrib>` como `<email>autor@dominio</email>`. Marca al responsable de correspondencia con `corresp="yes"`, coloca un `<xref ref-type="corresp" rid="cor1">*</xref>` al inicio, y registra el dato en `<author-notes><corresp id="cor1"><email>...</email></corresp></author-notes>`.
+        *   **IMPORTANTE - Orden de elementos en <contrib>:** Dentro de cada `<contrib contrib-type="author">`, debes seguir ESTRICTAMENTE este orden de elementos (si están presentes):
+            1.  `<contrib-id contrib-id-type="orcid">` (si existe ORCID).
+            2.  `<name>` (con `<surname>` y `<given-names>`).
+            3.  `<xref ref-type="aff" rid="affX">` (referencias a afiliaciones).
+            4.  `<xref ref-type="corresp" rid="cor1">` (si es autor de correspondencia).
+            5.  `<email>` (correo electrónico).
+            NO coloques `contrib-id` después del nombre. NO coloques `xref` antes del nombre. El orden es CRÍTICO para la validación.
+        *   Crea un `<aff>` por cada filiación en `<contrib-group>`, con `id` (`aff1`, `aff2`, ...) y un `<label>` numérico.
+        *   Marca al responsable de correspondencia con `corresp="yes"` en el atributo de `<contrib>`, y registra el dato completo en `<author-notes><corresp id="cor1"><email>...</email></corresp></author-notes>`.
         *   Mantén `<abstract>` y `<kwd-group>` como en la especificación original.
     3.  **Sección <body>:**
         *   Usa `<sec>` para secciones con un `<title>`. Los párrafos deben ir en `<p>`.
