@@ -317,6 +317,10 @@ def main() -> None:
                                 st.session_state.generated_xml = st.session_state.pending_correction_xml.strip()
                                 st.session_state.validation_errors = []
                                 st.session_state.pending_correction_xml = None
+                                # Limpiar chat para iniciar nueva validación limpia
+                                st.session_state.correction_chat = []
+                                st.session_state.show_correction_chat = False
+                                
                                 st.toast("XML Actualizado. Ejecuta validación nuevamente.", icon="🔄")
                                 time.sleep(1.5)
                                 st.rerun()
