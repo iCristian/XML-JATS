@@ -1,10 +1,16 @@
-# Transformador XML JATS (JATS XML Transformer)
+# Transformador XML JATS (JATS XML Transformer) - v0.5 (Beta)
 
 Una herramienta avanzada impulsada por Inteligencia Artificial para convertir documentos de Word (`.docx`) a formato **JATS XML** validado, diseñada específicamente para el flujo editorial de revistas científicas.
 
 Esta aplicación automatiza el proceso de etiquetado semántico, extracción de tablas e imágenes (en desarrollo), y validación contra el estándar NLM/NCBI Journal Publishing DTD v1.3.
 
 ## 🚀 Características Principales
+
+- **Conversión Inteligente**: Utiliza LLMs (Google Gemini) para interpreta la estructura lógica del documento.
+- **Asistente de Corrección Interactivo**: Chatbot integrado que ayuda a solucionar errores de validación DTD, permitiendo ediciones precisas y regeneración del XML.
+- **Navegación Fluida**: Interfaz intuitiva con pestañas y botones de navegación automática entre pasos.
+- **HTML Autocontenido**: Genera archivos HTML con el logo incrustado (Base64), listos para publicar sin dependencias externas.
+- **Validación Integrada**: Valida contra JATS 1.3 y ofrece sugerencias de corrección en tiempo real.
 
 - **Conversión Inteligente**: Utiliza LLMs (Google Gemini) para interpretar la estructura lógica del documento y generar etiquetas JATS precisas.
 - **Extracción de Contenido**: Detecta y extrae imágenes y tablas automáticamente desde el archivo Word.
@@ -96,3 +102,19 @@ Facultad de Medicina\
 Universidad de Valparaíso, Chile.
 
 Desarrollado para la **Universidad de Valparaíso** con el objetivo de optimizar los procesos de publicación científica.
+
+## 📅 Historial de Versiones (Changelog)
+
+### v0.5 (Beta) - Versión Actual
+
+- **Mejoras de UI**: Navegación por pestañas con botones de avance automático.
+- **Corrección Interactiva**: Nuevo chatbot que permite dialogar con la IA para resolver errores de validación. Implementación de una "Caja de Sugerencias" para revisar y aplicar cambios al XML de forma segura.
+- **Logo Embedded**: El logo de la revista ahora se incrusta como Base64 en el HTML generado, eliminando la dependencia de carpetas locales.
+- **Optimización**: Eliminación de animaciones intrusivas y mejora en la legibilidad del chat en modo oscuro.
+
+### v0.1 - v0.4 (Alpha)
+
+- Inicio del proyecto.
+- Configuración de Gemini CLI.
+- Extracción básica de DOCX.
+- Primera implementación de transformación a XML JATS.

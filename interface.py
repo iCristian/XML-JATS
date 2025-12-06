@@ -86,7 +86,12 @@ def main() -> None:
         )
         st.markdown("---")
         st.markdown(
-            "<div class='branding'>Universidad de Valparaíso</div>", 
+            """
+            <div class='branding'>
+                <b>Universidad de Valparaíso</b><br>
+                <small>v0.5 (Beta)</small>
+            </div>
+            """, 
             unsafe_allow_html=True
         )
 
