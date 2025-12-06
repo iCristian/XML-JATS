@@ -1,5 +1,14 @@
 from __future__ import annotations
 
+"""Convertidor de JATS XML a HTML.
+
+Este módulo se encarga de parsear archivos XML válidos bajo el esquema JATS 1.3
+y generar una representación HTML5 moderna, responsiva y estilizada.
+Incluye funciones para extracción de metadatos, renderizado de secciones,
+y manejo de figuras y tablas.
+"""
+
+
 import argparse
 import json
 import re
@@ -16,11 +25,32 @@ _XLINK_HREF = "{http://www.w3.org/1999/xlink}href"
 _SANITIZE_ENTITY_RE = re.compile(r"&(?![a-zA-Z]+;|#\d+;|#x[0-9a-fA-F]+;)")
 
 
+
 def _clean_whitespace(text: str) -> str:
+    """Normaliza los espacios en blanco de una cadena.
+
+    Reemplaza múltiples espacios, tabulaciones y saltos de línea por un único espacio
+    y elimina espacios al inicio y final.
+
+    Args:
+        text (str): Texto a limpiar.
+
+    Returns:
+        str: Texto limpio y normalizado.
+    """
     return re.sub(r"\s+", " ", text or "").strip()
 
 
+
 def _node_text(node: etree._Element) -> str:
+    """Extrae todo el texto de un nodo XML y sus descendientes.
+
+    Args:
+        node (etree._Element): El nodo raíz desde el cual extraer texto.
+
+    Returns:
+        str: Todo el texto contenido en el nodo, concatenado y normalizado.
+    """
     parts: List[str] = []
     if node.text:
         parts.append(node.text)
@@ -31,57 +61,103 @@ def _node_text(node: etree._Element) -> str:
     return _clean_whitespace("".join(parts))
 
 
+
 def _inline_children_html(node: etree._Element) -> str:
-  segments: List[str] = []
-  if node.text:
-    segments.append(escape(node.text))
-  for child in node:
-    segments.append(_inline_element_html(child))
-    if child.tail:
-      segments.append(escape(child.tail))
-  return "".join(segments)
+    """Renderiza los hijos de un nodo como HTML inline, preservando marcas de formato.
+
+    Procesa recursivamente los nodos hijos para manejar negritas, itálicas, etc.
+
+    Args:
+        node (etree._Element): El nodo padre.
+
+    Returns:
+        str: Cadena HTML con el contenido de los hijos.
+    """
+    segments: List[str] = []
+    if node.text:
+        segments.append(escape(node.text))
+    for child in node:
+        segments.append(_inline_element_html(child))
+        if child.tail:
+            segments.append(escape(child.tail))
+    return "".join(segments)
+
 
 
 def _inline_element_html(element: etree._Element) -> str:
-  tag = etree.QName(element).localname.lower()
-  if tag == "xref" and (element.get("ref-type") or "").lower() == "bibr":
-    rid_attr = (element.get("rid") or "").strip()
-    first_target = rid_attr.split()[0] if rid_attr else ""
-    label_html = _inline_children_html(element) or escape(element.text or "")
-    href_attr = f"#{escape(first_target)}" if first_target else "#"
-    data_attr = escape(rid_attr)
-    return f"<a class=\"citation\" href=\"{href_attr}\" data-rid=\"{data_attr}\">{label_html}</a>"
-  if tag in {"italic", "i"}:
-    return f"<em>{_inline_children_html(element)}</em>"
-  if tag in {"bold", "b", "strong"}:
-    return f"<strong>{_inline_children_html(element)}</strong>"
-  if tag in {"underline", "u"}:
-    return f"<span class=\"underline\">{_inline_children_html(element)}</span>"
-  if tag == "sup":
-    return f"<sup>{_inline_children_html(element)}</sup>"
-  if tag == "sub":
-    return f"<sub>{_inline_children_html(element)}</sub>"
-  if tag == "ext-link":
-    href = element.get(_XLINK_HREF) or element.get("href") or ""
-    label = _inline_children_html(element) or escape(element.text or href)
-    if href:
-      return f"<a class=\"external-link\" href=\"{escape(href)}\" target=\"_blank\" rel=\"noopener\">{label}</a>"
-    return label
-  return _inline_children_html(element)
+    """Convierte un elemento XML individual a su representación HTML inline.
+
+    Maneja etiquetas específicas de JATS como xref, italic, bold, sup, sub, ext-link.
+
+    Args:
+        element (etree._Element): El elemento a convertir.
+
+    Returns:
+        str: Representación HTML del elemento.
+    """
+    tag = etree.QName(element).localname.lower()
+    if tag == "xref" and (element.get("ref-type") or "").lower() == "bibr":
+        rid_attr = (element.get("rid") or "").strip()
+        first_target = rid_attr.split()[0] if rid_attr else ""
+        label_html = _inline_children_html(element) or escape(element.text or "")
+        href_attr = f"#{escape(first_target)}" if first_target else "#"
+        data_attr = escape(rid_attr)
+        return f"<a class=\"citation\" href=\"{href_attr}\" data-rid=\"{data_attr}\">{label_html}</a>"
+    if tag in {"italic", "i"}:
+        return f"<em>{_inline_children_html(element)}</em>"
+    if tag in {"bold", "b", "strong"}:
+        return f"<strong>{_inline_children_html(element)}</strong>"
+    if tag in {"underline", "u"}:
+        return f"<span class=\"underline\">{_inline_children_html(element)}</span>"
+    if tag == "sup":
+        return f"<sup>{_inline_children_html(element)}</sup>"
+    if tag == "sub":
+        return f"<sub>{_inline_children_html(element)}</sub>"
+    if tag == "ext-link":
+        href = element.get(_XLINK_HREF) or element.get("href") or ""
+        label = _inline_children_html(element) or escape(element.text or href)
+        if href:
+            return f"<a class=\"external-link\" href=\"{escape(href)}\" target=\"_blank\" rel=\"noopener\">{label}</a>"
+        return label
+    return _inline_children_html(element)
+
 
 
 def _xpath(node: etree._Element, expression: str, namespaces: Dict[str, str]) -> List[Any]:
-  result = node.xpath(expression, namespaces=namespaces)
-  if result or "j:" not in expression:
-    return result
-  fallback_expression = expression.replace("j:", "")
-  try:
-    return node.xpath(fallback_expression)
-  except etree.XPathError:
-    return []
+    """Ejecuta una expresión XPath, manejando posibles prefijos de namespace faltantes.
+
+    Intenta usar el namespace 'j' (JATS) y si falla intenta sin prefijo como fallback.
+
+    Args:
+        node (etree._Element): Nodo sobre el cual ejecutar XPath.
+        expression (str): Expresión XPath.
+        namespaces (Dict[str, str]): Mapa de namespaces.
+
+    Returns:
+        List[Any]: Lista de resultados encontrados.
+    """
+    result = node.xpath(expression, namespaces=namespaces)
+    if result or "j:" not in expression:
+        return result
+    fallback_expression = expression.replace("j:", "")
+    try:
+        return node.xpath(fallback_expression)
+    except etree.XPathError:
+        return []
+
 
 
 def _first_text(node: etree._Element, expression: str, namespaces: Dict[str, str]) -> str:
+    """Retorna el texto del primer resultado de una búsqueda XPath.
+
+    Args:
+        node (etree._Element): Nodo raíz.
+        expression (str): Expresión XPath.
+        namespaces (Dict[str, str]): Namespaces.
+
+    Returns:
+        str: Texto limpio del primer match, o cadena vacía si no hay coincidencias.
+    """
     results = _xpath(node, expression, namespaces)
     if not results:
         return ""
@@ -93,7 +169,22 @@ def _first_text(node: etree._Element, expression: str, namespaces: Dict[str, str
     return _clean_whitespace(str(candidate))
 
 
+
 def _sanitize_xml(raw_xml: str) -> str:
+    """Limpia el XML crudo para asegurar que sea parseable.
+
+    Elimina caracteres de control inválidos, ajusta declaraciones XML/DOCTYPE,
+    y asegura que exista un nodo raíz <article>.
+
+    Args:
+        raw_xml (str): Contenido XML original.
+
+    Returns:
+        str: XML sanitizado y seguro para lxml.
+
+    Raises:
+        ValueError: Si no se encuentra un nodo <article> válido.
+    """
     cleaned = raw_xml.replace("\u000b", " ").replace("\u000c", " ")
     decl_match = re.search(r"<\?xml[^>]*?>", cleaned)
     decl = decl_match.group(0) if decl_match else '<?xml version="1.0" encoding="UTF-8"?>'
@@ -108,7 +199,18 @@ def _sanitize_xml(raw_xml: str) -> str:
     return payload
 
 
+
 def _ensure_namespace(root: etree._Element) -> Dict[str, str]:
+    """Descubre y normaliza los namespaces del documento XML.
+
+    Asigna el prefijo 'j' al namespace por defecto o JATS si no existe.
+
+    Args:
+        root (etree._Element): Nodo raíz del documento.
+
+    Returns:
+        Dict[str, str]: Mapa de prefijos a URIs.
+    """
     namespaces = {prefix: uri for prefix, uri in root.nsmap.items() if prefix}
     default_ns = root.nsmap.get(None)
     if default_ns:
@@ -118,7 +220,18 @@ def _ensure_namespace(root: etree._Element) -> Dict[str, str]:
     return namespaces
 
 
+
 def parse_jats(xml_path: str) -> Dict[str, Any]:
+    """Parsea un archivo JATS XML y extrae metadatos y contenido estructurado.
+
+    Extrae título, autores, secciones, figuras, tablas y referencias.
+
+    Args:
+        xml_path (str): Ruta al archivo XML.
+
+    Returns:
+        Dict[str, Any]: Diccionario con toda la información extraída del artículo.
+    """
     raw_xml = Path(xml_path).read_text(encoding="utf-8")
     sanitized = _sanitize_xml(raw_xml)
     parser = etree.XMLParser(
@@ -184,7 +297,17 @@ def parse_jats(xml_path: str) -> Dict[str, Any]:
     return data
 
 
+
 def _extract_pub_date(article_meta: etree._Element, namespaces: Dict[str, str]) -> str:
+    """Extrae la fecha de publicación en formato DD/MM/YYYY o parcial.
+
+    Args:
+        article_meta (etree._Element): Elemento article-meta.
+        namespaces (Dict[str, str]): Mapa de namespaces.
+
+    Returns:
+        str: Fecha formateada o cadena vacía.
+    """
     for node in _xpath(article_meta, ".//j:pub-date", namespaces):
         day = _first_text(node, "./j:day", namespaces)
         month = _first_text(node, "./j:month", namespaces)
@@ -198,7 +321,17 @@ def _extract_pub_date(article_meta: etree._Element, namespaces: Dict[str, str]) 
     return ""
 
 
+
 def _extract_keywords(article_meta: etree._Element, namespaces: Dict[str, str]) -> List[str]:
+    """Extrae las palabras clave del artículo.
+
+    Args:
+        article_meta (etree._Element): Elemento article-meta.
+        namespaces (Dict[str, str]): Namespaces.
+
+    Returns:
+        List[str]: Lista de palabras clave.
+    """
     keywords: List[str] = []
     for kwd in _xpath(article_meta, ".//j:kwd-group/j:kwd", namespaces):
         text = _node_text(kwd)
@@ -207,78 +340,101 @@ def _extract_keywords(article_meta: etree._Element, namespaces: Dict[str, str]) 
     return keywords
 
 
+
 def _extract_authors(article_meta: etree._Element, namespaces: Dict[str, str]) -> List[Dict[str, Any]]:
-  affiliations: Dict[str, str] = {}
-  for aff in _xpath(article_meta, ".//j:aff", namespaces):
-    aff_id = aff.get(_XML_ID) or aff.get("id")
-    if aff_id:
-      affiliations[aff_id] = _node_text(aff)
+    """Extrae la lista completa de autores y sus metadatos.
 
-  corresp_notes: Dict[str, str] = {}
-  for cor in _xpath(article_meta, ".//j:author-notes/j:corresp", namespaces):
-    cor_id = cor.get(_XML_ID) or cor.get("id")
-    email_value = _first_text(cor, ".//j:email", namespaces) or _node_text(cor)
-    if cor_id and email_value:
-      corresp_notes[cor_id] = email_value
+    Procesa nombres, afiliaciones, correspondencia y correos electrónicos.
 
-  authors: List[Dict[str, Any]] = []
-  for contrib in _xpath(article_meta, ".//j:contrib-group/j:contrib[@contrib-type='author']", namespaces):
-    surname = _first_text(contrib, "./j:name/j:surname", namespaces)
-    given = _first_text(contrib, "./j:name/j:given-names", namespaces)
-    collective = _first_text(contrib, "./j:collab", namespaces)
-    full_name = collective or " ".join(part for part in [given, surname] if part)
-    if not full_name:
-      continue
+    Args:
+        article_meta (etree._Element): Elemento article-meta.
+        namespaces (Dict[str, str]): Namespaces.
 
-    is_corresponding = contrib.get("corresp", "").lower() == "yes"
-    corresp_rids = [xref.get("rid") for xref in _xpath(contrib, ".//j:xref[@ref-type='corresp']", namespaces) if xref.get("rid")]
+    Returns:
+        List[Dict[str, Any]]: Lista de diccionarios con info de cada autor.
+    """
+    affiliations: Dict[str, str] = {}
+    for aff in _xpath(article_meta, ".//j:aff", namespaces):
+        aff_id = aff.get(_XML_ID) or aff.get("id")
+        if aff_id:
+            affiliations[aff_id] = _node_text(aff)
 
-    author_affs: List[str] = []
-    for xref in _xpath(contrib, ".//j:xref[@ref-type='aff']", namespaces):
-      rid = xref.get("rid")
-      if rid and rid in affiliations:
-        author_affs.append(affiliations[rid])
-    if not author_affs:
-      inline_aff = contrib.find(".//{*}aff")
-      inline_text = _node_text(inline_aff) if inline_aff is not None else ""
-      if inline_text:
-        author_affs.append(inline_text)
+    corresp_notes: Dict[str, str] = {}
+    for cor in _xpath(article_meta, ".//j:author-notes/j:corresp", namespaces):
+        cor_id = cor.get(_XML_ID) or cor.get("id")
+        email_value = _first_text(cor, ".//j:email", namespaces) or _node_text(cor)
+        if cor_id and email_value:
+            corresp_notes[cor_id] = email_value
 
-    emails: List[str] = []
-    for email in _xpath(contrib, ".//j:email", namespaces):
-      value = _node_text(email)
-      if value:
-        emails.append(value)
+    authors: List[Dict[str, Any]] = []
+    for contrib in _xpath(article_meta, ".//j:contrib-group/j:contrib[@contrib-type='author']", namespaces):
+        surname = _first_text(contrib, "./j:name/j:surname", namespaces)
+        given = _first_text(contrib, "./j:name/j:given-names", namespaces)
+        collective = _first_text(contrib, "./j:collab", namespaces)
+        full_name = collective or " ".join(part for part in [given, surname] if part)
+        if not full_name:
+            continue
 
-    if corresp_rids:
-      for cor_id in corresp_rids:
-        note_email = corresp_notes.get(cor_id)
-        if note_email and note_email not in emails:
-          emails.append(note_email)
+        is_corresponding = contrib.get("corresp", "").lower() == "yes"
+        corresp_rids = [xref.get("rid") for xref in _xpath(contrib, ".//j:xref[@ref-type='corresp']", namespaces) if xref.get("rid")]
 
-    orcid_value = ""
-    for contrib_id in _xpath(contrib, ".//j:contrib-id[@contrib-id-type='orcid']", namespaces):
-      raw = _node_text(contrib_id)
-      if raw:
-        orcid_value = raw.strip()
-        break
+        author_affs: List[str] = []
+        for xref in _xpath(contrib, ".//j:xref[@ref-type='aff']", namespaces):
+            rid = xref.get("rid")
+            if rid and rid in affiliations:
+                author_affs.append(affiliations[rid])
+        if not author_affs:
+            inline_aff = contrib.find(".//{*}aff")
+            inline_text = _node_text(inline_aff) if inline_aff is not None else ""
+            if inline_text:
+                author_affs.append(inline_text)
 
-    if not is_corresponding:
-      is_corresponding = bool(corresp_rids or contrib.get("corresp"))
+        emails: List[str] = []
+        for email in _xpath(contrib, ".//j:email", namespaces):
+            value = _node_text(email)
+            if value:
+                emails.append(value)
 
-    authors.append(
-      {
-        "full": full_name,
-        "affiliations": author_affs,
-        "emails": emails,
-        "orcid": orcid_value,
-        "corresponding": is_corresponding,
-      }
-    )
-  return authors
+        if corresp_rids:
+            for cor_id in corresp_rids:
+                note_email = corresp_notes.get(cor_id)
+                if note_email and note_email not in emails:
+                    emails.append(note_email)
+
+        orcid_value = ""
+        for contrib_id in _xpath(contrib, ".//j:contrib-id[@contrib-id-type='orcid']", namespaces):
+            raw = _node_text(contrib_id)
+            if raw:
+                orcid_value = raw.strip()
+                break
+
+        if not is_corresponding:
+            is_corresponding = bool(corresp_rids or contrib.get("corresp"))
+
+        authors.append(
+            {
+                "full": full_name,
+                "affiliations": author_affs,
+                "emails": emails,
+                "orcid": orcid_value,
+                "corresponding": is_corresponding,
+            }
+        )
+    return authors
+
 
 
 def _extract_paragraphs(parent: etree._Element, expression: str, namespaces: Dict[str, str]) -> List[str]:
+    """Extrae párrafos de texto como HTML inline dado un XPath.
+
+    Args:
+        parent (etree._Element): Elemento padre.
+        expression (str): XPath para encontrar los párrafos.
+        namespaces (Dict[str, str]): Namespaces.
+
+    Returns:
+        List[str]: Lista de párrafos en HTML.
+    """
     paragraphs: List[str] = []
     for element in _xpath(parent, expression, namespaces):
         html = _inline_children_html(element)
@@ -287,7 +443,17 @@ def _extract_paragraphs(parent: etree._Element, expression: str, namespaces: Dic
     return paragraphs
 
 
+
 def _extract_sections(body: etree._Element, namespaces: Dict[str, str]) -> List[Dict[str, Any]]:
+    """Extrae jerarquía de secciones del cuerpo del artículo recursivamente.
+
+    Args:
+        body (etree._Element): Elemento body o section padre.
+        namespaces (Dict[str, str]): Namespaces.
+
+    Returns:
+        List[Dict[str, Any]]: Lista de secciones con títulos, párrafos y subsecciones.
+    """
     def serialize(sec: etree._Element, index: int) -> Dict[str, Any]:
         sec_id = sec.get(_XML_ID) or sec.get("id") or f"sec-{index}"
         children = _xpath(sec, "./j:sec", namespaces)
@@ -305,7 +471,17 @@ def _extract_sections(body: etree._Element, namespaces: Dict[str, str]) -> List[
     return sections
 
 
+
 def _extract_figures(body: etree._Element, namespaces: Dict[str, str]) -> List[Dict[str, Any]]:
+    """Extrae figuras del artículo.
+
+    Args:
+        body (etree._Element): Cuerpo del artículo.
+        namespaces (Dict[str, str]): Namespaces.
+
+    Returns:
+        List[Dict[str, Any]]: Lista de figuras con metadatos y URL de imagen.
+    """
     figures: List[Dict[str, Any]] = []
     for fig in _xpath(body, ".//j:fig", namespaces):
         fig_id = fig.get(_XML_ID) or fig.get("id") or f"fig-{len(figures) + 1}"
@@ -326,7 +502,17 @@ def _extract_figures(body: etree._Element, namespaces: Dict[str, str]) -> List[D
     return figures
 
 
+
 def _extract_tables(body: etree._Element, namespaces: Dict[str, str]) -> List[Dict[str, Any]]:
+    """Extrae tablas del artículo.
+
+    Args:
+        body (etree._Element): Cuerpo del artículo.
+        namespaces (Dict[str, str]): Namespaces.
+
+    Returns:
+        List[Dict[str, Any]]: Lista de tablas con sus filas y celdas.
+    """
     tables: List[Dict[str, Any]] = []
     for wrap in _xpath(body, ".//j:table-wrap", namespaces):
         table_id = wrap.get(_XML_ID) or wrap.get("id") or f"table-{len(tables) + 1}"
@@ -352,7 +538,17 @@ def _extract_tables(body: etree._Element, namespaces: Dict[str, str]) -> List[Di
     return tables
 
 
+
 def _extract_references(back: etree._Element, namespaces: Dict[str, str]) -> List[Dict[str, str]]:
+    """Extrae las referencias bibliográficas.
+
+    Args:
+        back (etree._Element): Sección back del artículo.
+        namespaces (Dict[str, str]): Namespaces.
+
+    Returns:
+        List[Dict[str, str]]: Lista de referencias con ID, etiqueta y HTML renderizado.
+    """
     references: List[Dict[str, str]] = []
     for ref in _xpath(back, ".//j:ref-list/j:ref", namespaces):
         ref_id = ref.get(_XML_ID) or ref.get("id") or ""
@@ -363,7 +559,18 @@ def _extract_references(back: etree._Element, namespaces: Dict[str, str]) -> Lis
     return references
 
 
+
 def _collect_section_entries(sections: List[Dict[str, Any]], prefix: str = "", level: int = 1) -> List[Tuple[int, str, str, str]]:
+    """Aplana la jerarquía de secciones para generar el índice (TOC).
+
+    Args:
+        sections (List[Dict[str, Any]]): Lista de secciones anidadas.
+        prefix (str, optional): Prefijo de numeración acumulado.
+        level (int, optional): Nivel de profundidad actual.
+
+    Returns:
+        List[Tuple[int, str, str, str]]: Lista de tuplas (nivel, id, etiqueta, título).
+    """
     entries: List[Tuple[int, str, str, str]] = []
     for idx, section in enumerate(sections, start=1):
         number = f"{prefix}{idx}" if prefix else str(idx)
@@ -373,7 +580,16 @@ def _collect_section_entries(sections: List[Dict[str, Any]], prefix: str = "", l
     return entries
 
 
+
 def _render_keywords(keywords: Iterable[str]) -> str:
+    """Genera el HTML para la sección de palabras clave.
+
+    Args:
+        keywords (Iterable[str]): Lista de palabras clave.
+
+    Returns:
+        str: HTML renderizado o cadena vacía si no hay keywords.
+    """
     items = [f"<li>{escape(keyword)}</li>" for keyword in keywords if keyword]
     if not items:
         return ""
@@ -385,98 +601,136 @@ def _render_keywords(keywords: Iterable[str]) -> str:
     """.replace("{items}", "".join(items))
 
 
+
 def _render_authors(authors: List[Dict[str, Any]]) -> str:
-  if not authors:
-    return ""
-  author_items: List[str] = []
-  for author in authors:
-    name_classes = ["author-name"]
-    if author.get("corresponding"):
-      name_classes.append("author-name--corresponding")
-    header_parts = [f"<span class=\"{' '.join(name_classes)}\">{escape(author['full'])}</span>"]
-    if author.get("corresponding"):
-      header_parts.append("<span class=\"author-corresponding\">Autor de correspondencia</span>")
-    sections: List[str] = [f"<div class=\"author-header\">{''.join(header_parts)}</div>"]
+    """Genera el HTML para la lista de autores y sus filiaciones.
 
-    if author.get("affiliations"):
-      affs = "; ".join(escape(aff) for aff in author["affiliations"] if aff)
-      if affs:
-        sections.append(f"<div class=\"author-affiliations\">{affs}</div>")
+    Args:
+        authors (List[Dict[str, Any]]): Metadatos de autores.
 
-    contact_links: List[str] = []
-    orcid_value = (author.get("orcid") or "").strip()
-    if orcid_value:
-      orcid_url = orcid_value if orcid_value.lower().startswith("http") else f"https://orcid.org/{orcid_value}"
-      orcid_display = orcid_url.rstrip("/").split("/")[-1] or orcid_url
-      contact_links.append(
-        f"<a class=\"author-link author-orcid\" href=\"{escape(orcid_url)}\" target=\"_blank\" rel=\"noopener\">ORCID: {escape(orcid_display)}</a>"
-      )
-
-    for email in author.get("emails", []):
-      if email:
-        email_classes = ["author-link", "author-email"]
+    Returns:
+        str: HTML renderizado o cadena vacía.
+    """
+    if not authors:
+        return ""
+    author_items: List[str] = []
+    for author in authors:
+        name_classes = ["author-name"]
         if author.get("corresponding"):
-          email_classes.append("author-email--corresponding")
-        contact_links.append(
-          f"<a class=\"{' '.join(email_classes)}\" href=\"mailto:{escape(email)}\">Email: {escape(email)}</a>"
-        )
+            name_classes.append("author-name--corresponding")
+        header_parts = [f"<span class=\"{' '.join(name_classes)}\">{escape(author['full'])}</span>"]
+        if author.get("corresponding"):
+            header_parts.append("<span class=\"author-corresponding\">Autor de correspondencia</span>")
+        sections: List[str] = [f"<div class=\"author-header\">{''.join(header_parts)}</div>"]
 
-    if contact_links:
-      link_items = "".join(f"<span class=\"author-link-item\">{link}</span>" for link in contact_links)
-      sections.append(f"<div class=\"author-links\">{link_items}</div>")
+        if author.get("affiliations"):
+            affs = "; ".join(escape(aff) for aff in author["affiliations"] if aff)
+            if affs:
+                sections.append(f"<div class=\"author-affiliations\">{affs}</div>")
 
-    author_items.append(f"<li class=\"author\">{''.join(sections)}</li>")
+        contact_links: List[str] = []
+        orcid_value = (author.get("orcid") or "").strip()
+        if orcid_value:
+            orcid_url = orcid_value if orcid_value.lower().startswith("http") else f"https://orcid.org/{orcid_value}"
+            orcid_display = orcid_url.rstrip("/").split("/")[-1] or orcid_url
+            contact_links.append(
+                f"<a class=\"author-link author-orcid\" href=\"{escape(orcid_url)}\" target=\"_blank\" rel=\"noopener\">ORCID: {escape(orcid_display)}</a>"
+            )
 
-  return """
-  <section class=\"panel\">
-    <h3>Autores</h3>
-    <ul class=\"author-list\">{items}</ul>
-  </section>
-  """.replace("{items}", "".join(author_items))
+        for email in author.get("emails", []):
+            if email:
+                email_classes = ["author-link", "author-email"]
+                if author.get("corresponding"):
+                    email_classes.append("author-email--corresponding")
+                contact_links.append(
+                    f"<a class=\"{' '.join(email_classes)}\" href=\"mailto:{escape(email)}\">Email: {escape(email)}</a>"
+                )
+
+        if contact_links:
+            link_items = "".join(f"<span class=\"author-link-item\">{link}</span>" for link in contact_links)
+            sections.append(f"<div class=\"author-links\">{link_items}</div>")
+
+        author_items.append(f"<li class=\"author\">{''.join(sections)}</li>")
+
+    return """
+    <section class=\"panel\">
+        <h3>Autores</h3>
+        <ul class=\"author-list\">{items}</ul>
+    </section>
+    """.replace("{items}", "".join(author_items))
+
 
 
 def _render_paragraphs(paragraphs: Iterable[str]) -> str:
-  return "".join(f"<p>{paragraph}</p>" for paragraph in paragraphs if paragraph)
+    """Envuelve los párrafos en etiquetas <p>.
+
+    Args:
+        paragraphs (Iterable[str]): Lista de párrafos ya escapados/procesados.
+
+    Returns:
+        str: HTML concatenado.
+    """
+    return "".join(f"<p>{paragraph}</p>" for paragraph in paragraphs if paragraph)
+
 
 
 def _render_sections(sections: List[Dict[str, Any]], depth: int = 1, prefix: str = "") -> str:
-  html_parts: List[str] = []
-  heading_tags = {1: "h2", 2: "h3", 3: "h4", 4: "h5"}
-  for idx, section in enumerate(sections, start=1):
-    number = f"{prefix}{idx}" if prefix else str(idx)
-    heading_tag = heading_tags.get(depth, "h6")
-    title = escape(section["title"])
-    label_text = section.get("label") or number
-    label = escape(label_text) if label_text else ""
-    section_id = escape(section["id"])
-    classes = ["article-section", f"level-{depth}"]
-    if depth == 1:
-      classes.extend(["main-section", "surface"])
-    else:
-      classes.append("subsection")
-    html_parts.append(f"<section id=\"{section_id}\" class=\"{' '.join(classes)}\">")
-    heading_parts = ["<header class=\"section-header\">"]
-    number_text = label
-    if number_text and not number_text.endswith('.'):
-      number_text = f"{number_text}."
-    number_html = f"<span class=\"section-number\">{number_text}</span>" if number_text else ""
-    heading_parts.append(
-      f"<{heading_tag} class=\"section-heading\">{number_html}<span class=\"section-title\">{title}</span></{heading_tag}>"
-    )
-    heading_parts.append("</header>")
-    html_parts.append("".join(heading_parts))
-    body_html = _render_paragraphs(section["paragraphs"])
-    if body_html:
-      html_parts.append(f"<div class=\"section-body\">{body_html}</div>")
-    if section["subsections"]:
-      html_parts.append("<div class=\"subsection-group\">")
-      html_parts.append(_render_sections(section["subsections"], depth + 1, f"{number}."))
-      html_parts.append("</div>")
-    html_parts.append("</section>")
-  return "".join(html_parts)
+    """Renderiza las secciones y subsecciones de forma recursiva.
+
+    Args:
+        sections (List[Dict[str, Any]]): Lista de secciones.
+        depth (int, optional): Profundidad actual (para jerarquía h2-h6).
+        prefix (str, optional): Prefijo de numeración (ej. "1.1").
+
+    Returns:
+        str: HTML de todas las secciones renderizadas.
+    """
+    html_parts: List[str] = []
+    heading_tags = {1: "h2", 2: "h3", 3: "h4", 4: "h5"}
+    for idx, section in enumerate(sections, start=1):
+        number = f"{prefix}{idx}" if prefix else str(idx)
+        heading_tag = heading_tags.get(depth, "h6")
+        title = escape(section["title"])
+        label_text = section.get("label") or number
+        label = escape(label_text) if label_text else ""
+        section_id = escape(section["id"])
+        classes = ["article-section", f"level-{depth}"]
+        if depth == 1:
+            classes.extend(["main-section", "surface"])
+        else:
+            classes.append("subsection")
+        html_parts.append(f"<section id=\"{section_id}\" class=\"{' '.join(classes)}\">")
+        heading_parts = ["<header class=\"section-header\">"]
+        number_text = label
+        if number_text and not number_text.endswith('.'):
+            number_text = f"{number_text}."
+        number_html = f"<span class=\"section-number\">{number_text}</span>" if number_text else ""
+        heading_parts.append(
+            f"<{heading_tag} class=\"section-heading\">{number_html}<span class=\"section-title\">{title}</span></{heading_tag}>"
+        )
+        heading_parts.append("</header>")
+        html_parts.append("".join(heading_parts))
+        body_html = _render_paragraphs(section["paragraphs"])
+        if body_html:
+            html_parts.append(f"<div class=\"section-body\">{body_html}</div>")
+        if section["subsections"]:
+            html_parts.append("<div class=\"subsection-group\">")
+            html_parts.append(_render_sections(section["subsections"], depth + 1, f"{number}."))
+            html_parts.append("</div>")
+        html_parts.append("</section>")
+    return "".join(html_parts)
+
 
 
 def _render_figures(figures: List[Dict[str, Any]]) -> str:
+    """Genera HTML para las figuras.
+
+    Args:
+        figures (List[Dict[str, Any]]): Lista de figuras.
+
+    Returns:
+        str: HTML renderizado.
+    """
     if not figures:
         return ""
     figure_blocks: List[str] = []
@@ -505,7 +759,16 @@ def _render_figures(figures: List[Dict[str, Any]]) -> str:
     """.replace("{figures}", "".join(figure_blocks))
 
 
+
 def _render_tables(tables: List[Dict[str, Any]]) -> str:
+    """Genera HTML para las tablas.
+
+    Args:
+        tables (List[Dict[str, Any]]): Lista de tablas.
+
+    Returns:
+        str: HTML renderizado.
+    """
     if not tables:
         return ""
     table_blocks: List[str] = []
@@ -537,7 +800,16 @@ def _render_tables(tables: List[Dict[str, Any]]) -> str:
     """.replace("{tables}", "".join(table_blocks))
 
 
+
 def _render_references(references: List[Dict[str, str]]) -> str:
+    """Genera HTML para la lista de referencias.
+
+    Args:
+        references (List[Dict[str, str]]): Lista de referencias.
+
+    Returns:
+        str: HTML renderizado.
+    """
     if not references:
         return ""
     items: List[str] = []
@@ -558,7 +830,16 @@ def _render_references(references: List[Dict[str, str]]) -> str:
     """.replace("{items}", "".join(items))
 
 
+
 def _render_sidebar(doc: Dict[str, Any]) -> str:
+    """Genera el panel lateral con la tabla de contenidos (TOC) y metadatos.
+
+    Args:
+        doc (Dict[str, Any]): Datos completos del artículo.
+
+    Returns:
+        str: HTML del sidebar.
+    """
     sections = doc.get("sections", [])
     entries = _collect_section_entries(sections)
     nav_items: List[str] = []
@@ -632,7 +913,18 @@ def _render_sidebar(doc: Dict[str, Any]) -> str:
     )
 
 
+
 def build_html(doc: Dict[str, Any]) -> str:
+    """Construye el documento HTML completo a partir de los datos extraídos.
+
+    Ensambla CSS, JS, metadatos y secciones en una plantilla HTML responsiva.
+
+    Args:
+        doc (Dict[str, Any]): Datos estructurados del artículo.
+
+    Returns:
+        str: Código fuente HTML completo.
+    """
     title = escape(doc.get("title") or "Artículo sin título")
     translated_title = escape(doc.get("translated_title") or "")
 
@@ -1500,7 +1792,17 @@ body[data-theme="dark"] .floating-button {
     return html
 
 
+
 def convert(xml_path: str, output_path: str | None = None) -> str:
+    """Función de alto nivel para convertir un archivo JATS XML a HTML.
+
+    Args:
+        xml_path (str): Ruta al archivo de entrada.
+        output_path (str | None, optional): Ruta de salida. Si es None, no guarda archivo.
+
+    Returns:
+        str: El contenido HTML generado.
+    """
     doc = parse_jats(xml_path)
     html = build_html(doc)
     if output_path:
@@ -1508,7 +1810,16 @@ def convert(xml_path: str, output_path: str | None = None) -> str:
     return html
 
 
+
 def main(argv: List[str]) -> int:
+    """Punto de entrada para la ejecución desde línea de comandos.
+
+    Args:
+        argv (List[str]): Argumentos de la línea de comandos (sin incluir el nombre del script).
+
+    Returns:
+        int: Código de salida (0 para éxito, 1 para error).
+    """
     parser = argparse.ArgumentParser(description="Convierte un artículo JATS en HTML estilizado y responsivo.")
     parser.add_argument("xml", help="Ruta al archivo XML en formato JATS")
     parser.add_argument("-o", "--output", help="Ruta del archivo HTML resultante")

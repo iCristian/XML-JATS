@@ -2,6 +2,8 @@ import streamlit as st
 import os
 import tempfile
 from pathlib import Path
+from typing import Optional, Tuple, Dict, Any, List
+
 import transformer
 import xml_html
 import streamlit.components.v1 as components
@@ -49,7 +51,12 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-def main():
+def main() -> None:
+    """Función principal de la aplicación Streamlit.
+
+    Orquesta la interfaz de usuario, manejo de estados y llamadas
+    a los módulos de transformación y validación.
+    """
     st.title("📄 Transformador XML JATS")
     st.markdown("### Convierte documentos Word a XML JATS con IA")
     
@@ -122,7 +129,7 @@ def main():
                     result = transformer.invocar_gemini_cli(prompt)
                     
                     if result.get('returncode') == 0 and result.get('stdout'):
-                        xml_out = result.get('stdout')
+                        xml_out = result.get('stdout', '')
                         # Limpiar bloques de código markdown
                         import re
                         match = re.search(r"```xml\s*(.*?)\s*```", xml_out, re.DOTALL)
