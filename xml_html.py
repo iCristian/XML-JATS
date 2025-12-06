@@ -831,6 +831,18 @@ def _render_references(references: List[Dict[str, str]]) -> str:
 
 
 
+def _get_logo_base64() -> str:
+    """Lee el archivo de logo y lo convierte a Base64."""
+    try:
+        logo_path = Path("resources/logo.png")
+        if logo_path.exists():
+            import base64
+            encoded = base64.b64encode(logo_path.read_bytes()).decode("utf-8")
+            return f"data:image/png;base64,{encoded}"
+    except Exception:
+        pass
+    return ""
+
 def _render_sidebar(doc: Dict[str, Any]) -> str:
     """Genera el panel lateral con la tabla de contenidos (TOC) y metadatos.
 
@@ -889,11 +901,23 @@ def _render_sidebar(doc: Dict[str, Any]) -> str:
     if pub_date:
         meta_rows.append(f"<li><span>Fecha:</span> {escape(pub_date)}</li>")
 
+    logo_src = _get_logo_base64()
+    logo_html = ""
+    if logo_src:
+        logo_html = f"""
+        <div class=\"logo-container\" style=\"text-align: center; margin-bottom: 20px;\">
+            <img src=\"{logo_src}\" alt=\"Logo Revista\" style=\"max-width: 80%; height: auto;\">
+        </div>
+        """
+
     template = """
   <aside class=\"sidebar\" id=\"sidebar\" aria-label=\"Índice de contenido\" aria-hidden=\"false\">
       <div class=\"sidebar-header\">
-        <h2>Contenido</h2>
-        <button class=\"sidebar-close\" id=\"sidebarClose\" aria-label=\"Cerrar índice\">✕</button>
+        {logo}
+        <div class=\"sidebar-title-row\">
+            <h2>Contenido</h2>
+            <button class=\"sidebar-close\" id=\"sidebarClose\" aria-label=\"Cerrar índice\">✕</button>
+        </div>
       </div>
       <nav class=\"toc\">
         <ul>{toc}</ul>
@@ -910,6 +934,7 @@ def _render_sidebar(doc: Dict[str, Any]) -> str:
         template.replace("{toc}", toc_html)
         .replace("{meta}", "".join(meta_rows) if meta_rows else "<li>Información no disponible</li>")
         .replace("{keywords}", _render_keywords(doc.get("keywords", [])))
+        .replace("{logo}", logo_html)
     )
 
 
@@ -1123,10 +1148,12 @@ body.sidebar-open .sidebar {
   transform: translateX(0);
 }
 .sidebar-header {
+  margin-bottom: 20px;
+}
+.sidebar-title-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
 }
 .sidebar-header h2 {
   margin: 0;
