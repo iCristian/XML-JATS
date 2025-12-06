@@ -1,21 +1,98 @@
-# xml_html.py
+# Transformador XML JATS (JATS XML Transformer)
 
-Script para convertir un archivo XML (por ejemplo JATS) a un único archivo HTML
-profesional y responsivo. Usa la CLI `gemini` si está disponible; si no, aplica
-un XSLT local como fallback.
+Una herramienta avanzada impulsada por Inteligencia Artificial para convertir documentos de Word (`.docx`) a formato **JATS XML** validado, diseñada específicamente para el flujo editorial de revistas científicas.
 
-Uso rápido:
+Esta aplicación automatiza el proceso de etiquetado semántico, extracción de tablas e imágenes (en desarrollo), y validación contra el estándar NLM/NCBI Journal Publishing DTD v1.3.
+
+## 🚀 Características Principales
+
+- **Conversión Inteligente**: Utiliza LLMs (Google Gemini) para interpretar la estructura lógica del documento y generar etiquetas JATS precisas.
+- **Extracción de Contenido**: Detecta y extrae imágenes y tablas automáticamente desde el archivo Word.
+- **Validación Integrada**: Valida el XML generado contra el DTD oficial JATS 1.3 con MathML3.
+- **Interfaz Dual**:
+  - **CLI (Línea de Comandos)**: Para automatización y procesamiento por lotes.
+  - **Web UI (Streamlit)**: Interfaz gráfica amigable para arrastrar y soltar archivos, editar contenido extraído y previsualizar resultados.
+- **Conversión a HTML**: Genera una vista previa en HTML del artículo para su revisión inmediata.
+
+## 🛠️ Requisitos del Sistema
+
+- Windows, macOS o Linux.
+- [Python 3.9+](https://www.python.org/downloads/)
+- Una clave de API de Google Gemini (Google AI Studio).
+
+## 📦 Instalación
+
+1. **Clonar el repositorio** (si aplica) o descargar el código fuente.
+
+2. **Crear un entorno virtual** (recomendado):
+
+    ```bash
+    python -m venv .venv
+    # Activar:
+    # Windows: .venv\Scripts\activate
+    # macOS/Linux: source .venv/bin/activate
+    ```
+
+3. **Instalar dependencias**:
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+    *Nota: Si no tienes un `requirements.txt`, las dependencias principales son: `python-docx`, `lxml`, `streamlit`, `google-generativeai` (o la herramienta CLI correspondiente).*
+
+4. **Configurar la API Key de Gemini**:
+    Asegúrate de que la CLI de `gemini` esté configurada en tu PATH o system environment variables.
+
+    ```bash
+    export GEMINI_API_KEY="tu_clave_aqui"
+    ```
+
+## 📖 Uso
+
+### Interfaz Web (Recomendado)
+
+La interfaz gráfica es la forma más fácil de usar la herramienta.
+
+1. Ejecuta la aplicación:
+
+    ```bash
+    streamlit run interface.py
+    ```
+
+2. Abre tu navegador en la URL mostrada (usualmente `http://localhost:8501`).
+3. Sube tu archivo `.docx`.
+4. Revisa el texto extraído, genera el XML, valida y descarga los resultados.
+
+### Línea de Comandos (CLI)
+
+Para usuarios avanzados que deseen integrar la herramienta en scripts.
+
+**Transformación (Word -> XML):**
 
 ```bash
-# activar virtualenv
-source .venv/bin/activate
+python transformer.py entrada.docx salida.xml
+```
 
+**Conversión (XML -> HTML):**
+
+```bash
 python xml_html.py entrada.xml salida.html
 ```
 
-Notas:
-- El script intentará invocar `gemini` y pedir la conversión por IA.
-- Si `gemini` no está instalado o no produce HTML, el script usa un XSLT
-  sencillo para generar una versión funcional del HTML.
-- Si quieres que gemini devuelva metadatos (por ejemplo tokens), considera
-  modificar la invocación a `-o json` en `xml_html.py`.
+## 📂 Estructura del Proyecto
+
+- `transformer.py`: Núcleo de la lógica de conversión. Maneja la lectura del Word, construcción del prompt para IA y validación XML.
+- `interface.py`: Aplicación web construida con Streamlit.
+- `xml_html.py`: Utilidad para convertir el XML JATS resultante a HTML visualizable.
+- `JATS-Publishing-1-3-MathML3-DTD/`: Archivos DTD locales para validación offline (se descargan si no existen).
+- `imagenes_extraidas/`: Directorio temporal donde se guardan las imágenes extraídas del documento Word.
+
+## 🤝 Créditos
+
+Desarrollado por **Cristian Carreño León**\
+Escuela de Obstetricia y Puericultura\
+Facultad de Medicina\
+Universidad de Valparaíso, Chile.
+
+Desarrollado para la **Universidad de Valparaíso** con el objetivo de optimizar los procesos de publicación científica.
