@@ -5,4 +5,4 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Activate the virtual environment and run the app
-"$DIR/.venv/bin/streamlit" run "$DIR/📄_Transformador_XML_JATS.py"
+"$DIR/.venv/bin/streamlit" run "$DIR/streamlit_app.py"

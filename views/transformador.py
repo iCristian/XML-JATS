@@ -10,13 +10,7 @@ import xml_html
 import correction
 import streamlit.components.v1 as components
 
-# Configuración de la página
-st.set_page_config(
-    page_title="Transformador XML JATS",
-    page_icon="📄",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+# Nota: st.set_page_config se ha movido a streamlit_app.py
 
 # CSS Personalizado
 st.markdown("""
@@ -83,16 +77,6 @@ def main() -> None:
             "2. **Generación**: Crea el XML.\n"
             "3. **Validación**: Verifica y corrige errores.\n"
             "4. **Resultados**: Descarga el XML/HTML."
-        )
-        st.markdown("---")
-        st.markdown(
-            """
-            <div class='branding'>
-                <b>Universidad de Valparaíso</b><br>
-                <small>v0.5 (Beta)</small>
-            </div>
-            """, 
-            unsafe_allow_html=True
         )
 
     if 'extracted_text' not in st.session_state:
@@ -235,7 +219,7 @@ def main() -> None:
                      # podría no haberse validado aún, pero asumimos flujo normal)
                      # Mejor usar una flag si 'is_validated'
                      pass 
-
+                
                 if st.session_state.validation_errors:
                     for e in st.session_state.validation_errors:
                         st.warning(f"• {e}")
@@ -366,5 +350,17 @@ def main() -> None:
                 st.markdown("---")
                 components.html(st.session_state.generated_html, height=800, scrolling=True)
 
-if __name__ == "__main__":
-    main()
+    # Sidebar Footer (Igual que en la app principal para consistencia)
+    with st.sidebar:
+        st.markdown("---")
+        st.markdown(
+            """
+            <div class='branding'>
+                <b>Universidad de Valparaíso</b><br>
+                <small>Transformador XML JATS v0.5 (Beta)</small>
+            </div>
+            """, 
+            unsafe_allow_html=True
+        )
+
+main()

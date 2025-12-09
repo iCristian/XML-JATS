@@ -2,16 +2,12 @@ import streamlit as st
 import base64
 from pathlib import Path
 
-st.set_page_config(
-    page_title="Información - Transformador XML JATS",
-    page_icon="ℹ️",
-    layout="wide"
-)
+# Nota: st.set_page_config removido, se maneja en streamlit_app.py
 
 def _get_logo_base64() -> str:
     """Lee el archivo de logo y lo convierte a Base64."""
     try:
-        logo_path = Path("resources/logo.png")
+        logo_path = Path("resources/UV_blanco.png")
         if logo_path.exists():
             encoded = base64.b64encode(logo_path.read_bytes()).decode("utf-8")
             return f"data:image/png;base64,{encoded}"
@@ -29,7 +25,7 @@ def main():
         if logo_src:
             st.markdown(
                 f"""
-                <div style="text-align: center; margin-bottom: 20px;">
+                <div style="text-align: left; margin-bottom: 20px;">
                     <img src="{logo_src}" style="max-width: 200px;">
                 </div>
                 """, 
@@ -38,14 +34,14 @@ def main():
         
         st.markdown("""
         ### Universidad de Valparaíso
-        **Escuela de Obstetricia y Puericultura**  
-        *Facultad de Medicina*
+        **Facultad de Medicina**  
+        *Escuela de Obstetricia y Puericultura*
         """)
 
     with col2:
         st.header("Créditos y Desarrollo")
         st.markdown("""
-        Esta herramienta ha sido desarrollada para optimizar el flujo de trabajo editorial de la **Revista Matronería Actual**, automatizando la conversión de manuscritos a XML JATS validado.
+        Esta herramienta ha sido desarrollada para optimizar el flujo de trabajo editorial de la **Revistas UV**, automatizando la conversión de manuscritos a XML JATS validado.
 
         **Desarrollador Principal:**  
         Cristian Carreño León  
@@ -87,22 +83,21 @@ def main():
     col_back, _ = st.columns([1, 2])
     with col_back:
         if st.button("⬅️ VOLVER AL INICIO", type="primary", use_container_width=True):
-            st.switch_page("📄_Transformador_XML_JATS.py")
+            st.switch_page("views/transformador.py")
 
     # Sidebar Footer (Igual que en la app principal)
     with st.sidebar:
-        st.markdown("---")
+        #st.markdown("---")
         st.markdown(
             """
             <div class='branding'>
                 <b>Universidad de Valparaíso</b><br>
-                <small>v0.5 (Beta)</small>
+                <small>Transformador XML JATS v0.5 (Beta)</small>
             </div>
             """, 
             unsafe_allow_html=True
         )
 
-    st.caption("Transformador XML JATS v0.5 (Beta) | © 2024 Universidad de Valparaíso")
+    st.caption("Transformador XML JATS v0.5 (Beta) | Universidad de Valparaíso")
 
-if __name__ == "__main__":
-    main()
+main()
