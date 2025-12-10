@@ -228,10 +228,29 @@ def main() -> None:
                     if st.button("🛠️ Solucionar con IA", type="primary"):
                         st.session_state.show_correction_chat = True
                         if not st.session_state.correction_chat:
-                             st.session_state.correction_chat.append({
-                                 "role": "assistant", 
-                                 "content": "He analizado los errores. ¿Cómo deseas proceder?"
-                             })
+                            with st.spinner("Analizando errores y buscando soluciones..."):
+                                res = correction.analizar_errores_inicial(
+                                    st.session_state.generated_xml,
+                                    st.session_state.validation_errors
+                                )
+                                response_text = ""
+                                if res.get('returncode') == 0 and res.get('stdout'):
+                                    response_text = res.get('stdout', '')
+                                else:
+                                    response_text = f"Error: {res.get('stderr')}"
+                                
+                                import re
+                                match = re.search(r"```xml\s*(.*?)\s*```", response_text, re.DOTALL)
+                                if match:
+                                    new_xml = match.group(1)
+                                    st.session_state.pending_correction_xml = new_xml
+                                    # Limpiamos el texto para mostrar solo la nota explicativa si la hay
+                                    # Opcional: mostrar todo
+                                st.session_state.correction_chat.append({
+                                    "role": "assistant", 
+                                    "content": response_text
+                                })
+                                st.rerun()
                 else:
                     # Si no hay errores, mostramos el botón de avanzar
                     st.markdown("---")
