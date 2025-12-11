@@ -178,3 +178,6 @@ Desktop.ini
 
 # Recursive Pycache
 **/__pycache__/
+
+# Generated Images
+imagenes_extraidas/
