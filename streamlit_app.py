@@ -14,6 +14,7 @@ pages = {
         st.Page("views/transformador.py", title="Transformador", icon="📄"),
     ],
     "Información": [
+        st.Page("views/manual_usuario.py", title="Manual de Usuario", icon="📖"),
         st.Page("views/documentacion.py", title="Documentación", icon="📚"),
         st.Page("views/creditos.py", title="Créditos y Licencias", icon="⚖️"),
     ]
