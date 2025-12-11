@@ -63,7 +63,7 @@ La interfaz gráfica es la forma más fácil de usar la herramienta.
 1. Ejecuta la aplicación:
 
     ```bash
-    streamlit run 📄_Transformador_XML_JATS.py
+    streamlit run streamlit_app.py
     ```
 
 2. Abre tu navegador en la URL mostrada (usualmente `http://localhost:8501`).
@@ -77,21 +77,23 @@ Para usuarios avanzados que deseen integrar la herramienta en scripts.
 **Transformación (Word -> XML):**
 
 ```bash
-python transformer.py entrada.docx salida.xml
+python -m modules.transformer entrada.docx salida.xml
 ```
 
 **Conversión (XML -> HTML):**
 
 ```bash
-python xml_html.py entrada.xml salida.html
+python -m modules.xml_html entrada.xml salida.html
 ```
 
 ## 📂 Estructura del Proyecto
 
-- `transformer.py`: Núcleo de la lógica de conversión. Maneja la lectura del Word, construcción del prompt para IA y validación XML.
-- `📄_Transformador_XML_JATS.py`: Aplicación web principal (Streamlit UI).
-- `pages/2_⚖️_Créditos_y_Licencias.py`: Página de información, créditos y licencias.
-- `xml_html.py`: Utilidad para convertir el XML JATS resultante a HTML visualizable.
+- `streamlit_app.py`: Punto de entrada de la aplicación web (Streamlit UI).
+- `modules/`:
+  - `transformer.py`: Núcleo de la lógica de conversión. Maneja la lectura del Word, construcción del prompt para IA y validación XML.
+  - `correction.py`: Módulo para la corrección asistida por IA.
+  - `xml_html.py`: Utilidad para convertir el XML JATS resultante a HTML visualizable.
+- `views/`: Vistas de la interfaz gráfica.
 - `JATS-Publishing-1-3-MathML3-DTD/`: Archivos DTD locales para validación offline (se descargan si no existen).
 - `imagenes_extraidas/`: Directorio temporal donde se guardan las imágenes extraídas del documento Word.
 

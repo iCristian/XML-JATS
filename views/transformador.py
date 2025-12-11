@@ -5,9 +5,9 @@ import time
 from pathlib import Path
 from typing import Optional, Tuple, Dict, Any, List
 
-import transformer
-import xml_html
-import correction
+from modules import transformer
+from modules import xml_html
+from modules import correction
 import streamlit.components.v1 as components
 
 # Nota: st.set_page_config se ha movido a streamlit_app.py

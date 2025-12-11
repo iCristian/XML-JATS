@@ -11,7 +11,7 @@ import sys
 import time
 from typing import Dict, Any, List
 
-from transformer import invocar_gemini_cli, WORKSPACE_ROOT
+from .transformer import invocar_gemini_cli, WORKSPACE_ROOT
 
 def construir_prompt_analisis_inicial(xml_content: str, validation_errors: List[str]) -> str:
     """Construye el prompt para el análisis inicial de errores."""
