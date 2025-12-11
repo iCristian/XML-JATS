@@ -10,7 +10,9 @@ y manejo de figuras y tablas.
 
 
 import argparse
+import base64
 import json
+import mimetypes
 import re
 import sys
 from dataclasses import dataclass
@@ -23,6 +25,7 @@ from lxml import etree
 _XML_ID = "{http://www.w3.org/XML/1998/namespace}id"
 _XLINK_HREF = "{http://www.w3.org/1999/xlink}href"
 _SANITIZE_ENTITY_RE = re.compile(r"&(?![a-zA-Z]+;|#\d+;|#x[0-9a-fA-F]+;)")
+IMAGE_DIR = Path("imagenes_extraidas")
 
 
 
@@ -722,6 +725,28 @@ def _render_sections(sections: List[Dict[str, Any]], depth: int = 1, prefix: str
 
 
 
+def _encode_image_to_base64(image_path: Path) -> str:
+    """Codifica una imagen local a Base64.
+
+    Args:
+        image_path (Path): Ruta al archivo de imagen.
+
+    Returns:
+        str: Cadena Data URI (data:image/xyz;base64,...) o cadena vacía si falla.
+    """
+    try:
+        if not image_path.exists():
+            return ""
+        mime_type, _ = mimetypes.guess_type(image_path)
+        if not mime_type:
+            mime_type = "application/octet-stream"
+        
+        data = base64.b64encode(image_path.read_bytes()).decode("utf-8")
+        return f"data:{mime_type};base64,{data}"
+    except Exception:
+        return ""
+
+
 def _render_figures(figures: List[Dict[str, Any]]) -> str:
     """Genera HTML para las figuras.
 
@@ -738,6 +763,14 @@ def _render_figures(figures: List[Dict[str, Any]]) -> str:
         caption = escape(fig.get("caption") or "")
         label = escape(fig.get("label") or "Figura")
         href = escape(fig.get("href") or "")
+        
+        # Intentar convertir a Base64 si es un archivo local
+        if href and not href.startswith("data:") and not href.startswith("http"):
+             local_path = IMAGE_DIR / href
+             base64_img = _encode_image_to_base64(local_path)
+             if base64_img:
+                 href = base64_img
+                 
         alt = caption or label
         media = f"<img src=\"{href}\" alt=\"{alt}\" loading=\"lazy\">" if href else ""
         figure_blocks.append(
@@ -834,7 +867,11 @@ def _render_references(references: List[Dict[str, str]]) -> str:
 def _get_logo_base64() -> str:
     """Lee el archivo de logo y lo convierte a Base64."""
     try:
-        logo_path = Path("resources/logo.png")
+        # Prefer the transparent fixed version if it exists
+        logo_path = Path("resources/logo_transparent.png")
+        if not logo_path.exists():
+            logo_path = Path("resources/logo.png")
+            
         if logo_path.exists():
             import base64
             encoded = base64.b64encode(logo_path.read_bytes()).decode("utf-8")

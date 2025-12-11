@@ -29,7 +29,7 @@ from lxml import etree
 
 # --- Constantes ---
 DTD_ZIP_URL = "https://public.nlm.nih.gov/projects/jats/publishing/1.3/JATS-Publishing-1-3-MathML3-DTD.zip"
-WORKSPACE_ROOT = Path(__file__).resolve().parent
+WORKSPACE_ROOT = Path(__file__).resolve().parent.parent
 DTD_FILENAME = "JATS-journalpublishing1-3-mathml3.dtd"
 DTD_LOCAL_FILE = WORKSPACE_ROOT / DTD_FILENAME
 IMAGE_OUTPUT_DIR = WORKSPACE_ROOT / "imagenes_extraidas"

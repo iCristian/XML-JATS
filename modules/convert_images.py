@@ -17,8 +17,8 @@ for img_path in images:
         
     try:
         with Image.open(img_path) as img:
-            # Convert to RGB
-            img = img.convert('RGB')
+            # Convert to RGBA to preserve transparency
+            img = img.convert('RGBA')
             # Save it back without interlacing
             img.save(img_path, "PNG", optimize=False, compress_level=0)
             print(f"Converted and saved: {img_path}")

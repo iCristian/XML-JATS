@@ -160,3 +160,21 @@ cython_debug/
 #.idea/
 
 generate_pdf_source.py
+
+# Local OS/Tool items
+.DS_Store
+.gemini/
+Checkpoints/
+[Cc]ache/
+
+# OS Junk Files
+__MACOSX/
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Logs
+*.log
+
+# Recursive Pycache
+**/__pycache__/
