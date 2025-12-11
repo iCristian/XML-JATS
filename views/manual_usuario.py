@@ -227,13 +227,13 @@ def create_professional_pdf():
     pdf.set_text_color(100)
     pdf.cell(0, 10, 'Transformador XML-JATS', 0, 1, 'C')
     
-    pdf.set_y(100)
+    pdf.set_y(130)
     pdf.set_font('Arial', '', 12)
     pdf.set_text_color(0)
     pdf.cell(0, 10, 'Universidad de Valparaíso', 0, 1, 'C')
     pdf.cell(0, 10, 'Facultad de Medicina', 0, 1, 'C')
     
-    pdf.set_y(250)
+    pdf.set_y(180)
     pdf.set_font('Arial', 'B', 11)
     pdf.cell(0, 10, 'Autor: Cristian Carreño León', 0, 1, 'C')
     pdf.cell(0, 10, 'Fecha: 11-12-2025', 0, 1, 'C')
