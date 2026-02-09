@@ -23,14 +23,13 @@ Esta solución permite la conversión de manuscritos originales en formato Micro
         "content": """
 - Navegue a la sección **"Transformador"** en el menú lateral.
 - Encontrará un área designada para la carga de archivos.
-- Puede arrastrar y soltar su archivo `.docx` o hacer clic en "Browse files" para seleccionarlo de su equipo.
+- Puede subir documentos en formato **WORD (`.docx`)** o **PDF (`.pdf`)**.
 
-Una vez cargado el archivo, el sistema realizará una extracción automática del texto:
+Una vez cargado el archivo, el sistema desplegará el panel de **Revisión de Metadatos**:
 
-- Revise que el texto extraído sea correcto.
-- Si no es correcto, puede editar el texto manualmente.
-- Agregue en esta sección información que puede estar ausente en el documento original (DOI, Fecha de publicación, etc).
-- Revise que la información sea correcta.
+- **Verifique los datos**: Título, Revista, Fecha, DOI, etc.
+- **Complete lo faltante**: Si faltan datos clave, un **Chatbot Asistente** aparecerá para pedírselos. Puede escribirlos en el chat o en los campos editables.
+- Revise también la vista previa del texto extraído.
 """,
         "image": "resources/manual_images/01.png",
         "caption": "Figura 1: Área de carga de documentos."
@@ -39,10 +38,11 @@ Una vez cargado el archivo, el sistema realizará una extracción automática de
         "type": "step",
         "title": "2. Generación de XML JATS",
         "content": """
-Una vez cargado el archivo, en la pestaña **"Generación"**:
+Una vez confirmados los metadatos y el contenido, en la pestaña **"Generación"**:
 
 - Presione el botón **"Generar XML JATS"**.
-- El sistema procesará el contenido aplicando las reglas del estándar **JATS 1.3**.
+- El sistema procesará el contenido aplicando las reglas del último estándar **JATS 1.4 (ANSI/NISO Z39.96-2024)**.
+- Se utilizarán los metadatos validados para construir un encabezado (`<front>`) preciso.
 """,
         "image": "resources/manual_images/02.png",
         "caption": "Figura 2: Generación de XML JATS."
@@ -52,8 +52,7 @@ Una vez cargado el archivo, en la pestaña **"Generación"**:
         "title": "3. Validación y Corrección",
         "content": """
 - Presione el botón **"Ejecutar Validación DTD"**.
-- El sistema procesará el contenido aplicando las reglas del estándar **JATS 1.3**.
-- Se ejecutará una validación automática estricta contra el DTD oficial.
+- Se ejecutará una validación automática estricta contra el DTD oficial **JATS 1.4**.
 
 ***Importante***
 - Si el sistema encuentra errores, se mostrará un informe con los errores encontrados y se habilitarán un botón de corrección que permitirá corregir los errores encontrados asistido por la IA de Gemini.
@@ -78,7 +77,7 @@ Si la validación es exitosa, se habilitarán los botones de descarga:
 
 FAQ_CONTENT = """
 **¿Qué formatos soporta?**
-Actualmente soporta archivos Microsoft Word (`.docx`). Asegúrese de que el documento no esté protegido con contraseña.
+Soporta archivos Microsoft Word (`.docx`) y documentos Portables (`.pdf`).
 
 **¿Qué hago si falla la validación?**
 Revise el mensaje de error. Generalmente se debe a caracteres especiales no soportados o estructuras de documento inusuales (ej. tablas anidadas complejas). Edite el contenido en el paso 2 y reintente.
@@ -116,7 +115,7 @@ Tecnología:
 - Streamlit: Framework de interfaz de usuario.
 - Google Gemini Pro: Modelo de lenguaje (LLM).
 - LXML: Procesamiento y validación robusta de XML.
-- JATS 1.3: Estándar de etiquetado.
+- JATS 1.4: Estándar de etiquetado (2024).
 
 Privacidad y Tratamiento de Datos:
 1. Procesamiento Volátil: Los archivos no se almacenan permanentemente.
@@ -237,7 +236,7 @@ def create_professional_pdf():
     pdf.set_font('Arial', 'B', 11)
     pdf.cell(0, 10, 'Autor: Cristian Carreño León', 0, 1, 'C')
     pdf.cell(0, 10, 'Fecha: 11-12-2025', 0, 1, 'C')
-    pdf.cell(0, 10, 'Versión: 0.5 (Beta)', 0, 1, 'C')
+    pdf.cell(0, 10, 'Versión: 0.6', 0, 1, 'C')
     pdf.cell(0, 10, 'Contacto: carreonleong@gmail.com', 0, 1, 'C')
     
     # --- SECCIÓN 1: DOCUMENTACIÓN ---

@@ -1,20 +1,21 @@
-# Transformador XML JATS (JATS XML Transformer) - v0.5 (Beta)
+# Transformador XML JATS (JATS XML Transformer) - v0.6
 
 Una herramienta avanzada impulsada por Inteligencia Artificial para convertir documentos de Word (`.docx`) a formato **JATS XML** validado, diseñada específicamente para el flujo editorial de revistas científicas.
 
-Esta aplicación automatiza el proceso de etiquetado semántico, extracción de tablas e imágenes (en desarrollo), y validación contra el estándar NLM/NCBI Journal Publishing DTD v1.3.
+Esta aplicación automatiza el proceso de etiquetado semántico, extracción de tablas e imágenes (en desarrollo), y validación contra el estándar **NISO JATS Version 1.4 (ANSI/NISO Z39.96-2024)**.
 
 ## 🚀 Características Principales
 
-- **Conversión Inteligente**: Utiliza LLMs (Google Gemini) para interpreta la estructura lógica del documento.
-- **Asistente de Corrección Interactivo**: Chatbot integrado que ayuda a solucionar errores de validación DTD, permitiendo ediciones precisas y regeneración del XML.
-- **Navegación Fluida**: Interfaz intuitiva con pestañas y botones de navegación automática entre pasos.
-- **HTML Autocontenido**: Genera archivos HTML con el logo incrustado (Base64), listos para publicar sin dependencias externas.
-- **Validación Integrada**: Valida contra JATS 1.3 y ofrece sugerencias de corrección en tiempo real.
+- **Conversión Inteligente**: Utiliza LLMs (Google Gemini) para interpretar la estructura lógica del documento.
+- **Soporte Multiformato**: Procesa documentos **Word (`.docx`)** y **PDF (`.pdf`)**.
+- **Extracción de Metadatos**: Identifica y extrae automáticamente metadatos clave (título, autores, DOI, fechas).
+- **Revisión Interactiva**: Permite editar metadatos y dialogar con un chatbot para completar información faltante antes de la generación.
+- **Validación JATS 1.4**: Valida contra el último estándar **NISO JATS Version 1.4 (ANSI/NISO Z39.96-2024)**.
+- **HTML Autocontenido**: Genera archivos HTML con el logo incrustado (Base64), listos para publicar.
 
 - **Conversión Inteligente**: Utiliza LLMs (Google Gemini) para interpretar la estructura lógica del documento y generar etiquetas JATS precisas.
 - **Extracción de Contenido**: Detecta y extrae imágenes y tablas automáticamente desde el archivo Word.
-- **Validación Integrada**: Valida el XML generado contra el DTD oficial JATS 1.3 con MathML3.
+- **Validación Integrada**: Valida el XML generado contra el DTD oficial JATS 1.4 con MathML3.
 - **Interfaz Dual**:
   - **CLI (Línea de Comandos)**: Para automatización y procesamiento por lotes.
   - **Web UI (Streamlit)**: Interfaz gráfica amigable para arrastrar y soltar archivos, editar contenido extraído y previsualizar resultados.
@@ -67,8 +68,9 @@ La interfaz gráfica es la forma más fácil de usar la herramienta.
     ```
 
 2. Abre tu navegador en la URL mostrada (usualmente `http://localhost:8501`).
-3. Sube tu archivo `.docx`.
-4. Revisa el texto extraído, genera el XML, valida y descarga los resultados.
+3. Sube tu archivo `.docx` o `.pdf`.
+4. Revisa y completa los metadatos extraídos.
+5. Genera el XML, valida y descarga los resultados.
 
 ### Línea de Comandos (CLI)
 
@@ -108,7 +110,14 @@ Desarrollado para la **Universidad de Valparaíso** con el objetivo de optimizar
 
 ## 📅 Historial de Versiones (Changelog)
 
-### v0.5 (Beta) - Versión Actual
+### v0.6 - Actualización JATS 1.4 + Metadatos
+
+- **Estándar JATS 1.4**: Actualización completa del motor de validación y prompts al estándar ANSI/NISO Z39.96-2024.
+- **Soporte PDF**: Ahora es posible cargar archivos `.pdf` para extracción de texto y metadatos.
+- **Módulo de Metadatos**: Nueva lógica de extracción y validación de metadatos (título, autores, DOI, fecha).
+- **UI de Revisión**: Nueva sección en la interfaz para editar metadatos y chatbot asistente para completar información faltante.
+
+### v0.5 (Beta)
 
 - **Mejoras de UI**: Navegación por pestañas con botones de avance automático.
 - **Corrección Interactiva**: Nuevo chatbot que permite dialogar con la IA para resolver errores de validación. Implementación de una "Caja de Sugerencias" para revisar y aplicar cambios al XML de forma segura.

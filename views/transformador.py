@@ -8,6 +8,7 @@ from typing import Optional, Tuple, Dict, Any, List
 from modules import transformer
 from modules import xml_html
 from modules import correction
+from modules import metadata_processor
 import streamlit.components.v1 as components
 
 # Nota: st.set_page_config se ha movido a streamlit_app.py
@@ -95,6 +96,12 @@ def main() -> None:
         st.session_state.pending_correction_xml = None
     if 'uploaded_file_path' not in st.session_state:
         st.session_state.uploaded_file_path = None
+    if 'extracted_metadata' not in st.session_state:
+        st.session_state.extracted_metadata = {}
+    if 'metadata_missing_fields' not in st.session_state:
+        st.session_state.metadata_missing_fields = []
+    if 'metadata_chat' not in st.session_state:
+        st.session_state.metadata_chat = []
 
     # Definimos Tabs
     # Tab 0: Carga
@@ -111,35 +118,114 @@ def main() -> None:
     # --- Tab 1 ---
     with tab1:
         st.header("Carga de Documento")
-        uploaded_file = st.file_uploader("Selecciona un documento Word (.docx)", type=['docx'])
+        uploaded_file = st.file_uploader("Selecciona un documento (.docx o .pdf)", type=['docx', 'pdf'])
 
         if uploaded_file is not None:
-            if st.session_state.uploaded_file_path is None:
-                with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as tmp_file:
+            # Detectar cambio de archivo para limpiar estado
+            if st.session_state.uploaded_file_path and os.path.basename(st.session_state.uploaded_file_path) != uploaded_file.name:
+                st.session_state.extracted_text = ""
+                st.session_state.extracted_metadata = {}
+                st.session_state.metadata_chat = []
+
+            if st.session_state.uploaded_file_path is None or os.path.basename(st.session_state.uploaded_file_path) != uploaded_file.name:
+                with tempfile.NamedTemporaryFile(delete=False, suffix=Path(uploaded_file.name).suffix) as tmp_file:
                     tmp_file.write(uploaded_file.getvalue())
                     st.session_state.uploaded_file_path = tmp_file.name
 
-            col1, col2 = st.columns([1, 2])
+            col1, col2 = st.columns([1, 2], gap="medium")
             with col1:
-                st.success("Archivo cargado.")
-                if st.button("Extraer Contenido", type="primary"):
-                    with st.spinner("Procesando documento..."):
-                        extracted = transformer.extraer_contenido_estructurado(st.session_state.uploaded_file_path)
-                        if extracted:
-                            st.session_state.extracted_text = extracted
-                            st.toast("Extracción exitosa", icon="✅")
-                        else:
-                            st.error("Error en la extracción.")
+                st.info(f"Archivo cargado: **{uploaded_file.name}**")
                 
+                if st.button("🔍 Extraer Contenido y Metadatos", type="primary"):
+                    with st.spinner("Analizando documento con IA..."):
+                        # 1. Extraer Texto Estructurado (para DOCX) o Texto plano (PDF)
+                        # Nota: transformer.extraer_contenido_estructurado solo soporta DOCX.
+                        # Si es PDF, usamos fallback o solo metadatos por ahora para la generación.
+                        # Ajustaremos transformer más adelante para soportar PDF en generación si es necesario.
+                        
+                        fpath = st.session_state.uploaded_file_path
+                        if fpath.endswith('.docx'):
+                            extracted = transformer.extraer_contenido_estructurado(fpath)
+                            st.session_state.extracted_text = extracted
+                        else:
+                            # Para PDF, el texto estructurado vendrá de lo que pueda hacer metadata_processor o librerías futuras
+                            st.session_state.extracted_text = "Contenido PDF extraído (placeholder para visualización)."
+                        
+                        # 2. Extraer Metadatos
+                        extractor = metadata_processor.MetadataExtractor()
+                        meta = extractor.extract_from_file(fpath)
+                        st.session_state.extracted_metadata = meta
+                        
+                        # Validar campos faltantes
+                        missing = extractor.validate_metadata(meta)
+                        st.session_state.metadata_missing_fields = missing
+                        
+                        if missing:
+                            st.warning(f"Faltan datos clave: {', '.join(missing)}")
+                            # Inicializar chat si faltan datos
+                            if not st.session_state.metadata_chat:
+                                st.session_state.metadata_chat.append({
+                                    "role": "assistant",
+                                    "content": f"He analizado el documento, pero no encuentro: **{', '.join(missing)}**. ¿Podrías proporcionarlos?"
+                                })
+                        else:
+                            st.success("Metadatos completados.")
+                            st.toast("Análisis completo", icon="✅")
+
+                # --- Sección de Revisión de Metadatos ---
+                if st.session_state.extracted_metadata:
+                    st.divider()
+                    st.subheader("📝 Revisión de Metadatos")
+                    
+                    with st.expander("Editar Metadatos", expanded=True):
+                        # Formulario para editar metadatos
+                        meta = st.session_state.extracted_metadata
+                        
+                        new_title = st.text_input("Título", value=meta.get('article_title', ''))
+                        new_journal = st.text_input("Revista", value=meta.get('journal_title', ''))
+                        new_date = st.text_input("Fecha (YYYY-MM-DD)", value=meta.get('publication_date', ''))
+                        new_doi = st.text_input("DOI", value=meta.get('doi', ''))
+                        
+                        # Guardar cambios manuales
+                        if st.button("Guardar Cambios Manuales"):
+                            st.session_state.extracted_metadata.update({
+                                'article_title': new_title,
+                                'journal_title': new_journal,
+                                'publication_date': new_date,
+                                'doi': new_doi
+                            })
+                            st.success("Metadatos actualizados.")
+
+                    # Chatbot de Metadatos
+                    if st.session_state.metadata_missing_fields:
+                        st.divider()
+                        st.subheader("🤖 Asistente de Metadatos")
+                        meta_chat_container = st.container(height=200)
+                        
+                        with meta_chat_container:
+                            for msg in st.session_state.metadata_chat:
+                                st.chat_message(msg["role"]).write(msg["content"])
+                        
+                        if user_input := st.chat_input("Ingresa el dato faltante (ej: DOI: 10.1000/xyz)"):
+                            st.session_state.metadata_chat.append({"role": "user", "content": user_input})
+                            with meta_chat_container:
+                                st.chat_message("user").write(user_input)
+                                
+                                # Lógica simple de actualización via chat (simulada)
+                                # En una versión real, usaríamos LLM para parsear la respuesta del usuario
+                                # Aquí actualizamos si el usuario dice "DOI: ..."
+                                response = "Gracias. He anotado esa información. (Actualiza los campos arriba si es necesario)."
+                                st.chat_message("assistant").write(response)
+                                st.session_state.metadata_chat.append({"role": "assistant", "content": response})
+
                 # Nav Button
                 if st.session_state.extracted_text:
-                    st.success("✅ Texto extraído correctamente.")
                     if st.button("➡️ Ir a Paso 2: Generación"):
                         js_switch_tab(1)
             
             with col2:
                 if st.session_state.extracted_text:
-                    st.text_area("Texto Extraído", value=st.session_state.extracted_text, height=400)
+                    st.text_area("Vista Previa del Contenido (Texto)", value=st.session_state.extracted_text, height=600)
 
     # --- Tab 2 ---
     with tab2:
@@ -155,7 +241,12 @@ def main() -> None:
                 time.sleep(0.5)
                 
                 status_text.text("Enviando a Gemini AI...")
-                prompt = transformer.construir_prompt_avanzado(st.session_state.extracted_text)
+                
+                # Pasar metadatos al prompt
+                prompt = transformer.construir_prompt_avanzado(
+                    st.session_state.extracted_text, 
+                    st.session_state.extracted_metadata
+                )
                 progress_bar.progress(30)
                 
                 result = transformer.invocar_gemini_cli(prompt)

@@ -28,9 +28,9 @@ from docx import Document
 from lxml import etree
 
 # --- Constantes ---
-DTD_ZIP_URL = "https://public.nlm.nih.gov/projects/jats/publishing/1.3/JATS-Publishing-1-3-MathML3-DTD.zip"
+DTD_ZIP_URL = "https://ftp.ncbi.nih.gov/pub/jats/publishing/1.4/JATS-Publishing-1-4-MathML3-DTD.zip"
 WORKSPACE_ROOT = Path(__file__).resolve().parent.parent
-DTD_FILENAME = "JATS-journalpublishing1-3-mathml3.dtd"
+DTD_FILENAME = "JATS-journalpublishing1-4-mathml3.dtd"
 DTD_LOCAL_FILE = WORKSPACE_ROOT / DTD_FILENAME
 IMAGE_OUTPUT_DIR = WORKSPACE_ROOT / "imagenes_extraidas"
 
@@ -113,20 +113,40 @@ def extraer_contenido_estructurado(docx_path: str) -> Optional[str]:
         return None
 
 
-def construir_prompt_avanzado(texto_articulo: str) -> str:
+def construir_prompt_avanzado(texto_articulo: str, metadata: Optional[Dict[str, Any]] = None) -> str:
     """Construye un prompt de sistema detallado para la generación de JATS XML.
 
     Args:
         texto_articulo (str): El texto crudo del artículo con placeholders.
+        metadata (Optional[Dict[str, Any]]): Metadatos validados y corregidos por el usuario.
 
     Returns:
         str: El prompt completo formateado para el modelo de IA.
     """
+    
+    metadata_instructions = ""
+    if metadata:
+        metadata_instructions = f"""
+    INFORMACIÓN DE METADATOS OBLIGATORIA (ÚSALA TAL CUAL):
+    - Título del Artículo: {metadata.get('article_title', 'Determinar del texto')}
+    - Revista: {metadata.get('journal_title', 'Determinar del texto')}
+    - Fecha de Publicación: {metadata.get('publication_date', 'Determinar del texto')}
+    - DOI: {metadata.get('doi', 'Determinar del texto')}
+    - Autores: {metadata.get('authors', [])}
+    - Afiliaciones: {metadata.get('affiliations', [])}
+    - Resumen: {metadata.get('abstract', 'Determinar del texto')}
+    - Palabras Clave: {metadata.get('keywords', 'Determinar del texto')}
+    
+    Usa estos datos EXACTOS en la sección <front> del XML.
+        """
+
     prompt = f"""
-    Actúa como un experto en etiquetado JATS (Journal Article Tag Suite) XML, versión 1.3, para SciELO.
+    Actúa como un experto en etiquetado JATS (Journal Article Tag Suite) XML, versión 1.4 (ANSI/NISO Z39.96-2024), para SciELO.
 
     TAREA:
-    Convierte el siguiente texto de un artículo científico, que contiene placeholders especiales para imágenes y tablas, a un archivo XML bien formado que cumpla con el estándar JATS.
+    Convierte el siguiente texto de un artículo científico a un archivo XML bien formado que cumpla con el estándar JATS 1.4.
+    
+    {metadata_instructions}
 
     INSTRUCCIONES Y MEJORES PRÁCTICAS:
     1.  **Estructura General:** Raíz `<article>` con `xmlns:xlink="http://www.w3.org/1999/xlink"` y `xml:lang="es"`. Debe contener `<front>`, `<body>`, y `<back>`.
@@ -341,7 +361,8 @@ def validar_jats_xml(xml_content: str) -> Tuple[bool, List[str]]:
     """
     possible_dtd_locations = [
         WORKSPACE_ROOT / DTD_FILENAME,
-        WORKSPACE_ROOT / "JATS-Publishing-1-3-MathML3-DTD" / DTD_FILENAME
+        WORKSPACE_ROOT / "JATS-Publishing-1-4-MathML3-DTD" / DTD_FILENAME,
+        WORKSPACE_ROOT / "JATS-Publishing-1-3-MathML3-DTD" / DTD_FILENAME # Fallback
     ]
     
     dtd_path = None
@@ -381,7 +402,7 @@ def validar_jats_xml(xml_content: str) -> Tuple[bool, List[str]]:
         # Aquí reemplazamos cualquier DOCTYPE existente con uno que apunte al archivo local.
         xml_content_patched = re.sub(
             r'<!DOCTYPE.*?>',
-            f'<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD with MathML3 v1.3 20210610//EN" "{DTD_FILENAME}">',
+            f'<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD with MathML3 v1.4 2024//EN" "{DTD_FILENAME}">',
             xml_content,
             flags=re.DOTALL
         )
@@ -410,7 +431,7 @@ def guardar_salida_xml(xml_content: str, output_path: str) -> None:
     """
     try:
         with open(output_path, 'w', encoding='utf-8') as f:
-            dtd_decl = f'<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.3 20210610//EN" "{DTD_FILENAME}">' 
+            dtd_decl = f'<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.4 2024//EN" "{DTD_FILENAME}">' 
             # Eliminar declaración XML duplicada si existe
             if xml_content.startswith('<?xml'):
                 parts = xml_content.split('?>', 1)
