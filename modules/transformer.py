@@ -28,12 +28,55 @@ from docx import Document
 from lxml import etree
 
 # --- Constantes ---
-DTD_ZIP_URL = "https://ftp.ncbi.nih.gov/pub/jats/publishing/1.4/JATS-Publishing-1-4-MathML3-DTD.zip"
+DTD_ZIP_URL = "https://ftp.ncbi.nlm.nih.gov/pub/jats/publishing/1.3/JATS-Publishing-1-3-MathML3-DTD.zip"
 WORKSPACE_ROOT = Path(__file__).resolve().parent.parent
-DTD_FILENAME = "JATS-journalpublishing1-4-mathml3.dtd"
-DTD_LOCAL_FILE = WORKSPACE_ROOT / DTD_FILENAME
+# Ruta relativa al directorio de módulos donde se descargó
+DTD_DIR_INTERNAL = WORKSPACE_ROOT / "modules" / "dtd" / "JATS-Publishing-1-3-MathML3-DTD"
+DTD_FILENAME = "JATS-journalpublishing1-3-mathml3.dtd"
+DTD_LOCAL_FILE = DTD_DIR_INTERNAL / DTD_FILENAME
 IMAGE_OUTPUT_DIR = WORKSPACE_ROOT / "imagenes_extraidas"
 
+
+def validar_jats_xml(xml_content: str) -> Tuple[bool, List[str]]:
+    """
+    Valida el contenido XML contra el DTD JATS 1.3 local.
+    """
+    # Asegurar que el DTD existe (se debe haber descargado/instalado previamente)
+    if not DTD_LOCAL_FILE.exists():
+        return False, [f"Error crítico: No se encuentra el archivo DTD local en {DTD_LOCAL_FILE}. Por favor, reinstale los componentes o verifique la carpeta 'modules/dtd'."]
+
+    try:
+        # Parsear con lxml y validar
+        parser = etree.XMLParser(dtd_validation=True, no_network=False)
+        
+        # Necesitamos establecer el base_url para que encuentre las entidades relativas
+        # El base_url debe ser el directorio donde está el DTD
+        base_url = str(DTD_DIR_INTERNAL) + os.sep
+        
+        # Inyectar DTD si no tiene DOCTYPE o si queremos forzar el nuestro
+        # Para validación simple, cargamos el DTD explícitamente y validamos el objeto ElementTree
+        dtd = etree.DTD(str(DTD_LOCAL_FILE))
+        
+        # Parsear XML (sin validación automática al parsear para controlar errores mejor)
+        root = etree.fromstring(xml_content.encode('utf-8'))
+        
+        if dtd.validate(root):
+            return True, []
+        else:
+            # Formatear errores
+            errores = []
+            for error in dtd.error_log:
+                errores.append(f"Línea {error.line}: {error.message}")
+            return False, errores
+
+    except etree.XMLSyntaxError as e:
+        return False, [f"Error de Sintaxis XML: {str(e)}"]
+    except Exception as e:
+        return False, [f"Error inesperado validando XML: {str(e)}"]
+
+# Función antigua de descarga eliminada/simplificada ya que usamos bundle local
+def descargar_y_extraer_dtd(url: str, extract_to: Path):
+    pass
 
 def extraer_contenido_estructurado(docx_path: str) -> Optional[str]:
     """Extrae contenido de un .docx, incluyendo texto, tablas e imágenes.
@@ -236,18 +279,19 @@ def _should_retry_gemini(stderr: str, stdout: str) -> bool:
     return any(token in combined for token in retry_tokens)
 
 
-def invocar_gemini_cli(prompt: str, max_attempts: int = 3, base_backoff: int = 20) -> Dict[str, Any]:
+def invocar_gemini_cli(prompt: str, max_attempts: int = 3, base_backoff: int = 20, timeout: int = 120) -> Dict[str, Any]:
     """Invoca la CLI de Gemini para procesar el prompt, con lógica de reintentos.
 
     Args:
         prompt (str): El prompt a enviar a Gemini.
         max_attempts (int, optional): Número máximo de intentos. Por defecto 3.
         base_backoff (int, optional): Segundos base para esperar entre reintentos. Por defecto 20.
+        timeout (int, optional): Tiempo máximo en segundos para esperar respuesta. Por defecto 120.
 
     Returns:
         Dict[str, Any]: Diccionario con 'stdout', 'stderr', 'returncode', y 'elapsed'.
     """
-    command = ["gemini", "-p", prompt, "-o", "text"]
+    command = ["gemini", prompt, "-o", "text"]
     last_result: Dict[str, Any] = {'stdout': '', 'stderr': '', 'returncode': 1, 'elapsed': 0.0}
 
     for attempt in range(1, max_attempts + 1):
@@ -260,8 +304,13 @@ def invocar_gemini_cli(prompt: str, max_attempts: int = 3, base_backoff: int = 2
                 check=False,
                 encoding="utf-8",
                 cwd=str(WORKSPACE_ROOT),
+                timeout=timeout
             )
             elapsed = time.time() - start
+        except subprocess.TimeoutExpired:
+            msg = f"Error: La llamada a Gemini excedió el tiempo límite ({timeout}s)."
+            print(msg, file=sys.stderr)
+            return {'stdout': '', 'stderr': msg, 'returncode': 124, 'elapsed': timeout}
         except FileNotFoundError:
             msg = "Error: El comando 'gemini' no se encontró. Verifica tu instalación."
             print(msg, file=sys.stderr)
