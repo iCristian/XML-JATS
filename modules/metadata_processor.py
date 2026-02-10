@@ -103,8 +103,11 @@ class MetadataExtractor:
             try:
                 return json.loads(txt.strip())
             except json.JSONDecodeError:
-                return {"error": "Failed to parse LLM JSON response"}
-        return {}
+                return {"error": f"Failed to parse LLM JSON response: {txt[:500]}..."}
+        
+        # Si falló la llamada CLI
+        error_msg = result.get('stderr', 'Unknown error') or 'No output from Gemini'
+        return {"error": f"Gemini CLI error (Code {result.get('returncode')}): {error_msg}"}
 
     def validate_metadata(self, metadata: Dict[str, Any]) -> List[str]:
         """Returns a list of missing required fields."""
