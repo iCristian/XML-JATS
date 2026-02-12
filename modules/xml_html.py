@@ -553,13 +553,56 @@ def _extract_references(back: etree._Element, namespaces: Dict[str, str]) -> Lis
         List[Dict[str, str]]: Lista de referencias con ID, etiqueta y HTML renderizado.
     """
     references: List[Dict[str, str]] = []
-    for ref in _xpath(back, ".//j:ref-list/j:ref", namespaces):
+    for idx, ref in enumerate(_xpath(back, ".//j:ref-list/j:ref", namespaces), start=1):
         ref_id = ref.get(_XML_ID) or ref.get("id") or ""
         label = _first_text(ref, "./j:label", namespaces)
         citation_node = ref.find("./j:mixed-citation", namespaces) or ref.find("./j:element-citation", namespaces)
         body_html = _inline_children_html(citation_node) if citation_node is not None else _inline_children_html(ref)
+        
+        # Limpiar números duplicados al inicio del texto de la referencia.
+        # El texto puede venir con el número de referencia ya incluido
+        # (ej. "1Aldrete..." o "1. Aldrete..."), lo que causa duplicación
+        # porque el <ol> HTML y el <label> ya proveen la numeración.
+        body_html = _strip_leading_ref_number(body_html, label or str(idx))
+        
         references.append({"id": ref_id, "label": label, "html": body_html})
     return references
+
+
+def _strip_leading_ref_number(text: str, label: str) -> str:
+    """Elimina el número de referencia duplicado al inicio del texto.
+
+    Detecta patrones como '1Autor', '1. Autor', '1 Autor' al inicio
+    y los elimina si coinciden con el label de la referencia.
+
+    Args:
+        text (str): Texto HTML de la referencia.
+        label (str): Etiqueta/número esperado de la referencia.
+
+    Returns:
+        str: Texto limpio sin número duplicado al inicio.
+    """
+    if not text or not label:
+        return text
+    
+    # Extraer solo dígitos del label para comparar
+    label_digits = re.sub(r'[^\d]', '', label)
+    if not label_digits:
+        return text
+    
+    # Patrón: inicio del texto con el número, opcionalmente seguido de
+    # punto, guión o espacio (ej. "3", "3.", "3. ", "3-")
+    pattern = re.compile(
+        r'^\s*' + re.escape(label_digits) + r'[.\-\s)]*',
+        re.IGNORECASE
+    )
+    
+    cleaned = pattern.sub('', text, count=1)
+    
+    # Solo aceptar la limpieza si quedó contenido útil
+    if cleaned.strip():
+        return cleaned.strip()
+    return text
 
 
 
@@ -837,6 +880,9 @@ def _render_tables(tables: List[Dict[str, Any]]) -> str:
 def _render_references(references: List[Dict[str, str]]) -> str:
     """Genera HTML para la lista de referencias.
 
+    No muestra el label como texto porque el <ol> ya provee la numeración
+    automáticamente. Esto evita la duplicación de números.
+
     Args:
         references (List[Dict[str, str]]): Lista de referencias.
 
@@ -847,14 +893,11 @@ def _render_references(references: List[Dict[str, str]]) -> str:
         return ""
     items: List[str] = []
     for ref in references:
-        label = escape(ref.get("label") or "")
         body = ref.get("html") or ""
         item_id = escape(ref.get("id") or "")
         id_attr = f" id=\"{item_id}\"" if item_id else ""
-        if label:
-            items.append(f"<li{id_attr}><span class=\"reference-label\">{label}</span> {body}</li>")
-        else:
-            items.append(f"<li{id_attr}>{body}</li>")
+        # No incluir el label como span — el <ol> ya provee numeración.
+        items.append(f"<li{id_attr}>{body}</li>")
     return """
     <section class=\"panel\" id=\"references\">
       <h3>Referencias</h3>
@@ -1804,6 +1847,22 @@ body[data-theme="dark"] .floating-button {
   <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
   <title>{title}</title>
   <style>{css}</style>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {{
+    document.addEventListener('click', function(e) {{
+      var link = e.target.closest('a[href^="#"]');
+      if (!link) return;
+      var hash = link.getAttribute('href');
+      if (!hash || hash === '#') return;
+      e.preventDefault();
+      var targetId = hash.substring(1);
+      var target = document.getElementById(targetId);
+      if (target) {{
+        target.scrollIntoView({{ behavior: 'smooth', block: 'start' }});
+      }}
+    }});
+  }});
+  </script>
 </head>
 <body data-theme=\"light\" data-contrast=\"normal\">
   <div class="app">

@@ -19,6 +19,8 @@ except ImportError:
 
 from docx import Document
 from .transformer import invocar_gemini_cli
+import streamlit as st
+import os
 
 class MetadataExtractor:
     """Extracts and validates metadata from document files."""
@@ -93,7 +95,15 @@ class MetadataExtractor:
         RESPUESTA SOLO JSON:
         """
         
-        result = invocar_gemini_cli(prompt)
+        # Try to get API Key from session state (if user set it in UI) or env
+        # Note: metadata extraction happens in Tab 1, often BEFORE user sets key in Tab 2.
+        # Ideally, we should move the key input to a global sidebar or let them set it if extraction fails.
+        api_key = st.session_state.get('gemini_api_key_input') or os.environ.get("GEMINI_API_KEY")
+        
+        # Usar el modelo seleccionado por el usuario, o gemini-2.5-flash por defecto
+        selected_model = st.session_state.get("selected_model", "gemini-2.5-flash")
+        
+        result = invocar_gemini_cli(prompt, model_version=selected_model, api_key=api_key)
         if result.get('returncode') == 0 and result.get('stdout'):
             import json
             txt = result['stdout']
@@ -105,9 +115,9 @@ class MetadataExtractor:
             except json.JSONDecodeError:
                 return {"error": f"Failed to parse LLM JSON response: {txt[:500]}..."}
         
-        # Si falló la llamada CLI
+        # Si falló la llamada a la API
         error_msg = result.get('stderr', 'Unknown error') or 'No output from Gemini'
-        return {"error": f"Gemini CLI error (Code {result.get('returncode')}): {error_msg}"}
+        return {"error": f"Error de Gemini AI (Code {result.get('returncode')}): {error_msg}"}
 
     def validate_metadata(self, metadata: Dict[str, Any]) -> List[str]:
         """Returns a list of missing required fields."""
