@@ -181,3 +181,6 @@ Desktop.ini
 
 # Generated Images
 imagenes_extraidas/
+
+# Local config database (API keys, token usage)
+data/

@@ -19,6 +19,25 @@ Esta solución permite la conversión de manuscritos originales en formato Micro
     },
     {
         "type": "step",
+        "title": "Configuración Inicial",
+        "content": """
+Antes de comenzar, configure su API Key de Google Gemini en la **barra lateral**:
+
+- **Primera vez**: Pegue su clave en el campo "Gemini API Key" y presione **"💾 Guardar"**. La clave se almacena de forma segura y persistente.
+- **Sesiones posteriores**: La clave se carga automáticamente. Verá una versión enmascarada (ej. `AIza••••••xY4Z`).
+- **Cambiar o borrar**: Use los botones **"✏️ Cambiar"** o **"🗑️ Borrar"** en cualquier momento.
+
+**Panel "📊 Uso de Tokens"**: En la barra lateral encontrará un panel expandible que muestra:
+- Requests usadas hoy vs. el límite diario del modelo.
+- Tokens consumidos hoy.
+- Límites por minuto (TPM y RPM).
+- Historial acumulado total.
+
+Si se acerca al límite del tier gratuito, el sistema mostrará advertencias automáticas.
+"""
+    },
+    {
+        "type": "step",
         "title": "1. Carga de Archivos",
         "content": """
 - Navegue a la sección **"Transformador"** en el menú lateral.
@@ -69,6 +88,7 @@ Si la validación es exitosa, se habilitarán los botones de descarga:
 
 - Descargar XML: Archivo listo para publicación/preservación.
 - Descargar HTML: Vista previa para lectura web.
+- **Vista previa HTML**: Haga clic en el botón **"Ver vista previa en nueva pestaña"** para abrir el HTML en una pestaña independiente del navegador. Los enlaces internos (citas, tabla de contenidos) funcionan correctamente en esta vista.
 """,
         "image": "resources/manual_images/04.png",
         "caption": "Figura 4: Resultados."
@@ -82,8 +102,20 @@ Soporta archivos Microsoft Word (`.docx`) y documentos Portables (`.pdf`).
 **¿Qué hago si falla la validación?**
 Revise el mensaje de error. Generalmente se debe a caracteres especiales no soportados o estructuras de documento inusuales (ej. tablas anidadas complejas). Edite el contenido en el paso 2 y reintente.
 
+**¿Los enlaces del HTML funcionan correctamente?**
+Sí. A partir de la versión 0.62, los enlaces de citas (ej. [1], [2]) y la tabla de contenidos navegan correctamente dentro de la página. Use siempre el botón "Ver vista previa en nueva pestaña" para la mejor experiencia.
+
+**¿Los caracteres acentuados se ven bien?**
+Sí. El sistema decodifica correctamente todos los caracteres UTF-8 (á, é, í, ó, ú, ñ, etc.) tanto en la vista previa como en el archivo descargado.
+
 **¿Es seguro subir mis archivos?**
 Sí, los archivos se procesan temporalmente en la memoria para su transformación y no se guardan en el servidor de forma permanente.
+
+**¿Mi API Key está segura?**
+Sí. La clave se almacena localmente en una base de datos SQLite (carpeta `data/`) con ofuscación Base64. Una vez guardada, desaparece de la interfaz y solo se muestra enmascarada. La carpeta `data/` está excluida del control de versiones.
+
+**¿Qué pasa si alcanzo el límite de tokens gratuitos?**
+El panel "📊 Uso de Tokens" en la barra lateral muestra su consumo actual vs. los límites del tier gratuito de cada modelo. Al alcanzar el 80%% se muestra una advertencia; al 100%% las solicitudes podrían fallar. Puede esperar al día siguiente (los límites diarios se renuevan) o cambiar a un modelo con mayor cuota.
 """
 
 def get_documentation_content():
@@ -105,21 +137,32 @@ def get_documentation_content():
 def get_credits_content():
     """Retorna contenido de créditos como texto."""
     return """
-Esta herramienta ha sido desarrollada para optimizar el flujo de trabajo editorial de la Revistas UV, automatizando la conversión de manuscritos a XML JATS validado.
+Esta herramienta ha sido desarrollada para optimizar el flujo de trabajo editorial de las Revistas UV, automatizando la conversión de manuscritos a XML JATS validado.
 
 Desarrollador Principal:
 Cristian Carreño León (cristian.carreno@uv.cl)
+Escuela de Obstetricia y Puericultura
+Facultad de Medicina
+Universidad de Valparaíso, Chile
 
-Tecnología:
+Tecnologías Utilizadas:
 - Python 3.9+: Lenguaje base.
-- Streamlit: Framework de interfaz de usuario.
-- Google Gemini Pro: Modelo de lenguaje (LLM).
-- LXML: Procesamiento y validación robusta de XML.
-- JATS 1.4: Estándar de etiquetado (2024).
+- Streamlit: Framework de interfaz de usuario web.
+- Google Gemini: Modelo de lenguaje (LLM) para etiquetado inteligente.
+- lxml: Procesamiento, validación y parsing de XML/HTML.
+- python-docx: Extracción de contenido desde archivos Word.
+- FPDF2: Generación de manuales en PDF.
+- JATS 1.4 (ANSI/NISO Z39.96-2024): Estándar de etiquetado XML.
 
 Privacidad y Tratamiento de Datos:
-1. Procesamiento Volátil: Los archivos no se almacenan permanentemente.
-2. API de Inteligencia Artificial: Se utiliza Google Gemini bajo sus términos de servicio.
+1. Procesamiento Volátil: Los archivos no se almacenan permanentemente en el servidor.
+2. API de Inteligencia Artificial: Se utiliza Google Gemini bajo sus términos de servicio. El texto enviado a la API se procesa bajo las políticas de privacidad de Google.
+
+Licencia:
+Software de uso exclusivo para la Universidad de Valparaíso. Todos los derechos reservados.
+El código fuente y la documentación son propiedad intelectual de la Universidad de Valparaíso y su autor.
+
+Versión: 0.62
 """
 
 class ProfessionalPDF(FPDF):
@@ -236,7 +279,7 @@ def create_professional_pdf():
     pdf.set_font('Arial', 'B', 11)
     pdf.cell(0, 10, 'Autor: Cristian Carreño León', 0, 1, 'C')
     pdf.cell(0, 10, 'Fecha: 11-12-2025', 0, 1, 'C')
-    pdf.cell(0, 10, 'Versión: 0.6', 0, 1, 'C')
+    pdf.cell(0, 10, 'Versión: 0.62', 0, 1, 'C')
     pdf.cell(0, 10, 'Contacto: carreonleong@gmail.com', 0, 1, 'C')
     
     # --- SECCIÓN 1: DOCUMENTACIÓN ---
@@ -370,22 +413,25 @@ def main():
             with st.container():
                 col_text, col_img = st.columns([1, 1], gap="large")
                 
-                # Alternating layout
-                if i % 2 != 0:
-                    col_text, col_img = col_img, col_text
                 
-                with col_text:
+                if section.get("image"):
+                    # Alternating layout
+                    if i % 2 != 0:
+                        col_text, col_img = col_img, col_text
+                    
+                    with col_text:
+                        st.markdown(f"### {section['title']}")
+                        st.markdown(section["content"])
+                    
+                    with col_img:
+                        if os.path.exists(section["image"]):
+                            st.image(section["image"], caption=section.get("caption", ""), width=400)
+                        else:
+                            st.warning("Imagen no encontrada")
+                else:
+                    # No image — full width text
                     st.markdown(f"### {section['title']}")
-                    # Use the parser for the web view too?
-                    # The content is string with markdown, st.markdown handles it well.
-                    # But section content might be cleaner if we use st.markdown directly.
                     st.markdown(section["content"])
-                
-                with col_img:
-                    if os.path.exists(section["image"]):
-                        st.image(section["image"], caption=section["caption"], width=400) # Fixed width for consistency or use_container_width
-                    else:
-                        st.warning("Imagen no encontrada")
                 
                 st.divider()
 

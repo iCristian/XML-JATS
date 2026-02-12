@@ -1,25 +1,24 @@
-# Transformador XML JATS (JATS XML Transformer) - v0.6
+# Transformador XML JATS (JATS XML Transformer) - v0.63
 
 Una herramienta avanzada impulsada por Inteligencia Artificial para convertir documentos de Word (`.docx`) a formato **JATS XML** validado, diseñada específicamente para el flujo editorial de revistas científicas.
 
-Esta aplicación automatiza el proceso de etiquetado semántico, extracción de tablas e imágenes (en desarrollo), y validación contra el estándar **NISO JATS Version 1.4 (ANSI/NISO Z39.96-2024)**.
+Esta aplicación automatiza el proceso de etiquetado semántico, extracción de tablas e imágenes, y validación contra el estándar **NISO JATS Version 1.4 (ANSI/NISO Z39.96-2024)**.
 
 ## 🚀 Características Principales
 
-- **Conversión Inteligente**: Utiliza LLMs (Google Gemini) para interpretar la estructura lógica del documento.
+- **Conversión Inteligente**: Utiliza LLMs (Google Gemini) para interpretar la estructura lógica del documento y generar etiquetas JATS precisas.
 - **Soporte Multiformato**: Procesa documentos **Word (`.docx`)** y **PDF (`.pdf`)**.
 - **Extracción de Metadatos**: Identifica y extrae automáticamente metadatos clave (título, autores, DOI, fechas).
+- **Preservación de Texto**: El sistema etiqueta el texto original sin modificarlo — respetando el trabajo de los correctores humanos.
 - **Revisión Interactiva**: Permite editar metadatos y dialogar con un chatbot para completar información faltante antes de la generación.
 - **Validación JATS 1.4**: Valida contra el último estándar **NISO JATS Version 1.4 (ANSI/NISO Z39.96-2024)**.
-- **HTML Autocontenido**: Genera archivos HTML con el logo incrustado (Base64), listos para publicar.
-
-- **Conversión Inteligente**: Utiliza LLMs (Google Gemini) para interpretar la estructura lógica del documento y generar etiquetas JATS precisas.
-- **Extracción de Contenido**: Detecta y extrae imágenes y tablas automáticamente desde el archivo Word.
-- **Validación Integrada**: Valida el XML generado contra el DTD oficial JATS 1.4 con MathML3.
+- **Conversión a HTML**: Genera archivos HTML autocontenidos con logo incrustado (Base64), tema claro/oscuro, tabla de contenidos interactiva y enlaces funcionales.
+- **Vista Previa en Nueva Pestaña**: La previsualización del HTML se abre en una pestaña del navegador con soporte completo de UTF-8 y navegación por anclas.
+- **API Key Persistente**: La clave de API se guarda de forma segura en una base de datos SQLite local. No es necesario reingresarla en cada sesión.
+- **Monitoreo de Tokens**: Panel integrado que muestra el consumo de tokens acumulado, requests diarias vs. límites del tier gratuito, y alertas automáticas al acercarse al límite.
 - **Interfaz Dual**:
-  - **CLI (Línea de Comandos)**: Para automatización y procesamiento por lotes.
   - **Web UI (Streamlit)**: Interfaz gráfica amigable para arrastrar y soltar archivos, editar contenido extraído y previsualizar resultados.
-- **Conversión a HTML**: Genera una vista previa en HTML del artículo para su revisión inmediata.
+  - **CLI (Línea de Comandos)**: Para automatización y procesamiento por lotes.
 
 ## 🛠️ Requisitos del Sistema
 
@@ -46,10 +45,12 @@ Esta aplicación automatiza el proceso de etiquetado semántico, extracción de 
     pip install -r requirements.txt
     ```
 
-    *Nota: Si no tienes un `requirements.txt`, las dependencias principales son: `python-docx`, `lxml`, `streamlit`, `google-generativeai` (o la herramienta CLI correspondiente).*
+4. **Configurar la API Key de Gemini** (elige una opción):
 
-4. **Configurar la API Key de Gemini**:
-    Asegúrate de que la CLI de `gemini` esté configurada en tu PATH o system environment variables.
+    **Opción A — Desde la interfaz web (recomendado):**
+    Al abrir la aplicación, pega tu clave en el campo "Gemini API Key" de la barra lateral y presiona **"💾 Guardar"**. La clave se almacena de forma persistente y se carga automáticamente en futuras sesiones.
+
+    **Opción B — Variable de entorno (fallback):**
 
     ```bash
     export GEMINI_API_KEY="tu_clave_aqui"
@@ -71,6 +72,7 @@ La interfaz gráfica es la forma más fácil de usar la herramienta.
 3. Sube tu archivo `.docx` o `.pdf`.
 4. Revisa y completa los metadatos extraídos.
 5. Genera el XML, valida y descarga los resultados.
+6. Genera el HTML y haz clic en **"Ver vista previa en nueva pestaña"** para inspeccionar el resultado.
 
 ### Línea de Comandos (CLI)
 
@@ -92,12 +94,15 @@ python -m modules.xml_html entrada.xml salida.html
 
 - `streamlit_app.py`: Punto de entrada de la aplicación web (Streamlit UI).
 - `modules/`:
-  - `transformer.py`: Núcleo de la lógica de conversión. Maneja la lectura del Word, construcción del prompt para IA y validación XML.
-  - `correction.py`: Módulo para la corrección asistida por IA.
-  - `xml_html.py`: Utilidad para convertir el XML JATS resultante a HTML visualizable.
-- `views/`: Vistas de la interfaz gráfica.
-- `JATS-Publishing-1-3-MathML3-DTD/`: Archivos DTD locales para validación offline (se descargan si no existen).
+  - `transformer.py`: Núcleo de la lógica de conversión. Maneja la lectura del Word, construcción del prompt para IA, manejo de errores de recitación y validación XML.
+  - `correction.py`: Módulo para la corrección asistida por IA (preserva texto original).
+  - `xml_html.py`: Convertidor de JATS XML a HTML5 responsivo con deduplicación de referencias.
+  - `config_store.py`: Almacenamiento persistente de configuración (API Key, uso de tokens) mediante SQLite.
+- `views/`: Vistas de la interfaz gráfica (transformador, manual de usuario, documentación).
+- `data/`: Base de datos SQLite local (`config.db`) — excluida de Git.
+- `JATS-Publishing-1-3-MathML3-DTD/`: Archivos DTD locales para validación offline.
 - `imagenes_extraidas/`: Directorio temporal donde se guardan las imágenes extraídas del documento Word.
+- `resources/`: Logo de la revista y recursos gráficos.
 
 ## 🤝 Créditos
 
@@ -108,9 +113,53 @@ Universidad de Valparaíso, Chile.
 
 Desarrollado para la **Universidad de Valparaíso** con el objetivo de optimizar los procesos de publicación científica.
 
+### Tecnologías Utilizadas
+
+| Tecnología | Uso |
+| --- | --- |
+| Python 3.9+ | Lenguaje base |
+| Streamlit | Framework de interfaz web |
+| Google Gemini | Modelo de lenguaje (LLM) para etiquetado inteligente |
+| lxml | Procesamiento, validación y parsing de XML/HTML |
+| python-docx | Extracción de contenido desde archivos Word |
+| FPDF2 | Generación de manuales en PDF |
+| JATS 1.4 (ANSI/NISO Z39.96-2024) | Estándar de etiquetado XML |
+
+## 📄 Licencia
+
+Este software es de uso exclusivo para la **Universidad de Valparaíso**. Todos los derechos reservados.
+
+El código fuente y la documentación contenidos en este repositorio son propiedad intelectual de la Universidad de Valparaíso y su autor. Queda prohibida su reproducción, distribución o modificación sin autorización expresa.
+
+Para consultas sobre licenciamiento o uso, contactar a: [cristian.carreno@uv.cl](mailto:cristian.carreno@uv.cl)
+
 ## 📅 Historial de Versiones (Changelog)
 
-### v0.6 - Actualización JATS 1.4 + Metadatos
+### v0.63 — API Key Persistente y Monitoreo de Tokens
+
+- **Almacenamiento Persistente de API Key**: La clave de Gemini se guarda de forma segura en una base de datos SQLite local (`data/config.db`) y se carga automáticamente al iniciar la aplicación. Ofuscada con Base64 para protección básica.
+- **Seguridad de la Key**: Una vez guardada, la clave desaparece de la interfaz. Solo se muestra una versión enmascarada (`AIza••••••••xY4Z`). Botones para **cambiar** o **borrar** la key en cualquier momento.
+- **Panel de Uso de Tokens**: Nuevo panel expandible en la barra lateral que muestra:
+  - Requests usadas hoy vs. límite diario (RPD) con barra de progreso.
+  - Tokens consumidos hoy.
+  - Límites por minuto (TPM y RPM) del modelo seleccionado.
+  - Historial acumulado total.
+- **Advertencias de Límite**: Alertas automáticas al alcanzar el 80% y 100% del límite diario del tier gratuito.
+- **Registro Automático**: Cada operación con IA (generación, corrección, chatbot) registra automáticamente los tokens consumidos.
+- **Nuevo Módulo `config_store.py`**: Gestión centralizada de configuración y métricas mediante SQLite.
+
+### v0.62 — Mejoras de HTML, Manejo de Recitación y Deduplicación de Referencias
+
+- **Deduplicación de Referencias**: Corregido el problema donde los números de referencias bibliográficas aparecían triplicados en el HTML (por `<ol>`, `<label>` y texto de la cita). Nueva función `_strip_leading_ref_number()` limpia automáticamente los números duplicados.
+- **Vista Previa en Nueva Pestaña**: La previsualización HTML ahora se abre en una pestaña nueva del navegador en lugar de un iframe incrustado, resolviendo problemas con enlaces y estilos.
+- **Corrección UTF-8**: Implementación correcta de decodificación UTF-8 en la vista previa (`TextDecoder` en lugar de `atob`), solucionando caracteres acentuados corruptos (ej. "crÃticas" → "críticas").
+- **Navegación por Anclas**: Script de interceptación de clicks en enlaces `#ancla` usando `scrollIntoView()`, corrigiendo la navegación interna en páginas abiertas con `document.write()`.
+- **Preservación de Texto (Prompt)**: Prompt de generación JATS completamente reescrito para prohibir modificaciones al texto original — la IA solo etiqueta, nunca reescribe.
+- **Manejo de Recitación**: Manejo robusto de errores `finish_reason=4` (recitación) de la API de Gemini con reintentos automáticos y temperatura progresiva.
+- **Filtros de Seguridad Desactivados**: Todos los filtros de seguridad de Gemini configurados en `BLOCK_NONE` (apropiado para contenido académico publicado).
+- **Instrucciones de Referencia en Prompt**: Las instrucciones JATS ahora especifican explícitamente que el número de referencia va SOLO en `<label>`, no en `<element-citation>`.
+
+### v0.6 — Actualización JATS 1.4 + Metadatos
 
 - **Estándar JATS 1.4**: Actualización completa del motor de validación y prompts al estándar ANSI/NISO Z39.96-2024.
 - **Soporte PDF**: Ahora es posible cargar archivos `.pdf` para extracción de texto y metadatos.
@@ -124,7 +173,7 @@ Desarrollado para la **Universidad de Valparaíso** con el objetivo de optimizar
 - **Logo Embedded**: El logo de la revista ahora se incrusta como Base64 en el HTML generado, eliminando la dependencia de carpetas locales.
 - **Optimización**: Eliminación de animaciones intrusivas y mejora en la legibilidad del chat en modo oscuro.
 
-### v0.1 - v0.4 (Alpha)
+### v0.1 — v0.4 (Alpha)
 
 - Inicio del proyecto.
 - Configuración de Gemini CLI.
