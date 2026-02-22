@@ -1,4 +1,4 @@
-# Transformador XML JATS (JATS XML Transformer) - v0.63
+# Transformador XML JATS (JATS XML Transformer) - v0.64
 
 Una herramienta avanzada impulsada por Inteligencia Artificial para convertir documentos de Word (`.docx`) a formato **JATS XML** validado, diseñada específicamente para el flujo editorial de revistas científicas.
 
@@ -94,8 +94,10 @@ python -m modules.xml_html entrada.xml salida.html
 
 - `streamlit_app.py`: Punto de entrada de la aplicación web (Streamlit UI).
 - `modules/`:
-  - `transformer.py`: Núcleo de la lógica de conversión. Maneja la lectura del Word, construcción del prompt para IA, manejo de errores de recitación y validación XML.
-  - `correction.py`: Módulo para la corrección asistida por IA (preserva texto original).
+  - `transformer.py`: Núcleo de la lógica de conversión. Desacoplado de la interfaz de usuario. Usa `tenacity` para manejo robusto de reintentos (HTTP 429) y control de errores.
+  - `metadata_processor.py`: Módulo para la extracción de metadatos mediante IA, agnóstico al entorno gráfico.
+  - `correction.py`: Módulo para la corrección asistida por IA (preserva texto original), completamente separado del estado de Streamlit.
+  - `prompts.py`: Repositorio centralizado de instrucciones maestros (prompts) de IA, lo que facilita el mantenimiento y ajuste del comportamiento del modelo.
   - `xml_html.py`: Convertidor de JATS XML a HTML5 responsivo con deduplicación de referencias.
   - `config_store.py`: Almacenamiento persistente de configuración (API Key, uso de tokens) mediante SQLite.
 - `views/`: Vistas de la interfaz gráfica (transformador, manual de usuario, documentación).
@@ -135,9 +137,15 @@ Para consultas sobre licenciamiento o uso, contactar a: [cristian.carreno@uv.cl]
 
 ## 📅 Historial de Versiones (Changelog)
 
+### v0.64 — Refactorización del Backend y Desacoplamiento de UI
+
+- **Arquitectura Desacoplada**: Eliminada la dependencia de `streamlit` (`st.session_state`) en los módulos del backend (`metadata_processor.py`, `correction.py`, `transformer.py`). Ahora toda la configuración (API keys, versión de modelo) se pasa explícitamente, permitiendo ejecución pura por CLI o testing automatizado.
+- **Centralización de Prompts**: Creación del nuevo módulo `modules/prompts.py` que almacena todas las plantillas de instrucciones complejas para la IA, limpiando el código funcional y facilitando la afinación del comportamiento del modelo.
+- **Reintentos Robustos con Tenacity**: El bucle manual de reintentos en las llamadas a la API de Google Gemini ha sido reemplazado por la librería estándar `tenacity`. Ahora el sistema maneja automáticamente los errores de cuota (HTTP 429) usando retardos exponenciales, mientras preserva el fallo rápido para errores irrecuperables como bloqueos por *Recitation*/Copyright.
+
 ### v0.63 — API Key Persistente y Monitoreo de Tokens
 
-- **Almacenamiento Persistente de API Key**: La clave de Gemini se guarda de forma segura en una base de datos SQLite local (`data/config.db`) y se carga automáticamente al iniciar la aplicación. Ofuscada con Base64 para protección básica.
+- **Almacenamiento Persistente de API Key**: La clave de Gemini se guarda de forma segura en una base de datos SQLite local (`data/config.db`).
 - **Seguridad de la Key**: Una vez guardada, la clave desaparece de la interfaz. Solo se muestra una versión enmascarada (`AIza••••••••xY4Z`). Botones para **cambiar** o **borrar** la key en cualquier momento.
 - **Panel de Uso de Tokens**: Nuevo panel expandible en la barra lateral que muestra:
   - Requests usadas hoy vs. límite diario (RPD) con barra de progreso.
