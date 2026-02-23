@@ -87,17 +87,15 @@ def main():
 
     # Sidebar Footer (Igual que en la app principal)
     with st.sidebar:
-        #st.markdown("---")
+        st.markdown("---")
         st.markdown(
             """
             <div class='branding'>
                 <b>Universidad de Valparaíso</b><br>
-                <small>Transformador XML JATS v0.5 (Beta)</small>
+                <small>Transformador XML JATS v0.64</small>
             </div>
             """, 
             unsafe_allow_html=True
         )
-
-    st.caption("Transformador XML JATS v0.5 (Beta) | Universidad de Valparaíso")
 
 main()

@@ -162,7 +162,7 @@ Licencia:
 Software de uso exclusivo para la Universidad de Valparaíso. Todos los derechos reservados.
 El código fuente y la documentación son propiedad intelectual de la Universidad de Valparaíso y su autor.
 
-Versión: 0.62
+Versión: 0.64
 """
 
 class ProfessionalPDF(FPDF):
@@ -279,7 +279,7 @@ def create_professional_pdf():
     pdf.set_font('Arial', 'B', 11)
     pdf.cell(0, 10, 'Autor: Cristian Carreño León', 0, 1, 'C')
     pdf.cell(0, 10, 'Fecha: 11-12-2025', 0, 1, 'C')
-    pdf.cell(0, 10, 'Versión: 0.62', 0, 1, 'C')
+    pdf.cell(0, 10, 'Versión: 0.64', 0, 1, 'C')
     pdf.cell(0, 10, 'Contacto: carreonleong@gmail.com', 0, 1, 'C')
     
     # --- SECCIÓN 1: DOCUMENTACIÓN ---
@@ -456,6 +456,19 @@ def main():
                 type="primary",
                 use_container_width=True
             )
+
+    # Sidebar Footer (Igual que en la app principal para consistencia)
+    with st.sidebar:
+        st.markdown("---")
+        st.markdown(
+            """
+            <div class='branding'>
+                <b>Universidad de Valparaíso</b><br>
+                <small>Transformador XML JATS v0.64</small>
+            </div>
+            """, 
+            unsafe_allow_html=True
+        )
 
 if __name__ == "__main__":
     main()

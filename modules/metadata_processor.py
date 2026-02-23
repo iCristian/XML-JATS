@@ -17,9 +17,8 @@ try:
 except ImportError:
     pdfplumber = None
 
-from docx import Document
 from .transformer import invocar_gemini_cli
-import streamlit as st
+from . import prompts
 import os
 
 class MetadataExtractor:
@@ -30,17 +29,17 @@ class MetadataExtractor:
     def __init__(self):
         pass
 
-    def extract_from_file(self, file_path: str) -> Dict[str, Any]:
+    def extract_from_file(self, file_path: str, model_version: str = "gemini-2.5-flash", api_key: str = None) -> Dict[str, Any]:
         """Determines file type and delegates extraction."""
         path = Path(file_path)
         if path.suffix.lower() == '.docx':
-            return self.extract_from_docx(file_path)
+            return self.extract_from_docx(file_path, model_version, api_key)
         elif path.suffix.lower() == '.pdf':
-            return self.extract_from_pdf(file_path)
+            return self.extract_from_pdf(file_path, model_version, api_key)
         else:
             return {"error": "Unsupported file format"}
 
-    def extract_from_docx(self, file_path: str) -> Dict[str, Any]:
+    def extract_from_docx(self, file_path: str, model_version: str = "gemini-2.5-flash", api_key: str = None) -> Dict[str, Any]:
         """Extracts text from DOCX and uses LLM to parse metadata."""
         try:
             doc = Document(file_path)
@@ -50,12 +49,12 @@ class MetadataExtractor:
                 full_text.append(para.text)
             
             context_text = "\n".join(full_text)
-            return self._query_llm_for_metadata(context_text)
+            return self._query_llm_for_metadata(context_text, model_version, api_key)
         except Exception as e:
             print(f"Error reading DOCX: {e}", file=sys.stderr)
             return {}
 
-    def extract_from_pdf(self, file_path: str) -> Dict[str, Any]:
+    def extract_from_pdf(self, file_path: str, model_version: str = "gemini-2.5-flash", api_key: str = None) -> Dict[str, Any]:
         """Extracts text from PDF and uses LLM to parse metadata."""
         if not pdfplumber:
             return {"error": "pdfplumber not installed"}
@@ -69,41 +68,19 @@ class MetadataExtractor:
                     if text:
                         context_text += text + "\n"
             
-            return self._query_llm_for_metadata(context_text)
+            return self._query_llm_for_metadata(context_text, model_version, api_key)
         except Exception as e:
             print(f"Error reading PDF: {e}", file=sys.stderr)
             return {}
 
-    def _query_llm_for_metadata(self, text_snippet: str) -> Dict[str, Any]:
+    def _query_llm_for_metadata(self, text_snippet: str, model_version: str = "gemini-2.5-flash", api_key: str = None) -> Dict[str, Any]:
         """Uses Gemini to structure the metadata from raw text."""
-        prompt = f"""
-        Actúa como un bibliotecario experto. Analiza el siguiente texto inicial de un artículo científico y extrae los metadatos en formato JSON estricto.
-
-        TEXTO:
-        {text_snippet[:3000]} 
-
-        TIPOS DE DATOS REQUERIDOS (Devuelve null si no lo encuentras):
-        - article_title (string)
-        - journal_title (string)
-        - publication_date (string, formato YYYY-MM-DD o YYYY)
-        - roi (string, DOI del artículo)
-        - authors (lista de objetos: {{ "given_names": "", "surname": "", "email": "", "aff_id": "1" }})
-        - affiliations (lista de objetos: {{ "id": "1", "institution": "", "country": "" }})
-        - abstract (string)
-        - keywords (lista de strings)
-
-        RESPUESTA SOLO JSON:
-        """
+        prompt = prompts.get_metadata_prompt(text_snippet)
         
-        # Try to get API Key from session state (if user set it in UI) or env
-        # Note: metadata extraction happens in Tab 1, often BEFORE user sets key in Tab 2.
-        # Ideally, we should move the key input to a global sidebar or let them set it if extraction fails.
-        api_key = st.session_state.get('gemini_api_key_input') or os.environ.get("GEMINI_API_KEY")
+        # Try to get API Key from env if not passed
+        api_key = api_key or os.environ.get("GEMINI_API_KEY")
         
-        # Usar el modelo seleccionado por el usuario, o gemini-2.5-flash por defecto
-        selected_model = st.session_state.get("selected_model", "gemini-2.5-flash")
-        
-        result = invocar_gemini_cli(prompt, model_version=selected_model, api_key=api_key)
+        result = invocar_gemini_cli(prompt, model_version=model_version, api_key=api_key)
         if result.get('returncode') == 0 and result.get('stdout'):
             import json
             txt = result['stdout']

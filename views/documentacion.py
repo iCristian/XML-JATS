@@ -22,12 +22,12 @@ def main():
 
     # Sidebar Footer (Igual que en la app principal para consistencia)
     with st.sidebar:
-        #st.markdown("---")
+        st.markdown("---")
         st.markdown(
             """
             <div class='branding'>
                 <b>Universidad de Valparaíso</b><br>
-                <small>Transformador XML JATS v0.62</small>
+                <small>Transformador XML JATS v0.64</small>
             </div>
             """, 
             unsafe_allow_html=True

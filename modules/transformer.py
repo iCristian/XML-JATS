@@ -27,6 +27,12 @@ from typing import Dict, List, Optional, Tuple, Any
 from docx import Document
 from lxml import etree
 
+import google.generativeai as genai
+from google.generativeai.types import HarmCategory, HarmBlockThreshold
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+
+from . import prompts
+
 # --- Constantes ---
 DTD_ZIP_URL = "https://ftp.ncbi.nlm.nih.gov/pub/jats/publishing/1.3/JATS-Publishing-1-3-MathML3-DTD.zip"
 WORKSPACE_ROOT = Path(__file__).resolve().parent.parent
@@ -156,277 +162,155 @@ def extraer_contenido_estructurado(docx_path: str) -> Optional[str]:
         return None
 
 
-def construir_prompt_avanzado(texto_articulo: str, metadata: Optional[Dict[str, Any]] = None) -> str:
-    """Construye un prompt de sistema detallado para la generación de JATS XML.
-
-    Args:
-        texto_articulo (str): El texto crudo del artículo con placeholders.
-        metadata (Optional[Dict[str, Any]]): Metadatos validados y corregidos por el usuario.
-
-    Returns:
-        str: El prompt completo formateado para el modelo de IA.
-    """
-    
-    metadata_instructions = ""
-    if metadata:
-        metadata_instructions = f"""
-    INFORMACIÓN DE METADATOS OBLIGATORIA (ÚSALA TAL CUAL):
-    - Título del Artículo: {metadata.get('article_title', 'Determinar del texto')}
-    - Revista: {metadata.get('journal_title', 'Determinar del texto')}
-    - Fecha de Publicación: {metadata.get('publication_date', 'Determinar del texto')}
-    - DOI: {metadata.get('doi', 'Determinar del texto')}
-    - Autores: {metadata.get('authors', [])}
-    - Afiliaciones: {metadata.get('affiliations', [])}
-    - Resumen: {metadata.get('abstract', 'Determinar del texto')}
-    - Palabras Clave: {metadata.get('keywords', 'Determinar del texto')}
-    
-    Usa estos datos EXACTOS en la sección <front> del XML.
-        """
-
-    prompt = f"""
-    Actúa como un maquetador XML JATS (Journal Article Tag Suite), versión 1.4 (ANSI/NISO Z39.96-2024), para SciELO.
-
-    CONTEXTO PROFESIONAL:
-    Este es un trabajo de maquetación editorial. El texto del artículo ya pasó por revisión por pares y corrección de estilo profesional. Tu tarea es aplicar el marcado XML JATS estructural al contenido proporcionado.
-    
-    PRINCIPIO DE MAQUETACIÓN:
-    - Un maquetador NO edita, NO resume, NO parafrasea el contenido del autor.
-    - Un maquetador aplica formato y estructura al texto existente.
-    - El contenido textual dentro de cada etiqueta XML debe ser el contenido original del artículo.
-    - NO condenses párrafos ni secciones. Cada párrafo del original = un <p> en el XML.
-    - NO omitas secciones, tablas, datos ni referencias.
-    
-    {metadata_instructions}
-
-    INSTRUCCIONES DE ETIQUETADO:
-    1.  **Estructura General:** Raíz `<article>` con `xmlns:xlink="http://www.w3.org/1999/xlink"` y `xml:lang="es"`. Debe contener `<front>`, `<body>`, y `<back>`.
-    2.  **Sección <front>:**
-        *   Incluye `<article-title>` y, si está disponible en el texto, `<article-id pub-id-type="doi">`.
-        *   **IMPORTANTE - Orden de elementos en <contrib>:** Dentro de cada `<contrib contrib-type="author">`, sigue ESTRICTAMENTE este orden:
-            1.  `<contrib-id contrib-id-type="orcid">` (si existe ORCID).
-            2.  `<name>` (con `<surname>` y `<given-names>`).
-            3.  `<xref ref-type="aff" rid="affX">` (referencias a afiliaciones).
-            4.  `<xref ref-type="corresp" rid="cor1">` (si es autor de correspondencia).
-            5.  `<email>` (correo electrónico).
-        *   Crea un `<aff>` por cada filiación con `id` (`aff1`, `aff2`, ...) y `<label>` numérico.
-        *   Marca correspondencia con `corresp="yes"` y `<author-notes><corresp id="cor1"><email>...</email></corresp></author-notes>`.
-        *   El `<abstract>` debe contener el resumen completo del original.
-        *   `<kwd-group>` debe incluir todas las palabras clave.
-    3.  **Sección <body>:** 
-        *   Usa `<sec>` para secciones con `<title>`. Cada párrafo va en `<p>`.
-        *   Mantén la estructura y extensión original de cada sección y párrafo.
-        *   **Citas:** Etiqueta las citas bibliográficas con `<xref ref-type="bibr" rid="refN">`.
-        *   **Placeholders de imágenes:** `[IMAGEN-PLACEHOLDER file="..." caption="..."]` →
-            `<fig id="fN"><label>Figura N</label><caption><p>caption</p></caption><graphic mimetype="image" xlink:href="file"/></fig>`
-        *   **Placeholders de tablas:** `[TABLA-PLACEHOLDER caption="..." content="..."]` →
-            `<table-wrap>` con `<table>`, `<thead>`, `<tbody>`. Incluir TODAS las filas y columnas.
-    4.  **Sección <back>:** `<ref-list>` con `<ref>` y `<element-citation>` para cada referencia bibliográfica. Incluir TODAS las referencias del texto.
-        *   Cada `<ref>` debe tener un `<label>` con el número de referencia.
-        *   **IMPORTANTE:** El número de referencia debe ir SOLO en el `<label>`. NO repetir el número dentro de `<element-citation>`. Ejemplo correcto:
-            `<ref id="ref1"><label>1</label><element-citation>Aldrete MG, Navarro C...</element-citation></ref>`
-        *   Separar los componentes de la cita en sub-elementos: `<person-group>`, `<article-title>`, `<source>`, `<year>`, `<volume>`, `<fpage>`, `<lpage>`, `<pub-id pub-id-type="doi">`.
-    5.  **Completitud:** Todas las secciones, tablas, referencias y anexos deben estar presentes.
-    6.  **Reglas:** XML bien formado. Solo código XML en la salida. Caracteres especiales codificados.
-
-    TEXTO DEL ARTÍCULO A ETIQUETAR:
-    ---
-    {texto_articulo}
-    ---
-
-    RECORDATORIO: Genera el XML JATS completo desde `<article>` hasta `</article>`. Mantén la extensión y contenido original de cada sección. No omitas contenido.
-    """
-    return prompt
+def parse_model_response(text: str) -> str:
+    """Extrae el contenido de un bloque de código markdown o devuelve el texto puro."""
+    import re
+    # Buscar bloque XML (soporta output truncado sin backticks finales)
+    match_xml = re.search(r'```xml\s*(.*?)(?:```|$)', text, re.DOTALL | re.IGNORECASE)
+    if match_xml:
+         return match_xml.group(1).strip()
+         
+    # Buscar bloque JSON
+    match_json = re.search(r'```json\s*(.*?)(?:```|$)', text, re.DOTALL | re.IGNORECASE)
+    if match_json:
+         return match_json.group(1).strip()
+         
+    # Fallback si no hay formato markdown
+    return text.strip()
 
 
-def _should_retry_gemini(stderr: str, stdout: str) -> bool:
-    """Determina si se debe reintentar la llamada a Gemini basada en la salida de error.
+class GeminiRetryError(Exception):
+    """Excepción lanzada cuando faya la ejecución de Gemini tras varios reintentos por errores recuperables (e.g. cuota)."""
+    pass
 
-    Args:
-        stderr (str): Salida de error estándar del proceso.
-        stdout (str): Salida estándar del proceso.
-
-    Returns:
-        bool: True si el error indica un problema transitorio (ej. rate limit).
-    """
-    combined = f"{stderr}\n{stdout}".lower()
-    retry_tokens = (
-        "429",
-        "ratelimit",
-        "resource has been exhausted",
-        "resource exhausted",
-        "error when talking to gemini api",
-    )
-    return any(token in combined for token in retry_tokens)
-
-
-try:
-    import google.generativeai as genai
-except ImportError as _import_err:
-    genai = None
-    print(f"ADVERTENCIA: No se pudo importar google.generativeai: {_import_err}", file=sys.stderr)
-except Exception as _import_err:
-    genai = None
-    print(f"ERROR INESPERADO al importar google.generativeai: {_import_err}", file=sys.stderr)
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(multiplier=5, min=10, max=60),
+    retry=retry_if_exception_type(GeminiRetryError),
+    reraise=True
+)
+def _attempt_gemini_call(model: genai.GenerativeModel, prompt: str, token_manager=None, chat=None) -> Any:
+    """Llamada interna a Gemini con lógica de reintentos vía tenacity."""
+    try:
+        generation_config = genai.types.GenerationConfig(
+            temperature=0.1,
+            top_p=0.95,
+            top_k=40,
+            max_output_tokens=8192,
+        )
+        safety_settings = {
+            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+        }
+        
+        if chat is not None:
+             response = chat.send_message(prompt, generation_config=generation_config, safety_settings=safety_settings)
+        else:
+             response = model.generate_content(prompt, generation_config=generation_config, safety_settings=safety_settings)
+        
+        # Track token usage if response is successful
+        if token_manager and response and hasattr(response, 'usage_metadata'):
+            try:
+                # Actualizar contadores globales de tokens
+                usage = response.usage_metadata
+                token_manager.add_usage(
+                    input_tokens=usage.prompt_token_count,
+                    output_tokens=usage.candidates_token_count,
+                    model_name=model.model_name
+                )
+            except Exception as e:
+                print(f"Error registrando tokens (ignorado en core flow): {e}", file=sys.stderr)
+                
+        return response
+    except Exception as e:
+        error_str = str(e)
+        if "429" in error_str or "Quota exceeded" in error_str:
+            print(f"Advertencia: Cuota excedida (429). Programando reintento... Detalle: {error_str}", file=sys.stderr)
+            raise GeminiRetryError(f"HTTP 429: Cuota excedida o Rate Limit ({error_str})")
+        
+        if "Recitation" in error_str or "FinishReason.RECITATION" in error_str:
+            print(f"Error de Recitation (Gemini se negó a responder por políticas de copyright).", file=sys.stderr)
+            # Retornar una excepción normal que no dispara retries (o dejar que la capture the top level)
+            raise Exception(f"FinishReason.RECITATION - El modelo bloqueó la respuesta por políticas de recitación/copyright. Intenta procesar fragmentos más pequeños.")
+            
+        raise # Reraise other errors to be caught in invocar_gemini_cli
 
 def invocar_gemini_cli(prompt: str, max_attempts: int = 3, base_backoff: int = 20, timeout: int = 120, 
                        model_version: str = "gemini-2.5-flash", api_key: Optional[str] = None) -> Dict[str, Any]:
-    """Invoca a Gemini usando la librería oficial de Python.
-
-    Args:
-        prompt (str): El prompt a enviar.
-        max_attempts (int, optional): Máximo de reintentos. Defaults to 3.
-        base_backoff (int, optional): Tiempo base de espera. Defaults to 20.
-        timeout (int, optional): (No usado directamente por la lib, pero mantenido por compatibilidad).
-        model_version (str, optional): Modelo a usar. Defaults to "gemini-1.5-flash".
-        api_key (str, optional): API Key. Si es None, busca en variable de entorno GEMINI_API_KEY.
-
-    Returns:
-        Dict[str, Any]: {'stdout': respuesta, 'stderr': error, 'returncode': 0 o 1}
     """
-    if not genai:
-        msg = "Error: La librería 'google-generativeai' no está instalada en el entorno virtual activo."
-        print(msg, file=sys.stderr)
-        return {'stdout': '', 'stderr': msg, 'returncode': 1, 'elapsed': 0.0}
-
-    # Configurar API Key
-    final_api_key = api_key or os.environ.get("GEMINI_API_KEY")
-    if not final_api_key:
-        msg = "Error: No se encontró la API Key de Gemini. Configúrala en la interfaz o en la variable de entorno GEMINI_API_KEY."
-        print(msg, file=sys.stderr)
-        return {'stdout': '', 'stderr': msg, 'returncode': 1, 'elapsed': 0.0}
+    Función helper para llamar a la API de Gemini (CLI-friendly y modular).
+    """
+    if not api_key:
+        api_key = os.environ.get('GEMINI_API_KEY')
+    if not api_key:
+        return {'returncode': 1, 'stderr': 'No API key provided. Set it as param, st.session_state (in app) or GEMINI_API_KEY env var.'}
     
-    genai.configure(api_key=final_api_key.strip())
-
-    # Configuración de generación
-    # max_output_tokens alto para no truncar artículos largos (tablas, refs, etc.)
-    generation_config = {
-        "temperature": 0.2,
-        "top_p": 0.95,
-        "top_k": 40,
-        "max_output_tokens": 65536,
-        "response_mime_type": "text/plain",
-    }
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel(model_version)
     
-    last_result = {'stdout': '', 'stderr': '', 'returncode': 1, 'elapsed': 0.0}
-
-    for attempt in range(1, max_attempts + 1):
-        try:
-            start = time.time()
-            
-            # Desactivar TODOS los filtros de seguridad.
-            # Trabajamos con artículos científicos publicados y revisados por pares.
-            # No hay razón para filtrar contenido académico legítimo.
-            safety_settings = [
-                {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-                {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-                {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-                {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
-            ]
-            
-            model = genai.GenerativeModel(
-                model_name=model_version,
-                generation_config=generation_config,
-                safety_settings=safety_settings,
-            )
-            
-            # Generar contenido
-            response = model.generate_content(prompt)
-            elapsed = time.time() - start
-            
-            # Extraer métricas de tokens del SDK (usage_metadata)
-            token_data = {'prompt_tokens': 0, 'completion_tokens': 0, 'total_tokens': 0}
-            try:
-                um = getattr(response, 'usage_metadata', None)
-                if um:
-                    token_data['prompt_tokens'] = getattr(um, 'prompt_token_count', 0) or 0
-                    token_data['completion_tokens'] = getattr(um, 'candidates_token_count', 0) or 0
-                    token_data['total_tokens'] = getattr(um, 'total_token_count', 0) or 0
-            except Exception:
-                pass  # Token data no disponible, no es crítico
-            
-            # NUNCA usar response.text — lanza ValueError si finish_reason != STOP
-            # Siempre extraer texto manualmente de los candidatos
-            if not response.candidates:
-                last_result = {'stdout': '', 'stderr': 'Gemini no retornó candidatos.', 'returncode': 1, 'elapsed': elapsed}
-                continue
-            
-            candidate = response.candidates[0]
-            finish_reason = getattr(candidate, 'finish_reason', None)
-            
-            # Extraer texto de las partes (seguro, sin excepciones)
-            extracted_text = ""
-            try:
-                if candidate.content and candidate.content.parts:
-                    extracted_text = "".join(
-                        part.text for part in candidate.content.parts 
-                        if hasattr(part, 'text')
-                    )
-            except (ValueError, AttributeError):
-                extracted_text = ""
-            
-            # finish_reason 1 = STOP (normal, exitoso)
-            if finish_reason == 1 and extracted_text:
-                return {'stdout': extracted_text, 'stderr': '', 'returncode': 0, 'elapsed': elapsed, 'token_usage': token_data}
-            
-            # finish_reason 4 = RECITATION (filtro de copyright)
-            if finish_reason == 4:
-                if extracted_text and len(extracted_text) > 500:
-                    # Hay contenido parcial útil — usarlo directamente
-                    print("Aviso: Respuesta parcial (filtro recitación), usando contenido disponible.", file=sys.stderr)
-                    return {'stdout': extracted_text, 'stderr': '', 'returncode': 0, 'elapsed': elapsed, 'token_usage': token_data}
-                else:
-                    # Reintentar con temperatura más alta para diversificar
-                    print(f"Aviso: Filtro de recitación (intento {attempt}/{max_attempts}). Subiendo temperatura...", file=sys.stderr)
-                    generation_config["temperature"] = min(0.4 + (attempt * 0.2), 0.9)
-                    last_result = {
-                        'stdout': '', 
-                        'stderr': f'Filtro de recitación activado (intento {attempt}/{max_attempts}). Reintentando con temperatura {generation_config["temperature"]}...', 
-                        'returncode': 1, 'elapsed': elapsed
-                    }
-                    time.sleep(2)  # Pausa breve antes de reintentar
-                    continue
-            
-            # finish_reason 3 = SAFETY
-            if finish_reason == 3:
-                if extracted_text and len(extracted_text) > 500:
-                    print("Aviso: Respuesta parcial (filtro seguridad), usando contenido disponible.", file=sys.stderr)
-                    return {'stdout': extracted_text, 'stderr': '', 'returncode': 0, 'elapsed': elapsed, 'token_usage': token_data}
-                else:
-                    last_result = {'stdout': '', 'stderr': 'Filtro de seguridad activado.', 'returncode': 1, 'elapsed': elapsed}
-                    continue
-            
-            # Cualquier otro caso con texto
-            if extracted_text:
-                return {'stdout': extracted_text, 'stderr': '', 'returncode': 0, 'elapsed': elapsed, 'token_usage': token_data}
-            else:
-                last_result = {'stdout': '', 'stderr': f'Respuesta vacía (finish_reason={finish_reason}).', 'returncode': 1, 'elapsed': elapsed}
-
-        except Exception as e:
-            elapsed = time.time() - start
-            error_msg = str(e)
-            
-            # Detectar errores de cuota para reintentar
-            if "429" in error_msg or "Resource has been exhausted" in error_msg:
-                wait_time = base_backoff * attempt
-                print(f"Aviso: Límite de recursos (429). Reintentando en {wait_time}s...", file=sys.stderr)
-                last_result = {'stdout': '', 'stderr': error_msg, 'returncode': 1, 'elapsed': elapsed}
-                time.sleep(wait_time)
-                continue
-            # Detectar error de recitación que llegó como excepción
-            elif "finish_reason" in error_msg and ("4" in error_msg or "RECITATION" in error_msg.upper()):
-                print(f"Aviso: Excepción por filtro de recitación (intento {attempt}). Subiendo temperatura...", file=sys.stderr)
-                generation_config["temperature"] = min(0.4 + (attempt * 0.2), 0.9)
-                last_result = {'stdout': '', 'stderr': f'Filtro de recitación (intento {attempt}/{max_attempts}).', 'returncode': 1, 'elapsed': elapsed}
-                time.sleep(2)
-                continue
-            else:
-                msg = f"Gemini AI Error: {error_msg}"
-                print(msg, file=sys.stderr)
-                return {'stdout': '', 'stderr': msg, 'returncode': 1, 'elapsed': elapsed}
-    
-    return last_result
-
-
+    token_manager = None
+    try:
+        from .config_store import token_manager as global_token_manager
+        token_manager = global_token_manager
+    except ImportError:
+        pass
+        
+    try:
+        chat = model.start_chat()
+        response = _attempt_gemini_call(model, prompt, token_manager=token_manager, chat=chat)
+        
+        full_text = response.text if response and hasattr(response, 'text') else ""
+        
+        tu = {}
+        if hasattr(response, 'usage_metadata'):
+             usage = response.usage_metadata
+             tu = {
+                 'prompt_tokens': getattr(usage, 'prompt_token_count', 0),
+                 'completion_tokens': getattr(usage, 'candidates_token_count', 0),
+                 'total_tokens': getattr(usage, 'total_token_count', 0)
+             }
+             
+        # Lógica de auto-continuación si el output llega al límite máximo de tokens (8192)
+        loop_count = 0
+        while response and response.candidates and loop_count < 3:
+             finish_reason = getattr(response.candidates[0], 'finish_reason', 1)
+             is_max_tokens = "MAX_TOKENS" in str(finish_reason) or finish_reason == 2
+             if not is_max_tokens:
+                 break
+                 
+             print("MAX_TOKENS alcanzado (límite de salida). Solicitando continuación a Gemini...", file=sys.stderr)
+             response = _attempt_gemini_call(
+                 model, 
+                 "Continúa generando el código XML exactamente donde te quedaste, sin repetir texto, sin saludos ni explicaciones, solo el código XML que sigue.", 
+                 token_manager=token_manager, 
+                 chat=chat
+             )
+             
+             if response and hasattr(response, 'text') and response.text:
+                 import re
+                 chunk = response.text.strip()
+                 chunk = re.sub(r"^```[a-zA-Z]*\n?", "", chunk)
+                 chunk = re.sub(r"```$", "", chunk).strip()
+                 full_text += "\n" + chunk
+             
+             if hasattr(response, 'usage_metadata'):
+                 usage = response.usage_metadata
+                 tu['prompt_tokens'] = tu.get('prompt_tokens', 0) + getattr(usage, 'prompt_token_count', 0)
+                 tu['completion_tokens'] = tu.get('completion_tokens', 0) + getattr(usage, 'candidates_token_count', 0)
+                 tu['total_tokens'] = tu.get('total_tokens', 0) + getattr(usage, 'total_token_count', 0)
+                 
+             loop_count += 1
+        
+        if full_text:
+             response_text = parse_model_response(full_text)
+             return {'returncode': 0, 'stdout': response_text, 'token_usage': tu}
+        else:
+             return {'returncode': 1, 'stderr': f'Gemini devolvió una respuesta vacía o fue bloqueada. {getattr(response, "prompt_feedback", "")}'}
+             
+    except Exception as e:
+        return {'returncode': 1, 'stderr': f'Error en API de Gemini tras reintentos: {str(e)}'}
 def extraer_resumen_tokens(gemini_meta: Dict[str, Any]) -> Dict[str, Any]:
     """Extrae métricas de uso de tokens de la salida de Gemini.
 
