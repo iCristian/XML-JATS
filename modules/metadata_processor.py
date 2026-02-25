@@ -21,13 +21,32 @@ from .transformer import invocar_gemini_cli
 from . import prompts
 import os
 
+try:
+    from docx import Document
+except ImportError:
+    pass
+
 class MetadataExtractor:
     """Extracts and validates metadata from document files."""
 
-    REQUIRED_FIELDS = ["article_title", "journal_title", "publication_date", "authors"]
+    REQUIRED_FIELDS = ["article_title", "journal_title", "publication_date", "doi", "authors"]
 
     def __init__(self):
         pass
+
+    @staticmethod
+    def _normalize_metadata(data: Dict[str, Any]) -> Dict[str, Any]:
+        """Normaliza claves conocidas del resultado de la IA.
+        
+        Corrige variaciones como 'roi' → 'doi' que el modelo puede devolver.
+        """
+        # Normalizar roi → doi (typo histórico en prompts)
+        if 'roi' in data and 'doi' not in data:
+            data['doi'] = data.pop('roi')
+        # Asegurar que doi existe como clave
+        if 'doi' not in data:
+            data['doi'] = None
+        return data
 
     def extract_from_file(self, file_path: str, model_version: str = "gemini-2.5-flash", api_key: str = None) -> Dict[str, Any]:
         """Determines file type and delegates extraction."""
@@ -87,8 +106,15 @@ class MetadataExtractor:
             # Clean markdown code blocks if present
             txt = re.sub(r'```json\s*', '', txt)
             txt = re.sub(r'```', '', txt)
+            # El LLM a veces antepone texto/XML antes del JSON.
+            # Extraer solo el objeto JSON buscando el primer '{' y último '}'
+            first_brace = txt.find('{')
+            last_brace = txt.rfind('}')
+            if first_brace != -1 and last_brace != -1 and last_brace > first_brace:
+                txt = txt[first_brace:last_brace + 1]
             try:
-                return json.loads(txt.strip())
+                parsed = json.loads(txt.strip())
+                return self._normalize_metadata(parsed)
             except json.JSONDecodeError:
                 return {"error": f"Failed to parse LLM JSON response: {txt[:500]}..."}
         

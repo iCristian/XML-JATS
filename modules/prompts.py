@@ -22,7 +22,7 @@ def get_metadata_prompt(text_snippet: str) -> str:
     - article_title (string)
     - journal_title (string)
     - publication_date (string, formato YYYY-MM-DD o YYYY)
-    - roi (string, DOI del artículo)
+    - doi (string, DOI del artículo)
     - authors (lista de objetos: {{ "given_names": "", "surname": "", "email": "", "aff_id": "1" }})
     - affiliations (lista de objetos: {{ "id": "1", "institution": "", "country": "" }})
     - abstract (string)
@@ -68,34 +68,102 @@ def get_generation_prompt(texto_articulo: str, metadata: Optional[Dict[str, Any]
 
     INSTRUCCIONES DE ETIQUETADO:
     1.  **Estructura General:** Raíz `<article>` con `xmlns:xlink="http://www.w3.org/1999/xlink"` y `xml:lang="es"`. Debe contener `<front>`, `<body>`, y `<back>`.
-    2.  **Sección <front>:**
-        *   **OBLIGATORIO - Nodos vacíos:** Debes incluir SIEMPRE las siguientes etiquetas en sus posiciones correctas, incluso si la información no está en el texto original (déjalas completamente vacías si no hay datos): `<trans-title>`, `<journal-title>`, `<publisher-name>`, `<issn>`, `<volume>`, `<issue>`, `<fpage>`, `<lpage>`, `<year>`, `<abstract>`, `<kwd-group>`.
-        *   Incluye `<article-title>` y `<article-id pub-id-type="doi">`.
-        *   **IMPORTANTE - Orden de elementos en <contrib>:** Dentro de cada `<contrib contrib-type="author">`, sigue ESTRICTAMENTE este orden:
-            1.  `<contrib-id contrib-id-type="orcid">` (si existe ORCID).
-            2.  `<name>` (con `<surname>` y `<given-names>`).
-            3.  `<xref ref-type="aff" rid="affX">` (referencias a afiliaciones).
-            4.  `<xref ref-type="corresp" rid="cor1">` (si es autor de correspondencia).
-            5.  `<email>` (correo electrónico).
-        *   Crea un `<aff>` por cada filiación con `id` (`aff1`, `aff2`, ...) y `<label>` numérico.
-        *   Marca correspondencia con `corresp="yes"` y `<author-notes><corresp id="cor1"><email>...</email></corresp></author-notes>`.
-        *   El `<abstract>` debe contener el resumen completo del original.
-        *   `<kwd-group>` debe incluir todas las palabras clave.
+    2.  **Sección <front>:** (DEBE seguir EXACTAMENTE esta estructura y orden, no cambies el orden ni omitas etiquetas obligatorias de JATS 1.3):
+        ```xml
+        <front>
+            <journal-meta>
+                <journal-id journal-id-type="publisher-id">Revista</journal-id>
+                <journal-title-group><journal-title>Nombre Revista</journal-title></journal-title-group>
+                <issn>0000-0000</issn>
+                <publisher><publisher-name>Nombre Autoridad</publisher-name></publisher>
+            </journal-meta>
+            <article-meta>
+                <article-id pub-id-type="doi">10.xxx/xxx</article-id>
+                <title-group>
+                    <article-title>Título del artículo</article-title>
+                    <trans-title-group xml:lang="en"><trans-title>Título en inglés</trans-title></trans-title-group>
+                </title-group>
+                <contrib-group>
+                    <!-- autores. ORDEN estricto: contrib-id(orcid), name, xref(aff), xref(corresp), email -->
+                    <contrib contrib-type="author">
+                        <contrib-id contrib-id-type="orcid">...</contrib-id>
+                        <name><surname>...</surname><given-names>...</given-names></name>
+                        <xref ref-type="aff" rid="aff1"/>
+                        <email>...</email>
+                    </contrib>
+                </contrib-group>
+                <!-- afiliaciones -->
+                <aff id="aff1"><label>1</label><institution>...</institution></aff>
+                <author-notes>
+                    <corresp id="cor1"><label>Correspondencia:</label><email>...</email></corresp>
+                </author-notes>
+                <pub-date pub-type="epub"><day>X</day><month>X</month><year>202X</year></pub-date>
+                <volume>X</volume>
+                <issue>X</issue>
+                <fpage>X</fpage>
+                <lpage>X</lpage>
+                <history>
+                    <date date-type="received"><day>X</day><month>X</month><year>X</year></date>
+                    <date date-type="accepted"><day>X</day><month>X</month><year>X</year></date>
+                </history>
+                <abstract><title>Resumen</title><p>...</p></abstract> 
+                <!-- abstract traducidos van aquí -->
+                <trans-abstract xml:lang="en"><title>Abstract</title><p>...</p></trans-abstract>
+                <kwd-group><kwd>...</kwd></kwd-group>
+                <kwd-group xml:lang="en"><kwd>...</kwd></kwd-group>
+            </article-meta>
+        </front>
+        ```
+        *   Rellena la estructura anterior con los metadatos. Si algún dato no existe, deja la etiqueta vacía (ej. `<volume></volume>`).
+        *   NO ALTERES el orden de las etiquetas en `<article-meta>` y NO saques cosas como `journal-title-group` hacia `article-meta`.
+        *   **OBLIGATORIO: FECHA Y DOI:** Siempre incluye `<pub-date>` con `<day>`, `<month>`, `<year>` y `<article-id pub-id-type="doi">`. Estos campos son CRÍTICOS para indexación. Si los metadatos los proporcionan, ÚSALOS textualmente.
     3.  **Sección <body>:** 
+        *   **Secciones con Títulos:** Cada sección marcada en el artículo (ej. Introducción, Métodos, Resultados, Discusión, Conclusiones, etc.) DEBE convertirse en un `<sec>` con su correspondiente `<title>`. Identifica TODOS los títulos de sección del papel y mapéalos a `<sec><title>`. Esto es FUNDAMENTAL para la estructura del artículo.
         *   Usa `<sec>` para secciones con `<title>`. Cada párrafo va en `<p>`.
-        *   Mantén la estructura y extensión original de cada sección y párrafo.
-        *   **Citas:** Etiqueta las citas bibliográficas con `<xref ref-type="bibr" rid="refN">`.
-        *   **Placeholders de imágenes:** `[IMAGEN-PLACEHOLDER file="..." caption="..."]` →
-            `<fig id="fN"><label>Figura N</label><caption><p>caption</p></caption><graphic mimetype="image" xlink:href="file"/></fig>`
-        *   **Placeholders de tablas:** `[TABLA-PLACEHOLDER caption="..." content="..."]` →
-            `<table-wrap>` con `<table>`, `<thead>`, `<tbody>`. Incluir TODAS las filas y columnas.
-    4.  **Sección <back>:** `<ref-list>` con `<ref>` y `<element-citation>` para cada referencia bibliográfica. Incluir TODAS las referencias del texto.
-        *   Cada `<ref>` debe tener un `<label>` con el número de referencia.
-        *   **IMPORTANTE:** El número de referencia debe ir SOLO en el `<label>`. NO repetir el número dentro de `<element-citation>`. Ejemplo correcto:
-            `<ref id="ref1"><label>1</label><element-citation>Aldrete MG, Navarro C...</element-citation></ref>`
-        *   Separar los componentes de la cita en sub-elementos: `<person-group>`, `<article-title>`, `<source>`, `<year>`, `<volume>`, `<fpage>`, `<lpage>`, `<pub-id pub-id-type="doi">`.
+        *   Mantén la estructura original.
+        *   **Citas:** Etiqueta citas con `<xref ref-type="bibr" rid="refN">`.
+        *   **Imágenes:** `[IMAGEN-PLACEHOLDER...]` → `<fig id="fN"><label>Figura N</label><caption><p>caption</p></caption><graphic mimetype="image" xlink:href="file"/></fig>`
+        *   **Tablas:** `[TABLA-PLACEHOLDER...]` → Genera la tabla COMPLETA con esta estructura exacta:
+            ```xml
+            <table-wrap id="tN">
+              <label>Tabla N</label>
+              <caption><title>Título de la tabla</title></caption>
+              <table frame="hsides" rules="groups">
+                <thead>
+                  <tr>
+                    <th>Encabezado 1</th>
+                    <th>Encabezado 2</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Dato 1</td>
+                    <td>Dato 2</td>
+                  </tr>
+                </tbody>
+              </table>
+            </table-wrap>
+            ```
+            Analiza el contenido del placeholder: la primera fila de datos suele ser los encabezados (`<thead>`), las filas restantes son datos (`<tbody>`). Cada celda separada por `|` → un `<td>` o `<th>`. NUNCA omitas los datos de la tabla; transcribe TODAS las filas y columnas.
+        *   **REGLA DTD ESTRICTA PARA TABLAS E IMÁGENES:** Todo `<table-wrap>` y `<fig>` DEBE estar contenido *DENTRO* de una sección (`<sec>`) o un párrafo (`<p>`). NUNCA los coloques como hijos directos del `<body>` fuera de un `<sec>`.
+        *   **IMPORTANTE SOBRE LOS LIMITES:** CIERRA `</body>` CORRECTAMENTE ANTES de abrir `<back>`. NUNCA pongas `<back>` DENTRO de `<body>`.
+    4.  **Sección <back>:** VA DESPUÉS DE CERRAR `</body>`.
+        *   Debe contener `<ref-list>` con `<ref>` para cada referencia.
+        *   El número de ref va en el `<label>`, no en `<element-citation>`.
+        *   Separar componentes: `<person-group>`, `<article-title>`, `<source>`, `<year>`, `<volume>`, `<fpage>`, `<lpage>`, `<pub-id>`.
+        *   **¡PELIGRO DE XML ROTO EN REFERENCIAS!** Revisa obsesivamente que CADA `<ref>` que abras se cierre con `</ref>` ANTES de abrir el `<ref>` siguiente. NO metas un `<ref>` adentro de otro `<ref>`.
+        *   Si hay Anexos o Agradecimientos que van al final del texto, colócalos también como `<sec>` dentro del `<body>` (por ejemplo `<sec sec-type="appendix">`), ANTES de cerrar `</body>`.
     5.  **Completitud:** Todas las secciones, tablas, referencias y anexos deben estar presentes.
-    6.  **Reglas:** XML bien formado. Solo código XML en la salida. Caracteres especiales codificados.
+    6.  **Reglas de XML y Sintaxis (CRÍTICAS PARA QUE NO FALLE LA VALIDACIÓN):** 
+        *   Tu respuesta DEBE ESTAR COMPLETAMENTE BIEN FORMADA.
+        *   Cada etiqueta que abras DEBE CERRARSE CORRECTAMENTE con el MISMO NOMBRE exacto (ej. si abres `<month>`, ciérrala estrictamente con `</month>`, NO con `</label>` ni con `</year>`). ¡Revisa dos veces los cierres de etiquetas!
+        *   Ten especial cuidado al cerrar `</element-citation>` de no olvidarte cerrar el `</ref>` a continuación.
+        *   Mantén todos los atributos entre comillas dobles.
+        *   Codifica los caracteres especiales de manera correcta si es necesario, o déjalos en UTF-8 puro si la declaración lo permite.
+        *   INCLUYE la raíz `<article>` al inicio y ciérrala al final con `</article>`.
+        *   Cualquier error de desajuste de etiquetas ("Opening and ending tag mismatch") arruinará el documento. Presta MUCHA ATENCIÓN a esto.
+        *   NUNCA uses `<break/>` dentro de `<p>`. Si necesitas un salto de línea, crea un nuevo `<p>` separado.
+        *   Para enlaces URL en referencias bibliográficas, usa `<ext-link ext-link-type="uri" xlink:href="URL">URL</ext-link>`. NUNCA uses `<pub-id pub-id-type="uri">`, porque "uri" NO es un valor válido para pub-id-type en JATS. Los valores válidos de pub-id-type son: "doi", "pmid", "pmcid", etc.
 
     TEXTO DEL ARTÍCULO A ETIQUETAR:
     ---

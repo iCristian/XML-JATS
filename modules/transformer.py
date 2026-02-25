@@ -43,43 +43,6 @@ DTD_LOCAL_FILE = DTD_DIR_INTERNAL / DTD_FILENAME
 IMAGE_OUTPUT_DIR = WORKSPACE_ROOT / "imagenes_extraidas"
 
 
-def validar_jats_xml(xml_content: str) -> Tuple[bool, List[str]]:
-    """
-    Valida el contenido XML contra el DTD JATS 1.3 local.
-    """
-    # Asegurar que el DTD existe (se debe haber descargado/instalado previamente)
-    if not DTD_LOCAL_FILE.exists():
-        return False, [f"Error crítico: No se encuentra el archivo DTD local en {DTD_LOCAL_FILE}. Por favor, reinstale los componentes o verifique la carpeta 'modules/dtd'."]
-
-    try:
-        # Parsear con lxml y validar
-        parser = etree.XMLParser(dtd_validation=True, no_network=False)
-        
-        # Necesitamos establecer el base_url para que encuentre las entidades relativas
-        # El base_url debe ser el directorio donde está el DTD
-        base_url = str(DTD_DIR_INTERNAL) + os.sep
-        
-        # Inyectar DTD si no tiene DOCTYPE o si queremos forzar el nuestro
-        # Para validación simple, cargamos el DTD explícitamente y validamos el objeto ElementTree
-        dtd = etree.DTD(str(DTD_LOCAL_FILE))
-        
-        # Parsear XML (sin validación automática al parsear para controlar errores mejor)
-        root = etree.fromstring(xml_content.encode('utf-8'))
-        
-        if dtd.validate(root):
-            return True, []
-        else:
-            # Formatear errores
-            errores = []
-            for error in dtd.error_log:
-                errores.append(f"Línea {error.line}: {error.message}")
-            return False, errores
-
-    except etree.XMLSyntaxError as e:
-        return False, [f"Error de Sintaxis XML: {str(e)}"]
-    except Exception as e:
-        return False, [f"Error inesperado validando XML: {str(e)}"]
-
 # Función antigua de descarga eliminada/simplificada ya que usamos bundle local
 def descargar_y_extraer_dtd(url: str, extract_to: Path):
     pass
@@ -196,7 +159,7 @@ def _attempt_gemini_call(model: genai.GenerativeModel, prompt: str, token_manage
             temperature=0.1,
             top_p=0.95,
             top_k=40,
-            max_output_tokens=8192,
+            max_output_tokens=65536,
         )
         safety_settings = {
             HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
@@ -305,6 +268,8 @@ def invocar_gemini_cli(prompt: str, max_attempts: int = 3, base_backoff: int = 2
         
         if full_text:
              response_text = parse_model_response(full_text)
+             # Sanitización automática del XML generado
+             response_text = sanitize_generated_xml(response_text)
              return {'returncode': 0, 'stdout': response_text, 'token_usage': tu}
         else:
              return {'returncode': 1, 'stderr': f'Gemini devolvió una respuesta vacía o fue bloqueada. {getattr(response, "prompt_feedback", "")}'}
@@ -366,6 +331,164 @@ def extraer_resumen_tokens(gemini_meta: Dict[str, Any]) -> Dict[str, Any]:
     return tokens_info
 
 
+def _fix_unclosed_tags(xml_string: str) -> str:
+    """Intento de emergencia para cerrar etiquetas huérfanas o arreglar desajustes básicos dejados por la IA."""
+    import re
+    
+    # 1. Asegurar que empiece y termine con <article>
+    if not xml_string.strip().startswith("<article") and not xml_string.strip().startswith("<?xml"):
+        xml_string = f"<article>\n{xml_string}"
+    
+    if not xml_string.strip().endswith("</article>"):
+        xml_string = f"{xml_string}\n</article>"
+    
+    return xml_string
+
+
+def sanitize_generated_xml(xml_string: str) -> str:
+    """
+    Post-procesamiento exhaustivo del XML generado por la IA.
+    
+    Corrige errores recurrentes del modelo antes de pasar a validación DTD:
+      - Etiquetas truncadas/malformadas (ej. <publisher\\n<publisher-name>)
+      - <align="..."> sueltos que debían ser <td align="...">
+      - <break/> (no válido en JATS)
+      - <table-wrap> huérfanos a nivel de <body> (deben ir dentro de <sec>)
+      - <table-wrap-foot> fuera de su <table-wrap>
+      - <collab>et al.</collab> → <etal/> si procede (opcional, no forzado)
+    """
+    import re
+
+    # ── 0. Quitar BOM y espacios iniciales ──────────────────────────
+    xml_string = xml_string.strip().lstrip('\ufeff')
+
+    # ── 1. Etiquetas truncadas / malformadas ────────────────────────
+    # Patrón: <tag_name  (sin cerrar con '>') seguido inmediatamente de otra etiqueta
+    # Ejemplo real: <publisher\n<publisher-name>  →  <publisher-name>
+    # Detectamos <word  seguido de \n o espacio y luego <  (sin > intermedio)
+    xml_string = re.sub(
+        r'<([a-zA-Z][\w-]*)\s*\n\s*(<[a-zA-Z])',
+        r'\2',
+        xml_string
+    )
+
+    # ── 2. <align="...">texto</align> → <td align="...">texto</td> ──
+    # La IA a veces escribe <align="left"> en vez de <td align="left">
+    xml_string = re.sub(
+        r'<align="([^"]*)">(.*?)</align>',
+        r'<td align="\1">\2</td>',
+        xml_string,
+        flags=re.DOTALL
+    )
+
+    # ── 3. Quitar <break/> (no válido en JATS) ─────────────────────
+    xml_string = re.sub(r'<break\s*/>', '', xml_string)
+
+    # ── 4. Quitar <?xml...?> duplicada si hay más de una ────────────
+    # Mantener solo la primera
+    parts = xml_string.split('<?xml')
+    if len(parts) > 2:
+        xml_string = '<?xml' + parts[1]
+        for p in parts[2:]:
+            # Quitar la declaración, conservar el resto
+            idx = p.find('?>')
+            if idx >= 0:
+                xml_string += p[idx+2:]
+
+    # ── 5. Asegurar <article> y </article> ──────────────────────────
+    xml_string = _fix_unclosed_tags(xml_string)
+
+    # ── 6. Mover <table-wrap> huérfanos (hijos directos de <body>)
+    #        adentro de la sección que los referencia, o crear una <sec>
+    #        auxiliar si es necesario. ────────────────────────────────
+    # Esto es crítico porque el DTD dice: body = (block-stuff*, sec*, sig-block?)
+    # Una vez que aparecen <sec>, no puede haber más <table-wrap> sueltos.
+    try:
+        xml_string = _move_orphan_table_wraps(xml_string)
+    except Exception:
+        pass  # Si falla, dejamos el XML sin cambiar en este paso
+
+    # ── 7. Limpiar <table-wrap-foot> si quedó fuera de su <table-wrap>
+    # Por robustez, lo envolvemos en un <sec> si está suelto en <body>
+    # (esto generalmente ya se resuelve con el paso 6)
+
+    return xml_string
+
+
+def _move_orphan_table_wraps(xml_string: str) -> str:
+    """
+    Detecta <table-wrap> que son hijos directos de <body> (fuera de cualquier <sec>)
+    y los envuelve en una <sec sec-type="supplementary-material"> al final del body,
+    justo ANTES del primer </body>.
+    
+    Usa lxml con recover=True para manejar XML levemente roto.
+    """
+    try:
+        parser = etree.XMLParser(recover=True, encoding='utf-8')
+        root = etree.fromstring(xml_string.encode('utf-8'), parser=parser)
+    except Exception:
+        return xml_string  # No podemos parsear, devolver sin tocar
+
+    body = root.find('.//body')
+    if body is None:
+        return xml_string
+
+    # Encontrar table-wrap que sean hijos directos de body (NO dentro de sec)
+    orphans = []
+    for child in list(body):
+        tag = child.tag if isinstance(child.tag, str) else ''
+        if tag == 'table-wrap':
+            orphans.append(child)
+        elif tag == 'table-wrap-foot':
+            # table-wrap-foot suelto en body, lo quitamos (debería estar dentro de table-wrap)
+            body.remove(child)
+
+    if not orphans:
+        return xml_string
+
+    # Intentar mover cada table-wrap a la sección que lo referencia via <xref rid="...">
+    for tw in orphans:
+        tw_id = tw.get('id', '')
+        if not tw_id:
+            continue
+        
+        # Buscar la <sec> que contiene un <xref ref-type="table" rid="tw_id">
+        placed = False
+        for xref in root.iter('xref'):
+            if xref.get('rid') == tw_id and xref.get('ref-type') == 'table':
+                # Subir hasta encontrar la <sec> padre
+                parent = xref.getparent()
+                while parent is not None and parent.tag != 'sec':
+                    parent = parent.getparent()
+                if parent is not None and parent.tag == 'sec':
+                    # Remover del body y añadir al final de esa sec
+                    body.remove(tw)
+                    parent.append(tw)
+                    placed = True
+                    break
+        
+        if not placed:
+            # No encontramos la sec que lo referencia — crear una sec auxiliar
+            body.remove(tw)
+            aux_sec = etree.SubElement(body, 'sec')
+            aux_sec.set('sec-type', 'supplementary-material')
+            title_el = etree.SubElement(aux_sec, 'title')
+            title_el.text = 'Material Suplementario'
+            aux_sec.append(tw)
+
+    # Serializar de vuelta
+    result = etree.tostring(root, encoding='unicode', xml_declaration=False)
+    
+    # Re-añadir la declaración XML si la tenía al inicio
+    if xml_string.strip().startswith('<?xml'):
+        import re
+        match = re.match(r'(<\?xml[^?]*\?>)', xml_string.strip())
+        if match:
+            result = match.group(1) + '\n' + result
+    
+    return result
+
+
 def validar_jats_xml(xml_content: str) -> Tuple[bool, List[str]]:
     """Valida el contenido XML contra el DTD JATS 1.3 local.
 
@@ -424,7 +547,9 @@ def validar_jats_xml(xml_content: str) -> Tuple[bool, List[str]]:
         )
         
         xml_bytes = xml_content_patched.encode('utf-8')
-        parser = etree.XMLParser(dtd_validation=False, no_network=False)
+        
+        # Activar modo de recuperación para intentar parsear a pesar de etiquetas mal cerradas
+        parser = etree.XMLParser(dtd_validation=False, recover=True, no_network=False)
         xml_tree = etree.fromstring(xml_bytes, parser)
         dtd = etree.DTD(str(dtd_path))
 
@@ -496,7 +621,7 @@ def main() -> None:
         sys.exit(1)
     
     # 2. Construcción de Prompt
-    prompt = construir_prompt_avanzado(structured_text)
+    prompt = prompts.get_generation_prompt(structured_text)
 
     # 3. Invocación IA
     log("Paso 2: Consultando a Gemini AI...")

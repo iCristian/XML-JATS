@@ -122,6 +122,45 @@ def _inline_element_html(element: etree._Element) -> str:
         if href:
             return f"<a class=\"external-link\" href=\"{escape(href)}\" target=\"_blank\" rel=\"noopener\">{label}</a>"
         return label
+    # --- Elementos de referencias bibliográficas (JATS) ---
+    if tag == "name":
+        # <name><surname>X</surname><given-names>Y</given-names></name>
+        parts = []
+        for child in element:
+            ctag = etree.QName(child).localname.lower()
+            if ctag == "surname":
+                parts.append(escape(child.text or ""))
+            elif ctag in {"given-names", "given_names"}:
+                parts.append(escape(child.text or ""))
+        result = " ".join(p for p in parts if p)
+        tail = escape(element.tail or "")
+        return result + tail if tail else result
+    if tag in {"surname", "given-names", "given_names", "prefix", "suffix"}:
+        return escape(element.text or "")
+    if tag == "person-group":
+        names = []
+        for child in element:
+            names.append(_inline_element_html(child))
+            if child.tail and child.tail.strip():
+                names.append(escape(child.tail.strip()))
+        return " ".join(names)
+    if tag == "source":
+        return f"<em>{escape(element.text or '')}</em>"
+    if tag == "article-title":
+        return escape(element.text or "")
+    if tag in {"year", "month", "day", "volume", "issue", "fpage", "lpage",
+               "season", "edition", "publisher-name", "publisher-loc",
+               "chapter-title", "data-title", "conf-name", "comment", "label",
+               "string-name", "collab", "etal", "role", "trans-title",
+               "series", "supplement", "part-title", "patent", "std"}:
+        return escape(element.text or "")
+    if tag == "pub-id":
+        pid_type = element.get("pub-id-type", "")
+        text = escape(element.text or "")
+        if pid_type == "doi" and text:
+            url = f"https://doi.org/{text}"
+            return f"<a href=\"{url}\" target=\"_blank\" rel=\"noopener\">{text}</a>"
+        return text
     return _inline_children_html(element)
 
 

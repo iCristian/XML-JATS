@@ -1,4 +1,4 @@
-# Transformador XML JATS (JATS XML Transformer) - v0.64
+# Transformador XML JATS (JATS XML Transformer) - v0.65
 
 Una herramienta avanzada impulsada por Inteligencia Artificial para convertir documentos de Word (`.docx`) a formato **JATS XML** validado, diseñada específicamente para el flujo editorial de revistas científicas.
 
@@ -6,13 +6,14 @@ Esta aplicación automatiza el proceso de etiquetado semántico, extracción de 
 
 ## 🚀 Características Principales
 
-- **Conversión Inteligente**: Utiliza LLMs (Google Gemini) para interpretar la estructura lógica del documento y generar etiquetas JATS precisas.
+- **Conversión Inteligente**: Utiliza LLMs (Google Gemini 2.5 Flash) para interpretar la estructura lógica del documento y generar etiquetas JATS precisas.
 - **Soporte Multiformato**: Procesa documentos **Word (`.docx`)** y **PDF (`.pdf`)**.
-- **Extracción de Metadatos**: Identifica y extrae automáticamente metadatos clave (título, autores, DOI, fechas).
+- **Extracción de Metadatos**: Identifica y extrae automáticamente metadatos clave (título, autores, DOI, fechas de publicación, recepción y aceptación).
+- **Extracción de Tablas**: Las tablas del documento se convierten automáticamente a `<table-wrap>` con `<thead>`/`<tbody>` correctamente estructurados.
 - **Preservación de Texto**: El sistema etiqueta el texto original sin modificarlo — respetando el trabajo de los correctores humanos.
 - **Revisión Interactiva**: Permite editar metadatos y dialogar con un chatbot para completar información faltante antes de la generación.
 - **Validación JATS 1.4**: Valida contra el último estándar **NISO JATS Version 1.4 (ANSI/NISO Z39.96-2024)**.
-- **Conversión a HTML**: Genera archivos HTML autocontenidos con logo incrustado (Base64), tema claro/oscuro, tabla de contenidos interactiva y enlaces funcionales.
+- **Conversión a HTML**: Genera archivos HTML autocontenidos con logo incrustado (Base64), tema claro/oscuro, tabla de contenidos interactiva y enlaces funcionales. Las referencias bibliográficas se renderizan correctamente con DOIs clickeables.
 - **Vista Previa en Nueva Pestaña**: La previsualización del HTML se abre en una pestaña del navegador con soporte completo de UTF-8 y navegación por anclas.
 - **API Key Persistente**: La clave de API se guarda de forma segura en una base de datos SQLite local. No es necesario reingresarla en cada sesión.
 - **Monitoreo de Tokens**: Panel integrado que muestra el consumo de tokens acumulado, requests diarias vs. límites del tier gratuito, y alertas automáticas al acercarse al límite.
@@ -94,11 +95,11 @@ python -m modules.xml_html entrada.xml salida.html
 
 - `streamlit_app.py`: Punto de entrada de la aplicación web (Streamlit UI).
 - `modules/`:
-  - `transformer.py`: Núcleo de la lógica de conversión. Desacoplado de la interfaz de usuario. Usa `tenacity` para manejo robusto de reintentos (HTTP 429) y control de errores.
+  - `transformer.py`: Núcleo de la lógica de conversión. Desacoplado de la interfaz de usuario. Usa `tenacity` para manejo robusto de reintentos (HTTP 429) y control de errores. Soporta generación de hasta 65K tokens de salida.
   - `metadata_processor.py`: Módulo para la extracción de metadatos mediante IA, agnóstico al entorno gráfico.
   - `correction.py`: Módulo para la corrección asistida por IA (preserva texto original), completamente separado del estado de Streamlit.
-  - `prompts.py`: Repositorio centralizado de instrucciones maestros (prompts) de IA, lo que facilita el mantenimiento y ajuste del comportamiento del modelo.
-  - `xml_html.py`: Convertidor de JATS XML a HTML5 responsivo con deduplicación de referencias.
+  - `prompts.py`: Repositorio centralizado de instrucciones maestras (prompts) de IA con plantillas detalladas para tablas, secciones, DOI y fechas.
+  - `xml_html.py`: Convertidor de JATS XML a HTML5 responsivo con renderización completa de referencias bibliográficas (DOIs clickeables, nombres de autores, fuentes en itálica).
   - `config_store.py`: Almacenamiento persistente de configuración (API Key, uso de tokens) mediante SQLite.
 - `views/`: Vistas de la interfaz gráfica (transformador, manual de usuario, documentación).
 - `data/`: Base de datos SQLite local (`config.db`) — excluida de Git.
@@ -136,6 +137,19 @@ El código fuente y la documentación contenidos en este repositorio son propied
 Para consultas sobre licenciamiento o uso, contactar a: [cristian.carreno@uv.cl](mailto:cristian.carreno@uv.cl)
 
 ## 📅 Historial de Versiones (Changelog)
+
+### v0.65 — Auditoría Exhaustiva y Corrección de Bugs Críticos
+
+- **🔧 15+ Bugs Críticos Corregidos**: Auditoría completa del código fuente de todos los módulos con corrección de errores funcionales que impedían el flujo correcto.
+- **Extracción de Tablas Mejorada**: Instrucciones detalladas en el prompt para generar `<table-wrap>` con `<table>`, `<thead>`, `<tbody>`, `<tr>`, `<th>`, `<td>` completos. Las tablas ya no se omiten ni se generan vacías.
+- **DOI y Fechas Obligatorios**: El DOI y la fecha de publicación son ahora campos obligatorios en la validación de metadatos. Instrucciones reforzadas para que el modelo siempre incluya `<pub-date>` y `<article-id pub-id-type="doi">`.
+- **Secciones con Títulos**: Instrucciones mejoradas para que cada sección del artículo (Introducción, Métodos, Resultados, etc.) se mapee correctamente a `<sec><title>`.
+- **Token Limit**: `max_output_tokens` aumentado de 8192 a 65536 — los artículos extensos ya no se truncan.
+- **Corrección de Modelo**: Todos los módulos ahora usan `gemini-2.5-flash` de forma consistente.
+- **Parsing de Metadatos Robusto**: Nuevo método `_normalize_metadata()` que corrige variaciones en las claves del JSON devuelto por la IA. Extracción de JSON mejorada para manejar respuestas con prefijos no-JSON.
+- **Corrección de Chatbot**: El flujo de corrección por chatbot ahora detecta correctamente XML directo (sin backticks) en las respuestas de la IA, resolviendo el bug donde las correcciones nunca se aplicaban.
+- **Renderización de Referencias HTML**: `xml_html.py` ahora maneja correctamente elementos JATS de bibliografía (`<name>`, `<surname>`, `<given-names>`, `<person-group>`, `<source>`, `<pub-id>`, etc.) con DOIs clickeables y fuentes en itálica.
+- **Eliminación de Código Duplicado**: Removida la definición duplicada de `validar_jats_xml` y la llamada a `construir_prompt_avanzado` (función inexistente).
 
 ### v0.64 — Refactorización del Backend y Desacoplamiento de UI
 

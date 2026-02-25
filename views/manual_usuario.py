@@ -15,6 +15,12 @@ MANUAL_SECTIONS = [
 El **Transformador XML JATS** es una herramienta especializada diseñada para optimizar y automatizar el flujo de trabajo editorial de la **Universidad de Valparaíso**. 
 
 Esta solución permite la conversión de manuscritos originales en formato Microsoft Word (`.docx`) al estándar **JATS XML (Journal Archiving and Interchange Tag Suite)**, asegurando el cumplimiento con los requisitos de indexación y preservación digital de alto nivel.
+
+Características principales:
+- Extracción automática de metadatos (título, autores, DOI, fechas).
+- Conversión de tablas a formato JATS con estructura completa.
+- Generación de HTML con DOIs clickeables y referencias bien formateadas.
+- Validación contra el estándar JATS 1.4 (ANSI/NISO Z39.96-2024).
 """
     },
     {
@@ -46,9 +52,9 @@ Si se acerca al límite del tier gratuito, el sistema mostrará advertencias aut
 
 Una vez cargado el archivo, el sistema desplegará el panel de **Revisión de Metadatos**:
 
-- **Verifique los datos**: Título, Revista, Fecha, DOI, etc.
-- **Complete lo faltante**: Si faltan datos clave, un **Chatbot Asistente** aparecerá para pedírselos. Puede escribirlos en el chat o en los campos editables.
-- Revise también la vista previa del texto extraído.
+- **Verifique los datos**: Título, Revista, Fecha, DOI, autores, etc.
+- **Complete lo faltante**: Si faltan datos clave (el DOI y la fecha son obligatorios), un **Chatbot Asistente** aparecerá para pedírselos. Puede escribirlos en el chat o en los campos editables.
+- Revise también la vista previa del texto extraído, incluyendo las tablas detectadas.
 """,
         "image": "resources/manual_images/01.png",
         "caption": "Figura 1: Área de carga de documentos."
@@ -61,7 +67,9 @@ Una vez confirmados los metadatos y el contenido, en la pestaña **"Generación"
 
 - Presione el botón **"Generar XML JATS"**.
 - El sistema procesará el contenido aplicando las reglas del último estándar **JATS 1.4 (ANSI/NISO Z39.96-2024)**.
-- Se utilizarán los metadatos validados para construir un encabezado (`<front>`) preciso.
+- Se utilizarán los metadatos validados para construir un encabezado (`<front>`) preciso, incluyendo DOI y fechas.
+- Las tablas del documento se convertirán automáticamente a `<table-wrap>` con encabezados y cuerpo.
+- Cada sección del artículo (Introducción, Métodos, Resultados, etc.) se mapeará a su etiqueta `<sec>` correspondiente.
 """,
         "image": "resources/manual_images/02.png",
         "caption": "Figura 2: Generación de XML JATS."
@@ -87,8 +95,8 @@ Una vez confirmados los metadatos y el contenido, en la pestaña **"Generación"
 Si la validación es exitosa, se habilitarán los botones de descarga:
 
 - Descargar XML: Archivo listo para publicación/preservación.
-- Descargar HTML: Vista previa para lectura web.
-- **Vista previa HTML**: Haga clic en el botón **"Ver vista previa en nueva pestaña"** para abrir el HTML en una pestaña independiente del navegador. Los enlaces internos (citas, tabla de contenidos) funcionan correctamente en esta vista.
+- Descargar HTML: Vista previa para lectura web con DOIs clickeables.
+- **Vista previa HTML**: Haga clic en el botón **"Ver vista previa en nueva pestaña"** para abrir el HTML en una pestaña independiente del navegador. Los enlaces internos (citas, tabla de contenidos) y los DOIs en las referencias funcionan correctamente en esta vista.
 """,
         "image": "resources/manual_images/04.png",
         "caption": "Figura 4: Resultados."
@@ -100,10 +108,16 @@ FAQ_CONTENT = """
 Soporta archivos Microsoft Word (`.docx`) y documentos Portables (`.pdf`).
 
 **¿Qué hago si falla la validación?**
-Revise el mensaje de error. Generalmente se debe a caracteres especiales no soportados o estructuras de documento inusuales (ej. tablas anidadas complejas). Edite el contenido en el paso 2 y reintente.
+Revise el mensaje de error. Generalmente se debe a caracteres especiales no soportados o estructuras de documento inusuales (ej. tablas anidadas complejas). Puede usar el botón **"Intentar Solucionar con IA"** para que Gemini corrija automáticamente los errores, o editar el XML manualmente.
+
+**¿Las tablas del documento se incluyen en el XML?**
+Sí. A partir de la versión 0.65, las tablas se extraen automáticamente y se convierten a formato JATS (`<table-wrap>`) con encabezados (`<thead>`) y cuerpo (`<tbody>`) correctamente estructurados, preservando todas las filas y columnas del documento original.
+
+**¿Se incluye el DOI y la fecha de publicación?**
+Sí. El DOI y la fecha de publicación son campos obligatorios que se extraen automáticamente de los metadatos. Si el sistema no los detecta, le pedirá que los ingrese antes de generar el XML.
 
 **¿Los enlaces del HTML funcionan correctamente?**
-Sí. A partir de la versión 0.62, los enlaces de citas (ej. [1], [2]) y la tabla de contenidos navegan correctamente dentro de la página. Use siempre el botón "Ver vista previa en nueva pestaña" para la mejor experiencia.
+Sí. Los enlaces de citas (ej. [1], [2]) y la tabla de contenidos navegan correctamente dentro de la página. Los DOIs en las referencias bibliográficas son clickeables y enlazan directamente a doi.org. Use siempre el botón "Ver vista previa en nueva pestaña" para la mejor experiencia.
 
 **¿Los caracteres acentuados se ven bien?**
 Sí. El sistema decodifica correctamente todos los caracteres UTF-8 (á, é, í, ó, ú, ñ, etc.) tanto en la vista previa como en el archivo descargado.
@@ -148,7 +162,7 @@ Universidad de Valparaíso, Chile
 Tecnologías Utilizadas:
 - Python 3.9+: Lenguaje base.
 - Streamlit: Framework de interfaz de usuario web.
-- Google Gemini: Modelo de lenguaje (LLM) para etiquetado inteligente.
+- Google Gemini 2.5 Flash: Modelo de lenguaje (LLM) para etiquetado inteligente.
 - lxml: Procesamiento, validación y parsing de XML/HTML.
 - python-docx: Extracción de contenido desde archivos Word.
 - FPDF2: Generación de manuales en PDF.
@@ -162,7 +176,7 @@ Licencia:
 Software de uso exclusivo para la Universidad de Valparaíso. Todos los derechos reservados.
 El código fuente y la documentación son propiedad intelectual de la Universidad de Valparaíso y su autor.
 
-Versión: 0.64
+Versión: 0.65
 """
 
 class ProfessionalPDF(FPDF):
@@ -279,7 +293,7 @@ def create_professional_pdf():
     pdf.set_font('Arial', 'B', 11)
     pdf.cell(0, 10, 'Autor: Cristian Carreño León', 0, 1, 'C')
     pdf.cell(0, 10, 'Fecha: 11-12-2025', 0, 1, 'C')
-    pdf.cell(0, 10, 'Versión: 0.64', 0, 1, 'C')
+    pdf.cell(0, 10, 'Versión: 0.65', 0, 1, 'C')
     pdf.cell(0, 10, 'Contacto: carreonleong@gmail.com', 0, 1, 'C')
     
     # --- SECCIÓN 1: DOCUMENTACIÓN ---
@@ -464,7 +478,7 @@ def main():
             """
             <div class='branding'>
                 <b>Universidad de Valparaíso</b><br>
-                <small>Transformador XML JATS v0.64</small>
+                <small>Transformador XML JATS v0.65</small>
             </div>
             """, 
             unsafe_allow_html=True

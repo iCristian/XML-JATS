@@ -26,7 +26,7 @@ def corregir_xml(
     xml_content: str, 
     validation_errors: List[str], 
     user_feedback: str = "",
-    model_version: str = "gemini-1.5-flash",
+    model_version: str = "gemini-2.5-flash",
     api_key: str = None
 ) -> Dict[str, Any]:
     """Orquesta el proceso de corrección de XML usando Gemini."""

@@ -308,23 +308,28 @@ def main() -> None:
                 # Mostrar botón solo si NO hay datos extraídos aún
                 if not st.session_state.extracted_metadata and not st.session_state.extracted_text:
                     if st.button("🔍 Extraer Contenido y Metadatos", type="primary"):
+                        # Variable de control para saber si debemos hacer rerun fuera del bloque status
+                        should_rerun = False
+                        
                         # Uso de st.status para feedback detallado y profesional
-                        with st.status("Iniciando proceso de extracción...", expanded=True) as status:
+                        with st.status("⏳ Iniciando proceso de extracción...", expanded=True) as status:
                             try:
                                 # 1. Validación inicial
-                                status.write("📂 Verificando archivo...")
+                                status.update(label="⏳ Verificando archivo...")
+                                status.write("📂 Validando la existencia del archivo en el servidor...")
                                 fpath = st.session_state.uploaded_file_path
                                 if not fpath or not os.path.exists(fpath):
-                                    status.update(label="Error: Archivo no encontrado", state="error")
+                                    status.update(label="❌ Error: Archivo no encontrado", state="error")
                                     st.error("El archivo temporal se ha perdido. Por favor, cárgualo nuevamente.")
                                     st.stop()
 
                                 # 2. Extraer Texto Estructurado
-                                status.write("📄 Extrayendo contenido del documento...")
+                                status.update(label="⏳ Extrayendo texto del documento DOCX...")
+                                status.write("📄 Procesando párrafos y estructura del documento...")
                                 if fpath.endswith('.docx'):
                                     extracted = transformer.extraer_contenido_estructurado(fpath)
                                     if not extracted:
-                                        status.update(label="Error en extracción de texto", state="error")
+                                        status.update(label="❌ Error en extracción de texto", state="error")
                                         st.error("No se pudo extraer texto del DOCX. El archivo podría estar corrupto o vacío.")
                                         st.stop()
                                     st.session_state.extracted_text = extracted
@@ -333,7 +338,8 @@ def main() -> None:
                                     st.session_state.extracted_text = "Contenido PDF extraído (placeholder)."
                                 
                                 # 3. Extraer Metadatos con IA
-                                status.write("🤖 Analizando metadatos con Gemini AI...")
+                                status.update(label="⏳ Analizando metadatos con Gemini AI...")
+                                status.write("🤖 Extrayendo título, autores, fecha y DOI usando Inteligencia Artificial...")
                                 extractor = metadata_processor.MetadataExtractor()
                                 api_key = st.session_state.get('gemini_api_key_input') or os.environ.get("GEMINI_API_KEY")
                                 selected_model = st.session_state.get("selected_model", "gemini-2.5-flash")
@@ -341,21 +347,21 @@ def main() -> None:
                                 
                                 # Verificar errores explícitos de la IA
                                 if "error" in meta:
-                                    status.update(label="Error en análisis de IA", state="error")
+                                    status.update(label="❌ Error en análisis de IA", state="error")
                                     st.error(f"Error en análisis de IA: {meta['error']}")
                                     st.stop()
                                 
                                 st.session_state.extracted_metadata = meta
                                 
                                 # 4. Validar campos
-                                status.write("✅ Validando información extraída...")
+                                status.update(label="⏳ Validando información extraída...")
+                                status.write("✅ Comprobando que los campos obligatorios estén completos...")
                                 missing = extractor.validate_metadata(meta)
                                 st.session_state.metadata_missing_fields = missing
                                 
                                 if missing:
-                                    # FIX: state="warning" no existe, usamos "error" para destacar que faltan cosas, o "complete" con warning.
                                     # Usamos error para que quede rojo y llame la atención, ya que faltan datos obligatorios.
-                                    status.update(label=f"⚠️ Faltan datos: {', '.join(missing)}", state="error", expanded=False)
+                                    status.update(label=f"⚠️ Faltan datos críticos: {', '.join(missing)}", state="error", expanded=False)
                                     st.warning(f"La extracción fue exitosa, pero faltan campos obligatorios: {', '.join(missing)}")
                                     
                                     # Generar mensaje de ayuda inicial para el chatbot
@@ -365,21 +371,29 @@ def main() -> None:
                                             "content": f"⚠️ **Atención**: No he podido detectar los siguientes campos en el documento: **{', '.join(missing)}**. \n\nPor favor, completa el formulario de metadatos manualmente."
                                         })
                                 else:
-                                    status.update(label="¡Extracción Completada con Éxito!", state="complete", expanded=False)
+                                    status.update(label="✨ ¡Extracción Completada con Éxito!", state="complete", expanded=False)
                                     st.success("Todos los metadatos críticos han sido encontrados.")
                                     st.toast("Análisis completo", icon="✅")
                                     st.session_state.metadata_verified = True
                                 
-                                time.sleep(1) # Breve pausa para que el usuario vea el estado final
-                                st.rerun()
+                                # Indicamos que se debe hacer un rerun pero fuera del contexto
+                                should_rerun = True
                                 
                             except Exception as e:
-                                status.update(label="Error Crítico Inesperado", state="error")
+                                # Prevenir la captura de Excepciones críticas de Streamlit que causan cuelgues (StopException, RerunException)
+                                if e.__class__.__name__ in ["StopException", "RerunException"]:
+                                    raise e
+                                status.update(label="❌ Error Crítico Inesperado", state="error")
                                 st.error(f"Ocurrió un error no controlado durante el proceso: {str(e)}")
                                 # Imprimir traceback detallado para depuración
                                 import traceback
                                 st.expander("Ver detalles técnicos").code(traceback.format_exc())
                                 # No hacemos rerun aquí para que el usuario vea el error
+                        
+                        # Mover sleep y rerun FUERA del bloque status para evitar deadlocks de UI de Streamlit
+                        if should_rerun:
+                            time.sleep(0.5)
+                            st.rerun()
                 else:
                     st.info("✅ Contenido y metadatos extraídos.")
                     if st.button("🔄 Re-extraer (Borrará cambios actuales)"):
@@ -396,7 +410,10 @@ def main() -> None:
                         st.text_area("Texto Extraído", value=st.session_state.extracted_text, height=400, label_visibility="collapsed")
                 
                 # --- Sección de Revisión de Metadatos (Layout Mejorado) ---
-                if st.session_state.extracted_metadata:
+                if st.session_state.extracted_text:
+                    if not st.session_state.extracted_metadata:
+                        st.session_state.extracted_metadata = {}
+                        
                     with st.expander("📝 Formulario de Metadatos Extraídos", expanded=True):
                         st.markdown("Revisa los metadatos extraídos. Puedes editarlos antes de ir al Paso 2.")
                         
@@ -494,77 +511,7 @@ def main() -> None:
             # Detectar la intención de navegar y avisar vía JS render
             if st.session_state.pop("go_to_step_2", False):
                 js_switch_tab(1)
-            
-            # --- Sidebar: Asistente de Soporte ---
-            with st.sidebar:
-                if st.session_state.extracted_metadata:
-                    st.divider()
-                    st.header("🤖 Soporte Metadatos")
-                    
-                    # Mostrar estado actual en sidebar
-                    if st.session_state.metadata_missing_fields:
-                        st.error(f"Faltan: {len(st.session_state.metadata_missing_fields)} campos")
-                    else:
-                        st.success("Estado: Completo")
-
-                    # Chat de Ayuda
-                    meta_chat_container = st.container(height=400)
-                    with meta_chat_container:
-                        if not st.session_state.metadata_chat:
-                            st.info("Aquí verás ayuda sobre los metadatos.")
-                        
-                        for msg in st.session_state.metadata_chat:
-                            st.chat_message(msg["role"]).write(msg["content"])
-                    
-                    # Interacción de soporte y corrección manual
-                    st.caption("¿Dudas o faltan datos? Escríbelo abajo.")
-                    
-                    # Chatbot Logic Tab 1
-                    if prompt := st.chat_input("Ej: DOI: 10.1000/xyz o '¿Dónde está la fecha?'"):
-                        st.session_state.metadata_chat.append({"role": "user", "content": prompt})
-                        with meta_chat_container:
-                            st.chat_message("user").write(prompt)
-                            
-                            # Lógica simple de parsing para actualizar metadatos
-                            response = ""
-                            prompt_lower = prompt.lower()
-                            updated_field = None
-                            
-                            if "doi:" in prompt_lower:
-                                new_doi = prompt.split("doi:")[-1].strip()
-                                st.session_state.extracted_metadata['doi'] = new_doi
-                                updated_field = "DOI"
-                            elif "fecha:" in prompt_lower:
-                                new_date = prompt.split("fecha:")[-1].strip()
-                                st.session_state.extracted_metadata['publication_date'] = new_date
-                                updated_field = "Fecha"
-                            elif "título:" in prompt_lower or "titulo:" in prompt_lower:
-                                new_title = prompt.split(":")[-1].strip()
-                                st.session_state.extracted_metadata['article_title'] = new_title
-                                updated_field = "Título"
-                            elif "revista:" in prompt_lower:
-                                new_journal = prompt.split("revista:")[-1].strip()
-                                st.session_state.extracted_metadata['journal_title'] = new_journal
-                                updated_field = "Revista"
-                            
-                            if updated_field:
-                                response = f"✅ He actualizado el **{updated_field}** con: `{prompt.split(':')[-1].strip()}`. \n\n(Recuerda guardar los cambios en el formulario principal)."
-                                # Re-validar
-                                # Eliminamos import local que causa conflicto de scope
-                                extractor = metadata_processor.MetadataExtractor()
-                                missing = extractor.validate_metadata(st.session_state.extracted_metadata)
-                                st.session_state.metadata_missing_fields = missing
-                                st.rerun() # Recargar para reflejar cambios en formulario y sidebar
-                            else:
-                                # Respuesta genérica o ayuda
-                                if "donde" in prompt_lower or "buscar" in prompt_lower:
-                                    response = "🔍 El DOI suele estar en la primera página, cerca del título. La fecha a veces está en el pie de página."
-                                else:
-                                    response = "Entendido. Si quieres actualizar un dato, usa el formato `Campo: Valor` (ej: `DOI: 10.xxxx`)."
-
-                            st.chat_message("assistant").write(response)
-                            st.session_state.metadata_chat.append({"role": "assistant", "content": response})
-
+                
     # --- Tab 2 ---
     with tab2:
         st.header("Generación XML con IA")
@@ -829,9 +776,23 @@ def main() -> None:
                                         total_tokens=tu.get('total_tokens', 0),
                                     )
                                 
+                                # invocar_gemini_cli ya limpia backticks via parse_model_response.
+                                # Detectar si el resultado es XML directo o texto con explicación.
+                                import re as _re_fix
+                                stripped_resp = response_text.strip()
+                                corrected_xml_fix = None
+                                if stripped_resp.startswith('<'):
+                                    corrected_xml_fix = stripped_resp
+                                else:
+                                    match_fix = _re_fix.search(r"```xml\s*(.*?)(?:```|$)", response_text, _re_fix.DOTALL | _re_fix.IGNORECASE)
+                                    if match_fix:
+                                        corrected_xml_fix = match_fix.group(1).strip()
                                 
-                                # El backend (transformer.py) ya limpió los backticks si existían
-                                st.session_state.pending_correction_xml = response_text.strip()
+                                if corrected_xml_fix:
+                                    st.session_state.pending_correction_xml = corrected_xml_fix
+                                else:
+                                    # No se pudo extraer XML, mostrar como texto
+                                    st.session_state.pending_correction_xml = None
                                 
                                 st.session_state.correction_chat.append({
                                     "role": "assistant", 
@@ -880,7 +841,7 @@ def main() -> None:
                             with st.chat_message("assistant"):
                                 with st.spinner("Consultando a Gemini..."):
                                     api_key = st.session_state.get('gemini_api_key_input') or os.environ.get("GEMINI_API_KEY")
-                                    selected_model = st.session_state.get("selected_model", "gemini-1.5-flash")
+                                    selected_model = st.session_state.get("selected_model", "gemini-2.5-flash")
                                     res = correction.corregir_xml(
                                         st.session_state.generated_xml,
                                         st.session_state.validation_errors,
@@ -890,8 +851,20 @@ def main() -> None:
                                     )
                                     
                                     response_text = ""
+                                    corrected_xml = None
                                     if res.get('returncode') == 0 and res.get('stdout'):
                                         response_text = res.get('stdout', '')
+                                        # invocar_gemini_cli ya limpia backticks via parse_model_response.
+                                        # Si el resultado parece XML directo (empieza con < ), usarlo.
+                                        # Si aún tiene backticks (raro), extraer.
+                                        import re as _re
+                                        stripped = response_text.strip()
+                                        if stripped.startswith('<'):
+                                            corrected_xml = stripped
+                                        else:
+                                            match = _re.search(r"```xml\s*(.*?)(?:```|$)", response_text, _re.DOTALL | _re.IGNORECASE)
+                                            if match:
+                                                corrected_xml = match.group(1).strip()
                                     else:
                                         response_text = f"Error: {res.get('stderr')}"
                                     
@@ -906,10 +879,8 @@ def main() -> None:
                                             total_tokens=tu.get('total_tokens', 0),
                                         )
                                     
-                                    import re as _re
-                                    match = _re.search(r"```xml\s*(.*?)(?:```|$)", response_text, _re.DOTALL | _re.IGNORECASE)
-                                    if match:
-                                        st.session_state.pending_correction_xml = match.group(1).strip()
+                                    if corrected_xml:
+                                        st.session_state.pending_correction_xml = corrected_xml
                                         st.session_state.correction_chat.append({
                                             "role": "assistant", 
                                             "content": response_text 
@@ -1010,7 +981,7 @@ def main() -> None:
             """
             <div class='branding'>
                 <b>Universidad de Valparaíso</b><br>
-                <small>Transformador XML JATS v0.64</small>
+                <small>Transformador XML JATS v0.65</small>
             </div>
             """, 
             unsafe_allow_html=True
