@@ -27,19 +27,18 @@ Características principales:
         "type": "step",
         "title": "Configuración Inicial",
         "content": """
-Antes de comenzar, configure su API Key de Google Gemini en la **barra lateral**:
+Antes de comenzar, diríjase a la pestaña **"⚙️ Configuración"** en el menú izquierdo para configurar su API Key de Google Gemini:
 
-- **Primera vez**: Pegue su clave en el campo "Gemini API Key" y presione **"💾 Guardar"**. La clave se almacena de forma segura y persistente.
-- **Sesiones posteriores**: La clave se carga automáticamente. Verá una versión enmascarada (ej. `AIza••••••xY4Z`).
+- **Primera vez**: Pegue su clave en el campo correspondiente (según su tipo de cuenta gratuita o de pago) y presione **"💾 Guardar"**. La clave pasará por una validación inicial y se almacenará de forma segura y persistente.
+- **Sesiones posteriores**: La clave se carga automáticamente. Verá una versión enmascarada (ej. `AIza••••••xY4Z`) y un indicador de que está configurada correctamente.
 - **Cambiar o borrar**: Use los botones **"✏️ Cambiar"** o **"🗑️ Borrar"** en cualquier momento.
 
-**Panel "📊 Uso de Tokens"**: En la barra lateral encontrará un panel expandible que muestra:
-- Requests usadas hoy vs. el límite diario del modelo.
-- Tokens consumidos hoy.
-- Límites por minuto (TPM y RPM).
-- Historial acumulado total.
+**Panel de Consumo y Cuotas**: En la misma página de configuración encontrará un panel que muestra:
+- Tabla comparativa de cuotas según su tipo de llave y modelo seleccionado.
+- Barra de progreso que ilustra las Requests usadas hoy vs. el límite diario del modelo.
+- Historial de uso de operaciones recientes detallando los tokens consumidos.
 
-Si se acerca al límite del tier gratuito, el sistema mostrará advertencias automáticas.
+Si se acerca al límite de la cuota gratuita, el sistema y la interfaz le mostrarán advertencias visuales de forma preventiva.
 """
     },
     {
@@ -111,7 +110,7 @@ Soporta archivos Microsoft Word (`.docx`) y documentos Portables (`.pdf`).
 Revise el mensaje de error. Generalmente se debe a caracteres especiales no soportados o estructuras de documento inusuales (ej. tablas anidadas complejas). Puede usar el botón **"Intentar Solucionar con IA"** para que Gemini corrija automáticamente los errores, o editar el XML manualmente.
 
 **¿Las tablas del documento se incluyen en el XML?**
-Sí. A partir de la versión 0.65, las tablas se extraen automáticamente y se convierten a formato JATS (`<table-wrap>`) con encabezados (`<thead>`) y cuerpo (`<tbody>`) correctamente estructurados, preservando todas las filas y columnas del documento original.
+Sí. Las tablas se extraen automáticamente y se convierten a formato JATS (`<table-wrap>`) con encabezados (`<thead>`) y cuerpo (`<tbody>`) correctamente estructurados, preservando todas las filas y columnas del documento original.
 
 **¿Se incluye el DOI y la fecha de publicación?**
 Sí. El DOI y la fecha de publicación son campos obligatorios que se extraen automáticamente de los metadatos. Si el sistema no los detecta, le pedirá que los ingrese antes de generar el XML.
@@ -129,7 +128,7 @@ Sí, los archivos se procesan temporalmente en la memoria para su transformació
 Sí. La clave se almacena localmente en una base de datos SQLite (carpeta `data/`) con ofuscación Base64. Una vez guardada, desaparece de la interfaz y solo se muestra enmascarada. La carpeta `data/` está excluida del control de versiones.
 
 **¿Qué pasa si alcanzo el límite de tokens gratuitos?**
-El panel "📊 Uso de Tokens" en la barra lateral muestra su consumo actual vs. los límites del tier gratuito de cada modelo. Al alcanzar el 80%% se muestra una advertencia; al 100%% las solicitudes podrían fallar. Puede esperar al día siguiente (los límites diarios se renuevan) o cambiar a un modelo con mayor cuota.
+El panel de consumo en la pestaña **"⚙️ Configuración"** muestra su consumo actual vs. los límites del tier gratuito de cada modelo. Al alcanzar el 80%% se muestra una advertencia; al 100%% las solicitudes podrían fallar. Puede esperar al día siguiente (los límites diarios se renuevan) o cambiar a un modelo con mayor cuota.
 """
 
 def get_documentation_content():
@@ -176,7 +175,7 @@ Licencia:
 Software de uso exclusivo para la Universidad de Valparaíso. Todos los derechos reservados.
 El código fuente y la documentación son propiedad intelectual de la Universidad de Valparaíso y su autor.
 
-Versión: 0.65
+Versión: 0.66
 """
 
 class ProfessionalPDF(FPDF):
@@ -292,9 +291,9 @@ def create_professional_pdf():
     pdf.set_y(180)
     pdf.set_font('Arial', 'B', 11)
     pdf.cell(0, 10, 'Autor: Cristian Carreño León', 0, 1, 'C')
-    pdf.cell(0, 10, 'Fecha: 11-12-2025', 0, 1, 'C')
-    pdf.cell(0, 10, 'Versión: 0.65', 0, 1, 'C')
-    pdf.cell(0, 10, 'Contacto: carreonleong@gmail.com', 0, 1, 'C')
+    pdf.cell(0, 10, 'Fecha: 15-03-2026', 0, 1, 'C')
+    pdf.cell(0, 10, 'Versión: 0.66', 0, 1, 'C')
+    pdf.cell(0, 10, 'Contacto: cristian.carreno@uv.cl', 0, 1, 'C')
     
     # --- SECCIÓN 1: DOCUMENTACIÓN ---
     docs = get_documentation_content()
@@ -478,7 +477,7 @@ def main():
             """
             <div class='branding'>
                 <b>Universidad de Valparaíso</b><br>
-                <small>Transformador XML JATS v0.65</small>
+                <small>Transformador XML JATS v0.66</small>
             </div>
             """, 
             unsafe_allow_html=True
