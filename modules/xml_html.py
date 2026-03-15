@@ -282,6 +282,7 @@ def parse_jats(xml_path: str) -> Dict[str, Any]:
         load_dtd=False,
         no_network=True,
         dtd_validation=False,
+        recover=True,
     )
     root = etree.fromstring(sanitized.encode("utf-8"), parser)
     namespaces = _ensure_namespace(root)

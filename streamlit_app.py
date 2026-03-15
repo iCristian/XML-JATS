@@ -13,6 +13,9 @@ pages = {
     "Aplicación": [
         st.Page("views/transformador.py", title="Transformador", icon="📄"),
     ],
+    "Configuración": [
+        st.Page("views/configuracion.py", title="API y Tokens", icon="⚙️"),
+    ],
     "Información": [
         st.Page("views/manual_usuario.py", title="Manual de Usuario", icon="📖"),
         st.Page("views/documentacion.py", title="Documentación", icon="📚"),

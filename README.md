@@ -1,4 +1,4 @@
-# Transformador XML JATS (JATS XML Transformer) - v0.65
+# Transformador XML JATS (JATS XML Transformer) - v0.66
 
 Una herramienta avanzada impulsada por Inteligencia Artificial para convertir documentos de Word (`.docx`) a formato **JATS XML** validado, diseñada específicamente para el flujo editorial de revistas científicas.
 
@@ -49,7 +49,7 @@ Esta aplicación automatiza el proceso de etiquetado semántico, extracción de 
 4. **Configurar la API Key de Gemini** (elige una opción):
 
     **Opción A — Desde la interfaz web (recomendado):**
-    Al abrir la aplicación, pega tu clave en el campo "Gemini API Key" de la barra lateral y presiona **"💾 Guardar"**. La clave se almacena de forma persistente y se carga automáticamente en futuras sesiones.
+    Al abrir la aplicación, dirígete a la pestaña **"⚙️ Configuración"** en el menú izquierdo, pega tu clave en el campo correspondiente y presiona **"💾 Guardar"**. La clave se almacena de forma persistente y se carga automáticamente en futuras sesiones.
 
     **Opción B — Variable de entorno (fallback):**
 
@@ -137,6 +137,14 @@ El código fuente y la documentación contenidos en este repositorio son propied
 Para consultas sobre licenciamiento o uso, contactar a: [cristian.carreno@uv.cl](mailto:cristian.carreno@uv.cl)
 
 ## 📅 Historial de Versiones (Changelog)
+
+### v0.66 — Interfaz Minimalista, Validación de API y Configuración Dedicada
+
+- **Página de Configuración Exclusiva**: Nueva pestaña "⚙️ Configuración" dedicada exclusivamente a visualizar y gestionar las API Keys y el modelo IA seleccionado, liberando espacio en el menú principal.
+- **Validación Robusta de API Keys**: Se implementó una verificación exhaustiva de la API Key en el backend, la cual ahora detecta placeholders o claves inválidas antes de enviar peticiones a la API, evitando errores confusos y cierres inesperados.
+- **Interfaz del Menú Lateral Minimalista**: Rediseño del panel lateral en el transformador principal. El estado de la API Key ahora se muestra de forma compacta (mini indicador) bajo el seleccionador de modelo. Las instrucciones pasaron de ocupar gran espacio a mostrarse en un práctico "popover" (ventana flotante).
+- **Recuperación Automática de XML Crítico (Resilient Parsing)**: El parser XML ahora cuenta con capacidad de recuperación ante etiquetas malformadas menores (`recover=True`), lo cual permite generar un HTML de vista previa incluso si la IA cometió ligeros errores estructurales en el etiquetado JATS.
+- **Mejores Mensajes de Error**: Si el XML está demasiado dañado para generar HTML seguro, la aplicación ahora detecta el fallo y sugiere amablemente al usuario utilizar la pestaña de "Validación y Corrección" asistida por IA para solucionarlo automáticamente.
 
 ### v0.65 — Auditoría Exhaustiva y Corrección de Bugs Críticos
 

@@ -201,17 +201,30 @@ def _attempt_gemini_call(model: genai.GenerativeModel, prompt: str, token_manage
         raise # Reraise other errors to be caught in invocar_gemini_cli
 
 def invocar_gemini_cli(prompt: str, max_attempts: int = 3, base_backoff: int = 20, timeout: int = 120, 
-                       model_version: str = "gemini-2.5-flash", api_key: Optional[str] = None) -> Dict[str, Any]:
+                       model_version: str = "gemini-2.5-flash", api_key: Optional[str] = None, api_key_pro: Optional[str] = None) -> Dict[str, Any]:
     """
     Función helper para llamar a la API de Gemini (CLI-friendly y modular).
+    Intenta usar la api_key (gratuita) primero. Si se agota la cuota, usa la api_key_pro.
     """
     if not api_key:
         api_key = os.environ.get('GEMINI_API_KEY')
-    if not api_key:
-        return {'returncode': 1, 'stderr': 'No API key provided. Set it as param, st.session_state (in app) or GEMINI_API_KEY env var.'}
-    
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel(model_version)
+    if not api_key_pro:
+        api_key_pro = os.environ.get('GEMINI_API_KEY_PRO')
+
+    # Sanitización robusta: ignorar placeholders o keys muy cortas (< 20 chars)
+    def _is_valid_key_format(k: Optional[str]) -> bool:
+        if not k:
+            return False
+        k = k.strip()
+        if len(k) < 20 or "tu_api_key" in k.lower() or k.lower() == "aiza...":
+            return False
+        return True
+
+    valid_key = api_key if _is_valid_key_format(api_key) else None
+    valid_key_pro = api_key_pro if _is_valid_key_format(api_key_pro) else None
+
+    if not valid_key and not valid_key_pro:
+        return {'returncode': 1, 'stderr': 'No se encontró una API Key válida. Ve a ⚙️ Configuración y guarda una clave real de Google AI Studio.'}
     
     token_manager = None
     try:
@@ -220,7 +233,9 @@ def invocar_gemini_cli(prompt: str, max_attempts: int = 3, base_backoff: int = 2
     except ImportError:
         pass
         
-    try:
+    def attempt_with_key(current_key: str, is_pro: bool = False) -> Dict[str, Any]:
+        genai.configure(api_key=current_key)
+        model = genai.GenerativeModel(model_version)
         chat = model.start_chat()
         response = _attempt_gemini_call(model, prompt, token_manager=token_manager, chat=chat)
         
@@ -232,7 +247,8 @@ def invocar_gemini_cli(prompt: str, max_attempts: int = 3, base_backoff: int = 2
              tu = {
                  'prompt_tokens': getattr(usage, 'prompt_token_count', 0),
                  'completion_tokens': getattr(usage, 'candidates_token_count', 0),
-                 'total_tokens': getattr(usage, 'total_token_count', 0)
+                 'total_tokens': getattr(usage, 'total_token_count', 0),
+                 'is_pro_key': is_pro
              }
              
         # Lógica de auto-continuación si el output llega al límite máximo de tokens (8192)
@@ -273,7 +289,20 @@ def invocar_gemini_cli(prompt: str, max_attempts: int = 3, base_backoff: int = 2
              return {'returncode': 0, 'stdout': response_text, 'token_usage': tu}
         else:
              return {'returncode': 1, 'stderr': f'Gemini devolvió una respuesta vacía o fue bloqueada. {getattr(response, "prompt_feedback", "")}'}
-             
+
+    try:
+        if valid_key:
+            try:
+                return attempt_with_key(valid_key, is_pro=False)
+            except GeminiRetryError as e:
+                if valid_key_pro:
+                    print(f"Cuota gratuita agotada o error de tasa. Cambiando a API Key Pro... Detalles: {e}", file=sys.stderr)
+                    return attempt_with_key(valid_key_pro, is_pro=True)
+                else:
+                    return {'returncode': 1, 'stderr': f'Error en API de Gemini tras reintentos (Free Tier agotado): {str(e)}'}
+        else:
+            return attempt_with_key(valid_key_pro, is_pro=True)
+            
     except Exception as e:
         return {'returncode': 1, 'stderr': f'Error en API de Gemini tras reintentos: {str(e)}'}
 def extraer_resumen_tokens(gemini_meta: Dict[str, Any]) -> Dict[str, Any]:

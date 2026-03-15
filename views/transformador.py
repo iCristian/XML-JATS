@@ -74,34 +74,39 @@ def main() -> None:
     st.markdown("### Convierte documentos Word a XML JATS con IA")
     
     with st.sidebar:
-        st.header("Instrucciones")
-        st.info(
-            "1. **Carga**: Sube el DOCX y extrae el texto.\n"
-            "2. **Generación**: Crea el XML.\n"
-            "3. **Validación**: Verifica y corrige errores.\n"
-            "4. **Resultados**: Descarga el XML/HTML."
-        )
+        # ─── Cargar API Keys de forma robusta (desacoplado de widgets) ───
+        # Siempre leer desde la fuente de verdad: config_store (SQLite)
+        _saved_key = config_store.load_api_key()
+        _saved_key_pro = config_store.load_api_key_pro()
+        st.session_state["_active_api_key"] = _saved_key or os.environ.get("GEMINI_API_KEY", "")
+        st.session_state["_active_api_key_pro"] = _saved_key_pro or os.environ.get("GEMINI_API_KEY_PRO", "")
         
-        st.divider()
-        st.markdown("### ⚙️ Configuración Global")
+        has_api_key = bool(st.session_state["_active_api_key"])
+        has_api_key_pro = bool(st.session_state["_active_api_key_pro"])
         
-        # 1. API Key — persistente via SQLite
-        # Cargar key guardada (solo la primera vez) a session_state
-        if "_api_key_loaded" not in st.session_state:
-            saved_key = config_store.load_api_key()
-            if saved_key:
-                st.session_state["gemini_api_key_input"] = saved_key
-            st.session_state["_api_key_loaded"] = True
-            
-        if "_show_key_input" not in st.session_state:
-            st.session_state["_show_key_input"] = False
+        # ─── Instrucciones (Popover minimalista) ───
+        with st.popover("📋 Instrucciones"):
+            st.markdown(
+                "1. **Carga**: Sube el DOCX y extrae el texto.\n"
+                "2. **Generación**: Crea el XML.\n"
+                "3. **Validación**: Verifica y corrige errores.\n"
+                "4. **Resultados**: Descarga el XML/HTML."
+            )
         
-        # Obtener key actual
-        current_api_key = st.session_state.get("gemini_api_key_input") or os.environ.get("GEMINI_API_KEY", "")
-        saved_key = config_store.load_api_key()
-        has_saved_key = bool(saved_key)
+        st.markdown("<br>", unsafe_allow_html=True)
         
-        # 2. Selección de Modelo (Dinámico si hay key)
+        # ─── Estado de API Key (muy compacto) ───
+        if has_api_key:
+            key_status = "✅ API Key configurada"
+            if has_api_key_pro:
+                key_status += " + Pro"
+            st.markdown(f"<div style='font-size: 0.8rem; color: #4CAF50; margin-bottom: 1rem;'>🔑 {key_status}</div>", unsafe_allow_html=True)
+        else:
+            st.markdown("<div style='font-size: 0.8rem; color: #F44336; margin-bottom: 1rem;'>🔑 ❌ Sin API Key (Ir a Configuración)</div>", unsafe_allow_html=True)
+        
+        # ─── Selección de Modelo ───
+        st.markdown("<p style='font-size: 0.9rem; font-weight: 600; margin-bottom: 0;'>🤖 Modelo IA</p>", unsafe_allow_html=True)
+        
         @st.cache_data(ttl=3600)
         def get_available_models(api_key: str):
             default_models = [
@@ -126,119 +131,30 @@ def main() -> None:
                             models.append(name)
                 
                 if models:
-                    models.sort(reverse=True) # Sort to put newer versions first
+                    models.sort(reverse=True)
                     if "gemini-2.5-flash" in models:
                         models.remove("gemini-2.5-flash")
-                        models.insert(0, "gemini-2.5-flash") # Keep default fallback at top
+                        models.insert(0, "gemini-2.5-flash")
                     return models
             except Exception:
                 pass
             return default_models
 
-        model_options = get_available_models(current_api_key)
+        model_options = get_available_models(st.session_state["_active_api_key"])
         
         selected_model = st.selectbox(
-            "Modelo IA:", 
+            "Modelo:", 
             options=model_options, 
             index=0,
             key="selected_model_dropdown",
-            help="Selecciona un modelo. La lista se actualiza automáticamente según lo disponible en tu cuenta. '2.5-flash' recomendado."
+            help="'gemini-2.5-flash' recomendado por su balance costo/rendimiento."
         )
         
-        # Permitir modelo personalizado si es necesario (avanzado)
-        use_custom_model = st.checkbox("Usar modelo personalizado o versión específica", value=False)
+        use_custom_model = st.checkbox("Modelo personalizado", value=False)
         if use_custom_model:
-            selected_model = st.text_input("Escribe el nombre del modelo:", value=selected_model)
+            selected_model = st.text_input("Nombre del modelo:", value=selected_model)
         
-        # Store in session state for consistency
         st.session_state.selected_model = selected_model
-        
-        # 3. Mostrar UI de API Key debajo
-        if has_saved_key and not st.session_state["_show_key_input"]:
-            # Key guardada → ocultar, mostrar solo estado
-            masked = saved_key[:4] + "•" * 20 + saved_key[-4:]
-            st.text_input("Gemini API Key:", value=masked, disabled=True, key="_masked_key_display")
-            st.caption("🔒 Key guardada de forma segura")
-            
-            key_col1, key_col2 = st.columns([1, 1])
-            with key_col1:
-                if st.button("✏️ Cambiar", key="change_key_btn", help="Ingresar una nueva API Key"):
-                    st.session_state["_show_key_input"] = True
-                    st.rerun()
-            with key_col2:
-                if st.button("🗑️ Borrar", key="delete_key_btn", help="Eliminar la API Key guardada"):
-                    config_store.delete_api_key()
-                    st.session_state["gemini_api_key_input"] = ""
-                    st.session_state["_show_key_input"] = False
-                    # Limpiar caché de modelos
-                    get_available_models.clear()
-                    st.rerun()
-        else:
-            # Sin key o modo edición → mostrar input
-            api_key_input = st.text_input(
-                "Gemini API Key:", 
-                type="password", 
-                value="" if st.session_state.get("_show_key_input") else st.session_state.get("gemini_api_key_input", ""),
-                key="gemini_api_key_input",
-                help="Pasos: 1. Ve a Google AI Studio. 2. Crea API Key. 3. Pégala aquí.",
-                placeholder="Pega tu API Key aquí..."
-            )
-            
-            current_key = st.session_state.get("gemini_api_key_input", "").strip()
-            
-            col_save, col_cancel = st.columns([1, 1])
-            with col_save:
-                if current_key:
-                    if st.button("💾 Guardar", key="save_key_btn", type="primary"):
-                        config_store.save_api_key(current_key)
-                        st.session_state["_show_key_input"] = False
-                        st.success("✅ Key guardada")
-                        st.rerun()
-            with col_cancel:
-                if st.session_state["_show_key_input"] and has_saved_key:
-                    if st.button("Cancelar", key="cancel_key_btn"):
-                        st.session_state["_show_key_input"] = False
-                        st.rerun()
-            
-            if not current_key and not has_saved_key:
-                st.warning("⚠️ Sin API Key, las funciones de IA fallarán.")
-                st.markdown("[Obtener Key](https://aistudio.google.com/app/apikey)")
-        
-        # ─── Panel de Uso de Tokens ───
-        st.divider()
-        with st.expander("📊 Uso de Tokens", expanded=False):
-            token_summary = config_store.get_token_summary()
-            selected_model_for_limits = st.session_state.get("selected_model", "gemini-2.5-flash")
-            limits = config_store.get_free_tier_limits(selected_model_for_limits)
-            
-            st.caption(f"Modelo: **{selected_model_for_limits}**")
-            
-            # ── Requests diarias ──
-            rpd_used = token_summary['today_requests']
-            rpd_max = limits['rpd']
-            rpd_progress = min(rpd_used / max(rpd_max, 1), 1.0)
-            st.markdown(f"**Requests hoy:** {rpd_used:,} / {rpd_max:,}")
-            st.progress(rpd_progress)
-            
-            # ── Tokens usados hoy ──
-            tpm_max = limits['tpm']
-            tokens_today = token_summary['today_tokens']
-            st.markdown(f"**Tokens hoy:** {tokens_today:,}")
-            st.markdown(f"**Límite por minuto (TPM):** {tpm_max:,}")
-            st.markdown(f"**Límite requests/min (RPM):** {limits['rpm']}")
-            
-            # ── Advertencias ──
-            if rpd_progress >= 0.8:
-                st.warning(f"⚠️ {rpd_used}/{rpd_max} requests usadas hoy ({rpd_progress:.0%})")
-            if rpd_progress >= 1.0:
-                st.error("🚫 Límite diario alcanzado.")
-            
-            st.divider()
-            
-            # ── Histórico ──
-            st.markdown(f"**Total histórico:** {token_summary['total_tokens']:,} tokens en {token_summary['total_requests']} ops")
-            if token_summary['last_used']:
-                st.caption(f"Último uso: {token_summary['last_used'][:16].replace('T', ' ')}")
 
     if 'extracted_text' not in st.session_state:
         st.session_state.extracted_text = ""
@@ -341,9 +257,10 @@ def main() -> None:
                                 status.update(label="⏳ Analizando metadatos con Gemini AI...")
                                 status.write("🤖 Extrayendo título, autores, fecha y DOI usando Inteligencia Artificial...")
                                 extractor = metadata_processor.MetadataExtractor()
-                                api_key = st.session_state.get('gemini_api_key_input') or os.environ.get("GEMINI_API_KEY")
+                                api_key = st.session_state.get('_active_api_key', '')
+                                api_key_pro = st.session_state.get('_active_api_key_pro', '')
                                 selected_model = st.session_state.get("selected_model", "gemini-2.5-flash")
-                                meta = extractor.extract_from_file(fpath, model_version=selected_model, api_key=api_key)
+                                meta = extractor.extract_from_file(fpath, model_version=selected_model, api_key=api_key, api_key_pro=api_key_pro)
                                 
                                 # Verificar errores explícitos de la IA
                                 if "error" in meta:
@@ -522,10 +439,11 @@ def main() -> None:
              st.warning("⚠️ **Atención**: No has validado completamente los metadatos en el Paso 1. Esto podría generar un XML incompleto.")
         
         # --- Configuración ahora está en Sidebar ---
-        if not st.session_state.get("gemini_api_key_input"):
+        current_api_key = st.session_state.get('_active_api_key', '')
+        if not current_api_key:
              st.error("❌ Por favor configura tu API Key en la barra lateral izquierda.")
         
-        can_generate = bool(st.session_state.extracted_text and st.session_state.get("gemini_api_key_input"))
+        can_generate = bool(st.session_state.extracted_text and current_api_key)
         
         if st.button("Generar XML JATS", type="primary", disabled=not can_generate):
                 progress_bar = st.progress(0, text="Iniciando...")
@@ -548,7 +466,8 @@ def main() -> None:
                 result = transformer.invocar_gemini_cli(
                     prompt, 
                     model_version=selected_model,
-                    api_key=st.session_state.get("gemini_api_key_input")
+                    api_key=current_api_key,
+                    api_key_pro=st.session_state.get('_active_api_key_pro', '')
                 )
                 
                 status_text.text("Procesando respuesta...")
@@ -565,9 +484,10 @@ def main() -> None:
                     
                     # Registrar uso de tokens
                     tu = result.get('token_usage', {})
+                    is_pro = tu.get('is_pro_key', False)
                     if tu.get('total_tokens', 0) > 0:
                         config_store.log_token_usage(
-                            operation="generation",
+                            operation="generation" + (" (PRO)" if is_pro else " (FREE)"),
                             model=selected_model,
                             prompt_tokens=tu.get('prompt_tokens', 0),
                             completion_tokens=tu.get('completion_tokens', 0),
@@ -575,7 +495,8 @@ def main() -> None:
                         )
                     
                     progress_bar.progress(100)
-                    tokens_msg = f" ({tu.get('total_tokens', 0):,} tokens)" if tu.get('total_tokens') else ""
+                    tier_msg = " [MODO PAGO]" if is_pro else " [MODO AHORRO]"
+                    tokens_msg = f" ({tu.get('total_tokens', 0):,} tokens){tier_msg}" if tu.get('total_tokens') else ""
                     status_text.text(f"¡Completado!{tokens_msg}")
                 else:
                     progress_bar.empty()
@@ -755,21 +676,24 @@ def main() -> None:
                         if st.button("Intentar Solucionar con IA", type="primary", key="btn_ai_fix"):
                             st.session_state.show_correction_chat = True
                             with st.spinner("Analizando errores y buscando soluciones con IA..."):
-                                api_key = st.session_state.get('gemini_api_key_input') or os.environ.get("GEMINI_API_KEY")
+                                api_key = st.session_state.get('_active_api_key', '')
+                                api_key_pro = st.session_state.get('_active_api_key_pro', '')
                                 selected_model = st.session_state.get("selected_model", "gemini-2.5-flash")
                                 res = correction.analizar_errores_inicial(
                                     st.session_state.generated_xml,
                                     st.session_state.validation_errors,
                                     model_version=selected_model,
-                                    api_key=api_key
+                                    api_key=api_key,
+                                    api_key_pro=api_key_pro
                                 )
                                 response_text = res.get('stdout', '') if res.get('returncode') == 0 else f"Error: {res.get('stderr')}"
                                 
                                 # Registrar uso de tokens de corrección
                                 tu = res.get('token_usage', {})
+                                is_pro = tu.get('is_pro_key', False)
                                 if tu.get('total_tokens', 0) > 0:
                                     config_store.log_token_usage(
-                                        operation="correction",
+                                        operation="correction" + (" (PRO)" if is_pro else " (FREE)"),
                                         model=st.session_state.get("selected_model", "gemini-2.5-flash"),
                                         prompt_tokens=tu.get('prompt_tokens', 0),
                                         completion_tokens=tu.get('completion_tokens', 0),
@@ -840,14 +764,16 @@ def main() -> None:
                             
                             with st.chat_message("assistant"):
                                 with st.spinner("Consultando a Gemini..."):
-                                    api_key = st.session_state.get('gemini_api_key_input') or os.environ.get("GEMINI_API_KEY")
+                                    api_key = st.session_state.get('_active_api_key', '')
+                                    api_key_pro = st.session_state.get('_active_api_key_pro', '')
                                     selected_model = st.session_state.get("selected_model", "gemini-2.5-flash")
                                     res = correction.corregir_xml(
                                         st.session_state.generated_xml,
                                         st.session_state.validation_errors,
                                         prompt,
                                         model_version=selected_model,
-                                        api_key=api_key
+                                        api_key=api_key,
+                                        api_key_pro=api_key_pro
                                     )
                                     
                                     response_text = ""
@@ -915,7 +841,8 @@ def main() -> None:
                          html = xml_html.build_html(data)
                          st.session_state.generated_html = html
                      except Exception as e:
-                         st.error(f"Error HTML: {e}")
+                         st.error(f"**Error al generar HTML:** {e}")
+                         st.info("⚠️ **El XML generado tiene etiquetas mal formadas (ej. no cerradas correctamente).**\n\nVe a la pestaña **'Validación y Corrección'** y haz clic en *Ejecutar Validación DTD*. La IA detectará los errores y propondrá automáticamente la corrección de las etiquetas.")
                 
                 if st.session_state.generated_html:
                     st.download_button(
@@ -974,9 +901,22 @@ def main() -> None:
                 """
                 components.html(open_tab_js, height=80)
 
-    # Sidebar Footer (Igual que en la app principal para consistencia)
+    # Sidebar Footer: Mini-resumen de Tokens + Branding
     with st.sidebar:
-        st.markdown("---")
+        st.divider()
+        # ── Mini Resumen de Tokens ──
+        token_summary = config_store.get_token_summary()
+        _model = st.session_state.get("selected_model", "gemini-2.5-flash")
+        _limits = config_store.get_free_tier_limits(_model)
+        _rpd_used = token_summary['today_requests']
+        _rpd_max = _limits['rpd']
+        _rpd_pct = min(_rpd_used / max(_rpd_max, 1), 1.0)
+        
+        st.caption(f"📊 **Hoy:** {_rpd_used} / {_rpd_max} req · {token_summary['today_tokens']:,} tokens")
+        st.progress(_rpd_pct)
+        if _rpd_pct >= 0.8:
+            st.warning("⚠️ Cuota diaria casi agotada")
+        
         st.markdown(
             """
             <div class='branding'>

@@ -25,7 +25,7 @@
     ```
 
 4. **Configurar Variables de Entorno**:
-    Asegúrate de tener configurada la variable `GEMINI_API_KEY` o ingresarla desde la interfaz web al ejecutar la aplicación.
+    Puedes dejar configurada tu variable `GEMINI_API_KEY` o ingresarla cómodamente desde la nueva pestaña **"⚙️ Configuración"** en la interfaz web al ejecutar la aplicación.
 
 ## Arquitectura del Proyecto
 
@@ -47,7 +47,7 @@ streamlit_app.py          # Punto de entrada web
 
 ### Principios de Diseño
 
-- **Backend sin dependencia de UI**: `transformer.py`, `metadata_processor.py`, `correction.py` y `prompts.py` NO deben importar `streamlit`. Toda la configuración se pasa como parámetros.
+- **Backend sin dependencia de UI**: `transformer.py`, `metadata_processor.py`, `correction.py` y `prompts.py` NO deben depender del estado de `streamlit`. La configuración se pasa como parámetros y se guarda usando `config_store.py`.
 - **Prompts Centralizados**: Todas las instrucciones para la IA están en `prompts.py`. Nunca hardcodees prompts en otros módulos.
 - **Modelo Consistente**: El modelo default es `gemini-2.5-flash` en toda la aplicación. Si añades un nuevo punto de llamada a la IA, usa este modelo.
 

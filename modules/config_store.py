@@ -6,8 +6,8 @@ en una base de datos SQLite local (``data/config.db``).
 La API key se guarda ofuscada con Base64 para evitar exposición
 accidental en texto plano, aunque no constituye encriptación fuerte.
 
-Funciones principales:
-    - ``save_api_key`` / ``load_api_key``: persistencia de API key.
+    - ``save_api_key`` / ``load_api_key``: persistencia de API key gratuita.
+    - ``save_api_key_pro`` / ``load_api_key_pro``: persistencia de API key Pro (pago).
     - ``save_setting`` / ``load_setting``: configuraciones genéricas.
     - ``log_token_usage``: registra tokens consumidos por operación.
     - ``get_token_summary``: resumen acumulado de tokens.
@@ -149,6 +149,35 @@ def load_api_key() -> Optional[str]:
 def delete_api_key() -> None:
     """Elimina la API Key guardada de la base de datos."""
     delete_setting("gemini_api_key")
+
+
+def save_api_key_pro(api_key: str) -> None:
+    """Guarda la API Key Pro ofuscada en la base de datos.
+
+    Args:
+        api_key: Clave de API Pro de Gemini.
+    """
+    save_setting("gemini_api_key_pro", _obfuscate(api_key.strip()))
+
+
+def load_api_key_pro() -> Optional[str]:
+    """Carga la API Key Pro desde la base de datos.
+
+    Returns:
+        La API key Pro desofuscada, o ``None`` si no hay ninguna guardada.
+    """
+    encoded = load_setting("gemini_api_key_pro")
+    if encoded:
+        try:
+            return _deobfuscate(encoded)
+        except Exception:
+            return None
+    return None
+
+
+def delete_api_key_pro() -> None:
+    """Elimina la API Key Pro guardada de la base de datos."""
+    delete_setting("gemini_api_key_pro")
 
 
 # ─── Settings genéricos ───────────────────────────────────────
