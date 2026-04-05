@@ -17,11 +17,11 @@ def analizar_errores_inicial(
     validation_errors: List[str],
     model_version: str = "gemini-2.5-flash",
     api_key: str = None,
-    api_key_pro: str = None
+    **_kwargs,  # absorbe api_key_pro residual para compatibilidad
 ) -> Dict[str, Any]:
     """Realiza el análisis inicial de errores para decidir si preguntar o corregir."""
     prompt = prompts.get_correction_analysis_prompt(xml_content, validation_errors)
-    return invocar_gemini_cli(prompt, model_version=model_version, api_key=api_key, api_key_pro=api_key_pro)
+    return invocar_gemini_cli(prompt, model_version=model_version, api_key=api_key)
 
 def corregir_xml(
     xml_content: str, 
@@ -29,8 +29,8 @@ def corregir_xml(
     user_feedback: str = "",
     model_version: str = "gemini-2.5-flash",
     api_key: str = None,
-    api_key_pro: str = None
+    **_kwargs,  # absorbe api_key_pro residual para compatibilidad
 ) -> Dict[str, Any]:
     """Orquesta el proceso de corrección de XML usando Gemini."""
     prompt = prompts.get_interactive_correction_prompt(xml_content, validation_errors, user_feedback)
-    return invocar_gemini_cli(prompt, model_version=model_version, api_key=api_key, api_key_pro=api_key_pro)
+    return invocar_gemini_cli(prompt, model_version=model_version, api_key=api_key)

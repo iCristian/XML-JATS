@@ -74,15 +74,11 @@ def main() -> None:
     st.markdown("### Convierte documentos Word a XML JATS con IA")
     
     with st.sidebar:
-        # ─── Cargar API Keys de forma robusta (desacoplado de widgets) ───
-        # Siempre leer desde la fuente de verdad: config_store (SQLite)
+        # ─── Cargar API Key (clave única) ───
         _saved_key = config_store.load_api_key()
-        _saved_key_pro = config_store.load_api_key_pro()
         st.session_state["_active_api_key"] = _saved_key or os.environ.get("GEMINI_API_KEY", "")
-        st.session_state["_active_api_key_pro"] = _saved_key_pro or os.environ.get("GEMINI_API_KEY_PRO", "")
         
         has_api_key = bool(st.session_state["_active_api_key"])
-        has_api_key_pro = bool(st.session_state["_active_api_key_pro"])
         
         # ─── Instrucciones (Popover minimalista) ───
         with st.popover("📋 Instrucciones"):
@@ -95,14 +91,25 @@ def main() -> None:
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # ─── Estado de API Key (muy compacto) ───
+        # ─── Estado de API Key ───
         if has_api_key:
-            key_status = "✅ API Key configurada"
-            if has_api_key_pro:
-                key_status += " + Pro"
-            st.markdown(f"<div style='font-size: 0.8rem; color: #4CAF50; margin-bottom: 1rem;'>🔑 {key_status}</div>", unsafe_allow_html=True)
+            st.markdown(
+                "<div style='font-size: 0.8rem; color: #4CAF50; margin-bottom: 0.5rem;'>🔑 ✅ API Key configurada</div>",
+                unsafe_allow_html=True,
+            )
         else:
-            st.markdown("<div style='font-size: 0.8rem; color: #F44336; margin-bottom: 1rem;'>🔑 ❌ Sin API Key (Ir a Configuración)</div>", unsafe_allow_html=True)
+            st.markdown(
+                "<div style='font-size: 0.8rem; color: #F44336; margin-bottom: 0.5rem;'>🔑 ❌ Sin API Key (Ir a Configuración)</div>",
+                unsafe_allow_html=True,
+            )
+
+        # ─── Banner de cuota de pago activa ───
+        if st.session_state.get("_paid_quota_active"):
+            st.warning(
+                "💳 **Cuota gratuita agotada.** Las próximas llamadas serán de pago "
+                "(si tu cuenta de Google tiene facturación habilitada).",
+                icon="⚠️",
+            )
         
         # ─── Selección de Modelo ───
         st.markdown("<p style='font-size: 0.9rem; font-weight: 600; margin-bottom: 0;'>🤖 Modelo IA</p>", unsafe_allow_html=True)
@@ -258,9 +265,8 @@ def main() -> None:
                                 status.write("🤖 Extrayendo título, autores, fecha y DOI usando Inteligencia Artificial...")
                                 extractor = metadata_processor.MetadataExtractor()
                                 api_key = st.session_state.get('_active_api_key', '')
-                                api_key_pro = st.session_state.get('_active_api_key_pro', '')
                                 selected_model = st.session_state.get("selected_model", "gemini-2.5-flash")
-                                meta = extractor.extract_from_file(fpath, model_version=selected_model, api_key=api_key, api_key_pro=api_key_pro)
+                                meta = extractor.extract_from_file(fpath, model_version=selected_model, api_key=api_key)
                                 
                                 # Verificar errores explícitos de la IA
                                 if "error" in meta:
@@ -462,16 +468,19 @@ def main() -> None:
                 )
                 progress_bar.progress(30)
                 
-                # Llamada actualizada con parámetros de config
+                # Llamada con clave única
                 result = transformer.invocar_gemini_cli(
                     prompt, 
                     model_version=selected_model,
                     api_key=current_api_key,
-                    api_key_pro=st.session_state.get('_active_api_key_pro', '')
                 )
                 
                 status_text.text("Procesando respuesta...")
                 progress_bar.progress(80)
+                
+                if result.get('quota_exceeded'):
+                    st.session_state["_paid_quota_active"] = True
+                    st.rerun()
                 
                 if result.get('returncode') == 0 and result.get('stdout'):
                     xml_out = result.get('stdout', '')
@@ -484,10 +493,9 @@ def main() -> None:
                     
                     # Registrar uso de tokens
                     tu = result.get('token_usage', {})
-                    is_pro = tu.get('is_pro_key', False)
                     if tu.get('total_tokens', 0) > 0:
                         config_store.log_token_usage(
-                            operation="generation" + (" (PRO)" if is_pro else " (FREE)"),
+                            operation="generation",
                             model=selected_model,
                             prompt_tokens=tu.get('prompt_tokens', 0),
                             completion_tokens=tu.get('completion_tokens', 0),
@@ -495,8 +503,7 @@ def main() -> None:
                         )
                     
                     progress_bar.progress(100)
-                    tier_msg = " [MODO PAGO]" if is_pro else " [MODO AHORRO]"
-                    tokens_msg = f" ({tu.get('total_tokens', 0):,} tokens){tier_msg}" if tu.get('total_tokens') else ""
+                    tokens_msg = f" ({tu.get('total_tokens', 0):,} tokens)" if tu.get('total_tokens') else ""
                     status_text.text(f"¡Completado!{tokens_msg}")
                 else:
                     progress_bar.empty()
@@ -677,23 +684,23 @@ def main() -> None:
                             st.session_state.show_correction_chat = True
                             with st.spinner("Analizando errores y buscando soluciones con IA..."):
                                 api_key = st.session_state.get('_active_api_key', '')
-                                api_key_pro = st.session_state.get('_active_api_key_pro', '')
                                 selected_model = st.session_state.get("selected_model", "gemini-2.5-flash")
                                 res = correction.analizar_errores_inicial(
                                     st.session_state.generated_xml,
                                     st.session_state.validation_errors,
                                     model_version=selected_model,
                                     api_key=api_key,
-                                    api_key_pro=api_key_pro
                                 )
                                 response_text = res.get('stdout', '') if res.get('returncode') == 0 else f"Error: {res.get('stderr')}"
                                 
+                                if res.get('quota_exceeded'):
+                                    st.session_state["_paid_quota_active"] = True
+                                
                                 # Registrar uso de tokens de corrección
                                 tu = res.get('token_usage', {})
-                                is_pro = tu.get('is_pro_key', False)
                                 if tu.get('total_tokens', 0) > 0:
                                     config_store.log_token_usage(
-                                        operation="correction" + (" (PRO)" if is_pro else " (FREE)"),
+                                        operation="correction",
                                         model=st.session_state.get("selected_model", "gemini-2.5-flash"),
                                         prompt_tokens=tu.get('prompt_tokens', 0),
                                         completion_tokens=tu.get('completion_tokens', 0),
@@ -765,7 +772,6 @@ def main() -> None:
                             with st.chat_message("assistant"):
                                 with st.spinner("Consultando a Gemini..."):
                                     api_key = st.session_state.get('_active_api_key', '')
-                                    api_key_pro = st.session_state.get('_active_api_key_pro', '')
                                     selected_model = st.session_state.get("selected_model", "gemini-2.5-flash")
                                     res = correction.corregir_xml(
                                         st.session_state.generated_xml,
@@ -773,8 +779,10 @@ def main() -> None:
                                         prompt,
                                         model_version=selected_model,
                                         api_key=api_key,
-                                        api_key_pro=api_key_pro
                                     )
+                                    
+                                    if res.get('quota_exceeded'):
+                                        st.session_state["_paid_quota_active"] = True
                                     
                                     response_text = ""
                                     corrected_xml = None

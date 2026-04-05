@@ -6,12 +6,17 @@ en una base de datos SQLite local (``data/config.db``).
 La API key se guarda ofuscada con Base64 para evitar exposición
 accidental en texto plano, aunque no constituye encriptación fuerte.
 
-    - ``save_api_key`` / ``load_api_key``: persistencia de API key gratuita.
-    - ``save_api_key_pro`` / ``load_api_key_pro``: persistencia de API key Pro (pago).
+    - ``save_api_key`` / ``load_api_key``: persistencia de la API key.
     - ``save_setting`` / ``load_setting``: configuraciones genéricas.
     - ``log_token_usage``: registra tokens consumidos por operación.
     - ``get_token_summary``: resumen acumulado de tokens.
     - ``get_daily_usage``: uso agrupado por día.
+
+.. note::
+    Las funciones ``save_api_key_pro`` / ``load_api_key_pro`` /
+    ``delete_api_key_pro`` están **obsoletas** y se mantienen solo
+    para compatibilidad silenciosa con bases de datos antiguas.
+    No deben usarse en código nuevo.
 
 Typical usage::
 
@@ -25,6 +30,7 @@ Typical usage::
 import sqlite3
 import base64
 import os
+import warnings
 from datetime import datetime, date
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -151,21 +157,32 @@ def delete_api_key() -> None:
     delete_setting("gemini_api_key")
 
 
-def save_api_key_pro(api_key: str) -> None:
-    """Guarda la API Key Pro ofuscada en la base de datos.
+def save_api_key_pro(api_key: str) -> None:  # noqa: D401
+    """**OBSOLETO** — No usar en código nuevo.
 
-    Args:
-        api_key: Clave de API Pro de Gemini.
+    La misma clave gratuita funciona en el tier de pago cuando la
+    cuenta tiene facturación habilitada en Google Cloud. Esta función
+    se mantiene solo para migración silenciosa de bases de datos antiguas.
     """
+    warnings.warn(
+        "save_api_key_pro está obsoleta. Usa save_api_key() únicamente.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     save_setting("gemini_api_key_pro", _obfuscate(api_key.strip()))
 
 
-def load_api_key_pro() -> Optional[str]:
-    """Carga la API Key Pro desde la base de datos.
+def load_api_key_pro() -> Optional[str]:  # noqa: D401
+    """**OBSOLETO** — No usar en código nuevo.
 
     Returns:
-        La API key Pro desofuscada, o ``None`` si no hay ninguna guardada.
+        La API key Pro desofuscada guardada anteriormente, o ``None``.
     """
+    warnings.warn(
+        "load_api_key_pro está obsoleta. Usa load_api_key() únicamente.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     encoded = load_setting("gemini_api_key_pro")
     if encoded:
         try:
@@ -175,8 +192,13 @@ def load_api_key_pro() -> Optional[str]:
     return None
 
 
-def delete_api_key_pro() -> None:
-    """Elimina la API Key Pro guardada de la base de datos."""
+def delete_api_key_pro() -> None:  # noqa: D401
+    """**OBSOLETO** — No usar en código nuevo."""
+    warnings.warn(
+        "delete_api_key_pro está obsoleta.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     delete_setting("gemini_api_key_pro")
 
 

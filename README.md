@@ -1,4 +1,4 @@
-# Transformador XML JATS (JATS XML Transformer) - v0.66
+# Transformador XML JATS (JATS XML Transformer) - v0.67
 
 Una herramienta avanzada impulsada por Inteligencia Artificial para convertir documentos de Word (`.docx`) a formato **JATS XML** validado, diseñada específicamente para el flujo editorial de revistas científicas.
 
@@ -15,8 +15,9 @@ Esta aplicación automatiza el proceso de etiquetado semántico, extracción de 
 - **Validación JATS 1.4**: Valida contra el último estándar **NISO JATS Version 1.4 (ANSI/NISO Z39.96-2024)**.
 - **Conversión a HTML**: Genera archivos HTML autocontenidos con logo incrustado (Base64), tema claro/oscuro, tabla de contenidos interactiva y enlaces funcionales. Las referencias bibliográficas se renderizan correctamente con DOIs clickeables.
 - **Vista Previa en Nueva Pestaña**: La previsualización del HTML se abre en una pestaña del navegador con soporte completo de UTF-8 y navegación por anclas.
-- **API Key Persistente**: La clave de API se guarda de forma segura en una base de datos SQLite local. No es necesario reingresarla en cada sesión.
+- **Una Sola API Key**: La clave de API se guarda de forma segura en una base de datos SQLite local. No es necesario reingresarla en cada sesión. Google gestiona automáticamente el paso entre tier gratuito y tier de pago con la misma clave cuando la cuenta tiene facturación habilitada.
 - **Monitoreo de Tokens**: Panel integrado que muestra el consumo de tokens acumulado, requests diarias vs. límites del tier gratuito, y alertas automáticas al acercarse al límite.
+- **Detección de Cuota Agotada**: Cuando se agota la cuota gratuita, el sistema lo detecta automáticamente y muestra un banner `💳 Cuota gratuita agotada — usando tier de pago` en la barra lateral.
 - **Interfaz Dual**:
   - **Web UI (Streamlit)**: Interfaz gráfica amigable para arrastrar y soltar archivos, editar contenido extraído y previsualizar resultados.
   - **CLI (Línea de Comandos)**: Para automatización y procesamiento por lotes.
@@ -57,6 +58,8 @@ Esta aplicación automatiza el proceso de etiquetado semántico, extracción de 
     export GEMINI_API_KEY="tu_clave_aqui"
     ```
 
+    > **Nota sobre cuota pagada:** si tu cuenta de Google AI tiene facturación habilitada, la misma clave funciona en el tier de pago una vez agotada la cuota gratuita. No se necesita ninguna clave adicional.
+
 ## 📖 Uso
 
 ### Interfaz Web (Recomendado)
@@ -79,13 +82,13 @@ La interfaz gráfica es la forma más fácil de usar la herramienta.
 
 Para usuarios avanzados que deseen integrar la herramienta en scripts.
 
-**Transformación (Word -> XML):**
+**Transformación (Word → XML):**
 
 ```bash
 python -m modules.transformer entrada.docx salida.xml
 ```
 
-**Conversión (XML -> HTML):**
+**Conversión (XML → HTML):**
 
 ```bash
 python -m modules.xml_html entrada.xml salida.html
@@ -95,12 +98,12 @@ python -m modules.xml_html entrada.xml salida.html
 
 - `streamlit_app.py`: Punto de entrada de la aplicación web (Streamlit UI).
 - `modules/`:
-  - `transformer.py`: Núcleo de la lógica de conversión. Desacoplado de la interfaz de usuario. Usa `tenacity` para manejo robusto de reintentos (HTTP 429) y control de errores. Soporta generación de hasta 65K tokens de salida.
+  - `transformer.py`: Núcleo de la lógica de conversión. Desacoplado de la interfaz de usuario. Usa `tenacity` para manejo robusto de reintentos (HTTP 429) y control de errores. Soporta generación de hasta 65K tokens de salida. Retorna `quota_exceeded: True` cuando se agota el límite diario gratuito.
   - `metadata_processor.py`: Módulo para la extracción de metadatos mediante IA, agnóstico al entorno gráfico.
   - `correction.py`: Módulo para la corrección asistida por IA (preserva texto original), completamente separado del estado de Streamlit.
   - `prompts.py`: Repositorio centralizado de instrucciones maestras (prompts) de IA con plantillas detalladas para tablas, secciones, DOI y fechas.
   - `xml_html.py`: Convertidor de JATS XML a HTML5 responsivo con renderización completa de referencias bibliográficas (DOIs clickeables, nombres de autores, fuentes en itálica).
-  - `config_store.py`: Almacenamiento persistente de configuración (API Key, uso de tokens) mediante SQLite.
+  - `config_store.py`: Almacenamiento persistente de configuración (API Key, uso de tokens) mediante SQLite. Gestiona una única API key; las funciones `*_pro` están obsoletas.
 - `views/`: Vistas de la interfaz gráfica (transformador, manual de usuario, documentación).
 - `data/`: Base de datos SQLite local (`config.db`) — excluida de Git.
 - `JATS-Publishing-1-3-MathML3-DTD/`: Archivos DTD locales para validación offline.
@@ -137,6 +140,14 @@ El código fuente y la documentación contenidos en este repositorio son propied
 Para consultas sobre licenciamiento o uso, contactar a: [cristian.carreno@uv.cl](mailto:cristian.carreno@uv.cl)
 
 ## 📅 Historial de Versiones (Changelog)
+
+### v0.67 — Unificación a Clave API Única y Detección de Cuota
+
+- **Una sola API Key**: Eliminado el concepto de "Key Pro" separada. El sistema ahora usa una única clave de API. Google gestiona internamente el paso de tier gratuito a tier de pago cuando la cuenta tiene **facturación habilitada en Google Cloud**.
+- **Detección de Cuota Agotada**: Cuando `transformer.py` o `correction.py` reciben un error 429 tras reintentos, retornan `{'quota_exceeded': True}` en lugar de intentar cambiar de clave. La UI muestra automáticamente un banner `💳 Cuota gratuita agotada — usando tier de pago` en la barra lateral.
+- **Tabla de Cuotas Simplificada**: La sección **"⚙️ Configuración"** reemplaza las columnas "Pro" de la tabla por una única columna **"Tras cuota libre: Pay-as-you-go"**. Se añade un panel informativo explicando el modelo de una sola clave con enlace a [Google AI pricing](https://ai.google.dev/pricing).
+- **Funciones Obsoletas Marcadas**: `save_api_key_pro`, `load_api_key_pro` y `delete_api_key_pro` en `config_store.py` emiten `DeprecationWarning` si se llaman. Se mantienen solo para compatibilidad con bases de datos antiguas.
+- **Backend Limpio**: `transformer.py` y `correction.py` ya no aceptan el parámetro `api_key_pro` en sus firmas. Args residuales se absorben con `**_kwargs`.
 
 ### v0.66 — Interfaz Minimalista, Validación de API y Configuración Dedicada
 

@@ -24,8 +24,15 @@
     pip install -r requirements.txt
     ```
 
-4. **Configurar Variables de Entorno**:
-    Puedes dejar configurada tu variable `GEMINI_API_KEY` o ingresarla cómodamente desde la nueva pestaña **"⚙️ Configuración"** en la interfaz web al ejecutar la aplicación.
+4. **Configurar la API Key**:
+    Ingresa tu clave `GEMINI_API_KEY` desde la pestaña **"⚙️ Configuración"** en la interfaz web, o exporta la variable de entorno antes de ejecutar:
+
+    ```bash
+    export GEMINI_API_KEY="tu_clave_aqui"
+    streamlit run streamlit_app.py
+    ```
+
+    > **Una sola clave:** el sistema no usa ni necesita una segunda key. Si la cuenta tiene facturación habilitada en Google Cloud, la misma clave funciona en el tier de pago al agotar la cuota gratuita.
 
 ## Arquitectura del Proyecto
 
@@ -35,6 +42,7 @@ El proyecto sigue una arquitectura desacoplada donde el backend es independiente
 streamlit_app.py          # Punto de entrada web
 ├── views/
 │   ├── transformador.py  # UI principal (Streamlit)
+│   ├── configuracion.py  # Configuración de API key y tokens
 │   └── manual_usuario.py # Documentación y manual
 └── modules/
     ├── transformer.py     # Lógica de conversión DOCX → XML
@@ -42,7 +50,7 @@ streamlit_app.py          # Punto de entrada web
     ├── metadata_processor.py  # Extracción de metadatos
     ├── correction.py      # Corrección asistida por IA
     ├── xml_html.py        # Conversión XML → HTML
-    └── config_store.py    # Persistencia (SQLite)
+    └── config_store.py    # Persistencia (SQLite) — una API key
 ```
 
 ### Principios de Diseño
@@ -50,6 +58,8 @@ streamlit_app.py          # Punto de entrada web
 - **Backend sin dependencia de UI**: `transformer.py`, `metadata_processor.py`, `correction.py` y `prompts.py` NO deben depender del estado de `streamlit`. La configuración se pasa como parámetros y se guarda usando `config_store.py`.
 - **Prompts Centralizados**: Todas las instrucciones para la IA están en `prompts.py`. Nunca hardcodees prompts en otros módulos.
 - **Modelo Consistente**: El modelo default es `gemini-2.5-flash` en toda la aplicación. Si añades un nuevo punto de llamada a la IA, usa este modelo.
+- **Una sola API Key**: **No añadas parámetros `api_key_pro` ni segundas claves.** Cuando la cuota gratuita se agota, `transformer.py` y `correction.py` retornan `{'quota_exceeded': True}` y la UI muestra el banner correspondiente. Google maneja el tier de pago automáticamente con la misma clave.
+- **Señalización de Cuota**: Si una función hace llamadas a Gemini y puede recibir error 429, debe retornar un diccionario que incluya `'quota_exceeded': True` (no lanzar excepción), para que la UI detecte el estado y actualice el banner lateral.
 
 ## Estilo de Código y Normas
 
@@ -112,6 +122,7 @@ Al procesar respuestas de la IA (Gemini), sigue estas reglas:
 - **Parsing de JSON**: Siempre busca el primer `{` y último `}` para extraer el JSON, ya que el modelo puede anteponer texto.
 - **Parsing de XML**: Verifica si la respuesta comienza con `<` (XML directo) o contiene bloques ` ```xml ``` ` (markdown). `invocar_gemini_cli` ya limpia backticks via `parse_model_response`.
 - **Normalización**: Usa `_normalize_metadata()` para corregir variaciones en claves del JSON.
+- **Cuota agotada**: Detecta el error 429 con `tenacity`; si se agotan los reintentos, retorna `{'error': ..., 'quota_exceeded': True}`.
 
 ### 5. Prompts para la IA
 
@@ -137,8 +148,9 @@ Al modificar o añadir prompts en `prompts.py`:
 | --- | --- |
 | La IA antepone texto antes del JSON de metadatos | Extracción por `{...}` en `metadata_processor.py` |
 | La IA no cierra etiquetas XML correctamente | Instrucciones reforzadas en `prompts.py` + sanitización en `transformer.py` |
-| `max_output_tokens` insuficiente para artículos largos | Configurado a 65536 tokens |
+| `max_output_tokens` insuficiente para artículos largos | Configurado a 65 536 tokens |
 | Backticks eliminados por `parse_model_response` | Detección dual de XML (directo o con backticks) en `transformador.py` |
+| Cuota gratuita agotada (HTTP 429 persistente) | `transformer.py` retorna `quota_exceeded: True`; la UI muestra el banner automáticamente |
 
 ## Contacto
 

@@ -48,17 +48,17 @@ class MetadataExtractor:
             data['doi'] = None
         return data
 
-    def extract_from_file(self, file_path: str, model_version: str = "gemini-2.5-flash", api_key: str = None, api_key_pro: str = None) -> Dict[str, Any]:
+    def extract_from_file(self, file_path: str, model_version: str = "gemini-2.5-flash", api_key: str = None, **_kwargs) -> Dict[str, Any]:
         """Determines file type and delegates extraction."""
         path = Path(file_path)
         if path.suffix.lower() == '.docx':
-            return self.extract_from_docx(file_path, model_version, api_key, api_key_pro)
+            return self.extract_from_docx(file_path, model_version, api_key)
         elif path.suffix.lower() == '.pdf':
-            return self.extract_from_pdf(file_path, model_version, api_key, api_key_pro)
+            return self.extract_from_pdf(file_path, model_version, api_key)
         else:
             return {"error": "Unsupported file format"}
 
-    def extract_from_docx(self, file_path: str, model_version: str = "gemini-2.5-flash", api_key: str = None, api_key_pro: str = None) -> Dict[str, Any]:
+    def extract_from_docx(self, file_path: str, model_version: str = "gemini-2.5-flash", api_key: str = None, **_kwargs) -> Dict[str, Any]:
         """Extracts text from DOCX and uses LLM to parse metadata."""
         try:
             doc = Document(file_path)
@@ -68,12 +68,12 @@ class MetadataExtractor:
                 full_text.append(para.text)
             
             context_text = "\n".join(full_text)
-            return self._query_llm_for_metadata(context_text, model_version, api_key, api_key_pro)
+            return self._query_llm_for_metadata(context_text, model_version, api_key)
         except Exception as e:
             print(f"Error reading DOCX: {e}", file=sys.stderr)
             return {}
 
-    def extract_from_pdf(self, file_path: str, model_version: str = "gemini-2.5-flash", api_key: str = None, api_key_pro: str = None) -> Dict[str, Any]:
+    def extract_from_pdf(self, file_path: str, model_version: str = "gemini-2.5-flash", api_key: str = None, **_kwargs) -> Dict[str, Any]:
         """Extracts text from PDF and uses LLM to parse metadata."""
         if not pdfplumber:
             return {"error": "pdfplumber not installed"}
@@ -87,20 +87,19 @@ class MetadataExtractor:
                     if text:
                         context_text += text + "\n"
             
-            return self._query_llm_for_metadata(context_text, model_version, api_key, api_key_pro)
+            return self._query_llm_for_metadata(context_text, model_version, api_key)
         except Exception as e:
             print(f"Error reading PDF: {e}", file=sys.stderr)
             return {}
 
-    def _query_llm_for_metadata(self, text_snippet: str, model_version: str = "gemini-2.5-flash", api_key: str = None, api_key_pro: str = None) -> Dict[str, Any]:
+    def _query_llm_for_metadata(self, text_snippet: str, model_version: str = "gemini-2.5-flash", api_key: str = None, **_kwargs) -> Dict[str, Any]:
         """Uses Gemini to structure the metadata from raw text."""
         prompt = prompts.get_metadata_prompt(text_snippet)
         
         # Try to get API Key from env if not passed
         api_key = api_key or os.environ.get("GEMINI_API_KEY")
-        api_key_pro = api_key_pro or os.environ.get("GEMINI_API_KEY_PRO")
         
-        result = invocar_gemini_cli(prompt, model_version=model_version, api_key=api_key, api_key_pro=api_key_pro)
+        result = invocar_gemini_cli(prompt, model_version=model_version, api_key=api_key)
         if result.get('returncode') == 0 and result.get('stdout'):
             import json
             txt = result['stdout']

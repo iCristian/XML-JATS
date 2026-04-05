@@ -20,9 +20,8 @@ def main() -> None:
     st.header("🔑 Claves de API")
 
     saved_key = config_store.load_api_key()
-    saved_key_pro = config_store.load_api_key_pro()
 
-    col_free, col_pro = st.columns(2, gap="large")
+    col_free, col_info = st.columns(2, gap="large")
 
     with col_free:
         st.subheader("API Key Gratuita")
@@ -67,51 +66,25 @@ def main() -> None:
 
         st.markdown("[🔗 Obtener Key en Google AI Studio](https://aistudio.google.com/app/apikey)")
 
-    with col_pro:
-        st.subheader("API Key Pro (Pago)")
-        if saved_key_pro:
-            masked_pro = saved_key_pro[:4] + "•" * 16 + saved_key_pro[-4:]
-            st.text_input("Key actual:", value=masked_pro, disabled=True, key="_cfg_masked_pro")
-            st.success("✅ Configurada", icon="🟢")
-
-            c1, c2 = st.columns(2)
-            with c1:
-                if st.button("✏️ Cambiar", key="cfg_change_pro"):
-                    st.session_state["_cfg_edit_pro"] = True
-                    st.rerun()
-            with c2:
-                if st.button("🗑️ Borrar", key="cfg_delete_pro"):
-                    config_store.delete_api_key_pro()
-                    st.session_state.pop("_active_api_key_pro", None)
-                    st.rerun()
-        else:
-            st.info("ℹ️ Opcional — se usa como respaldo si la gratuita se agota.")
-
-        if not saved_key_pro or st.session_state.get("_cfg_edit_pro"):
-            new_key_pro = st.text_input(
-                "Ingresa tu API Key Pro:",
-                type="password",
-                key="_cfg_input_pro",
-                placeholder="AIza...",
-                help="Generada con proyecto de facturación activa en Google Cloud."
-            )
-            bcol1, bcol2 = st.columns(2)
-            with bcol1:
-                if new_key_pro and st.button("💾 Guardar", key="cfg_save_pro", type="primary"):
-                    config_store.save_api_key_pro(new_key_pro.strip())
-                    st.session_state["_active_api_key_pro"] = new_key_pro.strip()
-                    st.session_state.pop("_cfg_edit_pro", None)
-                    st.success("✅ Guardada")
-                    st.rerun()
-            with bcol2:
-                if saved_key_pro and st.button("Cancelar", key="cfg_cancel_pro"):
-                    st.session_state.pop("_cfg_edit_pro", None)
-                    st.rerun()
+    with col_info:
+        st.subheader("💡 Una sola clave para todo")
+        st.info(
+            "La misma API Key que guardas aquí sirve tanto para el **tier gratuito** "
+            "como para el **tier de pago**.\n\n"
+            "Cuando tu cuota gratuita diaria se agote, Google continuará usando la "
+            "misma clave si tu cuenta tiene **facturación habilitada** en Google Cloud. "
+            "Si no, las solicitudes quedarán bloqueadas hasta el día siguiente.\n\n"
+            "No es necesario configurar una segunda clave.",
+        )
+        st.markdown(
+            "[\U0001f4b3 Activar facturación en Google Cloud]("
+            "https://console.cloud.google.com/billing)"
+        )
 
     st.markdown("---")
     st.caption(
-        "🔒 Las claves se almacenan localmente en `data/config.db` con ofuscación Base64. "
-        "No se envían a ningún servidor externo excepto a la API de Google."
+        "🔒 La clave se almacena localmente en `data/config.db` con ofuscación Base64. "
+        "No se envía a ningún servidor externo excepto a la API de Google."
     )
 
     # ════════════════════════════════════════════════════════════
@@ -120,9 +93,9 @@ def main() -> None:
     st.header("📋 Cuotas de Gemini por Modelo y Cuenta")
 
     st.markdown("""
-El sistema utiliza la **API de Google Generative AI** para interactuar con los modelos Gemini. 
-Las cuentas gratuitas tienen límites diarios y por minuto. Al superar estos límites, 
-el sistema cambia automáticamente a la API Key Pro (si está configurada).
+El sistema utiliza la **API de Google Generative AI** para interactuar con los modelos Gemini.
+Las cuentas gratuitas tienen límites diarios y por minuto. Cuando se agota la cuota libre,
+Google continúa usando la misma clave si la cuenta tiene **facturación habilitada**.
 """)
 
     # Tabla de cuotas
@@ -133,9 +106,7 @@ el sistema cambia automáticamente a la API Key Pro (si está configurada).
             "Req/día (Free)": f"{limits['rpd']:,}",
             "Tokens/min (Free)": f"{limits['tpm']:,}",
             "Req/min (Free)": limits['rpm'],
-            "Req/día (Pro)": "Sin límite*",
-            "Tokens/min (Pro)": "Según plan",
-            "Req/min (Pro)": "2000+",
+            "Tras cuota libre": "Pay-as-you-go*",
         })
 
     df_quotas = pd.DataFrame(quota_data)
@@ -148,10 +119,10 @@ el sistema cambia automáticamente a la API Key Pro (si está configurada).
 - Límites diarios reinician a las 00:00 UTC.
 - Al alcanzar el límite, se recibe error HTTP 429.
 
-**Cuenta Pro (con facturación):**
-- Se cobra por tokens usados tras agotar la cuota incluida en el plan.
-- Límites significativamente más altos que la cuenta gratuita.
-- Facturación pay-as-you-go tras la cuota incluida.
+**Con facturación habilitada (Google Cloud Billing):**
+- La misma API key continúa funcionando tras agotar la cuota libre.
+- Se cobra sólo por tokens usados por encima del tier gratuito.
+- Facturación pay-as-you-go sin límites artificiales.
 
 **Modelos recomendados:**
 | Modelo | Uso ideal |
@@ -161,7 +132,7 @@ el sistema cambia automáticamente a la API Key Pro (si está configurada).
 | `gemini-2.5-pro` | Máxima calidad, menor cuota gratuita |
 | `gemini-2.0-flash` | Mayor cuota diaria (1500 req), buena calidad |
 
-*\\* Los límites Pro varían según el plan contratado. Consulta [Google AI pricing](https://ai.google.dev/pricing).*
+*\\* Consulta [Google AI pricing](https://ai.google.dev/pricing) para tarifas actuales.*
 """)
 
     # ════════════════════════════════════════════════════════════
@@ -194,7 +165,7 @@ el sistema cambia automáticamente a la API Key Pro (si está configurada).
     st.markdown(f"**Uso de cuota diaria ({selected_model}):**")
     st.progress(rpd_pct)
     if rpd_pct >= 1.0:
-        st.error("🚫 Límite diario de la cuenta gratuita alcanzado. Se usará la Key Pro si está disponible.")
+        st.error("🚫 Cuota gratuita diaria agotada. Si tu cuenta tiene facturación habilitada, las llamadas continuarán en tier de pago.")
     elif rpd_pct >= 0.8:
         st.warning(f"⚠️ Has usado {rpd_pct:.0%} de tu cuota diaria gratuita.")
     else:

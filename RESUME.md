@@ -22,7 +22,7 @@ streamlit_app.py (Entrada)
        │         └── Conversión HTML   │
        │                              │
        ├── views/configuracion.py ────┤
-       │         └── API Keys & Tokens │
+       │         └── API Key & Tokens  │
        │                              │
        └── views/manual_usuario.py    │
                                       │
@@ -35,7 +35,7 @@ streamlit_app.py (Entrada)
        ├── correction.py        (Corrección de errores XML con IA)
        ├── prompts.py           (Prompts centralizados para Gemini)
        ├── xml_html.py          (Conversión XML JATS → HTML5)
-       └── config_store.py      (Persistencia SQLite de config)
+       └── config_store.py      (Persistencia SQLite de config — una sola API key)
               │
               ▼
        modules/dtd/JATS-Publishing-1-3-MathML3-DTD/ (Validación DTD)
@@ -54,7 +54,7 @@ streamlit_app.py (Entrada)
 | **python-docx** | 1.2.0 | Extracción de contenido de Word |
 | **pdfplumber** | 0.10.4 | Extracción de texto de PDFs |
 | **tenacity** | 9.1.2 | Reintentos robustos con backoff exponencial |
-| **SQLite** | - | Persistencia de API keys y tokens |
+| **SQLite** | - | Persistencia de API key y tokens |
 
 ---
 
@@ -65,37 +65,36 @@ XML-JATS-2/
 ├── streamlit_app.py          # Punto de entrada principal
 ├── run_app.sh                # Script de ejecución
 ├── requirements.txt          # Dependencias Python
-├── README.md                 # Documentación principal (v0.66)
+├── README.md                 # Documentación principal (v0.67)
+├── RESUME.md                 # Resumen técnico del proyecto
 ├── CONTRIBUTING.md           # Guía de contribución
 ├── Manual_Usuario_Completo_UV_v0-5.pdf  # Manual PDF
 │
 ├── modules/                  # Backend - Módulos Python
-│   ├── transformer.py        # Núcleo de conversión (694 líneas)
-│   ├── metadata_processor.py # Extracción de metadatos (134 líneas)
-│   ├── correction.py         # Corrección con IA (37 líneas)
-│   ├── prompts.py            # Prompts centralizados (274 líneas)
-│   ├── xml_html.py           # Conversión XML→HTML (1700+ líneas)
-│   ├── config_store.py       # Persistencia SQLite (373 líneas)
+│   ├── transformer.py        # Núcleo de conversión (DOCX → XML)
+│   ├── metadata_processor.py # Extracción de metadatos
+│   ├── correction.py         # Corrección con IA
+│   ├── prompts.py            # Prompts centralizados
+│   ├── xml_html.py           # Conversión XML→HTML
+│   ├── config_store.py       # Persistencia SQLite (una API key)
 │   ├── convert_images.py     # Utilidad de conversión
 │   └── dtd/                  # DTD JATS local
 │       └── JATS-Publishing-1-3-MathML3-DTD/
 │
 ├── views/                    # Frontend - Vistas Streamlit
-│   ├── transformador.py      # Vista principal (931 líneas)
-│   ├── configuracion.py      # Configuración API/tokens (239 líneas)
-│   ├── manual_usuario.py     # Manual de usuario (520+ líneas)
-│   ├── documentacion.py     # Vista de documentación
+│   ├── transformador.py      # Vista principal
+│   ├── configuracion.py      # Configuración API/tokens
+│   ├── manual_usuario.py     # Manual de usuario
+│   ├── documentacion.py      # Vista de documentación
 │   └── creditos.py           # Créditos y licencias
 │
 └── resources/                # Recursos estáticos
     ├── UV_blanco.png         # Logo UV
     ├── UV_color.png          # Logo UV color
     ├── logo.png              # Logo principal
-    ├── logo_transparent.png   # Logo transparente
-    └── manual_images/         # Imágenes del manual
+    ├── logo_transparent.png  # Logo transparente
+    └── manual_images/        # Imágenes del manual
 ```
-
-**Total de líneas de código Python:** ~5,365 líneas
 
 ---
 
@@ -115,17 +114,27 @@ XML-JATS-2/
 
 | Modelo | Cuota gratis/día | Uso recomendado |
 |--------|------------------|-----------------|
-| gemini-2.5-flash | 500 | Recomendado (balance) |
-| gemini-2.5-pro | 25 | Máxima calidad |
-| gemini-2.0-flash | 1500 | Alto volumen |
-| gemini-3-flash-preview | 500 | Experimental |
+| gemini-2.5-flash | 500 RPD | Recomendado (balance calidad/cuota) |
+| gemini-2.5-pro | 25 RPD | Máxima calidad |
+| gemini-2.0-flash | 1500 RPD | Alto volumen |
+
+> Una vez agotada la cuota gratuita, la misma clave funciona en el **tier de pago** si la cuenta tiene facturación habilitada en Google Cloud. No se requiere una segunda clave.
+
+---
+
+## Gestión de API Key y Cuota
+
+- **Una sola clave**: ingresada desde la pestaña **"⚙️ Configuración"** o mediante la variable de entorno `GEMINI_API_KEY`.
+- **Cuota agotada**: `transformer.py` retorna `{'quota_exceeded': True}` ante un error 429 persistente. La UI muestra el banner `💳 Cuota gratuita agotada — usando tier de pago` en la barra lateral.
+- **Seguridad**: la clave se almacena en `data/config.db` (excluido de Git) y solo se muestra enmascarada en la UI.
 
 ---
 
 ## Variables de Entorno
 
-- `GEMINI_API_KEY` - API Key gratuita de Gemini
-- `GEMINI_API_KEY_PRO` - API Key de pago (opcional)
+| Variable | Descripción |
+|----------|-------------|
+| `GEMINI_API_KEY` | API Key de Google Gemini (única variable requerida) |
 
 ---
 
@@ -145,9 +154,9 @@ streamlit run streamlit_app.py
 
 ## Estado del Proyecto
 
-- **Versión actual:** 0.66
+- **Versión actual:** 0.67
 - **Framework:** Streamlit
-- **LLM:** Google Gemini API
+- **LLM:** Google Gemini API (gemini-2.5-flash por defecto)
 - **Validación:** JATS DTD 1.3/1.4
 
 ---
@@ -156,6 +165,6 @@ streamlit run streamlit_app.py
 
 | Archivo | Propósito |
 |---------|-----------|
-| `data/config.db` | Base de datos SQLite local (API keys, tokens, métricas) |
-| `.gitignore` | Exclusiones de Git |
+| `data/config.db` | Base de datos SQLite local (API key, tokens, métricas) |
+| `.gitignore` | Exclusiones de Git (`data/`, `.venv/`, etc.) |
 | `requirements.txt` | Dependencias Python |
