@@ -184,3 +184,14 @@ imagenes_extraidas/
 
 # Local config database (API keys, token usage)
 data/
+
+# Temporary files
+temp/
+*.tmp
+
+# Downloaded/archived DTD (extracted version is in modules/dtd/)
+jats_dtd.zip
+JATS-Publishing-1-3-MathML3-DTD/
+
+# Unrelated documents
+codigoFuente_inscripcion.pdf
