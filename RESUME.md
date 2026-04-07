@@ -65,7 +65,7 @@ XML-JATS-2/
 ├── streamlit_app.py          # Punto de entrada principal
 ├── run_app.sh                # Script de ejecución
 ├── requirements.txt          # Dependencias Python
-├── README.md                 # Documentación principal (v0.67)
+├── README.md                 # Documentación principal (v0.7.0)
 ├── RESUME.md                 # Resumen técnico del proyecto
 ├── CONTRIBUTING.md           # Guía de contribución
 ├── Manual_Usuario_Completo_UV_v0-5.pdf  # Manual PDF

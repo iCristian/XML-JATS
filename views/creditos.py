@@ -56,9 +56,10 @@ def main():
 
         - **Python 3.9+**: Lenguaje base.
         - **Streamlit**: Framework de interfaz de usuario.
-        - **Google Gemini Pro**: Modelo de lenguaje (LLM) para la interpretación semántica y corrección de XML.
+        - **Inteligencia Artificial Multi-Model**: Soporte nativo para motores LLM de **Google Gemini**, **OpenAI**, **Anthropic (Claude)**, **DeepSeek**, **Mistral**, **Groq** y local/offline mediante **Ollama**; para interpretación semántica y corrección de XML.
         - **LXML**: Procesamiento y validación robusta de XML.
-        - **JATS 1.3**: Estándar de etiquetado (Journal Archiving and Interchange Tag Suite).
+        - **SQLite**: Gestión ligera y eficiente para almacenar de forma persistente e iterativa las API Keys multicuenta (ofuscadas en token Base64) y control contable de los recursos.
+        - **JATS 1.3 / 1.4**: Estándares oficiales de etiquetado (Journal Archiving and Interchange Tag Suite), intercambiable en tiempo real a gusto del publicador.
         """)
 
     st.divider()
@@ -70,11 +71,12 @@ def main():
     
     st.markdown("""
     1. **Procesamiento Volátil**: Los archivos cargados se procesan en la memoria del servidor (o localmente si se ejecuta en su máquina) y **no se almacenan permanentemente**.
-    2. **API de Inteligencia Artificial**:
-        - El texto extraído de los documentos se envía a la API de **Google Gemini** para su estructuración.
-        - Google utiliza estos datos de acuerdo con sus [Términos de Servicio de API Generativa](https://ai.google.dev/terms).
-        - **No suba documentos con datos personales sensibles** (nombres de pacientes, datos confidenciales no anonimizados) a menos que tenga autorización explícita.
-    3. **Uso Local Recomendado**: Para máxima privacidad, ejecute esta herramienta en un entorno local seguro.
+    2. **Custodia de Claves en SQLite**: Tus claves API para los diversos proveedores se almacenan de manera local y encriptada en la base de datos `data/config.db`. **Nunca** son derivadas hacia un middleware o ente de terceros más allá del puente oficial SSL entre servidor y el Cloud AI escogido.
+    3. **Integraciones AI de Terceros**:
+        - El texto extraído se envía en demanda exclusivamente al **Proveedor de Inteligencia Artificial activo** que hubiese configurado en su perfil (Gemini, Claude, OpenAI, etc.).
+        - El proveedor receptor utiliza tales extractos con apego a las cláusulas comerciales de sus API — que en ecosistemas como OpenAI o Anthropic estipulan usualmente Privacidad-Zero-Data-Training bajo cuentas tarifadas, a diferencia de versiones web comerciales. Revisar términos del proveedor utilizado.
+        - **Regla Oro**: No suministre bajo ningún método documentos con datos personales sensibles, patológicos o sin anonimizar sin tener consentimiento informado o garantías HIPAA provistas desde su propia nube privada.
+    4. **Inferencia Local (Ollama)**: Si configuras un servicio on-premise local como Ollama, ningún contenido de investigación transita fuera del servidor actual, lográndose un `air-gapped` total y garantizándose privacidad absoluta.
     """)
 
     st.divider()
@@ -92,7 +94,7 @@ def main():
             """
             <div class='branding'>
                 <b>Universidad de Valparaíso</b><br>
-                <small>Transformador XML JATS v0.65</small>
+                <small>Transformador XML JATS v0.7.0</small>
             </div>
             """, 
             unsafe_allow_html=True

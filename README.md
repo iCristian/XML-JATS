@@ -1,4 +1,4 @@
-# Transformador XML JATS (JATS XML Transformer) - v0.68
+# Transformador XML JATS (JATS XML Transformer) - v0.7.0
 
 Una herramienta avanzada impulsada por Inteligencia Artificial para convertir documentos de Word (`.docx`) a formato **JATS XML** validado, diseñada específicamente para el flujo editorial de revistas científicas.
 
@@ -6,7 +6,7 @@ Esta aplicación automatiza el proceso de etiquetado semántico, extracción de 
 
 ## 🚀 Características Principales
 
-- **Conversión Inteligente**: Utiliza LLMs (Google Gemini 2.5 Flash) para interpretar la estructura lógica del documento y generar etiquetas JATS precisas.
+- **Arquitectura Multi-Model (Vendor-Agnostic)**: El sistema soporta una amplia variedad de proveedores de Inteligencia Artificial más allá de Google Gemini, incluyendo **OpenAI (GPT-4o), Anthropic (Claude 3.5), DeepSeek, Mistral, Groq**, e incluso modelos locales sin costo usando **Ollama**.
 - **Soporte Multiformato**: Procesa documentos **Word (`.docx`)** y **PDF (`.pdf`)**.
 - **Extracción de Metadatos**: Identifica y extrae automáticamente metadatos clave (título, autores, DOI, fechas de publicación, recepción y aceptación).
 - **Extracción de Tablas**: Las tablas del documento se convierten automáticamente a `<table-wrap>` con `<thead>`/`<tbody>` correctamente estructurados.
@@ -15,8 +15,8 @@ Esta aplicación automatiza el proceso de etiquetado semántico, extracción de 
 - **Validación JATS 1.4**: Valida contra el último estándar **NISO JATS Version 1.4 (ANSI/NISO Z39.96-2024)**.
 - **Conversión a HTML**: Genera archivos HTML autocontenidos con logo incrustado (Base64), tema claro/oscuro, tabla de contenidos interactiva y enlaces funcionales. Las referencias bibliográficas se renderizan correctamente con DOIs clickeables.
 - **Vista Previa en Nueva Pestaña**: La previsualización del HTML se abre en una pestaña del navegador con soporte completo de UTF-8 y navegación por anclas.
-- **Una Sola API Key**: La clave de API se guarda de forma segura en una base de datos SQLite local. No es necesario reingresarla en cada sesión. Google gestiona automáticamente el paso entre tier gratuito y tier de pago con la misma clave cuando la cuenta tiene facturación habilitada.
-- **Monitoreo de Tokens**: Panel integrado que muestra el consumo de tokens acumulado, requests diarias vs. límites del tier gratuito, y alertas automáticas al acercarse al límite.
+- **Gestión Multi-API Key**: Las claves de API de los distintos proveedores elegidos se guardan localmente de forma segura en una base de datos SQLite con ofuscación Base64. Puedes interconectar múltiples inteligencias sin reingresar parámetros iterativamente.
+- **Monitoreo de Tokens Universal**: Un panel estadístico integrado computará el uso histórico, las métricas de consumo de cada proveedor logrando mostrar los thresholds de alertas y prevenciones de pago antes de llegar a cuotas máximas.
 - **Detección de Cuota Agotada**: Cuando se agota la cuota gratuita, el sistema lo detecta automáticamente y muestra un banner `💳 Cuota gratuita agotada — usando tier de pago` en la barra lateral.
 - **Interfaz Dual**:
   - **Web UI (Streamlit)**: Interfaz gráfica amigable para arrastrar y soltar archivos, editar contenido extraído y previsualizar resultados.
@@ -26,7 +26,7 @@ Esta aplicación automatiza el proceso de etiquetado semántico, extracción de 
 
 - Windows, macOS o Linux.
 - [Python 3.9+](https://www.python.org/downloads/)
-- Una clave de API de Google Gemini (Google AI Studio).
+- Una clave de API activa de cualquiera de los proveedores soportados (Gemini, OpenAI, Anthropic, DeepSeek, etc.) o una instalación local de **Ollama** ejecutándose en `localhost:11434`.
 
 ## 📦 Instalación
 
@@ -50,7 +50,7 @@ Esta aplicación automatiza el proceso de etiquetado semántico, extracción de 
 4. **Configurar la API Key de Gemini** (elige una opción):
 
     **Opción A — Desde la interfaz web (recomendado):**
-    Al abrir la aplicación, dirígete a la pestaña **"⚙️ Configuración"** en el menú izquierdo, pega tu clave en el campo correspondiente y presiona **"💾 Guardar"**. La clave se almacena de forma persistente y se carga automáticamente en futuras sesiones.
+    Al abrir la aplicación, dirígete a la pestaña **"⚙️ Configuración"** en el menú izquierdo. Escoge la inteligencia de tu agrado (ej. OpenAI, Anthropic, Gemini, Mastral, Deepseek), inserta tu respectiva key y presiona **"💾 Guardar"**.
 
     **Opción B — Variable de entorno (fallback):**
 
@@ -140,6 +140,13 @@ El código fuente y la documentación contenidos en este repositorio son propied
 Para consultas sobre licenciamiento o uso, contactar a: [cristian.carreno@uv.cl](mailto:cristian.carreno@uv.cl)
 
 ## 📅 Historial de Versiones (Changelog)
+
+### v0.7.0 — Arquitectura Multi-Model (Vendor-Agnostic)
+
+- **Soporte Multi-Proveedor (LLM-Agnostic)**: El Transformador XML abandona el confinamiento a Gemini e introduce una robusta arquitectura con soporte nativo para **OpenAI**, **Anthropic (Claude)**, **DeepSeek**, **Mistral**, **Groq** e inferencia local offline apoyada en **Ollama** (Llama3, Qwen, etc).
+- **Abstracción Multi-Proveedor**: Un nuevo diseño estructural (`modules/llm_provider.py`) introduce la clase abstracta `LLMProvider` permitiendo la fácil y limpia integración de nuevos ecosistemas y API providers en el futuro.
+- **Selectificador y Dashboard Híbrido**: El menú de *Configuración* fue reconstruido para permitir el ingreso de la API Key particular a cada servicio con enmascaramiento Base64, además de proveer atajos URL para expedir las Key gratuitas de todos los competidores en el mercado.
+- **Cuotas Multi-Cuenta y Fallbacks**: Rebalanceo interno del monitoreo de peticiones e historial contable, el token-meter reportará fidedignamente según el proveedor utilizado.
 
 ### v0.68 — Metadatos de Revista Persistentes, Selectores DTD y Corrección SSL
 

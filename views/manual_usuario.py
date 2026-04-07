@@ -502,7 +502,7 @@ def main():
             """
             <div class='branding'>
                 <b>Universidad de Valparaíso</b><br>
-                <small>Transformador XML JATS v0.68</small>
+                <small>Transformador XML JATS v0.7.0</small>
             </div>
             """, 
             unsafe_allow_html=True
