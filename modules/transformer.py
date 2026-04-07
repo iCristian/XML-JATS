@@ -15,23 +15,22 @@ Attributes:
 
 import os
 import re
-
 import sys
 import time
 import urllib.request
 import zipfile
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Any
+from typing import Any, Dict, List, Optional, Tuple
 
 from docx import Document
 from lxml import etree
-
-import google.generativeai as genai
-from google.generativeai.types import HarmCategory, HarmBlockThreshold
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+from tenacity import (retry, retry_if_exception_type, stop_after_attempt,
+                      wait_exponential)
 
 from . import prompts
+from .llm_provider import (PROVIDER_REGISTRY, LLMConfig, LLMResponse,
+                           get_provider)
 
 # --- Constantes ---
 DTD_ZIP_URL = "https://ftp.ncbi.nlm.nih.gov/pub/jats/publishing/1.3/JATS-Publishing-1-3-MathML3-DTD.zip"
@@ -128,6 +127,7 @@ def extraer_contenido_estructurado(docx_path: str) -> Optional[str]:
 def parse_model_response(text: str) -> str:
     """Extrae el contenido de un bloque de código markdown o devuelve el texto puro."""
     import re
+
     # Buscar bloque XML (soporta output truncado sin backticks finales)
     match_xml = re.search(r'```xml\s*(.*?)(?:```|$)', text, re.DOTALL | re.IGNORECASE)
     if match_xml:
@@ -142,87 +142,83 @@ def parse_model_response(text: str) -> str:
     return text.strip()
 
 
-class GeminiRetryError(Exception):
-    """Excepción lanzada cuando faya la ejecución de Gemini tras varios reintentos por errores recuperables (e.g. cuota)."""
+class LLMRetryError(Exception):
+    """Excepción lanzada cuando falla la ejecución del LLM tras varios reintentos por errores recuperables (e.g. cuota)."""
     pass
+
+# Alias de compatibilidad
+GeminiRetryError = LLMRetryError
 
 @retry(
     stop=stop_after_attempt(3),
     wait=wait_exponential(multiplier=5, min=10, max=60),
-    retry=retry_if_exception_type(GeminiRetryError),
+    retry=retry_if_exception_type(LLMRetryError),
     reraise=True
 )
-def _attempt_gemini_call(model: genai.GenerativeModel, prompt: str, token_manager=None, chat=None) -> Any:
-    """Llamada interna a Gemini con lógica de reintentos vía tenacity."""
+def _attempt_llm_call(
+    provider_id: str,
+    prompt: str,
+    model: str,
+    api_key: str,
+    config: LLMConfig | None = None,
+    chat_history: list | None = None,
+) -> LLMResponse:
+    """Llamada interna al LLM con lógica de reintentos vía tenacity."""
     try:
-        generation_config = genai.types.GenerationConfig(
-            temperature=0.1,
-            top_p=0.95,
-            top_k=40,
-            max_output_tokens=65536,
+        provider = get_provider(provider_id)
+        return provider.generate(
+            prompt=prompt,
+            model=model,
+            api_key=api_key,
+            config=config,
+            chat_history=chat_history,
         )
-        safety_settings = {
-            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
-            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
-        }
-        
-        if chat is not None:
-             response = chat.send_message(prompt, generation_config=generation_config, safety_settings=safety_settings)
-        else:
-             response = model.generate_content(prompt, generation_config=generation_config, safety_settings=safety_settings)
-        
-        # Track token usage if response is successful
-        if token_manager and response and hasattr(response, 'usage_metadata'):
-            try:
-                # Actualizar contadores globales de tokens
-                usage = response.usage_metadata
-                token_manager.add_usage(
-                    input_tokens=usage.prompt_token_count,
-                    output_tokens=usage.candidates_token_count,
-                    model_name=model.model_name
-                )
-            except Exception as e:
-                print(f"Error registrando tokens (ignorado en core flow): {e}", file=sys.stderr)
-                
-        return response
     except Exception as e:
         error_str = str(e)
-        if "429" in error_str or "Quota exceeded" in error_str:
+        if "429" in error_str or "Quota exceeded" in error_str or "rate_limit" in error_str.lower():
             print(f"Advertencia: Cuota excedida (429). Programando reintento... Detalle: {error_str}", file=sys.stderr)
-            raise GeminiRetryError(f"HTTP 429: Cuota excedida o Rate Limit ({error_str})")
-        
-        if "Recitation" in error_str or "FinishReason.RECITATION" in error_str:
-            print(f"Error de Recitation (Gemini se negó a responder por políticas de copyright).", file=sys.stderr)
-            # Retornar una excepción normal que no dispara retries (o dejar que la capture the top level)
-            raise Exception(f"FinishReason.RECITATION - El modelo bloqueó la respuesta por políticas de recitación/copyright. Intenta procesar fragmentos más pequeños.")
-            
-        raise # Reraise other errors to be caught in invocar_gemini_cli
+            raise LLMRetryError(f"HTTP 429: Cuota excedida o Rate Limit ({error_str})")
 
-def invocar_gemini_cli(
+        if "Recitation" in error_str or "FinishReason.RECITATION" in error_str:
+            print(f"Error de Recitation (modelo se negó a responder por políticas de copyright).", file=sys.stderr)
+            raise Exception(f"FinishReason.RECITATION - El modelo bloqueó la respuesta por políticas de recitación/copyright. Intenta procesar fragmentos más pequeños.")
+
+        raise
+
+
+def invocar_llm(
     prompt: str,
     max_attempts: int = 3,
     base_backoff: int = 20,
     timeout: int = 120,
     model_version: str = "gemini-2.5-flash",
-    api_key: Optional[str] = None,
-    **_kwargs,  # absorbe api_key_pro residual para compatibilidad hacia atrás
+    api_key: str | None = None,
+    provider_id: str = "gemini",
+    **_kwargs,
 ) -> Dict[str, Any]:
     """
-    Función helper para llamar a la API de Gemini (CLI-friendly y modular).
+    Función principal para llamar a cualquier proveedor de LLM.
 
-    Una sola ``api_key`` sirve tanto para el tier gratuito como para el de pago.
-    Cuando la cuota gratuita diaria se agota, la misma clave sigue funcionando
-    si la cuenta de Google tiene facturación habilitada.  En ese caso el resultado
-    incluirá ``'quota_exceeded': True`` como indicación para que la UI muestre
-    la advertencia de paso a cuota de pago.
+    Soporta Google Gemini, OpenAI, Anthropic y proveedores compatibles
+    con la API de OpenAI (DeepSeek, Mistral, Groq, Ollama).
+
+    Args:
+        prompt: Texto del prompt a enviar.
+        model_version: Nombre/ID del modelo.
+        api_key: Clave de API del proveedor.
+        provider_id: Identificador del proveedor ('gemini', 'openai', 'anthropic', etc.).
+
+    Returns:
+        Dict con claves 'returncode', 'stdout', 'stderr', 'token_usage', 'quota_exceeded'.
     """
     if not api_key:
-        api_key = os.environ.get('GEMINI_API_KEY')
+        provider = get_provider(provider_id)
+        env_var = provider.get_api_key_env_var()
+        api_key = os.environ.get(env_var, "") if env_var else ""
 
     # Sanitización robusta: ignorar placeholders o keys muy cortas (< 20 chars)
-    def _is_valid_key_format(k: Optional[str]) -> bool:
+    # Ollama no requiere API key real
+    def _is_valid_key_format(k: str | None) -> bool:
         if not k:
             return False
         k = k.strip()
@@ -230,83 +226,90 @@ def invocar_gemini_cli(
             return False
         return True
 
-    valid_key = api_key if _is_valid_key_format(api_key) else None
-
-    if not valid_key:
+    if provider_id != "ollama" and not _is_valid_key_format(api_key):
         return {
             'returncode': 1,
-            'stderr': 'No se encontró una API Key válida. Ve a ⚙️ Configuración y guarda tu clave de Google AI Studio.',
+            'stderr': f'No se encontró una API Key válida para {provider_id}. Ve a ⚙️ Configuración y guarda tu clave.',
         }
-    
+
+    # Para Ollama, usar una key dummy si no hay
+    if provider_id == "ollama" and not api_key:
+        api_key = "ollama"
+
     token_manager = None
     try:
         from .config_store import token_manager as global_token_manager
         token_manager = global_token_manager
     except ImportError:
         pass
-        
-    def attempt_with_key(current_key: str) -> Dict[str, Any]:
-        genai.configure(api_key=current_key)
-        model = genai.GenerativeModel(model_version)
-        chat = model.start_chat()
-        response = _attempt_gemini_call(model, prompt, token_manager=token_manager, chat=chat)
-        
-        full_text = response.text if response and hasattr(response, 'text') else ""
-        
-        tu = {}
-        if hasattr(response, 'usage_metadata'):
-             usage = response.usage_metadata
-             tu = {
-                 'prompt_tokens': getattr(usage, 'prompt_token_count', 0),
-                 'completion_tokens': getattr(usage, 'candidates_token_count', 0),
-                 'total_tokens': getattr(usage, 'total_token_count', 0),
-             }
-             
-        # Lógica de auto-continuación si el output llega al límite máximo de tokens (8192)
-        loop_count = 0
-        while response and response.candidates and loop_count < 3:
-             finish_reason = getattr(response.candidates[0], 'finish_reason', 1)
-             is_max_tokens = "MAX_TOKENS" in str(finish_reason) or finish_reason == 2
-             if not is_max_tokens:
-                 break
-                 
-             print("MAX_TOKENS alcanzado (límite de salida). Solicitando continuación a Gemini...", file=sys.stderr)
-             response = _attempt_gemini_call(
-                 model, 
-                 "Continúa generando el código XML exactamente donde te quedaste, sin repetir texto, sin saludos ni explicaciones, solo el código XML que sigue.", 
-                 token_manager=token_manager, 
-                 chat=chat
-             )
-             
-             if response and hasattr(response, 'text') and response.text:
-                 import re
-                 chunk = response.text.strip()
-                 chunk = re.sub(r"^```[a-zA-Z]*\n?", "", chunk)
-                 chunk = re.sub(r"```$", "", chunk).strip()
-                 full_text += "\n" + chunk
-             
-             if hasattr(response, 'usage_metadata'):
-                 usage = response.usage_metadata
-                 tu['prompt_tokens'] = tu.get('prompt_tokens', 0) + getattr(usage, 'prompt_token_count', 0)
-                 tu['completion_tokens'] = tu.get('completion_tokens', 0) + getattr(usage, 'candidates_token_count', 0)
-                 tu['total_tokens'] = tu.get('total_tokens', 0) + getattr(usage, 'total_token_count', 0)
-                 
-             loop_count += 1
-        
-        if full_text:
-             response_text = parse_model_response(full_text)
-             # Sanitización automática del XML generado
-             response_text = sanitize_generated_xml(response_text)
-             return {'returncode': 0, 'stdout': response_text, 'token_usage': tu}
-        else:
-             return {'returncode': 1, 'stderr': f'Gemini devolvió una respuesta vacía o fue bloqueada. {getattr(response, "prompt_feedback", "")}'}
+
+    config = LLMConfig()
 
     try:
-        return attempt_with_key(valid_key)
-    except GeminiRetryError as e:
-        # Cuota gratuita agotada: notificar a la UI mediante flag especial.
-        # Si la cuenta tiene facturación, la misma clave seguirá funcionando
-        # en el tier de pago — el usuario verá el aviso en la interfaz.
+        response = _attempt_llm_call(
+            provider_id=provider_id,
+            prompt=prompt,
+            model=model_version,
+            api_key=api_key,
+            config=config,
+        )
+
+        full_text = response.text
+
+        tu = {
+            'prompt_tokens': response.prompt_tokens,
+            'completion_tokens': response.completion_tokens,
+            'total_tokens': response.total_tokens,
+        }
+
+        # Track token usage
+        if token_manager and tu.get('total_tokens', 0) > 0:
+            try:
+                token_manager.add_usage(
+                    input_tokens=response.prompt_tokens,
+                    output_tokens=response.completion_tokens,
+                    model_name=model_version,
+                )
+            except Exception as e:
+                print(f"Error registrando tokens (ignorado): {e}", file=sys.stderr)
+
+        # Lógica de auto-continuación si el output llega al límite máximo de tokens
+        loop_count = 0
+        while loop_count < 3:
+            is_max_tokens = "MAX_TOKENS" in response.finish_reason.upper() or "length" in response.finish_reason.lower()
+            if not is_max_tokens:
+                break
+
+            print("MAX_TOKENS alcanzado. Solicitando continuación...", file=sys.stderr)
+            continuation = _attempt_llm_call(
+                provider_id=provider_id,
+                prompt="Continúa generando el código XML exactamente donde te quedaste, sin repetir texto, sin saludos ni explicaciones, solo el código XML que sigue.",
+                model=model_version,
+                api_key=api_key,
+                config=config,
+            )
+
+            if continuation.text:
+                chunk = continuation.text.strip()
+                chunk = re.sub(r"^```[a-zA-Z]*\n?", "", chunk)
+                chunk = re.sub(r"```$", "", chunk).strip()
+                full_text += "\n" + chunk
+
+            tu['prompt_tokens'] = tu.get('prompt_tokens', 0) + continuation.prompt_tokens
+            tu['completion_tokens'] = tu.get('completion_tokens', 0) + continuation.completion_tokens
+            tu['total_tokens'] = tu.get('total_tokens', 0) + continuation.total_tokens
+
+            response = continuation
+            loop_count += 1
+
+        if full_text:
+            response_text = parse_model_response(full_text)
+            response_text = sanitize_generated_xml(response_text)
+            return {'returncode': 0, 'stdout': response_text, 'token_usage': tu}
+        else:
+            return {'returncode': 1, 'stderr': 'El modelo devolvió una respuesta vacía o fue bloqueada.'}
+
+    except LLMRetryError as e:
         print(f"Cuota de API agotada tras reintentos. Detalles: {e}", file=sys.stderr)
         return {
             'returncode': 1,
@@ -315,11 +318,36 @@ def invocar_gemini_cli(
                 f'Cuota gratuita agotada (HTTP 429 tras {max_attempts} reintentos). '
                 'Si tu cuenta tiene facturación habilitada, la misma clave seguirá '
                 'funcionando en el tier de pago. Espera unos minutos o revisa '
-                'tu cuota en Google AI Studio.'
+                'tu cuota en el panel de tu proveedor de IA.'
             ),
         }
     except Exception as e:
-        return {'returncode': 1, 'stderr': f'Error en API de Gemini tras reintentos: {str(e)}'}
+        return {'returncode': 1, 'stderr': f'Error en API de LLM tras reintentos: {str(e)}'}
+
+
+# Alias de compatibilidad hacia atrás — código existente puede seguir usando invocar_gemini_cli
+def invocar_gemini_cli(
+    prompt: str,
+    max_attempts: int = 3,
+    base_backoff: int = 20,
+    timeout: int = 120,
+    model_version: str = "gemini-2.5-flash",
+    api_key: Optional[str] = None,
+    **_kwargs,
+) -> Dict[str, Any]:
+    """Alias de compatibilidad. Delega a ``invocar_llm`` con provider_id='gemini'."""
+    return invocar_llm(
+        prompt=prompt,
+        max_attempts=max_attempts,
+        base_backoff=base_backoff,
+        timeout=timeout,
+        model_version=model_version,
+        api_key=api_key,
+        provider_id="gemini",
+        **_kwargs,
+    )
+
+
 def extraer_resumen_tokens(gemini_meta: Dict[str, Any]) -> Dict[str, Any]:
     """Extrae métricas de uso de tokens de la salida de Gemini.
 
@@ -378,7 +406,7 @@ def extraer_resumen_tokens(gemini_meta: Dict[str, Any]) -> Dict[str, Any]:
 def _fix_unclosed_tags(xml_string: str) -> str:
     """Intento de emergencia para cerrar etiquetas huérfanas o arreglar desajustes básicos dejados por la IA."""
     import re
-    
+
     # 1. Asegurar que empiece y termine con <article>
     if not xml_string.strip().startswith("<article") and not xml_string.strip().startswith("<?xml"):
         xml_string = f"<article>\n{xml_string}"

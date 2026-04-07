@@ -7,21 +7,23 @@ y feedback del usuario a un modelo de lenguaje (Gemini) para obtener una versió
 """
 
 
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 
-from .transformer import invocar_gemini_cli, WORKSPACE_ROOT
 from . import prompts
+from .transformer import WORKSPACE_ROOT, invocar_gemini_cli, invocar_llm
+
 
 def analizar_errores_inicial(
     xml_content: str, 
     validation_errors: List[str],
     model_version: str = "gemini-2.5-flash",
     api_key: str = None,
-    **_kwargs,  # absorbe api_key_pro residual para compatibilidad
+    provider_id: str = "gemini",
+    **_kwargs,
 ) -> Dict[str, Any]:
     """Realiza el análisis inicial de errores para decidir si preguntar o corregir."""
     prompt = prompts.get_correction_analysis_prompt(xml_content, validation_errors)
-    return invocar_gemini_cli(prompt, model_version=model_version, api_key=api_key)
+    return invocar_llm(prompt, model_version=model_version, api_key=api_key, provider_id=provider_id)
 
 def corregir_xml(
     xml_content: str, 
@@ -29,8 +31,9 @@ def corregir_xml(
     user_feedback: str = "",
     model_version: str = "gemini-2.5-flash",
     api_key: str = None,
-    **_kwargs,  # absorbe api_key_pro residual para compatibilidad
+    provider_id: str = "gemini",
+    **_kwargs,
 ) -> Dict[str, Any]:
-    """Orquesta el proceso de corrección de XML usando Gemini."""
+    """Orquesta el proceso de corrección de XML usando el LLM seleccionado."""
     prompt = prompts.get_interactive_correction_prompt(xml_content, validation_errors, user_feedback)
-    return invocar_gemini_cli(prompt, model_version=model_version, api_key=api_key)
+    return invocar_llm(prompt, model_version=model_version, api_key=api_key, provider_id=provider_id)

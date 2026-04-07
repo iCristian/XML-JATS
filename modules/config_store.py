@@ -27,14 +27,13 @@ Typical usage::
     log_token_usage("generation", "gemini-2.5-flash", 1200, 3400, 4600)
 """
 
-import sqlite3
 import base64
 import os
+import sqlite3
 import warnings
-from datetime import datetime, date
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-
 
 # ─── Constantes ────────────────────────────────────────────────
 _DB_DIR = Path("data")
@@ -92,7 +91,25 @@ def init_db() -> None:
                 completion_tokens INTEGER DEFAULT 0,
                 total_tokens      INTEGER DEFAULT 0
             );
+
+            CREATE TABLE IF NOT EXISTS provider_keys (
+                provider_id TEXT PRIMARY KEY,
+                api_key     TEXT NOT NULL
+            );
         """)
+        # Migración automática: si existe gemini_api_key en config pero no en provider_keys
+        row = conn.execute(
+            "SELECT value FROM config WHERE key = 'gemini_api_key'"
+        ).fetchone()
+        if row:
+            existing = conn.execute(
+                "SELECT 1 FROM provider_keys WHERE provider_id = 'gemini'"
+            ).fetchone()
+            if not existing:
+                conn.execute(
+                    "INSERT INTO provider_keys (provider_id, api_key) VALUES (?, ?)",
+                    ("gemini", row["value"]),
+                )
         conn.commit()
     finally:
         conn.close()
@@ -200,6 +217,108 @@ def delete_api_key_pro() -> None:  # noqa: D401
         stacklevel=2,
     )
     delete_setting("gemini_api_key_pro")
+
+
+# ─── Multi-proveedor API Keys ────────────────────────────────
+
+def save_provider_key(provider_id: str, api_key: str) -> None:
+    """Guarda la API Key ofuscada para un proveedor específico.
+
+    Args:
+        provider_id: Identificador del proveedor (ej: 'gemini', 'openai').
+        api_key: Clave de API en texto plano.
+    """
+    conn = _get_connection()
+    try:
+        conn.execute(
+            "INSERT OR REPLACE INTO provider_keys (provider_id, api_key) VALUES (?, ?)",
+            (provider_id, _obfuscate(api_key.strip())),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+    # Mantener sincronizada la tabla legacy para Gemini
+    if provider_id == "gemini":
+        save_api_key(api_key)
+
+
+def load_provider_key(provider_id: str) -> Optional[str]:
+    """Carga la API Key de un proveedor específico.
+
+    Args:
+        provider_id: Identificador del proveedor.
+
+    Returns:
+        La API key desofuscada, o ``None`` si no hay ninguna guardada.
+    """
+    conn = _get_connection()
+    try:
+        row = conn.execute(
+            "SELECT api_key FROM provider_keys WHERE provider_id = ?",
+            (provider_id,),
+        ).fetchone()
+        if row:
+            try:
+                return _deobfuscate(row["api_key"])
+            except Exception:
+                return None
+    finally:
+        conn.close()
+    # Fallback para Gemini: intentar la tabla legacy
+    if provider_id == "gemini":
+        return load_api_key()
+    return None
+
+
+def delete_provider_key(provider_id: str) -> None:
+    """Elimina la API Key de un proveedor específico.
+
+    Args:
+        provider_id: Identificador del proveedor.
+    """
+    conn = _get_connection()
+    try:
+        conn.execute(
+            "DELETE FROM provider_keys WHERE provider_id = ?",
+            (provider_id,),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+    if provider_id == "gemini":
+        delete_api_key()
+
+
+def save_active_provider(provider_id: str) -> None:
+    """Guarda el proveedor activo seleccionado por el usuario.
+
+    Args:
+        provider_id: Identificador del proveedor activo.
+    """
+    save_setting("active_provider", provider_id)
+
+
+def load_active_provider() -> str:
+    """Carga el proveedor activo. Por defecto 'gemini'.
+
+    Returns:
+        Identificador del proveedor activo.
+    """
+    return load_setting("active_provider") or "gemini"
+
+
+def get_configured_providers() -> List[str]:
+    """Devuelve la lista de provider_ids que tienen una API key guardada.
+
+    Returns:
+        Lista de identificadores de proveedores configurados.
+    """
+    conn = _get_connection()
+    try:
+        rows = conn.execute("SELECT provider_id FROM provider_keys").fetchall()
+        return [row["provider_id"] for row in rows]
+    finally:
+        conn.close()
 
 
 # ─── Settings genéricos ───────────────────────────────────────

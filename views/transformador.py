@@ -1,17 +1,16 @@
-import streamlit as st
 import os
 import tempfile
 import time
 from pathlib import Path
-from typing import Optional, Tuple, Dict, Any, List
+from typing import Any, Dict, List, Optional, Tuple
 
-from modules import transformer
-from modules import xml_html
-from modules import correction
-from modules import metadata_processor
-from modules import config_store
-from modules import prompts
+import streamlit as st
 import streamlit.components.v1 as components
+
+from modules import (config_store, correction, metadata_processor, prompts,
+                     transformer, xml_html)
+from modules.llm_provider import (PROVIDER_REGISTRY, get_provider,
+                                  list_providers)
 
 # Nota: st.set_page_config se ha movido a streamlit_app.py
 
@@ -74,12 +73,33 @@ def main() -> None:
     st.markdown("### Convierte documentos Word a XML JATS con IA")
     
     with st.sidebar:
-        # ─── Cargar API Key (clave única) ───
-        _saved_key = config_store.load_api_key()
-        st.session_state["_active_api_key"] = _saved_key or os.environ.get("GEMINI_API_KEY", "")
-        
-        has_api_key = bool(st.session_state["_active_api_key"])
-        
+        # ─── Selección de Proveedor IA ───
+        providers = list_providers()
+        provider_ids = [p["id"] for p in providers]
+        provider_names = {p["id"]: p["name"] for p in providers}
+        active_provider = config_store.load_active_provider()
+        active_idx = provider_ids.index(active_provider) if active_provider in provider_ids else 0
+
+        selected_provider = st.selectbox(
+            "🤖 Proveedor IA:",
+            options=provider_ids,
+            format_func=lambda pid: provider_names.get(pid, pid),
+            index=active_idx,
+            key="sidebar_provider_select",
+        )
+        if selected_provider != active_provider:
+            config_store.save_active_provider(selected_provider)
+        st.session_state["_active_provider"] = selected_provider
+
+        # ─── Cargar API Key del proveedor activo ───
+        _saved_key = config_store.load_provider_key(selected_provider)
+        if not _saved_key:
+            env_var = PROVIDER_REGISTRY[selected_provider].get_api_key_env_var()
+            _saved_key = os.environ.get(env_var, "") if env_var else ""
+        st.session_state["_active_api_key"] = _saved_key
+
+        has_api_key = bool(st.session_state["_active_api_key"]) or selected_provider == "ollama"
+
         # ─── Instrucciones (Popover minimalista) ───
         with st.popover("📋 Instrucciones"):
             st.markdown(
@@ -88,13 +108,13 @@ def main() -> None:
                 "3. **Validación**: Verifica y corrige errores.\n"
                 "4. **Resultados**: Descarga el XML/HTML."
             )
-        
+
         st.markdown("<br>", unsafe_allow_html=True)
-        
+
         # ─── Estado de API Key ───
         if has_api_key:
             st.markdown(
-                "<div style='font-size: 0.8rem; color: #4CAF50; margin-bottom: 0.5rem;'>🔑 ✅ API Key configurada</div>",
+                f"<div style='font-size: 0.8rem; color: #4CAF50; margin-bottom: 0.5rem;'>🔑 ✅ {provider_names.get(selected_provider, selected_provider)} configurado</div>",
                 unsafe_allow_html=True,
             )
         else:
@@ -106,61 +126,43 @@ def main() -> None:
         # ─── Banner de cuota de pago activa ───
         if st.session_state.get("_paid_quota_active"):
             st.warning(
-                "💳 **Cuota gratuita agotada.** Las próximas llamadas serán de pago "
-                "(si tu cuenta de Google tiene facturación habilitada).",
+                "💳 **Cuota gratuita agotada.** Las próximas llamadas serán de pago.",
                 icon="⚠️",
             )
-        
+
         # ─── Selección de Modelo ───
-        st.markdown("<p style='font-size: 0.9rem; font-weight: 600; margin-bottom: 0;'>🤖 Modelo IA</p>", unsafe_allow_html=True)
-        
+        st.markdown("<p style='font-size: 0.9rem; font-weight: 600; margin-bottom: 0;'>📦 Modelo</p>", unsafe_allow_html=True)
+
         @st.cache_data(ttl=3600)
-        def get_available_models(api_key: str):
-            default_models = [
-                "gemini-2.5-flash",
-                "gemini-2.5-pro",
-                "gemini-2.5-flash-lite",
-                "gemini-3-flash-preview",
-                "gemini-3-pro-preview",
-                "gemini-2.0-flash",
-            ]
-            if not api_key:
+        def get_available_models(provider_id: str, api_key: str):
+            provider_obj = PROVIDER_REGISTRY.get(provider_id)
+            if not provider_obj:
+                return []
+            default_models = provider_obj.get_default_models()
+            if not api_key and provider_id != "ollama":
                 return default_models
-            
             try:
-                import google.generativeai as genai
-                genai.configure(api_key=api_key)
-                models = []
-                for m in genai.list_models():
-                    if 'generateContent' in m.supported_generation_methods:
-                        name = m.name.replace("models/", "")
-                        if name.startswith("gemini-") and "vision" not in name:
-                            models.append(name)
-                
-                if models:
-                    models.sort(reverse=True)
-                    if "gemini-2.5-flash" in models:
-                        models.remove("gemini-2.5-flash")
-                        models.insert(0, "gemini-2.5-flash")
-                    return models
+                live_models = provider_obj.list_models(api_key or "ollama")
+                if live_models:
+                    return live_models
             except Exception:
                 pass
             return default_models
 
-        model_options = get_available_models(st.session_state["_active_api_key"])
-        
+        model_options = get_available_models(selected_provider, st.session_state["_active_api_key"])
+
         selected_model = st.selectbox(
-            "Modelo:", 
-            options=model_options, 
+            "Modelo:",
+            options=model_options,
             index=0,
             key="selected_model_dropdown",
-            help="'gemini-2.5-flash' recomendado por su balance costo/rendimiento."
+            help="Selecciona el modelo del proveedor activo."
         )
-        
+
         use_custom_model = st.checkbox("Modelo personalizado", value=False)
         if use_custom_model:
             selected_model = st.text_input("Nombre del modelo:", value=selected_model)
-        
+
         st.session_state.selected_model = selected_model
 
     if 'extracted_text' not in st.session_state:
@@ -261,12 +263,14 @@ def main() -> None:
                                     st.session_state.extracted_text = "Contenido PDF extraído (placeholder)."
                                 
                                 # 3. Extraer Metadatos con IA
-                                status.update(label="⏳ Analizando metadatos con Gemini AI...")
-                                status.write("🤖 Extrayendo título, autores, fecha y DOI usando Inteligencia Artificial...")
+                                _prov_name = provider_names.get(st.session_state.get('_active_provider', 'gemini'), 'IA')
+                                status.update(label=f"⏳ Analizando metadatos con {_prov_name}...")
+                                status.write(f"🤖 Extrayendo título, autores, fecha y DOI usando {_prov_name}...")
                                 extractor = metadata_processor.MetadataExtractor()
                                 api_key = st.session_state.get('_active_api_key', '')
                                 selected_model = st.session_state.get("selected_model", "gemini-2.5-flash")
-                                meta = extractor.extract_from_file(fpath, model_version=selected_model, api_key=api_key)
+                                _pid = st.session_state.get('_active_provider', 'gemini')
+                                meta = extractor.extract_from_file(fpath, model_version=selected_model, api_key=api_key, provider_id=_pid)
                                 
                                 # Verificar errores explícitos de la IA
                                 if "error" in meta:
@@ -446,10 +450,12 @@ def main() -> None:
         
         # --- Configuración ahora está en Sidebar ---
         current_api_key = st.session_state.get('_active_api_key', '')
-        if not current_api_key:
+        _active_pid = st.session_state.get('_active_provider', 'gemini')
+        _needs_key = _active_pid != "ollama"
+        if not current_api_key and _needs_key:
              st.error("❌ Por favor configura tu API Key en la barra lateral izquierda.")
         
-        can_generate = bool(st.session_state.extracted_text and current_api_key)
+        can_generate = bool(st.session_state.extracted_text and (current_api_key or not _needs_key))
         
         if st.button("Generar XML JATS", type="primary", disabled=not can_generate):
                 progress_bar = st.progress(0, text="Iniciando...")
@@ -458,8 +464,10 @@ def main() -> None:
                 progress_bar.progress(10)
                 time.sleep(0.5)
                 
-                selected_model = st.session_state.get("selected_model", "gemini-1.5-flash")
-                status_text.text(f"Enviando a Gemini AI ({selected_model})...")
+                selected_model = st.session_state.get("selected_model", "gemini-2.5-flash")
+                _pid = st.session_state.get('_active_provider', 'gemini')
+                _prov_name = provider_names.get(_pid, _pid)
+                status_text.text(f"Enviando a {_prov_name} ({selected_model})...")
                 
                 # Pasar metadatos al prompt
                 prompt = prompts.get_generation_prompt(
@@ -468,11 +476,12 @@ def main() -> None:
                 )
                 progress_bar.progress(30)
                 
-                # Llamada con clave única
-                result = transformer.invocar_gemini_cli(
+                # Llamada al proveedor activo
+                result = transformer.invocar_llm(
                     prompt, 
                     model_version=selected_model,
                     api_key=current_api_key,
+                    provider_id=_pid,
                 )
                 
                 status_text.text("Procesando respuesta...")
@@ -685,11 +694,13 @@ def main() -> None:
                             with st.spinner("Analizando errores y buscando soluciones con IA..."):
                                 api_key = st.session_state.get('_active_api_key', '')
                                 selected_model = st.session_state.get("selected_model", "gemini-2.5-flash")
+                                _pid = st.session_state.get('_active_provider', 'gemini')
                                 res = correction.analizar_errores_inicial(
                                     st.session_state.generated_xml,
                                     st.session_state.validation_errors,
                                     model_version=selected_model,
                                     api_key=api_key,
+                                    provider_id=_pid,
                                 )
                                 response_text = res.get('stdout', '') if res.get('returncode') == 0 else f"Error: {res.get('stderr')}"
                                 
@@ -770,7 +781,9 @@ def main() -> None:
                                 st.write(prompt)
                             
                             with st.chat_message("assistant"):
-                                with st.spinner("Consultando a Gemini..."):
+                                _pid = st.session_state.get('_active_provider', 'gemini')
+                                _prov_name = provider_names.get(_pid, _pid)
+                                with st.spinner(f"Consultando a {_prov_name}..."):
                                     api_key = st.session_state.get('_active_api_key', '')
                                     selected_model = st.session_state.get("selected_model", "gemini-2.5-flash")
                                     res = correction.corregir_xml(
@@ -779,6 +792,7 @@ def main() -> None:
                                         prompt,
                                         model_version=selected_model,
                                         api_key=api_key,
+                                        provider_id=_pid,
                                     )
                                     
                                     if res.get('quota_exceeded'):
