@@ -461,84 +461,103 @@ def main() -> None:
         elif not st.session_state.get('metadata_verified', False):
              st.warning("⚠️ **Atención**: No has validado completamente los metadatos en el Paso 1. Esto podría generar un XML incompleto.")
         
-        # --- Configuración ahora está en Sidebar ---
-        current_api_key = st.session_state.get('_active_api_key', '')
-        _active_pid = st.session_state.get('_active_provider', 'gemini')
-        _needs_key = _active_pid != "ollama"
-        if not current_api_key and _needs_key:
-             st.error("❌ Por favor configura tu API Key en la barra lateral izquierda.")
+        # --- Configuración Multi-Agente ---
+        from modules.config_store import get_config
+        keys = get_config()
         
-        can_generate = bool(st.session_state.extracted_text and (current_api_key or not _needs_key))
+        available_options = {}
+        if keys.get("GEMINI_API_KEY"): available_options["Gemini (gemini-2.5-flash)"] = ("gemini", "gemini-2.5-flash", keys.get("GEMINI_API_KEY"))
+        if keys.get("OPENAI_API_KEY"): available_options["OpenAI (gpt-4o-mini)"] = ("openai", "gpt-4o-mini", keys.get("OPENAI_API_KEY"))
+        if keys.get("ANTHROPIC_API_KEY"): available_options["Claude (claude-3-5-sonnet)"] = ("anthropic", "claude-3-5-sonnet", keys.get("ANTHROPIC_API_KEY"))
+        if keys.get("DEEPSEEK_API_KEY"): available_options["DeepSeek (deepseek-chat)"] = ("deepseek", "deepseek-chat", keys.get("DEEPSEEK_API_KEY"))
+        if keys.get("MISTRAL_API_KEY"): available_options["Mistral (mistral-large-latest)"] = ("mistral", "mistral-large-latest", keys.get("MISTRAL_API_KEY"))
+        if keys.get("GROQ_API_KEY"): available_options["Groq (mixtral-8x7b-32768)"] = ("groq", "mixtral-8x7b-32768", keys.get("GROQ_API_KEY"))
+        available_options["Ollama (llama3 local)"] = ("ollama", "llama3", None)
         
-        if st.button("Generar XML JATS", type="primary", disabled=not can_generate):
-                progress_bar = st.progress(0, text="Iniciando...")
-                status_text = st.empty()
-                status_text.text("Preparando datos...")
-                progress_bar.progress(10)
-                time.sleep(0.5)
+        st.subheader("Selección de Agentes")
+        selected_agents_labels = st.multiselect(
+            "Selecciona uno o más agentes de IA para generar el XML (Batalla de Modelos):",
+            options=list(available_options.keys()),
+            default=[list(available_options.keys())[0]] if available_options else []
+        )
+        
+        can_generate = bool(st.session_state.extracted_text and len(selected_agents_labels) > 0)
+        
+        if st.button("Generar XML JATS (Batalla de Modelos)", type="primary", disabled=not can_generate):
+            st.session_state.generated_versions = []
+            st.session_state.generated_xml = None
+            st.session_state.validation_errors = []
+            st.session_state._validation_ran = False
+            
+            progress_bar = st.progress(0, text="Iniciando...")
+            status_text = st.empty()
+            
+            total_agents = len(selected_agents_labels)
+            
+            prompt = prompts.get_generation_prompt(
+                st.session_state.extracted_text, 
+                st.session_state.extracted_metadata
+            )
+            
+            for idx, agent_label in enumerate(selected_agents_labels):
+                _pid, _model, _key = available_options[agent_label]
+                status_text.text(f"Enviando a {_pid} ({_model}) [{idx+1}/{total_agents}]...")
+                progress_bar.progress(int((idx / total_agents) * 100))
                 
-                selected_model = st.session_state.get("selected_model", "gemini-2.5-flash")
-                _pid = st.session_state.get('_active_provider', 'gemini')
-                _prov_name = provider_names.get(_pid, _pid)
-                status_text.text(f"Enviando a {_prov_name} ({selected_model})...")
-                
-                # Pasar metadatos al prompt
-                prompt = prompts.get_generation_prompt(
-                    st.session_state.extracted_text, 
-                    st.session_state.extracted_metadata
-                )
-                progress_bar.progress(30)
-                
-                # Llamada al proveedor activo
                 result = transformer.invocar_llm(
                     prompt, 
-                    model_version=selected_model,
-                    api_key=current_api_key,
+                    model_version=_model,
+                    api_key=_key,
                     provider_id=_pid,
                 )
                 
-                status_text.text("Procesando respuesta...")
-                progress_bar.progress(80)
-                
                 if result.get('quota_exceeded'):
                     st.session_state["_paid_quota_active"] = True
-                    st.rerun()
                 
                 if result.get('returncode') == 0 and result.get('stdout'):
-                    xml_out = result.get('stdout', '')
+                    xml_out = result.get('stdout', '').strip()
+                    st.session_state.generated_versions.append({
+                        "label": agent_label,
+                        "provider": _pid,
+                        "model": _model,
+                        "xml": xml_out,
+                        "tokens": result.get('token_usage', {}).get('total_tokens', 0)
+                    })
                     
-                    st.session_state.generated_xml = xml_out.strip()
-                    st.session_state.validation_errors = []
-                    st.session_state.correction_chat = []
-                    st.session_state.show_correction_chat = False
-                    st.session_state.pending_correction_xml = None
-                    
-                    # Registrar uso de tokens
                     tu = result.get('token_usage', {})
                     if tu.get('total_tokens', 0) > 0:
                         config_store.log_token_usage(
                             operation="generation",
-                            model=selected_model,
+                            model=_model,
                             prompt_tokens=tu.get('prompt_tokens', 0),
                             completion_tokens=tu.get('completion_tokens', 0),
                             total_tokens=tu.get('total_tokens', 0),
                         )
-                    
-                    progress_bar.progress(100)
-                    tokens_msg = f" ({tu.get('total_tokens', 0):,} tokens)" if tu.get('total_tokens') else ""
-                    status_text.text(f"¡Completado!{tokens_msg}")
                 else:
-                    progress_bar.empty()
-                    status_text.error("Falló la generación.")
-                    st.error(result.get('stderr'))
+                    st.error(f"Fallo al generar con {agent_label}: {result.get('stderr')}")
+                    
+            progress_bar.progress(100)
+            status_text.text(f"¡Generación de {len(st.session_state.generated_versions)} versión(es) completada!")
             
-        if st.session_state.generated_xml:
-            st.success("✅ XML Generado.")
+            st.session_state.show_correction_chat = False
+            st.session_state.pending_correction_xml = None
+            
+            # Si solo se seleccionó 1, lo seteamos como el ganador temporal
+            if len(st.session_state.generated_versions) == 1:
+                st.session_state.generated_xml = st.session_state.generated_versions[0]['xml']
+                
+            st.rerun()
+            
+        if st.session_state.get('generated_versions'):
+            st.success(f"✅ {len(st.session_state.generated_versions)} XML(s) Generado(s). ¡Ve al Tab 3 (Validación) para ver los puntajes y elegir el mejor ganador!")
+            
+        if st.session_state.get('generated_xml'):
+            st.success("🏆 XML Ganador Establecido.")
             
             c_xml, c_form = st.columns(2, gap="large")
             
             with c_xml:
-                st.subheader("XML Generado")
+                st.subheader("XML Resultante")
                 st.code(st.session_state.generated_xml, language='xml')
                 
             with c_form:
@@ -621,13 +640,51 @@ def main() -> None:
     # --- Tab 3 ---
     with tab3:
         st.header("Validación y Corrección")
-        if not st.session_state.generated_xml:
+        if not st.session_state.get('generated_xml') and not st.session_state.get('generated_versions'):
             st.info("⚠️ Genera el XML en el Paso 2 primero.")
+        elif st.session_state.get('generated_versions') and not st.session_state.get('generated_xml'):
+            st.subheader("🏆 Batalla de Modelos: Evaluación y Puntuación")
+            st.info("Tienes múltiples versiones generadas. Valídalas para descubrir cuál es más precisa con el estándar JATS.")
+            if st.button("Ejecutar Validación para Todas las Versiones", type="primary"):
+                 with st.spinner("Validando múltiples XML contra la DTD de JATS..."):
+                     for version in st.session_state.generated_versions:
+                         is_valid, errors = transformer.validar_jats_xml(version['xml'])
+                         score = max(0, 100 - (len(errors) * 5)) if not is_valid else 100
+                         version['score'] = score
+                         version['errors'] = errors
+                     st.session_state._validation_ran_batalla = True
+                     st.session_state.generated_versions.sort(key=lambda x: x.get('score', 0), reverse=True)
+                 st.rerun()
+                 
+            if st.session_state.get('_validation_ran_batalla'):
+                 st.markdown("### Ranking de Precision JATS")
+                 for idx, version in enumerate(st.session_state.generated_versions):
+                     score_color = "🟢" if version['score'] >= 90 else "🟠" if version['score'] >= 60 else "🔴"
+                     st.markdown(f"**#{idx+1} | {version['label']}** - Puntuación: {score_color} **{version['score']}%**")
+                     with st.expander(f"Inspeccionar reporte de {version['label']}", expanded=(idx==0)):
+                         if version['score'] == 100:
+                             st.success("✅ ¡Perfecto! Cumple estandar DTD JATS al 100%.")
+                         else:
+                             st.warning(f"⚠️ {len(version['errors'])} advertencias/errores")
+                             for e in version['errors'][:10]:
+                                 st.write(f"- `{e}`")
+                             if len(version['errors']) > 10: st.write("...y más")
+                         st.code(version['xml'][:1500] + "\n\n... (truncado)", language='xml')
+                         
+                         def make_winner_callback(w_xml=version['xml'], w_errs=version['errors']):
+                             st.session_state.generated_xml = w_xml
+                             st.session_state.validation_errors = w_errs
+                             st.session_state.correction_chat = []
+                             st.session_state.show_correction_chat = False
+                             st.session_state.pending_correction_xml = None
+                             st.session_state._validation_ran = True # Skip re-validation later
+                         
+                         st.button(f"🥇 Seleccionar Ganador: {version['label']}", key=f"btn_win_{idx}", type="primary", on_click=make_winner_callback, args=(version['xml'], version['errors']))
         else:
             col_val, col_chat = st.columns([1, 1], gap="large")
             
             with col_val:
-                st.subheader("Estado de Validación")
+                st.subheader("Estado de Validación (Ganador Actual)")
                 
                 # ======================================================
                 # SECCIÓN 1: XML Corregido por IA (si hay pendiente)
