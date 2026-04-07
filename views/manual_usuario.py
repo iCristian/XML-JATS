@@ -27,18 +27,19 @@ Características principales:
         "type": "step",
         "title": "Configuración Inicial",
         "content": """
-Antes de comenzar, diríjase a la pestaña **"⚙️ Configuración"** en el menú izquierdo para configurar su API Key de Google Gemini:
+Antes de comenzar, diríjase a la pestaña **"⚙️ Configuración"** en el menú izquierdo para preparar su entorno:
 
-- **Primera vez**: Pegue su clave en el campo correspondiente (según su tipo de cuenta gratuita o de pago) y presione **"💾 Guardar"**. La clave pasará por una validación inicial y se almacenará de forma segura y persistente.
-- **Sesiones posteriores**: La clave se carga automáticamente. Verá una versión enmascarada (ej. `AIza••••••xY4Z`) y un indicador de que está configurada correctamente.
-- **Cambiar o borrar**: Use los botones **"✏️ Cambiar"** o **"🗑️ Borrar"** en cualquier momento.
+**1. Clave de API Gemini:**
+- **Primera vez**: Pegue su clave y presione **"💾 Guardar"**. Se almacenará de forma segura y persistente.
+- **Sesiones posteriores**: La clave se carga automáticamente (ej. `AIza••••••xY4Z`).
 
-**Panel de Consumo y Cuotas**: En la misma página de configuración encontrará un panel que muestra:
-- Tabla comparativa de cuotas según su tipo de llave y modelo seleccionado.
-- Barra de progreso que ilustra las Requests usadas hoy vs. el límite diario del modelo.
-- Historial de uso de operaciones recientes detallando los tokens consumidos.
+**2. Metadatos de Publicación y Estándar:**
+- Debajo del panel de cuotas encontrará los **Metadatos Persistentes de la Revista**.
+- Rellene aquí el **Título de Revista**, la **Editorial**, el **ISSN**, y seleccione qué **Versión DTD JATS** utilizará (1.3 o 1.4).
+- Estos datos se autocompletarán de forma transparente en cada validación que realice en la herramienta, ahorrando trabajo repetitivo.
 
-Si se acerca al límite de la cuota gratuita, el sistema y la interfaz le mostrarán advertencias visuales de forma preventiva.
+**3. Panel de Consumo:**
+- Encontrará una barra de progreso que ilustra las Requests usadas hoy vs. el límite diario, junto al historial y advertencias preventivas si se acerca al tope de su cuota gratuita.
 """
     },
     {
@@ -56,7 +57,7 @@ Una vez cargado el archivo, el sistema desplegará el panel de **Revisión de Me
 - Revise también la vista previa del texto extraído, incluyendo las tablas detectadas.
 """,
         "image": "resources/manual_images/01.png",
-        "caption": "Figura 1: Área de carga de documentos."
+        "caption": "Figura 2: Área de carga de documentos y extracción de metadatos."
     },
     {
         "type": "step",
@@ -71,7 +72,7 @@ Una vez confirmados los metadatos y el contenido, en la pestaña **"Generación"
 - Cada sección del artículo (Introducción, Métodos, Resultados, etc.) se mapeará a su etiqueta `<sec>` correspondiente.
 """,
         "image": "resources/manual_images/02.png",
-        "caption": "Figura 2: Generación de XML JATS."
+        "caption": "Figura 3: Generación exitosa de XML JATS."
     },
     {
         "type": "step",
@@ -84,8 +85,8 @@ Una vez confirmados los metadatos y el contenido, en la pestaña **"Generación"
 - Si el sistema encuentra errores, se mostrará un informe con los errores encontrados y se habilitarán un botón de corrección que permitirá corregir los errores encontrados asistido por la IA de Gemini.
 - Si el sistema no encuentra errores, se mostrará un mensaje de éxito y se habilitarán el botón de Resultados.
 """,
-        "image": "resources/manual_images/03.png", # Reusing home as it shows the button usually
-        "caption": "Figura 3: Validación de DTD."
+        "image": "resources/manual_images/03.png",
+        "caption": "Figura 4: Validación de DTD ejecutada sin errores."
     },
     {
         "type": "step",
@@ -98,7 +99,7 @@ Si la validación es exitosa, se habilitarán los botones de descarga:
 - **Vista previa HTML**: Haga clic en el botón **"Ver vista previa en nueva pestaña"** para abrir el HTML en una pestaña independiente del navegador. Los enlaces internos (citas, tabla de contenidos) y los DOIs en las referencias funcionan correctamente en esta vista.
 """,
         "image": "resources/manual_images/04.png",
-        "caption": "Figura 4: Resultados."
+        "caption": "Figura 5: Resultados y enlaces de descarga/vista previa."
     }
 ]
 
@@ -175,7 +176,7 @@ Licencia:
 Software de uso exclusivo para la Universidad de Valparaíso. Todos los derechos reservados.
 El código fuente y la documentación son propiedad intelectual de la Universidad de Valparaíso y su autor.
 
-Versión: 0.66
+Versión: 0.68
 """
 
 class ProfessionalPDF(FPDF):
@@ -292,7 +293,7 @@ def create_professional_pdf():
     pdf.set_font('Arial', 'B', 11)
     pdf.cell(0, 10, 'Autor: Cristian Carreño León', 0, 1, 'C')
     pdf.cell(0, 10, 'Fecha: 15-03-2026', 0, 1, 'C')
-    pdf.cell(0, 10, 'Versión: 0.66', 0, 1, 'C')
+    pdf.cell(0, 10, 'Versión: 0.68', 0, 1, 'C')
     pdf.cell(0, 10, 'Contacto: cristian.carreno@uv.cl', 0, 1, 'C')
     
     # --- SECCIÓN 1: DOCUMENTACIÓN ---
@@ -420,6 +421,30 @@ def main():
     
     st.subheader("📍 Flujo de Trabajo")
     
+    st.graphviz_chart('''
+        digraph Flujo {
+            rankdir=LR;
+            node [shape=rect, style=filled, color="#2e7bcf", fontcolor=white, fontname="Helvetica", margin="0.2,0.1"];
+            edge [color="#666666", fontname="Helvetica", fontsize=10];
+            
+            Carga [label="1. Carga de Archivo\\n(.docx o .pdf)"];
+            Extraccion [label="2. Extracción de\\nMetadatos"];
+            Revision [label="3. Revisión / Chatbot"];
+            Generacion [label="4. Generación\\nXML JATS"];
+            Validacion [label="5. Validación DTD\\nJATS"];
+            Resultados [label="6. Exportación\\n(XML / HTML)"];
+            
+            Carga -> Extraccion;
+            Extraccion -> Revision;
+            Revision -> Generacion [label=" Confirmar"];
+            Generacion -> Validacion [label=" Validar"];
+            Validacion -> Resultados [label=" Éxito", color="green", fontcolor="green"];
+            Validacion -> Revision [label=" Error", color="red", fontcolor="red"];
+        }
+    ''')
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+
     # Zig-zag layout using loop
     for i, section in enumerate(MANUAL_SECTIONS):
         if section["type"] == "step":
@@ -477,7 +502,7 @@ def main():
             """
             <div class='branding'>
                 <b>Universidad de Valparaíso</b><br>
-                <small>Transformador XML JATS v0.66</small>
+                <small>Transformador XML JATS v0.68</small>
             </div>
             """, 
             unsafe_allow_html=True

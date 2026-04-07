@@ -1,4 +1,4 @@
-# Transformador XML JATS (JATS XML Transformer) - v0.67
+# Transformador XML JATS (JATS XML Transformer) - v0.68
 
 Una herramienta avanzada impulsada por Inteligencia Artificial para convertir documentos de Word (`.docx`) a formato **JATS XML** validado, diseñada específicamente para el flujo editorial de revistas científicas.
 
@@ -140,6 +140,13 @@ El código fuente y la documentación contenidos en este repositorio son propied
 Para consultas sobre licenciamiento o uso, contactar a: [cristian.carreno@uv.cl](mailto:cristian.carreno@uv.cl)
 
 ## 📅 Historial de Versiones (Changelog)
+
+### v0.68 — Metadatos de Revista Persistentes, Selectores DTD y Corrección SSL
+
+- **Metadatos de Revista Persistentes**: Nueva sección en configuración para guardar datos estructurales de la publicación (título de la revista, editorial, ISSN), los cuales se inyectan automáticamente en cada nuevo flujo ahorrando escritura manual repetitiva.
+- **Selector de Versión JATS Dinámico**: El usuario puede escoger la versión objetivo del estándar (1.3 o 1.4) en la misma página de configuración. El transformador inyectará condicionalmente la declaración `<!DOCTYPE>` y validará contra el DTD JATS oficial preciso usando rutas dependientes del contexto.
+- **Validación SSL Opt-out Local**: Se resolvió un bug prevalente en macOS (`SSL: CERTIFICATE_VERIFY_FAILED`) ignorando programáticamente fallos SSL intermitentes al hacer el fetch oficial del DTD JATS a NLM. Esto asegura que la herramienta arranque exitosamente en cualquier estado de certificados Python.
+- **UI Responsiva y Textos Justificados**: Mejorada radicalmente la integración HTML CSS para IFrames como OJS (`width: 100%`) y se aseguró uniformidad con justificación de texto automática en artículos.
 
 ### v0.67 — Unificación a Clave API Única y Detección de Cuota
 
