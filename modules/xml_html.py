@@ -1246,6 +1246,8 @@ button {
   position: relative;
   padding: 0 clamp(16px, 4vw, 56px) 48px;
   flex: 1 1 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 .sidebar {
   width: min(340px, 82vw);
@@ -1444,6 +1446,8 @@ body.sidebar-open .sidebar {
   line-height: 1.75;
   font-size: 1.03rem;
   color: var(--text-muted);
+  text-align: justify;
+  hyphens: auto;
 }
 .subsection-group {
   display: grid;
@@ -1568,6 +1572,8 @@ body.sidebar-open .sidebar {
   font-size: 1.05rem;
   line-height: 1.75;
   color: var(--text-muted);
+  text-align: justify;
+  hyphens: auto;
 }
 .panel {
   margin-bottom: 32px;

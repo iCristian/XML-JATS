@@ -374,6 +374,32 @@ def delete_setting(key: str) -> None:
         conn.close()
 
 
+def get_default_journal_data() -> Dict[str, str]:
+    """Obtiene los datos por defecto de la revista."""
+    return {
+        "title": load_setting("default_journal_title") or "",
+        "publisher": load_setting("default_publisher_name") or "",
+        "issn": load_setting("default_journal_issn") or "",
+    }
+
+
+def save_default_journal_data(title: str, publisher: str, issn: str) -> None:
+    """Guarda los datos por defecto de la revista."""
+    save_setting("default_journal_title", title)
+    save_setting("default_publisher_name", publisher)
+    save_setting("default_journal_issn", issn)
+
+
+def get_jats_version() -> str:
+    """Obtiene la versión de JATS configurada (1.4 por defecto)."""
+    return load_setting("jats_version") or "1.4"
+
+
+def save_jats_version(version: str) -> None:
+    """Guarda la versión de JATS preferida."""
+    save_setting("jats_version", version)
+
+
 # ─── Token Usage ──────────────────────────────────────────────
 
 def log_token_usage(operation: str, model: str,

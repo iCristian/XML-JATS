@@ -34,6 +34,8 @@ def get_metadata_prompt(text_snippet: str) -> str:
 
 def get_generation_prompt(texto_articulo: str, metadata: Optional[Dict[str, Any]] = None) -> str:
     """Prompt avanzado para la generación de la estructura inicial JATS XML."""
+    from . import config_store
+    version = config_store.get_jats_version()
     
     metadata_instructions = ""
     if metadata:
@@ -52,7 +54,7 @@ def get_generation_prompt(texto_articulo: str, metadata: Optional[Dict[str, Any]
         """
 
     return f"""
-    Actúa como un maquetador XML JATS (Journal Article Tag Suite), versión 1.4 (ANSI/NISO Z39.96-2024), para SciELO.
+    Actúa como un maquetador XML JATS (Journal Article Tag Suite), versión {version}, para SciELO.
 
     CONTEXTO PROFESIONAL:
     Este es un trabajo de maquetación editorial. El texto del artículo ya pasó por revisión por pares y corrección de estilo profesional. Tu tarea es aplicar el marcado XML JATS estructural al contenido proporcionado.
@@ -118,9 +120,8 @@ def get_generation_prompt(texto_articulo: str, metadata: Optional[Dict[str, Any]
         *   NO ALTERES el orden de las etiquetas en `<article-meta>` y NO saques cosas como `journal-title-group` hacia `article-meta`.
         *   **OBLIGATORIO: FECHA Y DOI:** Siempre incluye `<pub-date>` con `<day>`, `<month>`, `<year>` y `<article-id pub-id-type="doi">`. Estos campos son CRÍTICOS para indexación. Si los metadatos los proporcionan, ÚSALOS textualmente.
     3.  **Sección <body>:** 
-        *   **Secciones con Títulos:** Cada sección marcada en el artículo (ej. Introducción, Métodos, Resultados, Discusión, Conclusiones, etc.) DEBE convertirse en un `<sec>` con su correspondiente `<title>`. Identifica TODOS los títulos de sección del papel y mapéalos a `<sec><title>`. Esto es FUNDAMENTAL para la estructura del artículo.
-        *   Usa `<sec>` para secciones con `<title>`. Cada párrafo va en `<p>`.
-        *   Mantén la estructura original.
+        *   **Secciones con Títulos:** Analiza el flujo completo del artículo de principio a fin de manera holística. Identifica todas las jerarquías de secciones implícitas basándote en los títulos y asegúrate de agrupar todos y cada uno de los párrafos dentro de su sección `<sec>` correspondiente. Ningún contenido textual puede quedar libre en el cuerpo del documento fuera de un `<sec>`. Cada `<sec>` debe tener su `<title>`.
+        *   Dentro de cada `<sec>`, cada párrafo va obligatoriamente en un `<p>`. Mantén la estructura original y no fusiones párrafos.
         *   **Citas:** Etiqueta citas con `<xref ref-type="bibr" rid="refN">`.
         *   **Imágenes:** `[IMAGEN-PLACEHOLDER...]` → `<fig id="fN"><label>Figura N</label><caption><p>caption</p></caption><graphic mimetype="image" xlink:href="file"/></fig>`
         *   **Tablas:** `[TABLA-PLACEHOLDER...]` → Genera la tabla COMPLETA con esta estructura exacta:

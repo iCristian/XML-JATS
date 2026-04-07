@@ -562,7 +562,7 @@ def _move_orphan_table_wraps(xml_string: str) -> str:
 
 
 def validar_jats_xml(xml_content: str) -> Tuple[bool, List[str]]:
-    """Valida el contenido XML contra el DTD JATS 1.3 local.
+    """Valida el contenido XML contra el DTD JATS local.
 
     Args:
         xml_content (str): Cadena con el XML completo.
@@ -570,10 +570,16 @@ def validar_jats_xml(xml_content: str) -> Tuple[bool, List[str]]:
     Returns:
         Tuple[bool, List[str]]: (es_valido, lista_de_errores).
     """
+    from . import config_store
+    version = config_store.get_jats_version()
+    dtd_filename = f"JATS-journalpublishing{version.replace('.', '-')}-mathml3.dtd"
+    dtd_folder = f"JATS-Publishing-{version.replace('.', '-')}-MathML3-DTD"
+
     possible_dtd_locations = [
-        WORKSPACE_ROOT / DTD_FILENAME,
-        WORKSPACE_ROOT / "JATS-Publishing-1-4-MathML3-DTD" / DTD_FILENAME,
-        WORKSPACE_ROOT / "JATS-Publishing-1-3-MathML3-DTD" / DTD_FILENAME # Fallback
+        WORKSPACE_ROOT / dtd_filename,
+        WORKSPACE_ROOT / dtd_folder / dtd_filename,
+        WORKSPACE_ROOT / "JATS-Publishing-1-4-MathML3-DTD" / "JATS-journalpublishing1-4-mathml3.dtd",
+        WORKSPACE_ROOT / "JATS-Publishing-1-3-MathML3-DTD" / "JATS-journalpublishing1-3-mathml3.dtd" # Fallback
     ]
     
     dtd_path = None
@@ -588,7 +594,14 @@ def validar_jats_xml(xml_content: str) -> Tuple[bool, List[str]]:
             zip_path = WORKSPACE_ROOT / "jats_dtd.zip"
             if not zip_path.exists():
                 print(f"Descargando DTD JATS desde {DTD_ZIP_URL}...")
-                urllib.request.urlretrieve(DTD_ZIP_URL, str(zip_path))
+                import ssl
+                # Configurar contexto SSL que omite la verificación local de certificados
+                ctx = ssl.create_default_context()
+                ctx.check_hostname = False
+                ctx.verify_mode = ssl.CERT_NONE
+                
+                with urllib.request.urlopen(DTD_ZIP_URL, context=ctx) as response, open(zip_path, 'wb') as out_file:
+                    out_file.write(response.read())
                 print("Descarga completada.")
 
             print("Extrayendo DTD...")
@@ -603,7 +616,7 @@ def validar_jats_xml(xml_content: str) -> Tuple[bool, List[str]]:
             return False, [f"Fallo crítico al descargar/extraer DTD: {e}"]
 
     if not dtd_path:
-         return False, [f"No se encontró {DTD_FILENAME} incluso después de intentar descargar."]
+         return False, [f"No se encontró {dtd_filename} incluso después de intentar descargar."]
 
     print(f"Usando DTD: {dtd_path}")
 
@@ -613,7 +626,7 @@ def validar_jats_xml(xml_content: str) -> Tuple[bool, List[str]]:
         # Aquí reemplazamos cualquier DOCTYPE existente con uno que apunte al archivo local.
         xml_content_patched = re.sub(
             r'<!DOCTYPE.*?>',
-            f'<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD with MathML3 v1.4 2024//EN" "{DTD_FILENAME}">',
+            f'<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD with MathML3 v{version} 2024//EN" "{dtd_filename}">',
             xml_content,
             flags=re.DOTALL
         )
@@ -642,9 +655,14 @@ def guardar_salida_xml(xml_content: str, output_path: str) -> None:
         xml_content (str): Contenido XML.
         output_path (str): Ruta de destino.
     """
+    from . import config_store
+    version = config_store.get_jats_version()
+    dtd_filename = f"JATS-journalpublishing{version.replace('.', '-')}-mathml3.dtd"
+
     try:
         with open(output_path, 'w', encoding='utf-8') as f:
-            dtd_decl = f'<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v1.4 2024//EN" "{DTD_FILENAME}">' 
+            dtd_decl = f'<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v{version} 2024//EN" "{dtd_filename}">' 
+
             # Eliminar declaración XML duplicada si existe
             if xml_content.startswith('<?xml'):
                 parts = xml_content.split('?>', 1)

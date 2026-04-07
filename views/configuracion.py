@@ -143,14 +143,55 @@ def main() -> None:
     )
 
     # ════════════════════════════════════════════════════════════
-    # SECCIÓN 3: Cuotas de Gemini por tipo de cuenta
+    # SECCIÓN 3: Configuración de la Revista y JATS
+    # ════════════════════════════════════════════════════════════
+    st.header("📄 Datos por Defecto y Estándar JATS")
+    
+    st.markdown("Establece los metadatos globales que se mantendrán fijos en todas las transformaciones y la versión JATS a exportar.")
+    
+    col_journal, col_jats = st.columns(2, gap="large")
+    
+    with col_journal:
+        st.subheader("Datos de la Revista")
+        journal_data = config_store.get_default_journal_data()
+        
+        new_title = st.text_input("Título de la Revista:", value=journal_data["title"])
+        new_publisher = st.text_input("Nombre de la Editorial (Publisher):", value=journal_data["publisher"])
+        new_issn = st.text_input("ISSN de la Revista:", value=journal_data["issn"])
+        
+        if st.button("💾 Guardar Datos", key="cfg_save_journal", type="primary"):
+            config_store.save_default_journal_data(new_title, new_publisher, new_issn)
+            st.success("✅ Datos de revista guardados")
+            
+    with col_jats:
+        st.subheader("Estándar XML JATS")
+        current_version = config_store.get_jats_version()
+        
+        st.info("**JATS 1.4** añade mejoras en accesibilidad, matemáticas y afiliaciones estructuradas. Selecciona **1.3** solo si tu publicador (ej. OJS legacy) lo restringe.")
+        
+        new_version = st.selectbox(
+            "Versión a generar:",
+            options=["1.3", "1.4"],
+            index=0 if current_version == "1.3" else 1,
+            key="cfg_jats_version"
+        )
+        
+        if new_version != current_version:
+            config_store.save_jats_version(new_version)
+            st.success(f"✅ Versión JATS cambiada a {new_version}")
+            st.rerun()
+
+    st.markdown("---")
+
+    # ════════════════════════════════════════════════════════════
+    # SECCIÓN 4: Cuotas de Gemini por tipo de cuenta
     # ════════════════════════════════════════════════════════════
     st.header("📋 Cuotas de Gemini por Modelo y Cuenta")
 
     st.markdown("""
-Las cuentas gratuitas de Gemini tienen límites diarios y por minuto. Cuando se agota la cuota libre,
-Google continúa usando la misma clave si la cuenta tiene **facturación habilitada**.
-Para otros proveedores, consulta su documentación de precios.
+**Tier Gratuito:** Las claves de Google AI Studio operan en capa gratuita con límites diarios y por minuto. 
+Mantenerte bajo este umbral garantiza coste cero. 
+⚠️ **Atención:** Si vinculaste tu clave a un proyecto de Google Cloud con facturación activa, al sobrepasar estos límites **pasarás automáticamente al modelo Pay-as-you-go** incurriendo en cargos. Sugerimos `gemini-2.5-flash` para mantener amplio margen de capa libre.
 """)
 
     quota_data = []
@@ -186,7 +227,7 @@ Para otros proveedores, consulta su documentación de precios.
 """)
 
     # ════════════════════════════════════════════════════════════
-    # SECCIÓN 4: Panel de consumo de tokens detallado
+    # SECCIÓN 5: Panel de consumo de tokens detallado
     # ════════════════════════════════════════════════════════════
     st.header("📊 Consumo de Tokens")
 

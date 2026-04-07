@@ -278,6 +278,19 @@ def main() -> None:
                                     st.error(f"Error en análisis de IA: {meta['error']}")
                                     st.stop()
                                 
+                                # Inyectar datos por defecto de la revista si existen
+                                journal_defaults = config_store.get_default_journal_data()
+                                if journal_defaults.get("title") and not meta.get("journal_title"):
+                                    meta["journal_title"] = journal_defaults["title"]
+                                elif journal_defaults.get("title") and meta.get("journal_title"):
+                                    # Override para asegurar que siempre usamos el de configuración si está definido
+                                    meta["journal_title"] = journal_defaults["title"]
+                                    
+                                if journal_defaults.get("publisher"):
+                                    meta["publisher_name"] = journal_defaults["publisher"]
+                                if journal_defaults.get("issn"):
+                                    meta["issn"] = journal_defaults["issn"]
+                                
                                 st.session_state.extracted_metadata = meta
                                 
                                 # 4. Validar campos
