@@ -4,13 +4,13 @@
 
 **XML-JATS-Transformer** es una herramienta especializada para la **conversión automática de documentos académicos** (Word/PDF) al formato **JATS XML** (Journal Article Tag Suite), el estándar utilizado por revistas científicas para indexación y preservación digital.
 
-Desarrollado para automatizar el flujo editorial de la Universidad de Valparaíso.
+Desarrollado para automatizar el flujo editorial de la Universidad de Valparaíso, dotado de Inteligencia Artificial en arquitectura Multi-Agente y soportando múltiples proveedores (Google, OpenAI, Anthropic, etc.).
 
 ---
 
 ## Arquitectura
 
-```
+```text
 streamlit_app.py (Entrada)
        │
        ├── views/transformador.py ────┐
@@ -46,7 +46,7 @@ streamlit_app.py (Entrada)
 ## Tecnologías
 
 | Tecnología | Versión | Propósito |
-|------------|---------|-----------|
+| ---------- | ------- | --------- |
 | **Python** | 3.9+ | Lenguaje base |
 | **Streamlit** | 1.51.0 | Framework de interfaz web |
 | **Google Gemini** | 2.5-flash | Modelo LLM para etiquetado inteligente |
@@ -60,7 +60,7 @@ streamlit_app.py (Entrada)
 
 ## Estructura de Directorios
 
-```
+```text
 XML-JATS-2/
 ├── streamlit_app.py          # Punto de entrada principal
 ├── run_app.sh                # Script de ejecución
@@ -102,18 +102,18 @@ XML-JATS-2/
 
 1. **Carga**: Usuario sube DOCX/PDF vía Streamlit UI
 2. **Extracción**: `transformer.extraer_contenido_estructurado()` extrae texto, tablas e imágenes
-3. **Metadatos**: `metadata_processor.MetadataExtractor` usa Gemini para extraer título, autores, DOI, etc.
-4. **Generación**: `prompts.get_generation_prompt()` + `transformer.invocar_gemini_cli()` generan XML JATS
-5. **Validación**: `transformer.validar_jats_xml()` valida contra DTD local
-6. **Corrección**: Si hay errores, `correction.corregir_xml()` usa IA para sugerir correcciones
-7. **HTML**: `xml_html.build_html()` convierte a HTML visualizable
+3. **Metadatos**: `metadata_processor.MetadataExtractor` usa IA para extraer título, autores, DOI, etc.
+4. **Generación Paralela (Leaderboard)**: Se emplea `llm_provider` junto con múltiples modelos LLM simultáneos. Se generan varios XML.
+5. **Puntuación y Validación**: Cada XML se valida contra DTD JATS estricto y se le otorga un puntaje (Score DTD).
+6. **Corrección (Agente Editorial)**: Si hay errores menores en el modelo ganador, un Agente Experto asiste didácticamente sugiriendo correcciones en formato interactivo.
+7. **HTML**: `xml_html.build_html()` convierte el XML final a HTML visualizable.
 
 ---
 
 ## Modelos de Gemini Soportados
 
 | Modelo | Cuota gratis/día | Uso recomendado |
-|--------|------------------|-----------------|
+| ------ | ---------------- | --------------- |
 | gemini-2.5-flash | 500 RPD | Recomendado (balance calidad/cuota) |
 | gemini-2.5-pro | 25 RPD | Máxima calidad |
 | gemini-2.0-flash | 1500 RPD | Alto volumen |
@@ -132,8 +132,8 @@ XML-JATS-2/
 
 ## Variables de Entorno
 
-| Variable | Descripción |
-|----------|-------------|
+| Variable       | Descripción                                         |
+| -------------- | --------------------------------------------------- |
 | `GEMINI_API_KEY` | API Key de Google Gemini (única variable requerida) |
 
 ---
@@ -154,17 +154,17 @@ streamlit run streamlit_app.py
 
 ## Estado del Proyecto
 
-- **Versión actual:** 0.67
+- **Versión actual:** 0.7.0
 - **Framework:** Streamlit
-- **LLM:** Google Gemini API (gemini-2.5-flash por defecto)
-- **Validación:** JATS DTD 1.3/1.4
+- **LLM:** Arquitectura LLM-Agnostic (Gemini, OpenAI, Anthropic, DeepSeek, Local Ollama)
+- **Validación:** JATS DTD 1.3/1.4 con scoring automatizado
 
 ---
 
 ## Archivos de Configuración
 
-| Archivo | Propósito |
-|---------|-----------|
+| Archivo            | Propósito                                              |
+| ------------------ | ------------------------------------------------------ |
 | `data/config.db` | Base de datos SQLite local (API key, tokens, métricas) |
 | `.gitignore` | Exclusiones de Git (`data/`, `.venv/`, etc.) |
 | `requirements.txt` | Dependencias Python |

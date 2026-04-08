@@ -61,15 +61,15 @@ Una vez cargado el archivo, el sistema desplegará el panel de **Revisión de Me
     },
     {
         "type": "step",
-        "title": "2. Generación de XML JATS",
+        "title": "2. Generación de XML JATS (Multi-Agente)",
         "content": """
 Una vez confirmados los metadatos y el contenido, en la pestaña **"Generación"**:
 
-- Presione el botón **"Generar XML JATS"**.
+- Seleccione los modelos deseados y presione el botón **"Generar XML JATS"**. Puede generar múltiples versiones a la vez (ej. Gemini, OpenAI, Claude).
+- El sistema presentará un **Leaderboard** donde evalúa el desempeño de cada modelo en tiempo real, asignando un porcentaje de precisión DTD a cada uno.
 - El sistema procesará el contenido aplicando las reglas del último estándar **JATS 1.4 (ANSI/NISO Z39.96-2024)**.
-- Se utilizarán los metadatos validados para construir un encabezado (`<front>`) preciso, incluyendo DOI y fechas.
 - Las tablas del documento se convertirán automáticamente a `<table-wrap>` con encabezados y cuerpo.
-- Cada sección del artículo (Introducción, Métodos, Resultados, etc.) se mapeará a su etiqueta `<sec>` correspondiente.
+- Seleccionará el XML con mejor puntaje para proceder a su posterior validación y corrección si fuese necesario.
 """,
         "image": "resources/manual_images/02.png",
         "caption": "Figura 3: Generación exitosa de XML JATS."
@@ -176,7 +176,7 @@ Licencia:
 Software de uso exclusivo para la Universidad de Valparaíso. Todos los derechos reservados.
 El código fuente y la documentación son propiedad intelectual de la Universidad de Valparaíso y su autor.
 
-Versión: 0.68
+Versión: 0.7.0
 """
 
 class ProfessionalPDF(FPDF):
@@ -293,7 +293,7 @@ def create_professional_pdf():
     pdf.set_font('Arial', 'B', 11)
     pdf.cell(0, 10, 'Autor: Cristian Carreño León', 0, 1, 'C')
     pdf.cell(0, 10, 'Fecha: 15-03-2026', 0, 1, 'C')
-    pdf.cell(0, 10, 'Versión: 0.68', 0, 1, 'C')
+    pdf.cell(0, 10, 'Versión: 0.7.0', 0, 1, 'C')
     pdf.cell(0, 10, 'Contacto: cristian.carreno@uv.cl', 0, 1, 'C')
     
     # --- SECCIÓN 1: DOCUMENTACIÓN ---

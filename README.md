@@ -141,8 +141,11 @@ Para consultas sobre licenciamiento o uso, contactar a: [cristian.carreno@uv.cl]
 
 ## 📅 Historial de Versiones (Changelog)
 
-### v0.7.0 — Arquitectura Multi-Model (Vendor-Agnostic)
+### v0.7.0 — Arquitectura Multi-Agente y Multi-Model (Vendor-Agnostic)
 
+- **Generación Paralela Multi-Agente**: Permite generar múltiples versiones de XML simultáneamente utilizando modelos distintos (Gemini, OpenAI, Anthropic, etc.), evaluando su rendimiento en tiempo real.
+- **Leaderboard y Puntuación DTD**: Implementación de un panel competitivo que evalúa automáticamente la precisión estructural de cada XML generado contra las estrictas reglas del DTD JATS. Genera un porcentaje de exactitud y corona a un modelo ganador.
+- **Validador Editorial AI (Agente Experto)**: Incorpora un agente de revision con rol de Editor Experto que asiste con explicaciones didácticas para subsanar los posibles fallos JATS del XML final, de forma detallada antes de su exportación.
 - **Soporte Multi-Proveedor (LLM-Agnostic)**: El Transformador XML abandona el confinamiento a Gemini e introduce una robusta arquitectura con soporte nativo para **OpenAI**, **Anthropic (Claude)**, **DeepSeek**, **Mistral**, **Groq** e inferencia local offline apoyada en **Ollama** (Llama3, Qwen, etc).
 - **Abstracción Multi-Proveedor**: Un nuevo diseño estructural (`modules/llm_provider.py`) introduce la clase abstracta `LLMProvider` permitiendo la fácil y limpia integración de nuevos ecosistemas y API providers en el futuro.
 - **Selectificador y Dashboard Híbrido**: El menú de *Configuración* fue reconstruido para permitir el ingreso de la API Key particular a cada servicio con enmascaramiento Base64, además de proveer atajos URL para expedir las Key gratuitas de todos los competidores en el mercado.

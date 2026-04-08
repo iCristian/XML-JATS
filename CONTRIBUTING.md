@@ -50,12 +50,14 @@ streamlit_app.py          # Punto de entrada web
     ├── metadata_processor.py  # Extracción de metadatos
     ├── correction.py      # Corrección asistida por IA
     ├── xml_html.py        # Conversión XML → HTML
-    └── config_store.py    # Persistencia (SQLite) — una API key
+    ├── config_store.py    # Persistencia (SQLite) — una API key
+    └── llm_provider.py    # Abstracción Multi-Proveedor y Multi-Agente
 ```
 
 ### Principios de Diseño
 
-- **Backend sin dependencia de UI**: `transformer.py`, `metadata_processor.py`, `correction.py` y `prompts.py` NO deben depender del estado de `streamlit`. La configuración se pasa como parámetros y se guarda usando `config_store.py`.
+- **Backend sin dependencia de UI**: `transformer.py`, `metadata_processor.py`, `correction.py`, `llm_provider.py` y `prompts.py` NO deben depender del estado de `streamlit`. La configuración se pasa como parámetros y se guarda usando `config_store.py`.
+- **Arquitectura Multi-Proveedor (Agnóstico a LLM)**: El proyecto utiliza la clase abstracta `LLMProvider` para conectarse a Gemini, Anthropic, OpenAI, etc. No introduzcas llamadas directas a APIs que rompan esta abstracción.
 - **Prompts Centralizados**: Todas las instrucciones para la IA están en `prompts.py`. Nunca hardcodees prompts en otros módulos.
 - **Modelo Consistente**: El modelo default es `gemini-2.5-flash` en toda la aplicación. Si añades un nuevo punto de llamada a la IA, usa este modelo.
 - **Una sola API Key**: **No añadas parámetros `api_key_pro` ni segundas claves.** Cuando la cuota gratuita se agota, `transformer.py` y `correction.py` retornan `{'quota_exceeded': True}` y la UI muestra el banner correspondiente. Google maneja el tier de pago automáticamente con la misma clave.
