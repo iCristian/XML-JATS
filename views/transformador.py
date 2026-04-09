@@ -484,7 +484,7 @@ def main() -> None:
         
         can_generate = bool(st.session_state.extracted_text and len(selected_agents_labels) > 0)
         
-        if st.button("Generar XML JATS (Batalla de Modelos)", type="primary", disabled=not can_generate):
+        if st.button("Generar XML JATS", type="primary", disabled=not can_generate):
             st.session_state.generated_versions = []
             st.session_state.generated_xml = None
             st.session_state.validation_errors = []
