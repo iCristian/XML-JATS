@@ -571,23 +571,24 @@ def main() -> None:
                      st.markdown(f"#### #{idx+1} | {version['label']}")
                      st.markdown(f"Puntuación Calidad JATS: {score_color} **{version['score']}%**")
                      if version['score'] == 100:
-                         st.success("✅ XML Limpio, estándar DTD respetado.")
+                         st.success("✅ XML Limpio, estándar XML-JATS respetado.")
                      elif version['score'] >= 90:
                          st.info("⚠️ XML casi perfecto. Mínimas advertencias.")
                      else:
                          st.warning(f"⚠️ {len(version['errors'])} advertencias/errores estructurales detectados.")
                      
-                     def make_winner_callback(w_xml=version['xml'], w_errs=version['errors']):
+                     def make_winner_callback(w_xml, w_errs, w_score):
                          st.session_state.generated_xml = w_xml
                          st.session_state.validation_errors = w_errs
+                         st.session_state.generated_score = w_score
                          st.session_state.correction_chat = []
                          st.session_state.show_correction_chat = False
                          st.session_state.pending_correction_xml = None
                          st.session_state._validation_ran = True # Skip re-validation later
                          st.session_state.go_to_step_3 = True # Advance automatically to Tab 3
                      
-                     btn_text = f"👑 Seleccionar Excelencia y Pasar a Validar ({version['label']})" if idx == 0 else f"Seleccionar opción alternativa ({version['label']})"
-                     st.button(btn_text, key=f"btn_tab2_win_{idx}", type="primary" if idx == 0 else "secondary", on_click=make_winner_callback, args=(version['xml'], version['errors']))
+                     btn_text = f"Pasar a Validar ({version['label']})" if idx == 0 else f"Seleccionar opción alternativa ({version['label']})"
+                     st.button(btn_text, key=f"btn_tab2_win_{idx}", type="primary" if idx == 0 else "secondary", on_click=make_winner_callback, args=(version['xml'], version['errors'], version['score']))
                      
                      with st.expander(f"Inspeccionar código generado por {version['label']}", expanded=False):
                          st.code(version['xml'][:1500] + "\n\n... (truncado por memoria visual)", language='xml')
@@ -684,92 +685,100 @@ def main() -> None:
         if not st.session_state.get('generated_xml'):
             st.info("⚠️ Por favor, ve al Paso 2 (Generación) y selecciona un Ganador XML primero.")
         else:
-            col_val, col_chat = st.columns([1, 1], gap="large")
+            st.subheader("Estado de Validación (XML Seleccionado)")
             
-            with col_val:
-                st.subheader("Estado de Validación (XML Seleccionado)")
+            if 'generated_score' in st.session_state:
+                 score = st.session_state.generated_score
+                 score_color = "🟢" if score >= 90 else "🟠" if score >= 60 else "🔴"
+                 st.markdown(f"**Puntuación de Calidad JATS:** {score_color} **{score}%**")
+            
+            def explain_dtd_error(error_msg: str) -> str:
+                import re
+                match = re.search(r"Element ([\w\-]+) content does not follow the DTD, expecting (.*?), got (.*)", error_msg)
+                if match:
+                    return f"🚨 Etiqueta `<{match.group(1)}>` incompleta o en orden incorrecto. Faltan elementos como `{match.group(2)}`."
+                match2 = re.search(r"No declaration for attribute ([\w\-]+) of element ([\w\-]+)", error_msg)
+                if match2:
+                    return f"⚠️ Atributo no válido. El atributo `{match2.group(1)}` no se permite en `<{match2.group(2)}>`."
+                match3 = re.search(r"Element ([\w\-]+) is not declared in (.*?)(?:List of possible elements:(.*))?", error_msg)
+                if match3:
+                     return f"🚨 Etiqueta desconocida. `<{match3.group(1)}>` no está permitida en esta sección."
+                part_split = error_msg.split(':', 4)
+                if len(part_split) > 4:
+                     return f"⚠️ Problema estructural JATS: {part_split[-1].strip()}"
+                return f"⚠️ {error_msg}"
+            
+            # ======================================================
+            # SECCIÓN 1: XML Corregido por IA (si hay pendiente)
+            # ======================================================
+            if st.session_state.get('pending_correction_xml'):
+                st.info("🤖 **La IA ha ejecutado el plan y generado una versión corregida.** Revísala y aplícala para re-evaluar.")
+                with st.expander("📄 Ver XML corregido propuesto", expanded=False):
+                    st.code(st.session_state.pending_correction_xml, language='xml')
                 
-                # ======================================================
-                # SECCIÓN 1: XML Corregido por IA (si hay pendiente)
-                # ======================================================
-                if st.session_state.pending_correction_xml:
-                    st.info("🤖 **La IA ha generado una versión corregida.** Revísala y aplícala para continuar.")
-                    with st.expander("📄 Ver XML corregido propuesto", expanded=False):
-                        st.code(st.session_state.pending_correction_xml, language='xml')
-                    
-                    col_apply, col_discard = st.columns(2)
-                    with col_apply:
-                        if st.button("✅ Aplicar Corrección", type="primary", key="btn_apply_correction"):
-                            corrected_xml = st.session_state.pending_correction_xml.strip()
-                            st.session_state.generated_xml = corrected_xml
-                            st.session_state.pending_correction_xml = None
-                            
-                            # Auto-validar el XML corregido
-                            is_valid, errors = transformer.validar_jats_xml(corrected_xml)
-                            st.session_state._validation_ran = True
-                            if is_valid:
-                                st.session_state.validation_errors = []
-                                st.session_state.correction_chat = []
-                                st.session_state.show_correction_chat = False
-                            else:
-                                st.session_state.validation_errors = errors
-                            
-                            st.rerun()
-                    with col_discard:
-                        if st.button("❌ Descartar", key="btn_discard_correction"):
-                            st.session_state.pending_correction_xml = None
-                            st.rerun()
+                col_apply, col_discard = st.columns(2)
+                with col_apply:
+                    if st.button("✅ Aplicar Corrección y Re-validar", type="primary", key="btn_apply_correction"):
+                        corrected_xml = st.session_state.pending_correction_xml.strip()
+                        st.session_state.generated_xml = corrected_xml
+                        st.session_state.pending_correction_xml = None
+                        
+                        # Auto-validar el XML corregido
+                        is_valid, errors = transformer.validar_jats_xml(corrected_xml)
+                        st.session_state._validation_ran = True
+                        if is_valid:
+                            st.session_state.validation_errors = []
+                            st.session_state.proposed_correction_plan = None
+                        else:
+                            st.session_state.validation_errors = errors
+                            st.session_state.proposed_correction_plan = None  # Reset plan to force re-evaluation
+                        
+                        st.rerun()
+                with col_discard:
+                    if st.button("❌ Descartar", key="btn_discard_correction"):
+                        st.session_state.pending_correction_xml = None
+                        st.rerun()
+                
+                st.divider()
+            
+            # ======================================================
+            # SECCIÓN 2: Botón de Validación XML-JATS
+            # ======================================================
+            if st.button("Ejecutar Validación XML-JATS", key="btn_validate_dtd"):
+                st.session_state.pending_correction_xml = None
+                st.session_state.proposed_correction_plan = None
+                st.session_state._validation_ran = True
+                
+                is_valid, errors = transformer.validar_jats_xml(st.session_state.generated_xml)
+                if is_valid:
+                    st.session_state.validation_errors = []
+                    st.session_state.generated_score = 100
+                else:
+                    st.session_state.validation_errors = errors
+                    st.session_state.generated_score = max(0, 100 - (len(errors) * 5))
+                st.rerun()
+            
+            # ======================================================
+            # SECCIÓN 3: Resultados y Plan de Cambios ASISTIDO
+            # ======================================================
+            if st.session_state.get("_validation_ran", False):
+                if st.session_state.get('validation_errors'):
+                    st.error(f"❌ {len(st.session_state.validation_errors)} errores encontrados en la validación.")
+                    with st.expander("📋 Ver lista de errores detallados y simplificados", expanded=True):
+                        for e in st.session_state.validation_errors:
+                            st.info(f"• {explain_dtd_error(e)}")
                     
                     st.divider()
-                
-                # ======================================================
-                # SECCIÓN 2: Botón de Validación DTD
-                # ======================================================
-                if st.button("Ejecutar Validación DTD", key="btn_validate_dtd"):
-                    st.session_state.pending_correction_xml = None
-                    st.session_state._validation_ran = True
+                    st.markdown("### 🛠️ Corrección Inteligente Asistida")
                     
-                    is_valid, errors = transformer.validar_jats_xml(st.session_state.generated_xml)
-                    if is_valid:
-                        st.session_state.validation_errors = []
-                        st.session_state.show_correction_chat = False
-                        st.session_state.correction_chat = []
-                    else:
-                        st.session_state.validation_errors = errors
-                        st.session_state.show_correction_chat = True 
-                        
-                        # Auto-explicación en chatbot
-                        if not st.session_state.correction_chat:
-                             explanation_msg = f"❌ **He detectado {len(errors)} errores de validación.**\n\nExplicación preliminar:\n"
-                             for i, err in enumerate(errors[:3]):
-                                 explanation_msg += f"- `{err}`\n"
-                             if len(errors) > 3:
-                                 explanation_msg += f"... y {len(errors)-3} más."
-                             explanation_msg += "\n\nPuedes intentar solucionarlos automáticamente con IA o editar manualmente."
-                             st.session_state.correction_chat.append({"role": "assistant", "content": explanation_msg})
-                    st.rerun()
-                
-                # ======================================================
-                # SECCIÓN 3: Resultados de Validación
-                # ======================================================
-                if st.session_state.get("_validation_ran", False):
-                    if st.session_state.validation_errors:
-                        st.error(f"❌ {len(st.session_state.validation_errors)} errores encontrados")
-                        for e in st.session_state.validation_errors:
-                            st.warning(f"• {e}")
-                        
-                        st.divider()
-                        st.markdown("### 🛠️ Corrección Asistida")
-                        st.warning("⚠️ **Advertencia**: El uso de IA para corregir XML puede introducir alucinaciones. Revisa siempre el resultado.")
-                        
-                        if st.button("Intentar Solucionar con IA", type="primary", key="btn_ai_fix"):
-                            st.session_state.show_correction_chat = True
-                            with st.spinner("Analizando errores y buscando soluciones con IA..."):
+                    if not st.session_state.get('proposed_correction_plan'):
+                        st.info("La IA puede revisar estos problemas y proponer un 'Plan de Cambios'. Podrás revisar este plan y realizar observaciones o proveer métadatos faltantes antes de permitirle a la IA tocar el código.")
+                        if st.button("🔍 Generar Plan de Cambios con IA", type="primary", key="btn_ai_plan"):
+                            with st.spinner("La IA está elaborando el plan de acción..."):
                                 api_key = st.session_state.get('_active_api_key', '')
                                 selected_model = st.session_state.get("selected_model", "gemini-2.5-flash")
                                 _pid = st.session_state.get('_active_provider', 'gemini')
-                                res = correction.analizar_errores_inicial(
-                                    st.session_state.generated_xml,
+                                res = correction.generar_plan_correccion(
                                     st.session_state.validation_errors,
                                     model_version=selected_model,
                                     api_key=api_key,
@@ -779,8 +788,60 @@ def main() -> None:
                                 
                                 if res.get('quota_exceeded'):
                                     st.session_state["_paid_quota_active"] = True
+                                    
+                                # Registrar uso de tokens del plan
+                                tu = res.get('token_usage', {})
+                                if tu.get('total_tokens', 0) > 0:
+                                    config_store.log_token_usage(
+                                        operation="correction_plan",
+                                        model=st.session_state.get("selected_model", "gemini-2.5-flash"),
+                                        prompt_tokens=tu.get('prompt_tokens', 0),
+                                        completion_tokens=tu.get('completion_tokens', 0),
+                                        total_tokens=tu.get('total_tokens', 0),
+                                    )
                                 
-                                # Registrar uso de tokens de corrección
+                                st.session_state.proposed_correction_plan = response_text
+                                st.rerun()
+                    else:
+                        # Mostrar el plan propuesto y el text area
+                        st.markdown("#### 📝 Plan de Cambios Propuesto por la IA")
+                        st.markdown(st.session_state.proposed_correction_plan)
+                        
+                        st.markdown("#### ✍️ Observaciones y Ejecución")
+                        user_feedback = st.text_area("Agrega datos faltantes (ej. correos, ORCIDs) o instrucciones adicionales para la IA antes de aplicar el plan:", height=100)
+                        
+                        if st.button("🚀 Proceder a Ejecutar Plan y Corregir XML", type="primary", key="btn_ai_execute"):
+                            with st.spinner("La IA está aplicando estructuralmente el plan al XML..."):
+                                api_key = st.session_state.get('_active_api_key', '')
+                                selected_model = st.session_state.get("selected_model", "gemini-2.5-flash")
+                                _pid = st.session_state.get('_active_provider', 'gemini')
+                                res = correction.corregir_xml(
+                                    st.session_state.generated_xml,
+                                    st.session_state.validation_errors,
+                                    user_feedback,
+                                    model_version=selected_model,
+                                    api_key=api_key,
+                                    provider_id=_pid,
+                                )
+                                response_text = ""
+                                corrected_xml = None
+                                if res.get('returncode') == 0 and res.get('stdout'):
+                                    response_text = res.get('stdout', '')
+                                    import re as _re
+                                    stripped = response_text.strip()
+                                    if stripped.startswith('<'):
+                                        corrected_xml = stripped
+                                    else:
+                                        match = _re.search(r"```xml\s*(.*?)(?:```|$)", response_text, _re.DOTALL | _re.IGNORECASE)
+                                        if match:
+                                            corrected_xml = match.group(1).strip()
+                                else:
+                                    response_text = f"Error: {res.get('stderr')}"
+                                    
+                                if res.get('quota_exceeded'):
+                                    st.session_state["_paid_quota_active"] = True
+                                
+                                # Registrar uso de tokens de la corrección
                                 tu = res.get('token_usage', {})
                                 if tu.get('total_tokens', 0) > 0:
                                     config_store.log_token_usage(
@@ -791,125 +852,18 @@ def main() -> None:
                                         total_tokens=tu.get('total_tokens', 0),
                                     )
                                 
-                                # invocar_gemini_cli ya limpia backticks via parse_model_response.
-                                # Detectar si el resultado es XML directo o texto con explicación.
-                                import re as _re_fix
-                                stripped_resp = response_text.strip()
-                                corrected_xml_fix = None
-                                if stripped_resp.startswith('<'):
-                                    corrected_xml_fix = stripped_resp
+                                if corrected_xml:
+                                    st.session_state.pending_correction_xml = corrected_xml
+                                    st.rerun()
                                 else:
-                                    match_fix = _re_fix.search(r"```xml\s*(.*?)(?:```|$)", response_text, _re_fix.DOTALL | _re_fix.IGNORECASE)
-                                    if match_fix:
-                                        corrected_xml_fix = match_fix.group(1).strip()
-                                
-                                if corrected_xml_fix:
-                                    st.session_state.pending_correction_xml = corrected_xml_fix
-                                else:
-                                    # No se pudo extraer XML, mostrar como texto
-                                    st.session_state.pending_correction_xml = None
-                                
-                                st.session_state.correction_chat.append({
-                                    "role": "assistant", 
-                                    "content": response_text
-                                })
-                                st.rerun()
-                    else:
-                        # ======================================================
-                        # SECCIÓN 4: Éxito + Botón Ir a Paso 4
-                        # ======================================================
-                        st.success("✅ ¡XML Válido! No se encontraron errores.")
-                        st.markdown("---")
-                        if st.button("➡️ Ir a Paso 4: Resultados", type="primary", key="btn_goto_step4"):
-                            js_switch_tab(3)
-
-            # ==============================================================
-            # COLUMNA DERECHA: Chat de corrección
-            # ==============================================================
-            with col_chat:
-                if st.session_state.show_correction_chat:
-                    st.subheader("🤖 Asistente de Corrección")
-                    
-                    chat_container = st.container(height=400)
-                    with chat_container:
-                        for msg in st.session_state.correction_chat:
-                            with st.chat_message(msg["role"]):
-                                content = msg["content"]
-                                if msg["role"] == "assistant":
-                                    # Mostrar una porción para el chat y un expander para el XML completo
-                                    st.write("Generé una posible corrección del XML.")
-                                    if msg == st.session_state.correction_chat[-1] and st.session_state.get('pending_correction_xml'):
-                                        st.info("📄 XML corregido generado. Aplícalo desde el panel izquierdo ⬅️")
-                                    else:
-                                        with st.expander("Ver XML generado en este paso", expanded=False):
-                                            st.code(content, language='xml')
-                                else:
-                                    st.write(content)
-
-                    prompt = st.chat_input("Escribe tu instrucción...", key="correction_chat_input")
-                    if prompt:
-                        st.session_state.correction_chat.append({"role": "user", "content": prompt})
-                        with chat_container:
-                            with st.chat_message("user"):
-                                st.write(prompt)
-                            
-                            with st.chat_message("assistant"):
-                                _pid = st.session_state.get('_active_provider', 'gemini')
-                                _prov_name = provider_names.get(_pid, _pid)
-                                with st.spinner(f"Consultando a {_prov_name}..."):
-                                    api_key = st.session_state.get('_active_api_key', '')
-                                    selected_model = st.session_state.get("selected_model", "gemini-2.5-flash")
-                                    res = correction.corregir_xml(
-                                        st.session_state.generated_xml,
-                                        st.session_state.validation_errors,
-                                        prompt,
-                                        model_version=selected_model,
-                                        api_key=api_key,
-                                        provider_id=_pid,
-                                    )
-                                    
-                                    if res.get('quota_exceeded'):
-                                        st.session_state["_paid_quota_active"] = True
-                                    
-                                    response_text = ""
-                                    corrected_xml = None
-                                    if res.get('returncode') == 0 and res.get('stdout'):
-                                        response_text = res.get('stdout', '')
-                                        # invocar_gemini_cli ya limpia backticks via parse_model_response.
-                                        # Si el resultado parece XML directo (empieza con < ), usarlo.
-                                        # Si aún tiene backticks (raro), extraer.
-                                        import re as _re
-                                        stripped = response_text.strip()
-                                        if stripped.startswith('<'):
-                                            corrected_xml = stripped
-                                        else:
-                                            match = _re.search(r"```xml\s*(.*?)(?:```|$)", response_text, _re.DOTALL | _re.IGNORECASE)
-                                            if match:
-                                                corrected_xml = match.group(1).strip()
-                                    else:
-                                        response_text = f"Error: {res.get('stderr')}"
-                                    
-                                    # Registrar uso de tokens del chatbot
-                                    tu = res.get('token_usage', {})
-                                    if tu.get('total_tokens', 0) > 0:
-                                        config_store.log_token_usage(
-                                            operation="chatbot",
-                                            model=st.session_state.get("selected_model", "gemini-2.5-flash"),
-                                            prompt_tokens=tu.get('prompt_tokens', 0),
-                                            completion_tokens=tu.get('completion_tokens', 0),
-                                            total_tokens=tu.get('total_tokens', 0),
-                                        )
-                                    
-                                    if corrected_xml:
-                                        st.session_state.pending_correction_xml = corrected_xml
-                                        st.session_state.correction_chat.append({
-                                            "role": "assistant", 
-                                            "content": response_text 
-                                        })
-                                        st.rerun()
-                                    else:
+                                    st.error("No se pudo extraer el XML corregido. Por favor intenta de nuevo.")
+                                    with st.expander("Ver respuesta del modelo", expanded=True):
                                         st.write(response_text)
-                                        st.session_state.correction_chat.append({"role": "assistant", "content": response_text})
+                else:
+                    st.success("✅ ¡XML Válido! No se encontraron errores estructurales.")
+                    st.markdown("---")
+                    if st.button("➡️ Ir a Paso 4: Resultados", type="primary", key="btn_goto_step4"):
+                        js_switch_tab(3)
 
 
     # --- Tab 4 ---
@@ -937,7 +891,7 @@ def main() -> None:
                          st.session_state.generated_html = html
                      except Exception as e:
                          st.error(f"**Error al generar HTML:** {e}")
-                         st.info("⚠️ **El XML generado tiene etiquetas mal formadas (ej. no cerradas correctamente).**\n\nVe a la pestaña **'Validación y Corrección'** y haz clic en *Ejecutar Validación DTD*. La IA detectará los errores y propondrá automáticamente la corrección de las etiquetas.")
+                         st.info("⚠️ **El XML generado tiene etiquetas mal formadas (ej. no cerradas correctamente).**\n\nVe a la pestaña **'Validación y Corrección'** y haz clic en *Ejecutar Validación XML-JATS*. La IA detectará los errores y propondrá automáticamente la corrección de las etiquetas.")
                 
                 if st.session_state.generated_html:
                     st.download_button(

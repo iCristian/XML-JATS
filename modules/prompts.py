@@ -70,7 +70,7 @@ def get_generation_prompt(texto_articulo: str, metadata: Optional[Dict[str, Any]
 
     INSTRUCCIONES DE ETIQUETADO:
     1.  **Estructura General:** Raíz `<article>` con `xmlns:xlink="http://www.w3.org/1999/xlink"` y `xml:lang="es"`. Debe contener `<front>`, `<body>`, y `<back>`.
-    2.  **Sección <front>:** (DEBE seguir EXACTAMENTE esta estructura y orden, no cambies el orden ni omitas etiquetas obligatorias de JATS 1.3):
+    2.  **Sección <front>:** (DEBE seguir EXACTAMENTE esta estructura y orden, no cambies el orden ni omitas etiquetas obligatorias del estándar XML-JATS {version}):
         ```xml
         <front>
             <journal-meta>
@@ -146,7 +146,7 @@ def get_generation_prompt(texto_articulo: str, metadata: Optional[Dict[str, Any]
             </table-wrap>
             ```
             Analiza el contenido del placeholder: la primera fila de datos suele ser los encabezados (`<thead>`), las filas restantes son datos (`<tbody>`). Cada celda separada por `|` → un `<td>` o `<th>`. NUNCA omitas los datos de la tabla; transcribe TODAS las filas y columnas.
-        *   **REGLA DTD ESTRICTA PARA TABLAS E IMÁGENES:** Todo `<table-wrap>` y `<fig>` DEBE estar contenido *DENTRO* de una sección (`<sec>`) o un párrafo (`<p>`). NUNCA los coloques como hijos directos del `<body>` fuera de un `<sec>`.
+        *   **REGLA ESTRICTA DE XML-JATS PARA TABLAS E IMÁGENES:** Todo `<table-wrap>` y `<fig>` DEBE estar contenido *DENTRO* de una sección (`<sec>`) o un párrafo (`<p>`). NUNCA los coloques como hijos directos del `<body>` fuera de un `<sec>`.
         *   **IMPORTANTE SOBRE LOS LIMITES:** CIERRA `</body>` CORRECTAMENTE ANTES de abrir `<back>`. NUNCA pongas `<back>` DENTRO de `<body>`.
     4.  **Sección <back>:** VA DESPUÉS DE CERRAR `</body>`.
         *   Debe contener `<ref-list>` con `<ref>` para cada referencia.
@@ -159,28 +159,46 @@ def get_generation_prompt(texto_articulo: str, metadata: Optional[Dict[str, Any]
         *   Tu respuesta DEBE ESTAR COMPLETAMENTE BIEN FORMADA.
         *   Cada etiqueta que abras DEBE CERRARSE CORRECTAMENTE con el MISMO NOMBRE exacto (ej. si abres `<month>`, ciérrala estrictamente con `</month>`, NO con `</label>` ni con `</year>`). ¡Revisa dos veces los cierres de etiquetas!
         *   Ten especial cuidado al cerrar `</element-citation>` de no olvidarte cerrar el `</ref>` a continuación.
-        *   Mantén todos los atributos entre comillas dobles.
-        *   Codifica los caracteres especiales de manera correcta si es necesario, o déjalos en UTF-8 puro si la declaración lo permite.
-        *   INCLUYE la raíz `<article>` al inicio y ciérrala al final con `</article>`.
-        *   Cualquier error de desajuste de etiquetas ("Opening and ending tag mismatch") arruinará el documento. Presta MUCHA ATENCIÓN a esto.
-        *   NUNCA uses `<break/>` dentro de `<p>`. Si necesitas un salto de línea, crea un nuevo `<p>` separado.
-        *   Para enlaces URL en referencias bibliográficas, usa `<ext-link ext-link-type="uri" xlink:href="URL">URL</ext-link>`. NUNCA uses `<pub-id pub-id-type="uri">`, porque "uri" NO es un valor válido para pub-id-type en JATS. Los valores válidos de pub-id-type son: "doi", "pmid", "pmcid", etc.
+        1.  MANTÉN EXACTAMENTE EL MISMO CONTENIDO TEXTUAL Y ORDEN LÓGICO DEL ARTÍCULO ORIGINAL.
+        2.  Aplica únicamente los cambios estructurales correspondientes.
+        3.  Devuelve el XML COMPLETO, desde la cabecera `<?xml ... ?>` hasta la etiqueta de cierre `</article>`. No recortes nada.
+        4.  Tu respuesta DEBE contener únicamente el bloque de código ````xml ... ```` y ninguna explicación adicional, para que pueda ser parseado directamente por el sistema.
+    """
 
-    TEXTO DEL ARTÍCULO A ETIQUETAR:
-    ---
-    {texto_articulo}
-    ---
 
-    RECORDATORIO: Genera el XML JATS completo desde `<article>` hasta `</article>`. Mantén la extensión y contenido original de cada sección. No omitas contenido.
+def get_correction_plan_prompt(validation_errors: List[str]) -> str:
+    """Prompt para generar únicamente un Plan de Acción (sin XML) sobre cómo corregir los errores reportados."""
+    from . import config_store
+    version = config_store.get_jats_version()
+    errores_str = "\n".join(f"- {err}" for err in validation_errors)
+    
+    return f"""
+    Actúa como un arquitecto y editor experto del estándar XML-JATS (versión {version}).
+
+    SITUACIÓN:
+    Tengo un archivo XML que presenta los siguientes errores de validación.
+
+    ERRORES DE VALIDACIÓN REPORTADOS:
+    {errores_str}
+
+    OBJETIVO:
+    Genera un "Plan de Cambios Propuesto" explicando en español, de forma clara, directa y estructurada como una lista de tareas (checklist), qué cambios estructurales precisos se deben realizar en el XML para subsanar los errores.
+
+    REGLAS ESTRICTAS:
+    1.  NO GENERES CÓDIGO XML. Tu salida debe ser ÚNICAMENTE el plan redactado en Markdown.
+    2.  Si algún error indica claramente la falta de información importante que deba provenir del mundo real (ej: no se proporcionó el correo electrónico de un autor, o la afiliación está incompleta), indícale amablemente al usuario que proporcione esa información en las "Observaciones" para que puedas incluirla en el siguiente paso.
+    3.  Mantén el tono didáctico, empático y profesional (similar a Antigravity).
     """
 
 
 def get_correction_analysis_prompt(xml_content: str, validation_errors: List[str]) -> str:
     """Prompt para analizar los errores XML e intentar una autocorrección profunda."""
+    from . import config_store
+    version = config_store.get_jats_version()
     errores_str = "\n".join(f"- {err}" for err in validation_errors)
     
     return f"""
-    Actúa como un validador experto de XML JATS 1.3.
+    Actúa como un validador experto del estándar XML-JATS (versión {version}).
 
     CONTEXTO: Este es un trabajo de maquetación editorial. El contenido textual del artículo ya fue aprobado.
     Solo debes corregir la ESTRUCTURA XML (tags, atributos, orden de elementos), no el contenido textual.
@@ -205,7 +223,7 @@ def get_correction_analysis_prompt(xml_content: str, validation_errors: List[str
        
     2. PRIORIDAD MÁXIMA: Corregir errores TÉCNICOS y ESTRUCTURALES directamente:
        - Tags mal anidados, atributos inválidos, orden incorrecto de elementos.
-       - Elementos faltantes requeridos por el DTD (ej: `<ref-list>` vacío si no hay refs, `<body>` incompleto).
+       - Elementos faltantes requeridos por el estándar XML-JATS (ej: `<ref-list>` vacío si no hay refs, `<body>` incompleto).
        - Secciones truncadas que terminan abruptamente (cierra los tags correctamente).
        
     3. Si la corrección requiere inventar contenido real que NO existe en el XML (ej: el nombre de un autor, una fecha que realmente falta), SOLO ENTONCES agrega un comentario XML y pregunta al usuario.
@@ -226,6 +244,8 @@ def get_correction_analysis_prompt(xml_content: str, validation_errors: List[str
 
 def get_interactive_correction_prompt(xml_content: str, validation_errors: List[str], user_feedback: str = "") -> str:
     """Prompt para orquestar la corrección XML iterativa asistida por feedback humano."""
+    from . import config_store
+    version = config_store.get_jats_version()
     errores_str = "\n".join(f"- {err}" for err in validation_errors)
     
     extra_instructions = ""
@@ -237,17 +257,17 @@ def get_interactive_correction_prompt(xml_content: str, validation_errors: List[
         """
 
     return f"""
-    Actúa como un experto en depuración de XML JATS 1.3 interactivo.
-
-    CONTEXTO: Este es un trabajo de maquetación editorial. El contenido textual del artículo ya fue aprobado.
-    Solo debes corregir la ESTRUCTURA XML (tags, atributos, orden de elementos), no el contenido textual.
+    Actúa como un experto en depuración interactiva del estándar XML-JATS (versión {version}).
 
     SITUACIÓN:
-    Tengo un archivo XML que NO valida contra el DTD JATS 1.3 o tiene datos incompletos.
+    Tengo un archivo XML que NO valida completamente contra el estándar XML-JATS {version} o tiene datos incompletos.
 
     ERRORES DE VALIDACIÓN REPORTADOS O PREGUNTA DEL USUARIO:
     {errores_str}
 
+    EL PLAN DE ACCIÓN A SEGUIR:
+    Has propuesto previamente un plan de corrección para solucionar estos errores.
+    
     {extra_instructions}
 
     TAREA CRÍTICA (DE CUMPLIMIENTO OBLIGATORIO):

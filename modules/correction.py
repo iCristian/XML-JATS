@@ -37,3 +37,21 @@ def corregir_xml(
     """Orquesta el proceso de corrección de XML usando el LLM seleccionado."""
     prompt = prompts.get_interactive_correction_prompt(xml_content, validation_errors, user_feedback)
     return invocar_llm(prompt, model_version=model_version, api_key=api_key, provider_id=provider_id)
+
+def generar_plan_correccion(validation_errors: List[str],
+                            model_version: str = "gemini-2.5-flash", 
+                            api_key: str = "",
+                            provider_id: str = "gemini") -> Dict[str, Any]:
+    """Genera un plan de acción sugerido basado en los errores de validación, sin retornar XML.
+
+    Args:
+        validation_errors: Lista de cadenas de error DTD.
+        model_version: Modelo a usar.
+        api_key: Puede ser vacía si el LLM la resuelve.
+        provider_id: Proveedor de LLM.
+
+    Returns:
+        Dict con 'stdout' (el plan redactado), 'token_usage', etc.
+    """
+    prompt = prompts.get_correction_plan_prompt(validation_errors)
+    return invocar_llm(prompt, model_version=model_version, api_key=api_key, provider_id=provider_id)
