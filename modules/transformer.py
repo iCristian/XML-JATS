@@ -648,6 +648,46 @@ def validar_jats_xml(xml_content: str) -> Tuple[bool, List[str]]:
         return False, [f"Error inesperado durante validación: {e}"]
 
 
+def verificar_completitud_xml(xml_content: str, original_text: str = None) -> Tuple[bool, List[str]]:
+    """Verifica heurísticamente que el XML no sea un cascarón vacío y contenga el texto real.
+
+    Args:
+        xml_content (str): Cadena con el XML completo a evaluar.
+        original_text (str, optional): Texto original extraído del docx para comparar densidad.
+
+    Returns:
+        Tuple[bool, List[str]]: (es_completo, lista_de_advertencias)
+    """
+    import re
+    warnings = []
+    is_complete = True
+
+    # 1. Búsqueda de comentarios perezosos típicos de LLMs
+    # Ej: <!-- Contenido de la introducción -->
+    lazy_comments = re.findall(r'<!--\s*(?i:contenido|cuerpo|texto|referencias|inserte|...\s*).*?-->', xml_content)
+    if lazy_comments:
+        warnings.append(f"Se detectaron comentarios que sugieren omisión de texto: {lazy_comments[:2]}...")
+        is_complete = False
+
+    # Extraer texto visible del body
+    try:
+        parser = etree.XMLParser(recover=True, encoding='utf-8')
+        root = etree.fromstring(xml_content.encode('utf-8'), parser=parser)
+        body = root.find('.//body')
+        body_text = "".join(body.itertext()) if body is not None else ""
+        
+        # 2. Verificación básica: un artículo académico debe tener un body sustancial
+        if len(body_text.strip()) < 500:
+            warnings.append("El cuerpo del documento (<body>) es peligrosamente corto (menos de 500 caracteres). El modelo probablemente omitió el contenido de la investigación.")
+            is_complete = False
+            
+    except Exception as e:
+        # Falla el parseo crudo
+        pass
+
+    return is_complete, warnings
+
+
 def guardar_salida_xml(xml_content: str, output_path: str) -> None:
     """Guarda el XML en disco con la declaración DOCTYPE correcta.
 

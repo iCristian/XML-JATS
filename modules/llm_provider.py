@@ -17,7 +17,9 @@ Uso típico::
 from __future__ import annotations
 
 import os
+import subprocess
 import sys
+import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
@@ -291,6 +293,48 @@ class OpenAIProvider(LLMProvider):
             return host
         return self._base_url
 
+    def _ensure_ollama_ready(self) -> bool:
+        """Verifica si Ollama está respondiendo y, si no, intenta iniciarlo."""
+        import requests
+        
+        host = self.get_base_url()
+        if not host:
+            return False
+            
+        # Solo intentar iniciar si es localhost
+        is_local = "localhost" in host or "127.0.0.1" in host
+        
+        # 1. Verificar si ya responde (rápido)
+        try:
+            # Quitamos /v1 si existe para llegar al endpoint /api/tags nativo de Ollama
+            ping_url = host.replace("/v1", "").rstrip("/") + "/api/tags"
+            resp = requests.get(ping_url, timeout=2)
+            if resp.status_code == 200:
+                return True
+        except Exception:
+            pass
+            
+        if not is_local:
+            return False # No podemos iniciar un servicio remoto
+            
+        # 2. Intentar iniciarlo en macOS
+        if sys.platform == "darwin":
+            if os.path.exists("/Applications/Ollama.app"):
+                try:
+                    subprocess.run(["open", "-a", "Ollama"], check=False)
+                    # Esperar un poco a que levante
+                    for _ in range(5):
+                        time.sleep(1)
+                        try:
+                            resp = requests.get(ping_url, timeout=1)
+                            if resp.status_code == 200:
+                                return True
+                        except Exception:
+                            continue
+                except Exception:
+                    pass
+        return False
+
     def generate(
         self,
         prompt: str,
@@ -301,6 +345,9 @@ class OpenAIProvider(LLMProvider):
     ) -> LLMResponse:
         from openai import OpenAI
 
+        if self._custom_id == "ollama":
+            self._ensure_ollama_ready()
+            
         cfg = config or LLMConfig()
         
         # Para Ollama/instancias locales, el SDK falla si la api_key es None/vacía
@@ -316,13 +363,18 @@ class OpenAIProvider(LLMProvider):
             
         client = OpenAI(**client_kwargs)
 
+        # Limpiar el nombre del modelo si viene con etiquetas entre corchetes, ej: [LOCAL] o [LOCAL - OFFLINE]
+        actual_model = model
+        if model.startswith("[") and "] " in model:
+            actual_model = model.split("] ", 1)[1]
+
         messages: List[Dict[str, str]] = []
         if chat_history:
             messages.extend(chat_history)
         messages.append({"role": "user", "content": prompt})
 
         response = client.chat.completions.create(
-            model=model,
+            model=actual_model,
             messages=messages,
             temperature=cfg.temperature,
             top_p=cfg.top_p,
@@ -347,29 +399,51 @@ class OpenAIProvider(LLMProvider):
         try:
             from openai import OpenAI
 
+            is_ollama = self._custom_id == "ollama"
+            actual_base_url = self.get_base_url()
+            
+            if is_ollama:
+                self._ensure_ollama_ready()
+
             _api_key = api_key
-            if self._custom_id == "ollama" and not _api_key:
+            if is_ollama and not _api_key:
                 _api_key = "ollama"
 
             client_kwargs: Dict[str, Any] = {"api_key": _api_key}
             
-            actual_base_url = self.get_base_url()
             if actual_base_url:
                 client_kwargs["base_url"] = actual_base_url
                 
             client = OpenAI(**client_kwargs)
             models = [m.id for m in client.models.list().data]
+            
             if not models:
                 return self.get_default_models()
+                
             # Solo filtrar por nombres GPT/o* para el proveedor OpenAI nativo
             if not self._custom_id:
                 chat_models = [m for m in models if any(k in m for k in ("gpt", "o1", "o3", "o4"))]
                 return sorted(chat_models, reverse=True) if chat_models else sorted(models)[:20]
+                
             # Para proveedores compatibles (DeepSeek, Mistral, Groq, Ollama)
-            # devolver todos los modelos sin filtrar
+            if is_ollama:
+                # Etiquetar local vs remoto
+                is_local = actual_base_url and ("localhost" in actual_base_url or "127.0.0.1" in actual_base_url)
+                tag = "[LOCAL]" if is_local else "[CLOUD]"
+                labeled_models = [f"{tag} {m}" for m in models]
+                return sorted(labeled_models)
+                
             return sorted(models) if len(models) <= 30 else sorted(models)[:30]
         except Exception:
             pass
+        
+        # Si falló Ollama, devolvemos default con aviso
+        if self._custom_id == "ollama":
+            actual_base_url = self.get_base_url()
+            is_local = actual_base_url and ("localhost" in actual_base_url or "127.0.0.1" in actual_base_url)
+            tag = "[LOCAL - OFFLINE]" if is_local else "[CLOUD - UNREACHABLE]"
+            return [f"{tag} {m}" for m in self.get_default_models()]
+            
         return self.get_default_models()
 
 

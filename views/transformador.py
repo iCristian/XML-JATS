@@ -107,6 +107,19 @@ def main() -> None:
                 config_store.save_ollama_host(new_host)
                 st.toast("URL de Ollama actualizada", icon="✅")
                 st.rerun()
+            
+            # Verificar estado de Ollama en vivo
+            provider_obj = PROVIDER_REGISTRY["ollama"]
+            with st.spinner("Revisando Ollama..."):
+                is_ready = provider_obj._ensure_ollama_ready()
+                if is_ready:
+                    st.success("✅ Ollama en ejecución")
+                else:
+                    st.error("❌ Ollama no responde")
+                    if "localhost" in current_host or "127.0.0.1" in current_host:
+                        st.info("💡 Intentando iniciar servicio automáticamente...")
+                    else:
+                        st.warning("⚠️ Verifica que la URL del servidor remoto sea correcta.")
 
         # ─── Instrucciones (Popover minimalista) ───
         with st.popover("📋 Instrucciones"):
@@ -142,8 +155,8 @@ def main() -> None:
         # ─── Selección de Modelo ───
         st.markdown("<p style='font-size: 0.9rem; font-weight: 600; margin-bottom: 0;'>📦 Modelo</p>", unsafe_allow_html=True)
 
-        @st.cache_data(ttl=3600)
-        def get_available_models(provider_id: str, api_key: str):
+        @st.cache_data(ttl=600)  # Reducir TTL para mayor frescura
+        def get_available_models(provider_id: str, api_key: str, host: Optional[str] = None):
             provider_obj = PROVIDER_REGISTRY.get(provider_id)
             if not provider_obj:
                 return []
@@ -151,6 +164,8 @@ def main() -> None:
             if not api_key and provider_id != "ollama":
                 return default_models
             try:
+                # El host ya se obtiene internamente en list_models desde config_store,
+                # pero pasarlo aquí asegura que @st.cache_data invalide si cambia.
                 live_models = provider_obj.list_models(api_key or "ollama")
                 if live_models:
                     return live_models
@@ -158,7 +173,9 @@ def main() -> None:
                 pass
             return default_models
 
-        model_options = get_available_models(selected_provider, st.session_state["_active_api_key"])
+        # Obtener host actual para invalidar cache si cambia
+        current_ollama_host = config_store.get_ollama_host() if selected_provider == "ollama" else None
+        model_options = get_available_models(selected_provider, st.session_state["_active_api_key"], current_ollama_host)
 
         selected_model = st.selectbox(
             "Modelo:",
@@ -496,7 +513,8 @@ def main() -> None:
                 with cols[i % len(cols)]:
                     provider_obj = PROVIDER_REGISTRY[pid]
                     api_key = config_store.load_provider_key(pid) if pid != "ollama" else "ollama"
-                    models = provider_obj.get_default_models()
+                    _host = config_store.get_ollama_host() if pid == "ollama" else None
+                    models = get_available_models(pid, api_key, _host)
                     
                     selected_models = st.multiselect(
                         f"Modelos de {provider_names[pid]}:",
@@ -585,7 +603,13 @@ def main() -> None:
                 with st.spinner("Realizando evaluación experta inmediata (DTD JATS)..."):
                     for version in st.session_state.generated_versions:
                         is_valid, errors = transformer.validar_jats_xml(version['xml'])
+                        is_complete, semantic_warnings = transformer.verificar_completitud_xml(version['xml'], st.session_state.extracted_text)
+                        
                         score = max(0, 100 - (len(errors) * 5)) if not is_valid else 100
+                        if not is_complete:
+                            score = min(score, 20)  # Penalización severa por XML vacío
+                            errors = semantic_warnings + errors # Agregar como errores para forzar corrección
+                            
                         version['score'] = score
                         version['errors'] = errors
                     st.session_state._validation_ran_batalla = True
@@ -763,12 +787,14 @@ def main() -> None:
                         
                         # Auto-validar el XML corregido
                         is_valid, errors = transformer.validar_jats_xml(corrected_xml)
+                        is_complete, semantic_warns = transformer.verificar_completitud_xml(corrected_xml, st.session_state.extracted_text)
+                        
                         st.session_state._validation_ran = True
-                        if is_valid:
+                        if is_valid and is_complete:
                             st.session_state.validation_errors = []
                             st.session_state.proposed_correction_plan = None
                         else:
-                            st.session_state.validation_errors = errors
+                            st.session_state.validation_errors = semantic_warns + errors
                             st.session_state.proposed_correction_plan = None  # Reset plan to force re-evaluation
                         
                         st.rerun()
@@ -788,12 +814,15 @@ def main() -> None:
                 st.session_state._validation_ran = True
                 
                 is_valid, errors = transformer.validar_jats_xml(st.session_state.generated_xml)
-                if is_valid:
+                is_complete, semantic_warns = transformer.verificar_completitud_xml(st.session_state.generated_xml, st.session_state.extracted_text)
+                
+                if is_valid and is_complete:
                     st.session_state.validation_errors = []
                     st.session_state.generated_score = 100
                 else:
-                    st.session_state.validation_errors = errors
-                    st.session_state.generated_score = max(0, 100 - (len(errors) * 5))
+                    st.session_state.validation_errors = semantic_warns + errors
+                    base_score = max(0, 100 - (len(errors) * 5))
+                    st.session_state.generated_score = min(base_score, 20) if not is_complete else base_score
                 st.rerun()
             
             # ======================================================
@@ -801,10 +830,18 @@ def main() -> None:
             # ======================================================
             if st.session_state.get("_validation_ran", False):
                 if st.session_state.get('validation_errors'):
-                    st.error(f"❌ {len(st.session_state.validation_errors)} errores encontrados en la validación.")
+                    
+                    # Detectar si es un error semántico (generado por verificación heurística)
+                    has_semantic_error = any("peligrosamente corto" in e or "omisión de texto" in e for e in st.session_state.validation_errors)
+                    
+                    if has_semantic_error:
+                        st.error("⚠️ **ALERTA CRÍTICA DE EDICIÓN**: El XML es técnicamente válido según JATS, pero parece estar [VACÍO / INCOMPLETO]. Faltan fragmentos clave del texto original o la IA usó delimitadores en lugar de transcribir los párrafos. Se recomienda descartar este XML y generar uno nuevo usando un modelo de mayor capacidad.")
+                    else:
+                        st.error(f"❌ {len(st.session_state.validation_errors)} errores encontrados en la validación.")
+                        
                     with st.expander("📋 Ver lista de errores detallados y simplificados", expanded=True):
                         for e in st.session_state.validation_errors:
-                            st.info(f"• {explain_dtd_error(e)}")
+                            st.info(f"• {explain_dtd_error(e) if 'Faltan fragmentos' not in e and 'El cuerpo' not in e and 'omisión de texto' not in e else e}")
                     
                     st.divider()
                     st.markdown("### 🛠️ Corrección Inteligente Asistida")

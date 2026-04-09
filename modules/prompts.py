@@ -66,6 +66,9 @@ def get_generation_prompt(texto_articulo: str, metadata: Optional[Dict[str, Any]
     - NO condenses párrafos ni secciones. Cada párrafo del original = un <p> en el XML.
     - NO omitas secciones, tablas, datos ni referencias.
     
+    ⚠️ REGLA CRÍTICA DE INTEGRIDAD (¡CERO PLACEHOLDERS!): 
+    Bajo NINGUNA circunstancia puedes utilizar comentarios XML (como `<!-- Contenido de la sección -->` o `<!-- Inserte texto aquí -->`) para reemplazar el texto original. DEBES transcribir TODO el contenido de la investigación (Introducción, Métodos, Resultados, Discusión, etc.) íntegramente dentro del `<body>` y todas sus Referencias en `<ref-list>`. Si entregas un "cascarón XML" vacío con el texto resumido o escondido en comentarios, se considerará una falla crítica de validación inaceptable.
+    
     {metadata_instructions}
 
     INSTRUCCIONES DE ETIQUETADO:
@@ -163,6 +166,11 @@ def get_generation_prompt(texto_articulo: str, metadata: Optional[Dict[str, Any]
         2.  Aplica únicamente los cambios estructurales correspondientes.
         3.  Devuelve el XML COMPLETO, desde la cabecera `<?xml ... ?>` hasta la etiqueta de cierre `</article>`. No recortes nada.
         4.  Tu respuesta DEBE contener únicamente el bloque de código ````xml ... ```` y ninguna explicación adicional, para que pueda ser parseado directamente por el sistema.
+
+    DOCUMENTO ORIGINAL A PROCESAR:
+    ======================================================================
+    {texto_articulo}
+    ======================================================================
     """
 
 
