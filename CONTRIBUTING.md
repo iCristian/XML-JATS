@@ -62,6 +62,7 @@ streamlit_app.py          # Punto de entrada web
 - **Modelo Consistente**: El modelo default es `gemini-2.5-flash` en toda la aplicación. Si añades un nuevo punto de llamada a la IA, usa este modelo.
 - **Una sola API Key**: **No añadas parámetros `api_key_pro` ni segundas claves.** Cuando la cuota gratuita se agota, `transformer.py` y `correction.py` retornan `{'quota_exceeded': True}` y la UI muestra el banner correspondiente. Google maneja el tier de pago automáticamente con la misma clave.
 - **Señalización de Cuota**: Si una función hace llamadas a Gemini y puede recibir error 429, debe retornar un diccionario que incluya `'quota_exceeded': True` (no lanzar excepción), para que la UI detecte el estado y actualice el banner lateral.
+- **Política de Integridad Semántica (Zero-Placeholder)**: Queda estrictamente prohibido permitir que la IA entregue XMLs con marcadores de posición (`<!-- Contenido de... -->`). Cualquier cambio en los prompts o el transformador debe reforzar la transcripción completa del texto original.
 
 ## Estilo de Código y Normas
 
@@ -125,6 +126,7 @@ Al procesar respuestas de la IA (Gemini), sigue estas reglas:
 - **Parsing de XML**: Verifica si la respuesta comienza con `<` (XML directo) o contiene bloques ` ```xml ``` ` (markdown). `invocar_gemini_cli` ya limpia backticks via `parse_model_response`.
 - **Normalización**: Usa `_normalize_metadata()` para corregir variaciones en claves del JSON.
 - **Cuota agotada**: Detecta el error 429 con `tenacity`; si se agotan los reintentos, retorna `{'error': ..., 'quota_exceeded': True}`.
+- **Auditoría de Completitud**: Al modificar el flujo de generación, invoca `verificar_completitud_xml` en `transformer.py` para asegurar que el output sea semánticamente denso y no un mero cascarón.
 
 ### 5. Prompts para la IA
 

@@ -1,4 +1,4 @@
-# Transformador XML JATS (JATS XML Transformer) - v0.7.0
+# Transformador XML JATS (JATS XML Transformer) - v0.7.5
 
 Una herramienta avanzada impulsada por Inteligencia Artificial para convertir documentos de Word (`.docx`) a formato **JATS XML** validado, diseñada específicamente para el flujo editorial de revistas científicas.
 
@@ -13,6 +13,7 @@ Esta aplicación automatiza el proceso de etiquetado semántico, extracción de 
 - **Preservación de Texto**: El sistema etiqueta el texto original sin modificarlo — respetando el trabajo de los correctores humanos.
 - **Revisión Interactiva**: Permite editar metadatos y dialogar con un chatbot para completar información faltante antes de la generación.
 - **Validación JATS 1.4**: Valida contra el último estándar **NISO JATS Version 1.4 (ANSI/NISO Z39.96-2024)**.
+- **Auditoría de Integridad Editorial (Semantic Check)**: El sistema no solo valida la estructura XML, sino que audita heurísticamente la presencia de datos reales, bloqueando "cascarones vacíos" o placeholders (`<!-- ... -->`) generados por modelos con baja capacidad o cuota limitada.
 - **Conversión a HTML**: Genera archivos HTML autocontenidos con logo incrustado (Base64), tema claro/oscuro, tabla de contenidos interactiva y enlaces funcionales. Las referencias bibliográficas se renderizan correctamente con DOIs clickeables.
 - **Vista Previa en Nueva Pestaña**: La previsualización del HTML se abre en una pestaña del navegador con soporte completo de UTF-8 y navegación por anclas.
 - **Gestión Multi-API Key**: Las claves de API de los distintos proveedores elegidos se guardan localmente de forma segura en una base de datos SQLite con ofuscación Base64. Puedes interconectar múltiples inteligencias sin reingresar parámetros iterativamente.
@@ -140,6 +141,13 @@ El código fuente y la documentación contenidos en este repositorio son propied
 Para consultas sobre licenciamiento o uso, contactar a: [cristian.carreno@uv.cl](mailto:cristian.carreno@uv.cl)
 
 ## 📅 Historial de Versiones (Changelog)
+
+### v0.7.5 — Auditoría Semántica y Robustez de Infraestructura
+
+- **Verificación de Completitud Semántica**: Nueva capa de validación heurística que detecta omisiones de texto, placeholders de IA e insuficiencia de densidad de datos, garantizando la integridad de la investigación maquetada.
+- **Auto-vuelo de Ollama (macOS)**: Implementación de auto-detección y lanzamiento del servicio local Ollama. Si el servicio no responde, el sistema intenta levantarlo automáticamente en entornos macOS para garantizar disponibilidad inmediata.
+- **Etiquetado de Origen [LOCAL/CLOUD]**: Identificación clara de modelos en el selector, diferenciando entre inferencia local (Ollama) y proveedores cloud, con monitoreo de estado en tiempo real.
+- **Refuerzo de Prompt "Zero-Placeholder"**: Instrucciones maestras rediseñadas para prohibir estrictamente el uso de comentarios XML como marcadores de posición, forzando la transcripción íntegra del cuerpo y referencias.
 
 ### v0.7.0 — Arquitectura Multi-Agente y Multi-Model (Vendor-Agnostic)
 

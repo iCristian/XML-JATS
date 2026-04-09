@@ -104,8 +104,8 @@ XML-JATS-2/
 2. **Extracción**: `transformer.extraer_contenido_estructurado()` extrae texto, tablas e imágenes
 3. **Metadatos**: `metadata_processor.MetadataExtractor` usa IA para extraer título, autores, DOI, etc.
 4. **Generación Paralela (Leaderboard)**: Se emplea `llm_provider` junto con múltiples modelos LLM simultáneos. Se generan varios XML.
-5. **Puntuación y Validación**: Cada XML se valida contra DTD JATS estricto y se le otorga un puntaje (Score DTD).
-6. **Corrección (Agente Editorial)**: Si hay errores menores en el modelo ganador, un Agente Experto asiste didácticamente sugiriendo correcciones en formato interactivo.
+5. **Puntuación y Validación**: Cada XML se valida contra DTD JATS estricto y se somete a una **Auditoría de Completitud Semántica** (detección de placeholders y validación de densidad de texto).
+6. **Corrección (Agente Editorial)**: Si hay errores menores en el modelo ganador o la auditoría marca inconsistencias, un Agente Experto asiste didácticamente sugiriendo correcciones en formato interactivo.
 7. **HTML**: `xml_html.build_html()` convierte el XML final a HTML visualizable.
 
 ---
@@ -154,10 +154,10 @@ streamlit run streamlit_app.py
 
 ## Estado del Proyecto
 
-- **Versión actual:** 0.7.0
+- **Versión actual:** 0.7.5
 - **Framework:** Streamlit
-- **LLM:** Arquitectura LLM-Agnostic (Gemini, OpenAI, Anthropic, DeepSeek, Local Ollama)
-- **Validación:** JATS DTD 1.3/1.4 con scoring automatizado
+- **LLM:** Arquitectura LLM-Agnostic (Gemini, OpenAI, Anthropic, DeepSeek, Local Ollama con Auto-start)
+- **Validación:** JATS DTD 1.3/1.4 con scoring automatizado y Auditoría de Integridad Semántica.
 
 ---
 
