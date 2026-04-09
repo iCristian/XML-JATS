@@ -492,7 +492,7 @@ def main():
                 file_name="Manual_Usuario_Completo_UV.pdf",
                 mime="application/pdf",
                 type="primary",
-                use_container_width=True
+                width="stretch"
             )
 
     # Sidebar Footer (Igual que en la app principal para consistencia)

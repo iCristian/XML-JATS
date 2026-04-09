@@ -282,6 +282,15 @@ class OpenAIProvider(LLMProvider):
             return self._custom_default_models
         return ["gpt-4o", "gpt-4o-mini", "gpt-4.1", "gpt-4.1-mini", "o3-mini"]
 
+    def get_base_url(self) -> Optional[str]:
+        if self._custom_id == "ollama":
+            from modules.config_store import get_ollama_host
+            host = get_ollama_host().rstrip("/")
+            if not host.endswith("/v1"):
+                host = f"{host}/v1"
+            return host
+        return self._base_url
+
     def generate(
         self,
         prompt: str,
@@ -293,9 +302,18 @@ class OpenAIProvider(LLMProvider):
         from openai import OpenAI
 
         cfg = config or LLMConfig()
-        client_kwargs: Dict[str, Any] = {"api_key": api_key}
-        if self._base_url:
-            client_kwargs["base_url"] = self._base_url
+        
+        # Para Ollama/instancias locales, el SDK falla si la api_key es None/vacía
+        _api_key = api_key
+        if self._custom_id == "ollama" and not _api_key:
+            _api_key = "ollama"
+            
+        client_kwargs: Dict[str, Any] = {"api_key": _api_key}
+        
+        actual_base_url = self.get_base_url()
+        if actual_base_url:
+            client_kwargs["base_url"] = actual_base_url
+            
         client = OpenAI(**client_kwargs)
 
         messages: List[Dict[str, str]] = []
@@ -329,9 +347,16 @@ class OpenAIProvider(LLMProvider):
         try:
             from openai import OpenAI
 
-            client_kwargs: Dict[str, Any] = {"api_key": api_key}
-            if self._base_url:
-                client_kwargs["base_url"] = self._base_url
+            _api_key = api_key
+            if self._custom_id == "ollama" and not _api_key:
+                _api_key = "ollama"
+
+            client_kwargs: Dict[str, Any] = {"api_key": _api_key}
+            
+            actual_base_url = self.get_base_url()
+            if actual_base_url:
+                client_kwargs["base_url"] = actual_base_url
+                
             client = OpenAI(**client_kwargs)
             models = [m.id for m in client.models.list().data]
             if not models:

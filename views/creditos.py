@@ -84,7 +84,7 @@ def main():
     # Botón Volver (más claro)
     col_back, _ = st.columns([1, 2])
     with col_back:
-        if st.button("⬅️ VOLVER AL INICIO", type="primary", use_container_width=True):
+        if st.button("⬅️ VOLVER AL INICIO", type="primary", width="stretch"):
             st.switch_page("views/transformador.py")
 
     # Sidebar Footer (Igual que en la app principal)

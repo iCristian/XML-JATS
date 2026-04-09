@@ -100,6 +100,14 @@ def main() -> None:
 
         has_api_key = bool(st.session_state["_active_api_key"]) or selected_provider == "ollama"
 
+        if selected_provider == "ollama":
+            current_host = config_store.get_ollama_host()
+            new_host = st.text_input("🌐 URL Servidor Ollama:", value=current_host, key="sidebar_ollama_host", help="Ej: http://localhost:11434 (local) o https://mi-ollama.nube.com (remoto)")
+            if new_host != current_host:
+                config_store.save_ollama_host(new_host)
+                st.toast("URL de Ollama actualizada", icon="✅")
+                st.rerun()
+
         # ─── Instrucciones (Popover minimalista) ───
         with st.popover("📋 Instrucciones"):
             st.markdown(
@@ -125,8 +133,9 @@ def main() -> None:
 
         # ─── Banner de cuota de pago activa ───
         if st.session_state.get("_paid_quota_active"):
+            _mdl = st.session_state.get("selected_model", "gemini-2.5-flash")
             st.warning(
-                "💳 **Cuota gratuita agotada.** Las próximas llamadas serán de pago.",
+                f"💳 **Cuota gratuita diaria agotada para el modelo `{_mdl}`.** Las próximas llamadas podrían ser incurrir en cobros o dar error en tiers estrictos.",
                 icon="⚠️",
             )
 
@@ -462,27 +471,52 @@ def main() -> None:
              st.warning("⚠️ **Atención**: No has validado completamente los metadatos en el Paso 1. Esto podría generar un XML incompleto.")
         
         # --- Configuración Multi-Agente ---
-        from modules.config_store import get_configured_providers, load_provider_key
+        configured_pids = config_store.get_configured_providers()
+        if "ollama" not in configured_pids:
+            configured_pids.append("ollama")
+            
+        provider_names = {p: PROVIDER_REGISTRY[p].display_name for p in configured_pids if p in PROVIDER_REGISTRY}
         
-        configured_pids = get_configured_providers()
-        available_options = {}
+        st.subheader("Selección de Agentes y Modelos")
+        st.markdown("Selecciona los proveedores y modelos de IA que participarán en la Batalla de Modelos:")
         
-        if "gemini" in configured_pids: available_options["Gemini (gemini-2.5-flash)"] = ("gemini", "gemini-2.5-flash", load_provider_key("gemini"))
-        if "openai" in configured_pids: available_options["OpenAI (gpt-4o-mini)"] = ("openai", "gpt-4o-mini", load_provider_key("openai"))
-        if "anthropic" in configured_pids: available_options["Claude (claude-3-5-sonnet)"] = ("anthropic", "claude-3-5-sonnet", load_provider_key("anthropic"))
-        if "deepseek" in configured_pids: available_options["DeepSeek (deepseek-chat)"] = ("deepseek", "deepseek-chat", load_provider_key("deepseek"))
-        if "mistral" in configured_pids: available_options["Mistral (mistral-large-latest)"] = ("mistral", "mistral-large-latest", load_provider_key("mistral"))
-        if "groq" in configured_pids: available_options["Groq (mixtral-8x7b-32768)"] = ("groq", "mixtral-8x7b-32768", load_provider_key("groq"))
-        available_options["Ollama (llama3 local)"] = ("ollama", "llama3", None)
-        
-        st.subheader("Selección de Agentes")
-        selected_agents_labels = st.multiselect(
-            "Selecciona uno o más agentes de IA para generar el XML (Batalla de Modelos):",
-            options=list(available_options.keys()),
-            default=[list(available_options.keys())[0]] if available_options else []
+        selected_pids = st.multiselect(
+            "1. Elige los Proveedores:",
+            options=[p for p in configured_pids if p in PROVIDER_REGISTRY],
+            format_func=lambda p: provider_names[p],
+            default=[configured_pids[0]] if configured_pids else []
         )
         
-        can_generate = bool(st.session_state.extracted_text and len(selected_agents_labels) > 0)
+        battle_roster = []
+        
+        if selected_pids:
+            cols = st.columns(len(selected_pids)) if len(selected_pids) <= 3 else st.columns(3)
+            
+            for i, pid in enumerate(selected_pids):
+                with cols[i % len(cols)]:
+                    provider_obj = PROVIDER_REGISTRY[pid]
+                    api_key = config_store.load_provider_key(pid) if pid != "ollama" else "ollama"
+                    models = provider_obj.get_default_models()
+                    
+                    selected_models = st.multiselect(
+                        f"Modelos de {provider_names[pid]}:",
+                        options=models,
+                        default=[models[0]] if models else [],
+                        key=f"battle_models_{pid}"
+                    )
+                    
+                    for mdl in selected_models:
+                        battle_roster.append({
+                            "label": f"{provider_names[pid]} ({mdl})",
+                            "provider": pid,
+                            "model": mdl,
+                            "api_key": api_key
+                        })
+                        
+        if battle_roster:
+            st.info("🤖 **Participantes en la batalla:** " + ", ".join([f"`{r['label']}`" for r in battle_roster]))
+            
+        can_generate = bool(st.session_state.extracted_text and len(battle_roster) > 0)
         
         if st.button("Generar XML JATS", type="primary", disabled=not can_generate):
             st.session_state.generated_versions = []
@@ -492,7 +526,7 @@ def main() -> None:
             
             st.session_state._validation_ran_batalla = False
             
-            total_agents = len(selected_agents_labels)
+            total_agents = len(battle_roster)
             
             prompt = prompts.get_generation_prompt(
                 st.session_state.extracted_text, 
@@ -501,12 +535,16 @@ def main() -> None:
             
             # Contenedores para el estado de cada agente progresivo
             status_containers = {}
-            for agent_label in selected_agents_labels:
+            for r in battle_roster:
+                agent_label = r["label"]
                 status_containers[agent_label] = st.empty()
                 status_containers[agent_label].info(f"⏳ {agent_label}: Esperando turno...")
                 
-            for idx, agent_label in enumerate(selected_agents_labels):
-                _pid, _model, _key = available_options[agent_label]
+            for idx, r in enumerate(battle_roster):
+                agent_label = r["label"]
+                _pid = r["provider"]
+                _model = r["model"]
+                _key = r["api_key"]
                 status_containers[agent_label].warning(f"🔄 {agent_label}: Procesando XML [{idx+1}/{total_agents}]...")
                 
                 result = transformer.invocar_llm(
@@ -961,10 +999,12 @@ def main() -> None:
         _rpd_max = _limits['rpd']
         _rpd_pct = min(_rpd_used / max(_rpd_max, 1), 1.0)
         
-        st.caption(f"📊 **Hoy:** {_rpd_used} / {_rpd_max} req · {token_summary['today_tokens']:,} tokens")
+        st.caption(f"📊 **Hoy ({_model}):** {_rpd_used} / {_rpd_max} req · {token_summary['today_tokens']:,} tokens")
         st.progress(_rpd_pct)
-        if _rpd_pct >= 0.8:
-            st.warning("⚠️ Cuota diaria casi agotada")
+        if _rpd_pct >= 1.0:
+            st.error(f"🚫 Cuota diaria de `{_model}` agotada.")
+        elif _rpd_pct >= 0.8:
+            st.warning(f"⚠️ Cuota diaria de `{_model}` casi agotada.")
         
         st.markdown(
             """

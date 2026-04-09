@@ -400,6 +400,16 @@ def save_jats_version(version: str) -> None:
     save_setting("jats_version", version)
 
 
+def get_ollama_host() -> str:
+    """Obtiene la URL configurada para el servidor Ollama."""
+    return load_setting("ollama_host") or "http://localhost:11434"
+
+
+def save_ollama_host(host_url: str) -> None:
+    """Guarda la URL del servidor Ollama."""
+    save_setting("ollama_host", host_url.strip())
+
+
 # ─── Token Usage ──────────────────────────────────────────────
 
 def log_token_usage(operation: str, model: str,

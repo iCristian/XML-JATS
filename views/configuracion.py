@@ -29,16 +29,25 @@ def main() -> None:
     current_provider = config_store.load_active_provider()
     current_idx = provider_ids.index(current_provider) if current_provider in provider_ids else 0
 
-    selected_provider = st.selectbox(
-        "Selecciona el proveedor de IA:",
-        options=provider_ids,
-        format_func=lambda pid: next((p["name"] for p in providers if p["id"] == pid), pid),
-        index=current_idx,
-        key="_cfg_provider_select",
-    )
-    if selected_provider != current_provider:
-        config_store.save_active_provider(selected_provider)
-        st.rerun()
+    col_prov1, col_prov2 = st.columns([3, 1])
+    with col_prov1:
+        selected_provider = st.selectbox(
+            "Proveedor principal a utilizar por defecto:",
+            options=provider_ids,
+            format_func=lambda pid: next((p["name"] for p in providers if p["id"] == pid), pid),
+            index=current_idx,
+            key="_cfg_provider_select",
+        )
+    with col_prov2:
+        st.markdown("<br>", unsafe_allow_html=True)
+        if st.button("💾 Guardar como Activo", width="stretch", type="primary"):
+            if selected_provider != current_provider:
+                config_store.save_active_provider(selected_provider)
+                st.session_state["_active_provider"] = selected_provider
+                st.success(f"Proveedor {selected_provider} configurado como principal.")
+                st.rerun()
+            else:
+                st.info("Ya es el proveedor activo.")
 
     configured = config_store.get_configured_providers()
     st.caption(
@@ -205,7 +214,7 @@ Mantenerte bajo este umbral garantiza coste cero.
         })
 
     df_quotas = pd.DataFrame(quota_data)
-    st.dataframe(df_quotas, use_container_width=True, hide_index=True)
+    st.dataframe(df_quotas, width="stretch", hide_index=True)
 
     with st.expander("ℹ️ Notas sobre cuentas y cuotas", expanded=False):
         st.markdown("""
@@ -254,9 +263,9 @@ Mantenerte bajo este umbral garantiza coste cero.
     st.markdown(f"**Uso de cuota diaria ({selected_model}):**")
     st.progress(rpd_pct)
     if rpd_pct >= 1.0:
-        st.error("🚫 Cuota gratuita diaria agotada.")
+        st.error(f"🚫 Cuota gratuita diaria de `{selected_model}` agotada.")
     elif rpd_pct >= 0.8:
-        st.warning(f"⚠️ Has usado {rpd_pct:.0%} de tu cuota diaria gratuita.")
+        st.warning(f"⚠️ Has usado {rpd_pct:.0%} de tu cuota diaria gratuita de `{selected_model}`.")
     else:
         st.success(f"✅ Cuota diaria al {rpd_pct:.0%}.")
 
@@ -284,7 +293,7 @@ Mantenerte bajo este umbral garantiza coste cero.
         df_hist = pd.DataFrame(history)
         df_hist.columns = ["Fecha/Hora", "Operación", "Modelo", "Prompt", "Respuesta", "Total"]
         df_hist["Fecha/Hora"] = df_hist["Fecha/Hora"].apply(lambda x: x[:19].replace("T", " ") if x else "")
-        st.dataframe(df_hist, use_container_width=True, hide_index=True)
+        st.dataframe(df_hist, width="stretch", hide_index=True)
     else:
         st.info("No hay operaciones registradas aún.")
 
