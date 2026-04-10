@@ -226,7 +226,7 @@ def invocar_llm(
             return False
         return True
 
-    if provider_id != "ollama" and not _is_valid_key_format(api_key):
+    if provider_id not in ("ollama", "lmstudio") and not _is_valid_key_format(api_key):
         return {
             'returncode': 1,
             'stderr': f'No se encontró una API Key válida para {provider_id}. Ve a ⚙️ Configuración y guarda tu clave.',

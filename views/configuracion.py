@@ -75,20 +75,24 @@ def main() -> None:
             col_key, col_info = st.columns(2, gap="large")
 
             with col_key:
-                if pid == "ollama":
+                if pid in ("ollama", "lmstudio"):
+                    is_ollama = pid == "ollama"
+                    name_prov = "Ollama" if is_ollama else "LM Studio"
+                    default_port = "`localhost:11434`" if is_ollama else "`localhost:1234/v1`"
+                    
                     st.info(
-                        "🏠 **Ollama es local** — no requiere API Key. "
-                        "Asegúrate de tener Ollama corriendo en `localhost:11434`."
+                        f"🏠 **{name_prov} es local** — no requiere API Key. "
+                        f"Asegúrate de tener {name_prov} corriendo y el servidor local activado en {default_port}."
                     )
-                    if st.button("🧪 Probar conexión", key=f"cfg_test_{pid}"):
+                    if st.button(f"🧪 Probar conexión", key=f"cfg_test_{pid}"):
                         try:
-                            models = provider_obj.list_models("ollama")
+                            models = provider_obj.list_models(pid)
                             if models:
-                                st.success(f"✅ Ollama conectado. Modelos: {', '.join(models[:5])}")
+                                st.success(f"✅ {name_prov} conectado. Modelos: {', '.join(models[:5])}")
                             else:
-                                st.warning("⚠️ Ollama conectado pero no se encontraron modelos.")
+                                st.warning(f"⚠️ {name_prov} conectado pero no se encontraron modelos descargados.")
                         except Exception as e:
-                            st.error(f"❌ No se pudo conectar a Ollama: {e}")
+                            st.error(f"❌ No se pudo conectar a {name_prov}: {e}")
                 else:
                     if saved_key:
                         masked = saved_key[:4] + "•" * 16 + saved_key[-4:]
@@ -136,14 +140,31 @@ def main() -> None:
 
             with col_info:
                 st.subheader(f"💡 {pname}")
-                default_models = provider_obj.get_default_models()
-                if default_models:
-                    st.markdown("**Modelos disponibles:**")
-                    for m in default_models[:6]:
-                        st.markdown(f"- `{m}`")
-                env_var = provider_obj.get_api_key_env_var()
-                if env_var:
-                    st.caption(f"Variable de entorno: `{env_var}`")
+                
+                if pid == "ollama":
+                    st.markdown(
+                        "**Ollama** es una herramienta que te permite ejecutar grandes modelos de lenguaje (LLMs) directamente en tu propia computadora, garantizando total privacidad y coste cero por consulta. "
+                        "Es ideal para equipos con Apple Silicon (M1/M2/M3) o tarjetas gráficas dedicadas.\n\n"
+                        "📚 [Visitar la página oficial de Ollama](https://ollama.com)\n\n"
+                        "📖 [Explorar Modelos Disponibles](https://ollama.com/library)"
+                    )
+                elif pid == "lmstudio":
+                    st.markdown(
+                        "**LM Studio** es una aplicación de escritorio fácil de usar para descubrir, descargar y ejecutar modelos de lenguaje locales (GGUF, Llama, Qwen, etc.). "
+                        "Ofrece un servidor local compatible con la API de OpenAI, lo que lo hace perfecto para integrarse con este sistema.\n\n"
+                        "Para usarlo, descarga un modelo, ve a la pestaña **Local Server** y actívalo.\n\n"
+                        "📚 [Descargar LM Studio](https://lmstudio.ai)\n\n"
+                        "▶️ [Guía Rápida de LM Studio](https://lmstudio.ai/docs)"
+                    )
+                else:
+                    default_models = provider_obj.get_default_models()
+                    if default_models:
+                        st.markdown("**Modelos disponibles:**")
+                        for m in default_models[:6]:
+                            st.markdown(f"- `{m}`")
+                    env_var = provider_obj.get_api_key_env_var()
+                    if env_var:
+                        st.caption(f"Variable de entorno: `{env_var}`")
 
     st.markdown("---")
     st.caption(

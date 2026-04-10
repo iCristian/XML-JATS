@@ -74,10 +74,17 @@ def main() -> None:
     
     with st.sidebar:
         # ─── Selección de Proveedor IA ───
-        providers = list_providers()
+        providers = list_providers(filter_unavailable=True)
         provider_ids = [p["id"] for p in providers]
         provider_names = {p["id"]: p["name"] for p in providers}
+        
         active_provider = config_store.load_active_provider()
+        
+        # Fallback al primer proveedor disponible si el activo no está disponible
+        if active_provider not in provider_ids and provider_ids:
+            active_provider = provider_ids[0]
+            config_store.save_active_provider(active_provider)
+            
         active_idx = provider_ids.index(active_provider) if active_provider in provider_ids else 0
 
         selected_provider = st.selectbox(
@@ -98,24 +105,30 @@ def main() -> None:
             _saved_key = os.environ.get(env_var, "") if env_var else ""
         st.session_state["_active_api_key"] = _saved_key
 
-        has_api_key = bool(st.session_state["_active_api_key"]) or selected_provider == "ollama"
+        has_api_key = bool(st.session_state["_active_api_key"]) or selected_provider in ("ollama", "lmstudio")
 
-        if selected_provider == "ollama":
-            current_host = config_store.get_ollama_host()
-            new_host = st.text_input("🌐 URL Servidor Ollama:", value=current_host, key="sidebar_ollama_host", help="Ej: http://localhost:11434 (local) o https://mi-ollama.nube.com (remoto)")
+        if selected_provider in ("ollama", "lmstudio"):
+            is_ollama = selected_provider == "ollama"
+            current_host = config_store.get_ollama_host() if is_ollama else config_store.get_lmstudio_host()
+            name = "Ollama" if is_ollama else "LM Studio"
+            
+            new_host = st.text_input(f"🌐 URL Servidor {name}:", value=current_host, key=f"sidebar_{selected_provider}_host", help=f"Ej: http://localhost:{'11434' if is_ollama else '1234/v1'} (local) o remoto")
             if new_host != current_host:
-                config_store.save_ollama_host(new_host)
-                st.toast("URL de Ollama actualizada", icon="✅")
+                if is_ollama:
+                    config_store.save_ollama_host(new_host)
+                else:
+                    config_store.save_lmstudio_host(new_host)
+                st.toast(f"URL de {name} actualizada", icon="✅")
                 st.rerun()
             
-            # Verificar estado de Ollama en vivo
-            provider_obj = PROVIDER_REGISTRY["ollama"]
-            with st.spinner("Revisando Ollama..."):
-                is_ready = provider_obj._ensure_ollama_ready()
+            # Verificar estado en vivo
+            provider_obj = PROVIDER_REGISTRY[selected_provider]
+            with st.spinner(f"Revisando {name}..."):
+                is_ready = provider_obj._ensure_local_ready()
                 if is_ready:
-                    st.success("✅ Ollama en ejecución")
+                    st.success(f"✅ {name} en ejecución")
                 else:
-                    st.error("❌ Ollama no responde")
+                    st.error(f"❌ {name} no responde")
                     if "localhost" in current_host or "127.0.0.1" in current_host:
                         st.info("💡 Intentando iniciar servicio automáticamente...")
                     else:
@@ -161,7 +174,7 @@ def main() -> None:
             if not provider_obj:
                 return []
             default_models = provider_obj.get_default_models()
-            if not api_key and provider_id != "ollama":
+            if not api_key and provider_id not in ("ollama", "lmstudio"):
                 return default_models
             try:
                 # El host ya se obtiene internamente en list_models desde config_store,
@@ -174,8 +187,13 @@ def main() -> None:
             return default_models
 
         # Obtener host actual para invalidar cache si cambia
-        current_ollama_host = config_store.get_ollama_host() if selected_provider == "ollama" else None
-        model_options = get_available_models(selected_provider, st.session_state["_active_api_key"], current_ollama_host)
+        current_local_host = None
+        if selected_provider == "ollama":
+            current_local_host = config_store.get_ollama_host()
+        elif selected_provider == "lmstudio":
+            current_local_host = config_store.get_lmstudio_host()
+            
+        model_options = get_available_models(selected_provider, st.session_state["_active_api_key"], current_local_host)
 
         selected_model = st.selectbox(
             "Modelo:",
@@ -489,19 +507,24 @@ def main() -> None:
         
         # --- Configuración Multi-Agente ---
         configured_pids = config_store.get_configured_providers()
-        if "ollama" not in configured_pids:
+        # Filtrar automáticamente proveedores locales si están disponibles
+        if "ollama" not in configured_pids and "ollama" in provider_ids:
             configured_pids.append("ollama")
+        if "lmstudio" not in configured_pids and "lmstudio" in provider_ids:
+            configured_pids.append("lmstudio")
             
-        provider_names = {p: PROVIDER_REGISTRY[p].display_name for p in configured_pids if p in PROVIDER_REGISTRY}
+        # Solo mostrar como seleccionables en la batalla a los proveedores funcionales
+        available_pids = [p for p in configured_pids if p in PROVIDER_REGISTRY and PROVIDER_REGISTRY[p].is_available()]
+        provider_names_multi = {p: PROVIDER_REGISTRY[p].display_name for p in available_pids}
         
         st.subheader("Selección de Agentes y Modelos")
         st.markdown("Selecciona los proveedores y modelos de IA que participarán en la Batalla de Modelos:")
         
         selected_pids = st.multiselect(
             "1. Elige los Proveedores:",
-            options=[p for p in configured_pids if p in PROVIDER_REGISTRY],
-            format_func=lambda p: provider_names[p],
-            default=[configured_pids[0]] if configured_pids else []
+            options=available_pids,
+            format_func=lambda p: provider_names_multi[p],
+            default=[available_pids[0]] if available_pids else []
         )
         
         battle_roster = []
@@ -512,12 +535,18 @@ def main() -> None:
             for i, pid in enumerate(selected_pids):
                 with cols[i % len(cols)]:
                     provider_obj = PROVIDER_REGISTRY[pid]
-                    api_key = config_store.load_provider_key(pid) if pid != "ollama" else "ollama"
-                    _host = config_store.get_ollama_host() if pid == "ollama" else None
+                    api_key = config_store.load_provider_key(pid) if pid not in ("ollama", "lmstudio") else pid
+                    
+                    _host = None
+                    if pid == "ollama":
+                        _host = config_store.get_ollama_host()
+                    elif pid == "lmstudio":
+                        _host = config_store.get_lmstudio_host()
+                        
                     models = get_available_models(pid, api_key, _host)
                     
                     selected_models = st.multiselect(
-                        f"Modelos de {provider_names[pid]}:",
+                        f"Modelos de {provider_names_multi[pid]}:",
                         options=models,
                         default=[models[0]] if models else [],
                         key=f"battle_models_{pid}"

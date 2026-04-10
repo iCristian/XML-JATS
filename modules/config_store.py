@@ -410,6 +410,16 @@ def save_ollama_host(host_url: str) -> None:
     save_setting("ollama_host", host_url.strip())
 
 
+def get_lmstudio_host() -> str:
+    """Obtiene la URL configurada para el servidor LM Studio."""
+    return load_setting("lmstudio_host") or "http://localhost:1234/v1"
+
+
+def save_lmstudio_host(host_url: str) -> None:
+    """Guarda la URL del servidor LM Studio."""
+    save_setting("lmstudio_host", host_url.strip())
+
+
 # ─── Token Usage ──────────────────────────────────────────────
 
 def log_token_usage(operation: str, model: str,

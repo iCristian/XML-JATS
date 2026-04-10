@@ -111,6 +111,10 @@ class LLMProvider(ABC):
         """Nombre de la variable de entorno para la API key."""
         return ""
 
+    def is_available(self) -> bool:
+        """Indica si el proveedor está disponible actualmente (útil para servicios locales)."""
+        return True
+
 
 # ─── Implementación: Google Gemini ────────────────────────────
 
@@ -291,10 +295,16 @@ class OpenAIProvider(LLMProvider):
             if not host.endswith("/v1"):
                 host = f"{host}/v1"
             return host
+        if self._custom_id == "lmstudio":
+            from modules.config_store import get_lmstudio_host
+            host = get_lmstudio_host().rstrip("/")
+            if not host.endswith("/v1"):
+                host = f"{host}/v1"
+            return host
         return self._base_url
 
-    def _ensure_ollama_ready(self) -> bool:
-        """Verifica si Ollama está respondiendo y, si no, intenta iniciarlo."""
+    def _ensure_local_ready(self) -> bool:
+        """Verifica si el servicio local (Ollama o LM Studio) está respondiendo y, si no, intenta iniciarlo."""
         import requests
         
         host = self.get_base_url()
@@ -306,9 +316,14 @@ class OpenAIProvider(LLMProvider):
         
         # 1. Verificar si ya responde (rápido)
         try:
-            # Quitamos /v1 si existe para llegar al endpoint /api/tags nativo de Ollama
-            ping_url = host.replace("/v1", "").rstrip("/") + "/api/tags"
-            resp = requests.get(ping_url, timeout=2)
+            if self._custom_id == "ollama":
+                # Quitamos /v1 si existe para llegar al endpoint /api/tags nativo de Ollama
+                ping_url = host.replace("/v1", "").rstrip("/") + "/api/tags"
+            else:
+                # Para LM Studio y otros, usamos /models
+                ping_url = host.rstrip("/") + "/models"
+                
+            resp = requests.get(ping_url, timeout=1.0)
             if resp.status_code == 200:
                 return True
         except Exception:
@@ -319,14 +334,15 @@ class OpenAIProvider(LLMProvider):
             
         # 2. Intentar iniciarlo en macOS
         if sys.platform == "darwin":
-            if os.path.exists("/Applications/Ollama.app"):
+            app_name = "Ollama" if self._custom_id == "ollama" else ("LM Studio" if self._custom_id == "lmstudio" else None)
+            if app_name and os.path.exists(f"/Applications/{app_name}.app"):
                 try:
-                    subprocess.run(["open", "-a", "Ollama"], check=False)
+                    subprocess.run(["open", "-a", app_name], check=False)
                     # Esperar un poco a que levante
                     for _ in range(5):
                         time.sleep(1)
                         try:
-                            resp = requests.get(ping_url, timeout=1)
+                            resp = requests.get(ping_url, timeout=1.0)
                             if resp.status_code == 200:
                                 return True
                         except Exception:
@@ -334,6 +350,11 @@ class OpenAIProvider(LLMProvider):
                 except Exception:
                     pass
         return False
+
+    def is_available(self) -> bool:
+        if self._custom_id in ("ollama", "lmstudio"):
+            return self._ensure_local_ready()
+        return True
 
     def generate(
         self,
@@ -345,15 +366,15 @@ class OpenAIProvider(LLMProvider):
     ) -> LLMResponse:
         from openai import OpenAI
 
-        if self._custom_id == "ollama":
-            self._ensure_ollama_ready()
+        if self._custom_id in ("ollama", "lmstudio"):
+            self._ensure_local_ready()
             
         cfg = config or LLMConfig()
         
-        # Para Ollama/instancias locales, el SDK falla si la api_key es None/vacía
+        # Para modelos locales, el SDK falla si la api_key es None/vacía
         _api_key = api_key
-        if self._custom_id == "ollama" and not _api_key:
-            _api_key = "ollama"
+        if self._custom_id in ("ollama", "lmstudio") and not _api_key:
+            _api_key = self._custom_id
             
         client_kwargs: Dict[str, Any] = {"api_key": _api_key}
         
@@ -399,15 +420,15 @@ class OpenAIProvider(LLMProvider):
         try:
             from openai import OpenAI
 
-            is_ollama = self._custom_id == "ollama"
+            is_local_provider = self._custom_id in ("ollama", "lmstudio")
             actual_base_url = self.get_base_url()
             
-            if is_ollama:
-                self._ensure_ollama_ready()
+            if is_local_provider:
+                self._ensure_local_ready()
 
             _api_key = api_key
-            if is_ollama and not _api_key:
-                _api_key = "ollama"
+            if is_local_provider and not _api_key:
+                _api_key = self._custom_id
 
             client_kwargs: Dict[str, Any] = {"api_key": _api_key}
             
@@ -425,8 +446,8 @@ class OpenAIProvider(LLMProvider):
                 chat_models = [m for m in models if any(k in m for k in ("gpt", "o1", "o3", "o4"))]
                 return sorted(chat_models, reverse=True) if chat_models else sorted(models)[:20]
                 
-            # Para proveedores compatibles (DeepSeek, Mistral, Groq, Ollama)
-            if is_ollama:
+            # Para proveedores compatibles (DeepSeek, Mistral, Groq, Ollama, LM Studio)
+            if is_local_provider:
                 # Etiquetar local vs remoto
                 is_local = actual_base_url and ("localhost" in actual_base_url or "127.0.0.1" in actual_base_url)
                 tag = "[LOCAL]" if is_local else "[CLOUD]"
@@ -437,8 +458,8 @@ class OpenAIProvider(LLMProvider):
         except Exception:
             pass
         
-        # Si falló Ollama, devolvemos default con aviso
-        if self._custom_id == "ollama":
+        # Si falló la consulta local, devolvemos default con aviso
+        if self._custom_id in ("ollama", "lmstudio"):
             actual_base_url = self.get_base_url()
             is_local = actual_base_url and ("localhost" in actual_base_url or "127.0.0.1" in actual_base_url)
             tag = "[LOCAL - OFFLINE]" if is_local else "[CLOUD - UNREACHABLE]"
@@ -567,6 +588,14 @@ PROVIDER_REGISTRY: Dict[str, LLMProvider] = {
         custom_api_key_env_var="",
         custom_default_models=["llama3.1", "llama3.2", "qwen2.5", "mistral", "gemma2", "phi3"],
     ),
+    "lmstudio": OpenAIProvider(
+        base_url="http://localhost:1234/v1",
+        custom_provider_id="lmstudio",
+        custom_display_name="LM Studio (Local)",
+        custom_api_key_url="",
+        custom_api_key_env_var="",
+        custom_default_models=["llama-3-8b-instruct", "qwen2.5-7b-instruct", "mistral-7b-instruct-v0.3", "phi-3-mini-4k-instruct"],
+    ),
 }
 
 
@@ -592,13 +621,18 @@ def get_provider(provider_id: str) -> LLMProvider:
     return provider
 
 
-def list_providers() -> List[Dict[str, str]]:
+def list_providers(filter_unavailable: bool = False) -> List[Dict[str, str]]:
     """Devuelve la lista de proveedores registrados con su ID y nombre.
+
+    Args:
+        filter_unavailable: Si es True, omite servicios locales no disponibles.
 
     Returns:
         Lista de dicts con claves 'id' y 'name'.
     """
-    return [
-        {"id": pid, "name": p.display_name}
-        for pid, p in PROVIDER_REGISTRY.items()
-    ]
+    providers = []
+    for pid, p in PROVIDER_REGISTRY.items():
+        if filter_unavailable and not p.is_available():
+            continue
+        providers.append({"id": pid, "name": p.display_name})
+    return providers
