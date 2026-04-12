@@ -1,5 +1,7 @@
-import streamlit as st
 from pathlib import Path
+
+import streamlit as st
+
 
 def main():
     st.title("📚 Documentación del Proyecto")
@@ -30,7 +32,7 @@ def main():
                 <small>Transformador XML JATS v0.7.0</small>
             </div>
             """, 
-            unsafe_allow_html=True
+            unsafe_allow_html=True  # safe: static HTML
         )
 
 main()

@@ -1,6 +1,7 @@
-import streamlit as st
 import base64
 from pathlib import Path
+
+import streamlit as st
 
 # Nota: st.set_page_config removido, se maneja en streamlit_app.py
 
@@ -29,7 +30,7 @@ def main():
                     <img src="{logo_src}" style="max-width: 200px;">
                 </div>
                 """, 
-                unsafe_allow_html=True
+                unsafe_allow_html=True  # safe: logo_src is an internal base64 data URI
             )
         
         st.markdown("""
@@ -97,7 +98,7 @@ def main():
                 <small>Transformador XML JATS v0.7.0</small>
             </div>
             """, 
-            unsafe_allow_html=True
+            unsafe_allow_html=True  # safe: static HTML
         )
 
 main()

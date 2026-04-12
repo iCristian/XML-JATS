@@ -1,8 +1,10 @@
+import atexit
 import os
 import tempfile
 import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
+from xml.sax.saxutils import escape as xml_escape
 
 import streamlit as st
 import streamlit.components.v1 as components
@@ -53,7 +55,7 @@ st.markdown("""
         border: 1px solid #c3e6cb;
     }
 </style>
-""", unsafe_allow_html=True)
+""", unsafe_allow_html=True)  # safe: static HTML
 
 # Helper para cambiar Tabs via JS
 def js_switch_tab(tab_index: int):
@@ -66,6 +68,29 @@ def js_switch_tab(tab_index: int):
         </script>
     """
     components.html(js_code, height=0, width=0)
+
+
+# --- Limpieza de archivos temporales ---
+_MAX_UPLOAD_SIZE = 50 * 1024 * 1024  # 50 MB
+_ALLOWED_SUFFIXES = {'.docx', '.pdf'}
+_MAGIC_BYTES = {
+    '.docx': b'PK\x03\x04',
+    '.pdf': b'%PDF',
+}
+
+
+def _cleanup_temp_files() -> None:
+    """Elimina archivos temporales registrados en session_state."""
+    for path in getattr(st.session_state, '_temp_files', []):
+        try:
+            if os.path.exists(path):
+                os.unlink(path)
+        except OSError:
+            pass
+
+
+atexit.register(_cleanup_temp_files)
+
 
 def main() -> None:
     """Función principal de la aplicación Streamlit."""
@@ -143,18 +168,18 @@ def main() -> None:
                 "4. **Resultados**: Descarga el XML/HTML."
             )
 
-        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)  # safe: static HTML
 
         # ─── Estado de API Key ───
         if has_api_key:
             st.markdown(
                 f"<div style='font-size: 0.8rem; color: #4CAF50; margin-bottom: 0.5rem;'>🔑 ✅ {provider_names.get(selected_provider, selected_provider)} configurado</div>",
-                unsafe_allow_html=True,
+                unsafe_allow_html=True,  # safe: provider_names is an internal dict, not user input
             )
         else:
             st.markdown(
                 "<div style='font-size: 0.8rem; color: #F44336; margin-bottom: 0.5rem;'>🔑 ❌ Sin API Key (Ir a Configuración)</div>",
-                unsafe_allow_html=True,
+                unsafe_allow_html=True,  # safe: static HTML
             )
 
         # ─── Banner de cuota de pago activa ───
@@ -166,7 +191,7 @@ def main() -> None:
             )
 
         # ─── Selección de Modelo ───
-        st.markdown("<p style='font-size: 0.9rem; font-weight: 600; margin-bottom: 0;'>📦 Modelo</p>", unsafe_allow_html=True)
+        st.markdown("<p style='font-size: 0.9rem; font-weight: 600; margin-bottom: 0;'>📦 Modelo</p>", unsafe_allow_html=True)  # safe: static HTML
 
         @st.cache_data(ttl=600)  # Reducir TTL para mayor frescura
         def get_available_models(provider_id: str, api_key: str, host: Optional[str] = None):
@@ -225,6 +250,8 @@ def main() -> None:
         st.session_state.pending_correction_xml = None
     if 'uploaded_file_path' not in st.session_state:
         st.session_state.uploaded_file_path = None
+    if '_temp_files' not in st.session_state:
+        st.session_state._temp_files = []
     if 'extracted_metadata' not in st.session_state:
         st.session_state.extracted_metadata = {}
     if 'metadata_missing_fields' not in st.session_state:
@@ -261,14 +288,42 @@ def main() -> None:
                 st.session_state.extracted_metadata = {}
                 st.session_state.metadata_chat = []
                 st.session_state.metadata_verified = False
+                # Limpiar archivo temporal anterior
+                old_path = st.session_state.uploaded_file_path
+                if old_path and os.path.exists(old_path):
+                    try:
+                        os.unlink(old_path)
+                    except OSError:
+                        pass
                 st.session_state.uploaded_file_path = None # Reiniciar path
                 st.session_state.last_uploaded_filename = uploaded_file.name # Actualizar tracking
 
             # Guardar archivo temporal solo si no existe path o cambió
             if st.session_state.uploaded_file_path is None or not os.path.exists(st.session_state.uploaded_file_path):
-                with tempfile.NamedTemporaryFile(delete=False, suffix=Path(uploaded_file.name).suffix) as tmp_file:
-                    tmp_file.write(uploaded_file.getvalue())
+                data = uploaded_file.getvalue()
+                suffix = Path(uploaded_file.name).suffix.lower()
+
+                # Validar tamaño
+                if len(data) > _MAX_UPLOAD_SIZE:
+                    st.error("El archivo excede el tamaño máximo permitido (50 MB).")
+                    st.stop()
+
+                # Validar extensión
+                if suffix not in _ALLOWED_SUFFIXES:
+                    st.error("Tipo de archivo no permitido. Solo se aceptan .docx y .pdf.")
+                    st.stop()
+
+                # Validar magic bytes
+                expected_magic = _MAGIC_BYTES.get(suffix, b'')
+                if not data[:len(expected_magic)] == expected_magic:
+                    st.error("El contenido del archivo no coincide con su extensión.")
+                    st.stop()
+
+                with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp_file:
+                    tmp_file.write(data)
                     st.session_state.uploaded_file_path = tmp_file.name
+                os.chmod(tmp_file.name, 0o600)
+                st.session_state._temp_files.append(tmp_file.name)
 
             col1, col2 = st.columns([1, 2], gap="medium")
             with col1:
@@ -368,10 +423,9 @@ def main() -> None:
                                 if e.__class__.__name__ in ["StopException", "RerunException"]:
                                     raise e
                                 status.update(label="❌ Error Crítico Inesperado", state="error")
-                                st.error(f"Ocurrió un error no controlado durante el proceso: {str(e)}")
-                                # Imprimir traceback detallado para depuración
-                                import traceback
-                                st.expander("Ver detalles técnicos").code(traceback.format_exc())
+                                import logging
+                                logging.exception("Error no controlado en procesamiento")
+                                st.error("Ocurrió un error no controlado. Si persiste, contacte al administrador.")
                                 # No hacemos rerun aquí para que el usuario vea el error
                         
                         # Mover sleep y rerun FUERA del bloque status para evitar deadlocks de UI de Streamlit
@@ -483,7 +537,7 @@ def main() -> None:
                             
                             st.text_area("Autores (separados por coma)", value=authors_str, help="Ej: Juan Pérez, María González", key="meta_authors")
 
-                            st.markdown("<br>", unsafe_allow_html=True)
+                            st.markdown("<br>", unsafe_allow_html=True)  # safe: static HTML
                             st.form_submit_button("💾 Guardar e ir al paso 2", on_click=save_metadata_callback, type="primary")
 
                         # Mostrar resumen de validación (fuera del form pero dentro del expander)
@@ -698,13 +752,25 @@ def main() -> None:
                 st.markdown("Revisa los componentes principales detectados. Modifica los campos vacíos o incorrectos. Los cambios se inyectarán en el XML automáticamente.")
                 
                 import re
+
+                _VALID_TAG_RE = re.compile(r'^[a-zA-Z][a-zA-Z0-9\-]*$')
+                _TAGS_WITH_SUBTAGS = {'abstract', 'kwd-group'}
+
                 def extract_tag(xml_data: str, tag: str) -> str:
-                    # Match exact tag name, followed by either > or a space and attributes
-                    match = re.search(f"<{tag}(?:>|\\s[^>]*>)(.*?)</{tag}>", xml_data, re.DOTALL | re.IGNORECASE)
+                    if not _VALID_TAG_RE.match(tag):
+                        return ""
+                    safe_tag = re.escape(tag)
+                    match = re.search(f"<{safe_tag}(?:>|\\s[^>]*>)(.*?)</{safe_tag}>", xml_data[:500_000], re.DOTALL | re.IGNORECASE)
                     return match.group(1).strip() if match else ""
                     
                 def inyectar_tag(xml_data: str, tag: str, new_val: str) -> str:
-                    pattern = f"(<{tag}(?:>|\\s[^>]*>))(.*?)(</{tag}>)"
+                    if not _VALID_TAG_RE.match(tag):
+                        return xml_data
+                    safe_tag = re.escape(tag)
+                    # Escapar contenido solo para tags simples (sin sub-etiquetas)
+                    if tag not in _TAGS_WITH_SUBTAGS:
+                        new_val = xml_escape(new_val)
+                    pattern = f"(<{safe_tag}(?:>|\\s[^>]*>))(.*?)(</{safe_tag}>)"
                     if re.search(pattern, xml_data, re.DOTALL | re.IGNORECASE):
                         return re.sub(pattern, f"\\g<1>{new_val}\\3", xml_data, flags=re.DOTALL | re.IGNORECASE)
                     return xml_data
@@ -764,7 +830,7 @@ def main() -> None:
                         st.session_state.generated_xml = xml_mod
                         st.session_state.go_to_step_3 = True
 
-                    st.markdown("<br>", unsafe_allow_html=True)
+                    st.markdown("<br>", unsafe_allow_html=True)  # safe: static HTML
                     st.form_submit_button("💾 Guardar y Validar", on_click=aplicar_cambios_xml, type="primary")
 
             if st.session_state.pop("go_to_step_3", False):
@@ -1079,7 +1145,7 @@ def main() -> None:
                 <small>Transformador XML JATS v0.7.0</small>
             </div>
             """, 
-            unsafe_allow_html=True
+            unsafe_allow_html=True  # safe: static HTML
         )
 
 main()

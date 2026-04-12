@@ -66,6 +66,7 @@ def extraer_contenido_estructurado(docx_path: str) -> Optional[str]:
 
         # Crear directorio para imágenes si no existe
         IMAGE_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        os.chmod(str(IMAGE_OUTPUT_DIR), 0o700)
 
         # Usamos un iterador para procesar elementos del cuerpo (párrafos y tablas)
         for element in doc.element.body:
@@ -87,6 +88,9 @@ def extraer_contenido_estructurado(docx_path: str) -> Optional[str]:
                         
                         # Guardar la imagen
                         content_type = image_part.content_type.split('/')[-1]
+                        _ALLOWED_IMAGE_EXT = {'png', 'jpeg', 'jpg', 'gif', 'tiff', 'bmp', 'svg+xml'}
+                        if content_type not in _ALLOWED_IMAGE_EXT:
+                            content_type = 'png'
                         image_filename = f"imagen_{image_counter}.{content_type}"
                         image_path = IMAGE_OUTPUT_DIR / image_filename
                         with open(image_path, "wb") as f:
@@ -496,7 +500,7 @@ def _move_orphan_table_wraps(xml_string: str) -> str:
     Usa lxml con recover=True para manejar XML levemente roto.
     """
     try:
-        parser = etree.XMLParser(recover=True, encoding='utf-8')
+        parser = etree.XMLParser(recover=True, encoding='utf-8', resolve_entities=False, no_network=True)
         root = etree.fromstring(xml_string.encode('utf-8'), parser=parser)
     except Exception:
         return xml_string  # No podemos parsear, devolver sin tocar
@@ -595,10 +599,9 @@ def validar_jats_xml(xml_content: str) -> Tuple[bool, List[str]]:
             if not zip_path.exists():
                 print(f"Descargando DTD JATS desde {DTD_ZIP_URL}...")
                 import ssl
-                # Configurar contexto SSL que omite la verificación local de certificados
-                ctx = ssl.create_default_context()
-                ctx.check_hostname = False
-                ctx.verify_mode = ssl.CERT_NONE
+
+                import certifi
+                ctx = ssl.create_default_context(cafile=certifi.where())
                 
                 with urllib.request.urlopen(DTD_ZIP_URL, context=ctx) as response, open(zip_path, 'wb') as out_file:
                     out_file.write(response.read())
@@ -634,7 +637,7 @@ def validar_jats_xml(xml_content: str) -> Tuple[bool, List[str]]:
         xml_bytes = xml_content_patched.encode('utf-8')
         
         # Activar modo de recuperación para intentar parsear a pesar de etiquetas mal cerradas
-        parser = etree.XMLParser(dtd_validation=False, recover=True, no_network=False)
+        parser = etree.XMLParser(dtd_validation=False, recover=True, no_network=True, resolve_entities=False)
         xml_tree = etree.fromstring(xml_bytes, parser)
         dtd = etree.DTD(str(dtd_path))
 
@@ -671,7 +674,7 @@ def verificar_completitud_xml(xml_content: str, original_text: str = None) -> Tu
 
     # Extraer texto visible del body
     try:
-        parser = etree.XMLParser(recover=True, encoding='utf-8')
+        parser = etree.XMLParser(recover=True, encoding='utf-8', resolve_entities=False, no_network=True)
         root = etree.fromstring(xml_content.encode('utf-8'), parser=parser)
         body = root.find('.//body')
         body_text = "".join(body.itertext()) if body is not None else ""

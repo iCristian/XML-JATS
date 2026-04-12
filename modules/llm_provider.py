@@ -334,10 +334,11 @@ class OpenAIProvider(LLMProvider):
             
         # 2. Intentar iniciarlo en macOS
         if sys.platform == "darwin":
+            _ALLOWED_APPS = {"Ollama", "LM Studio"}
             app_name = "Ollama" if self._custom_id == "ollama" else ("LM Studio" if self._custom_id == "lmstudio" else None)
-            if app_name and os.path.exists(f"/Applications/{app_name}.app"):
+            if app_name and app_name in _ALLOWED_APPS and os.path.exists(f"/Applications/{app_name}.app"):
                 try:
-                    subprocess.run(["open", "-a", app_name], check=False)
+                    subprocess.run(["open", "-a", app_name], check=False, timeout=10)
                     # Esperar un poco a que levante
                     for _ in range(5):
                         time.sleep(1)
