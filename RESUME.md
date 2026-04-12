@@ -152,11 +152,21 @@ XML-JATS/
 
 ## Gestión de API Keys y Cuota
 
-- **Multi-proveedor**: Cada proveedor tiene su propia API Key almacenada en `data/config.db` con ofuscación Base64.
+- **Multi-proveedor**: Cada proveedor tiene su propia API Key almacenada en `data/config.db` con cifrado Fernet.
 - **Proveedor activo**: Se configura en la UI y se persiste en `config_store`. El transformador usa el proveedor activo automáticamente.
 - **Cuota agotada**: `transformer.py` retorna `{'quota_exceeded': True}` ante un error 429 persistente. La UI muestra el banner `💳 Cuota gratuita agotada — usando tier de pago` en la barra lateral.
-- **Seguridad**: Las claves se almacenan en `data/config.db` (excluido de Git) y solo se muestran enmascaradas en la UI (`AIza••••••xY4Z`).
+- **Seguridad**: Las claves se almacenan cifradas en `data/config.db` (excluido de Git) y solo se muestran enmascaradas en la UI (`AIza••••••xY4Z`).
 - **Variables de entorno como fallback**: Si no hay clave en `config.db`, el sistema intenta cargar desde la variable de entorno correspondiente (ej. `GEMINI_API_KEY`).
+
+---
+
+## Privacidad y Seguridad
+
+- **Procesamiento por demanda**: El contenido del artículo se procesa durante el flujo de transformación; la aplicación no implementa un repositorio persistente de artículos.
+- **Custodia local de secretos**: Las API keys se cifran con Fernet y la clave criptográfica se guarda en `data/.fernet.key` con permisos restringidos (`0600`).
+- **Ruta de datos controlada**: El texto se envía solo al proveedor IA activo definido por el usuario o se ejecuta de forma local con Ollama/LM Studio.
+- **Defensa de configuración**: `data/` está excluida por `.gitignore`, evitando versionado accidental de credenciales y métricas.
+- **Reporte responsable**: Vulnerabilidades de seguridad deben comunicarse por canal privado antes de divulgación pública.
 
 ---
 

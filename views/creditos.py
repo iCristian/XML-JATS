@@ -42,7 +42,7 @@ def main():
     with col2:
         st.header("Créditos y Desarrollo")
         st.markdown("""
-        Esta herramienta ha sido desarrollada para optimizar el flujo de trabajo editorial de la **Revistas UV**, automatizando la conversión de manuscritos a XML JATS validado.
+        Esta herramienta ha sido desarrollada para optimizar el flujo editorial de las **Revistas UV**, automatizando la conversión de manuscritos a XML JATS validado.
 
         **Desarrollador Principal:**  
         Cristian Carreño León  
@@ -59,7 +59,7 @@ def main():
         - **Streamlit**: Framework de interfaz de usuario.
         - **Inteligencia Artificial Multi-Model**: Soporte nativo para motores LLM de **Google Gemini**, **OpenAI**, **Anthropic (Claude)**, **DeepSeek**, **Mistral**, **Groq** y local/offline mediante **Ollama**; para interpretación semántica y corrección de XML.
         - **LXML**: Procesamiento y validación robusta de XML.
-        - **SQLite**: Gestión ligera y eficiente para almacenar de forma persistente e iterativa las API Keys multicuenta (ofuscadas en token Base64) y control contable de los recursos.
+        - **SQLite + Fernet**: Persistencia local de configuración y credenciales cifradas, con migración automática desde formatos legacy.
         - **JATS 1.3 / 1.4**: Estándares oficiales de etiquetado (Journal Archiving and Interchange Tag Suite), intercambiable en tiempo real a gusto del publicador.
         """)
 
@@ -71,13 +71,20 @@ def main():
     """)
     
     st.markdown("""
-    1. **Procesamiento Volátil**: Los archivos cargados se procesan en la memoria del servidor (o localmente si se ejecuta en su máquina) y **no se almacenan permanentemente**.
-    2. **Custodia de Claves en SQLite**: Tus claves API para los diversos proveedores se almacenan de manera local y encriptada en la base de datos `data/config.db`. **Nunca** son derivadas hacia un middleware o ente de terceros más allá del puente oficial SSL entre servidor y el Cloud AI escogido.
-    3. **Integraciones AI de Terceros**:
-        - El texto extraído se envía en demanda exclusivamente al **Proveedor de Inteligencia Artificial activo** que hubiese configurado en su perfil (Gemini, Claude, OpenAI, etc.).
-        - El proveedor receptor utiliza tales extractos con apego a las cláusulas comerciales de sus API — que en ecosistemas como OpenAI o Anthropic estipulan usualmente Privacidad-Zero-Data-Training bajo cuentas tarifadas, a diferencia de versiones web comerciales. Revisar términos del proveedor utilizado.
-        - **Regla Oro**: No suministre bajo ningún método documentos con datos personales sensibles, patológicos o sin anonimizar sin tener consentimiento informado o garantías HIPAA provistas desde su propia nube privada.
-    4. **Inferencia Local (Ollama)**: Si configuras un servicio on-premise local como Ollama, ningún contenido de investigación transita fuera del servidor actual, lográndose un `air-gapped` total y garantizándose privacidad absoluta.
+    1. **Procesamiento por Demanda**: Los archivos cargados se procesan durante el flujo de transformación y no se incorporan a un repositorio persistente de artículos.
+    2. **Custodia Local de Claves**: Las API keys se almacenan cifradas en `data/config.db` mediante Fernet; la clave criptográfica se guarda localmente en `data/.fernet.key` con permisos restringidos.
+    3. **Ruta de Datos Controlada**: El texto extraído se envía únicamente al proveedor de IA activo configurado por el usuario.
+    4. **Inferencia Local Opcional**: Con Ollama o LM Studio, el procesamiento puede ejecutarse completamente en entorno local.
+    5. **Responsabilidad de Anonimización**: Para contenido sensible, se recomienda anonimizar previamente y aplicar políticas institucionales de tratamiento de datos.
+    """)
+
+    st.divider()
+    st.header("🛡️ Seguridad Operativa")
+    st.markdown("""
+    - **Secreto y Configuración fuera de Git**: `data/` está excluido por `.gitignore` para evitar filtraciones de base de datos y claves.
+    - **Reporte Responsable de Vulnerabilidades**: Comunicar incidentes primero por correo a [cristian.carreno@uv.cl](mailto:cristian.carreno@uv.cl).
+    - **Dependencias y Riesgo**: Toda actualización de librerías debe considerar revisión de CVEs y compatibilidad.
+    - **Buenas Prácticas en PRs**: No adjuntar capturas con datos reales ni registros que contengan fragmentos de manuscritos.
     """)
 
     st.divider()
@@ -95,7 +102,7 @@ def main():
             """
             <div class='branding'>
                 <b>Universidad de Valparaíso</b><br>
-                <small>Transformador XML JATS v0.7.0</small>
+                <small>Transformador XML JATS v0.7.5</small>
             </div>
             """, 
             unsafe_allow_html=True  # safe: static HTML

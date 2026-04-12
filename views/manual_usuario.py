@@ -449,7 +449,7 @@ def get_documentation_content():
 def get_credits_content():
     """Retorna contenido de créditos como texto."""
     return """
-Esta herramienta ha sido desarrollada para optimizar el flujo de trabajo editorial de las Revistas UV, automatizando la conversión de manuscritos a XML JATS validado.
+Esta herramienta ha sido desarrollada para optimizar el flujo editorial de las Revistas UV, automatizando la conversión de manuscritos a XML JATS validado.
 
 Desarrollador Principal:
 Cristian Carreño León (cristian.carreno@uv.cl)
@@ -468,18 +468,26 @@ Tecnologías Utilizadas:
 - pdfplumber 0.10+: Extracción de texto desde PDFs.
 - tenacity 9.1+: Reintentos robustos con backoff exponencial.
 - FPDF2: Generación de manuales en PDF.
-- SQLite: Persistencia de API keys y métricas.
+- SQLite + Fernet: Persistencia local de configuración y API keys cifradas.
 - JATS 1.3 / 1.4 (ANSI/NISO Z39.96-2024): Estándar de etiquetado XML.
 
 Privacidad y Tratamiento de Datos:
-1. Procesamiento Volátil: Los archivos no se almacenan permanentemente en el servidor.
-2. API de Inteligencia Artificial: El texto enviado a la API se procesa bajo las políticas del proveedor seleccionado.
-3. Inferencia Local: Con Ollama/LM Studio, ningún contenido sale del servidor (privacidad total).
-4. Claves API: Almacenadas localmente en data/config.db con ofuscacion, excluidas de Git.
+1. Procesamiento por Demanda: Los artículos se procesan durante la ejecución y no se incorporan a un repositorio persistente de manuscritos.
+2. Custodia Local de Credenciales: Las API keys se almacenan cifradas en data/config.db mediante Fernet; la clave criptográfica reside en data/.fernet.key.
+3. Proveedor Activo Controlado: El texto se envía únicamente al proveedor de IA seleccionado por el usuario.
+4. Inferencia Local: Con Ollama/LM Studio, el procesamiento puede realizarse sin salida de datos a servicios cloud.
+5. Recomendación Institucional: Para documentos sensibles, anonimizar previamente y aplicar políticas de protección de datos vigentes.
+
+Seguridad:
+1. Secretos fuera de control de versiones: data/ permanece excluido por .gitignore.
+2. Reporte responsable de vulnerabilidades: contacto directo con el responsable del proyecto antes de divulgar públicamente.
+3. Dependencias y riesgo: toda librería nueva debe revisarse por vulnerabilidades conocidas (CVE) antes de su adopción.
+4. Evidencia segura: no compartir capturas o logs que incluyan datos de manuscritos reales.
 
 Licencia:
 Software de uso exclusivo para la Universidad de Valparaíso. Todos los derechos reservados.
 El código y la documentación son propiedad de la Universidad de Valparaíso y su autor.
+El uso de servicios de terceros está sujeto a términos de cada proveedor (cloud o local) seleccionado por el usuario.
 
 Version: 0.7.5
 """

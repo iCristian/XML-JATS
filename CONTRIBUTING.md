@@ -290,10 +290,19 @@ streamlit run streamlit_app.py
 
 ## Política de Seguridad
 
-- **No commitas API keys ni secretos** en el código fuente. Las claves se almacenan en `data/config.db` (excluido de Git mediante `.gitignore`).
-- **No expongas `data/config.db`** en PRs o capturas de pantalla.
-- Si descubres una vulnerabilidad de seguridad, repórtala directamente por correo a [cristian.carreno@uv.cl](mailto:cristian.carreno@uv.cl) antes de abrir un Issue público.
-- Al añadir nuevas dependencias, verifica que no tengan vulnerabilidades conocidas (CVE) en la versión a utilizar.
+- **No commitas API keys ni secretos** en el código fuente. Las claves se almacenan cifradas en `data/config.db` con Fernet.
+- **No expongas `data/config.db` ni `data/.fernet.key`** en PRs, issues, artefactos de CI o capturas de pantalla.
+- **Aplica minimización de datos**: no uses documentos reales con datos sensibles para pruebas sin anonimización previa.
+- **Respeta el proveedor activo**: cualquier envío a IA debe pasar por `llm_provider.py` y usar el proveedor configurado por el usuario.
+- **Si descubres una vulnerabilidad**, repórtala directamente por correo a [cristian.carreno@uv.cl](mailto:cristian.carreno@uv.cl) antes de abrir un Issue público.
+- **Al añadir dependencias**, verifica CVEs y fija versiones en `requirements.txt`.
+
+### Checklist de Seguridad para PR
+
+- [ ] No hay secretos hardcodeados ni credenciales en texto plano.
+- [ ] No se añadieron logs con contenido sensible de documentos.
+- [ ] Los cambios de red mantienen uso de SDK/API oficial sobre HTTPS.
+- [ ] Se validó que `data/` permanezca fuera de control de versiones.
 
 ---
 

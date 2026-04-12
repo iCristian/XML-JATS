@@ -33,13 +33,21 @@ El sistema automatiza el etiquetado semántico completo del artículo, la extrac
 - **Descarga Directa**: Botones para descargar el XML JATS final y el HTML generado.
 
 ### Gestión y Seguridad
-- **Gestión Multi-Proveedor de API Keys**: Las claves se guardan localmente en SQLite con ofuscación Base64; nunca se envían a servidores externos.
+- **Gestión Multi-Proveedor de API Keys**: Las claves se guardan localmente en SQLite con cifrado Fernet; nunca se envían a servidores externos no seleccionados por el usuario.
 - **Monitoreo de Tokens**: Panel estadístico con historial de 30 días, alertas al 80 % y 100 % de la cuota gratuita, y métricas por proveedor.
 - **Detección de Cuota Agotada**: Cuando se agota la cuota gratuita el sistema detecta el error 429 automáticamente y muestra un banner informativo en la barra lateral.
 - **Metadatos de Revista Persistentes**: Título de revista, editorial e ISSN se configuran una sola vez y se inyectan en todas las transformaciones.
 - **Interfaz Dual**:
   - **Web UI (Streamlit)**: Interfaz gráfica con arrastrar-y-soltar, revisión de metadatos, chatbot asistente y previsualización en tiempo real.
   - **CLI (Línea de Comandos)**: Para automatización, procesamiento por lotes e integración en pipelines editoriales.
+
+### Privacidad y Seguridad Operativa
+- **Cifrado Local de Credenciales**: Las API keys se almacenan en `data/config.db` cifradas con **Fernet** (criptografía simétrica autenticada). Las claves antiguas en Base64 se migran automáticamente a Fernet.
+- **Clave Criptográfica Local**: El secreto de cifrado se guarda en `data/.fernet.key` con permisos restringidos (`0600`), y nunca se versiona en Git.
+- **Procesamiento por Demanda**: El contenido del documento se procesa en memoria durante la operación; no existe un repositorio persistente de artículos en el proyecto.
+- **Envío Controlado a Proveedor Activo**: El texto solo se envía al proveedor IA seleccionado por el usuario (Gemini, OpenAI, Anthropic, etc.) o se procesa localmente con Ollama/LM Studio.
+- **Aislamiento Local Opcional**: Con modelos locales (Ollama/LM Studio), los datos no salen del entorno de ejecución.
+- **Mínimo Privilegio Operativo**: La carpeta `data/` está excluida por `.gitignore`; no se deben subir bases de datos, logs ni capturas con datos sensibles.
 
 ## 🛠️ Requisitos del Sistema
 
@@ -83,7 +91,7 @@ El sistema automatiza el etiquetado semántico completo del artículo, la extrac
 4. **Configurar la API Key** (elige una opción):
 
     **Opción A — Desde la interfaz web (recomendado):**
-    Abre la aplicación y navega a **"⚙️ API y Tokens"** en el menú lateral. Selecciona tu proveedor de IA (Gemini, OpenAI, Anthropic, etc.), pega tu clave y presiona **"💾 Guardar"**. La clave se almacena en `data/config.db` (excluido de Git) con ofuscación Base64.
+    Abre la aplicación y navega a **"⚙️ API y Tokens"** en el menú lateral. Selecciona tu proveedor de IA (Gemini, OpenAI, Anthropic, etc.), pega tu clave y presiona **"💾 Guardar"**. La clave se almacena en `data/config.db` (excluido de Git) con cifrado Fernet.
 
     **Opción B — Variable de entorno:**
 
@@ -311,6 +319,22 @@ ollama serve
 ### Las imágenes del PDF no se extraen
 Los PDFs con imágenes vectoriales o con protección DRM pueden no permitir la extracción. Usa el archivo Word original si está disponible.
 
+## 🔒 Protección de Privacidad
+
+Este proyecto está diseñado para reducir exposición de datos en el flujo editorial:
+
+1. **Persistencia mínima**: solo se almacenan configuración, métricas y claves cifradas en `data/config.db`; los artículos no se guardan como dataset interno.
+2. **Custodia local de credenciales**: la API key se cifra con Fernet antes de persistirla y se muestra enmascarada en la interfaz.
+3. **Control de destino de datos**: el procesamiento IA ocurre exclusivamente con el proveedor activo configurado por el usuario.
+4. **Modo local recomendado para datos sensibles**: para documentos de alto riesgo, use Ollama/LM Studio y políticas institucionales de anonimización previa.
+
+## 🛡️ Seguridad
+
+- **Reporte responsable de vulnerabilidades**: contactar primero a [cristian.carreno@uv.cl](mailto:cristian.carreno@uv.cl) antes de abrir issues públicos.
+- **Higiene de secretos**: prohibido subir API keys, `data/config.db`, `data/.fernet.key` o trazas con datos de documentos.
+- **Dependencias**: toda nueva librería debe revisarse por CVEs y mantenerse fijada en `requirements.txt`.
+- **Transporte**: las integraciones cloud se realizan sobre HTTPS provisto por los SDKs oficiales.
+
 ## 🤝 Créditos
 
 Desarrollado por **Cristian Carreño León**\
@@ -341,6 +365,8 @@ Desarrollado para la **Universidad de Valparaíso** con el objetivo de optimizar
 Este software es de uso exclusivo para la **Universidad de Valparaíso**. Todos los derechos reservados.
 
 El código fuente y la documentación contenidos en este repositorio son propiedad intelectual de la Universidad de Valparaíso y su autor. Queda prohibida su reproducción, distribución o modificación sin autorización expresa.
+
+El uso de servicios de terceros (Google, OpenAI, Anthropic, DeepSeek, Mistral, Groq, Ollama o LM Studio) está sujeto adicionalmente a las condiciones de licenciamiento y privacidad de cada proveedor.
 
 Para consultas sobre licenciamiento o uso, contactar a: [cristian.carreno@uv.cl](mailto:cristian.carreno@uv.cl)
 
