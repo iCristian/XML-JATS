@@ -1,5 +1,6 @@
 import base64
 import os
+import re
 import tempfile
 from datetime import datetime
 from pathlib import Path
@@ -49,8 +50,8 @@ Antes de usar el Transformador, necesitas configurar al menos una clave de API d
 
 > 🔒 **Seguridad:** Tu clave se almacena localmente en `data/config.db` con ofuscación Base64. Nunca se envía a servidores externos distintos al proveedor de IA seleccionado.
 """,
-        "image": None,
-        "caption": ""
+        "image": "resources/manual_images/01.png",
+        "caption": "Figura 1: Panel de Configuración de API Keys con proveedor activo y estado de cada clave configurada."
     },
     {
         "type": "step",
@@ -72,8 +73,8 @@ Para evitar reescribir los mismos datos en cada artículo, configura los metadat
 
 Estos datos se inyectarán automáticamente en el XML de cada artículo que proceses, sin necesidad de ingresarlos manualmente cada vez.
 """,
-        "image": None,
-        "caption": ""
+        "image": "resources/manual_images/02.png",
+        "caption": "Figura 2: Configuración de los datos permanentes de la revista y selección del estándar JATS a generar."
     },
     {
         "type": "step",
@@ -97,8 +98,8 @@ El panel de consumo te permite controlar el uso de tu cuota gratuita y evitar in
 
 **Tip:** Si tu cuota se agota con frecuencia, considera cambiar al modelo `gemini-2.0-flash` (1500 requests/día gratuitas) o activar la facturación en Google Cloud para uso ilimitado Pay-as-you-go.
 """,
-        "image": None,
-        "caption": ""
+        "image": "resources/manual_images/03.png",
+        "caption": "Figura 3: Panel de consumo de tokens con métricas diarias, históricas y gráfico de uso de los últimos 30 días."
     },
     {
         "type": "step",
@@ -156,8 +157,8 @@ Una vez que tu documento está listo, es momento de cargarlo en el Transformador
 
 > ⏱️ El tiempo de procesamiento varía según el tamaño del artículo: un artículo típico de 8-12 páginas tarda entre 15 y 45 segundos dependiendo del proveedor de IA y la conexión a internet.
 """,
-        "image": "resources/manual_images/01.png",
-        "caption": "Figura 1: Área de carga de documentos. El sistema extrae automáticamente el contenido y los metadatos."
+        "image": "resources/manual_images/05.png",
+        "caption": "Figura 5: Área de carga de documentos. El sistema extrae automáticamente el contenido y los metadatos."
     },
     {
         "type": "step",
@@ -188,8 +189,8 @@ Tras la extracción, el sistema muestra los metadatos detectados para que los re
 
 > ⚠️ El **DOI** y la **fecha de publicación** son **obligatorios** para generar el XML JATS. Si no los tienes, el sistema no permitirá avanzar al siguiente paso.
 """,
-        "image": None,
-        "caption": ""
+        "image": "resources/manual_images/06.png",
+        "caption": "Figura 6: Formulario de metadatos extraídos automáticamente. Todos los campos son editables antes de continuar."
     },
     {
         "type": "step",
@@ -251,8 +252,8 @@ Con los metadatos confirmados, es momento de generar el XML JATS. Puedes usar un
 
 > 🔢 El sistema soporta artículos de hasta 65 536 tokens de salida — equivalente a artículos de ~50 páginas sin truncamiento.
 """,
-        "image": "resources/manual_images/02.png",
-        "caption": "Figura 2: Interfaz de generación XML JATS con Leaderboard Multi-Agente mostrando el puntaje de cada modelo."
+        "image": "resources/manual_images/08.png",
+        "caption": "Figura 8: Interfaz de generación XML JATS. Selecciona los modelos de IA que competirán en la generación simultánea."
     },
     {
         "type": "step",
@@ -280,8 +281,8 @@ Cuando generas XML con múltiples modelos, el Leaderboard te ayuda a comparar y 
 - Tablas correctamente estructuradas con todos los datos.
 - Referencias bibliográficas completas y bien formateadas.
 """,
-        "image": None,
-        "caption": ""
+        "image": "resources/manual_images/09.png",
+        "caption": "Figura 9: Leaderboard Multi-Agente con puntajes de calidad JATS. El ganador se determina automáticamente."
     },
     {
         "type": "step",
@@ -309,8 +310,8 @@ La validación DTD garantiza que el XML generado cumple con el estándar oficial
 
 > 💡 No todos los errores impiden la publicación. Algunos son advertencias menores que el Agente Editorial puede corregir automáticamente.
 """,
-        "image": "resources/manual_images/03.png",
-        "caption": "Figura 3: Resultado de validación DTD JATS exitosa. El XML cumple el estándar al 100%."
+        "image": "resources/manual_images/10.png",
+        "caption": "Figura 10: Resultado de la validación DTD JATS. Un XML válido al 100% puede descargarse y publicarse directamente."
     },
     {
         "type": "step",
@@ -375,8 +376,8 @@ Presiona los botones de descarga para obtener:
 
 > 💡 El archivo XML descargado incluye la declaración `<!DOCTYPE>` correcta para la versión JATS seleccionada (1.3 o 1.4), lista para ser importada directamente en Open Journal Systems (OJS).
 """,
-        "image": "resources/manual_images/04.png",
-        "caption": "Figura 4: Vista previa HTML del artículo con tabla de contenidos y referencias con DOIs clickeables."
+        "image": "resources/manual_images/12.png",
+        "caption": "Figura 12: Vista previa HTML del artículo con tabla de contenidos interactiva y referencias con DOIs clickeables."
     }
 ]
 
@@ -511,61 +512,152 @@ def clean_text_for_pdf(text):
     text = text.replace('**', '').replace('__', '').replace('`', '').strip()
     return text.encode('latin-1', 'ignore').decode('latin-1')
 
+
+def _is_markdown_table_separator(line: str) -> bool:
+    """Detecta separadores de tabla markdown como |---|:---:|."""
+    stripped = line.replace('|', '').replace(':', '').replace('-', '').strip()
+    return stripped == '' and '-' in line
+
+
+def _parse_markdown_table(lines, start_idx: int):
+    """Parsea bloque de tabla markdown y retorna (headers, rows, next_idx)."""
+    headers = [c.strip() for c in lines[start_idx].strip().strip('|').split('|')]
+    rows = []
+    i = start_idx + 2  # Skip separator line
+
+    while i < len(lines):
+        raw = lines[i].strip()
+        if not raw or '|' not in raw:
+            break
+        row = [c.strip() for c in raw.strip('|').split('|')]
+        rows.append(row)
+        i += 1
+
+    return headers, rows, i
+
+
+def _render_markdown_table(pdf, headers, rows):
+    """Renderiza tabla markdown con ancho dinámico y salto de página seguro."""
+    if not headers:
+        return
+
+    col_count = len(headers)
+    available_width = pdf.w - pdf.l_margin - pdf.r_margin
+    col_width = available_width / col_count
+    row_height = 7
+
+    required = row_height * (2 + len(rows))
+    _ensure_pdf_space(pdf, required)
+
+    # Header row
+    pdf.set_font('Arial', 'B', 10)
+    pdf.set_fill_color(230, 237, 248)
+    for header in headers:
+        pdf.cell(col_width, row_height, clean_text_for_pdf(header), border=1, align='C', fill=True)
+    pdf.ln(row_height)
+
+    # Body rows
+    pdf.set_font('Arial', '', 10)
+    for row in rows:
+        if len(row) < col_count:
+            row.extend([''] * (col_count - len(row)))
+        elif len(row) > col_count:
+            row = row[:col_count]
+
+        _ensure_pdf_space(pdf, row_height + 2)
+        for cell in row:
+            pdf.cell(col_width, row_height, clean_text_for_pdf(cell), border=1, align='L')
+        pdf.ln(row_height)
+
+    pdf.ln(3)
+
 def add_markdown_section_to_pdf(pdf, text):
-    """Parsea texto markdown simple y lo agrega al PDF formateado."""
+    """Parsea markdown simple (encabezados/listas/tablas) y lo agrega al PDF."""
     lines = text.split('\n')
-    for line in lines:
-        line = line.strip()
+    i = 0
+    while i < len(lines):
+        line = lines[i].strip()
+
         if not line:
-            pdf.ln(5)
+            pdf.ln(3)
+            i += 1
             continue
-            
+
+        # Tabla markdown: encabezado + separador
+        if (
+            '|' in line
+            and i + 1 < len(lines)
+            and _is_markdown_table_separator(lines[i + 1].strip())
+        ):
+            headers, rows, next_idx = _parse_markdown_table(lines, i)
+            _render_markdown_table(pdf, headers, rows)
+            i = next_idx
+            continue
+
         # Headers
         if line.startswith('# '):
-            pdf.ln(5)
+            _ensure_pdf_space(pdf, 14)
+            pdf.ln(3)
             pdf.set_font('Arial', 'B', 16)
-            pdf.set_text_color(0, 51, 102) # Dark Blue
+            pdf.set_text_color(0, 51, 102)
             pdf.cell(0, 10, clean_text_for_pdf(line.replace('# ', '')), 0, 1, 'L')
             pdf.set_text_color(0)
             pdf.set_font('Arial', '', 11)
-        
+
         elif line.startswith('## '):
-            pdf.ln(4)
+            _ensure_pdf_space(pdf, 13)
+            pdf.ln(2)
             pdf.set_font('Arial', 'B', 14)
             pdf.set_text_color(0, 51, 102)
-            pdf.cell(0, 10, clean_text_for_pdf(line.replace('## ', '')), 0, 1, 'L')
+            pdf.cell(0, 9, clean_text_for_pdf(line.replace('## ', '')), 0, 1, 'L')
             pdf.set_text_color(0)
             pdf.set_font('Arial', '', 11)
-            
+
         elif line.startswith('### '):
-            pdf.ln(2)
+            _ensure_pdf_space(pdf, 11)
+            pdf.ln(1)
             pdf.set_font('Arial', 'B', 12)
-            pdf.cell(0, 10, clean_text_for_pdf(line.replace('### ', '')), 0, 1, 'L')
+            pdf.cell(0, 8, clean_text_for_pdf(line.replace('### ', '')), 0, 1, 'L')
             pdf.set_font('Arial', '', 11)
-            
+
         # Lists
         elif line.startswith('- ') or line.startswith('* '):
+            _ensure_pdf_space(pdf, 8)
             pdf.set_font('Arial', '', 11)
-            pdf.cell(5) # Indent
-            # chr(149) is bullet for latin-1
+            pdf.cell(5)
             content = clean_text_for_pdf(line[2:])
             pdf.multi_cell(0, 6, chr(149) + ' ' + content)
-            
-        # Numbered Lists (Simple detection "1. ")
+
+        # Numbered Lists (simple detection "1. ")
         elif len(line) > 2 and line[0].isdigit() and line[1] == '.' and line[2] == ' ':
+            _ensure_pdf_space(pdf, 8)
             pdf.set_font('Arial', '', 11)
-            pdf.cell(5) # Indent
-            content = clean_text_for_pdf(line)
-            pdf.multi_cell(0, 6, content)
-            
+            pdf.cell(5)
+            pdf.multi_cell(0, 6, clean_text_for_pdf(line))
+
         # Code blocks (simple detection)
         elif line.startswith('```'):
-            continue # Skip the marker
-            
+            pass
+
         # Normal text
         else:
+            _ensure_pdf_space(pdf, 8)
             pdf.set_font('Arial', '', 11)
             pdf.multi_cell(0, 6, clean_text_for_pdf(line))
+
+        i += 1
+
+
+def _extract_step_number(step_title: str) -> str:
+    """Extrae el número de paso desde títulos como 'Paso 8 — ...'."""
+    match = re.search(r"Paso\s+(\d+)", step_title, flags=re.IGNORECASE)
+    return match.group(1) if match else "?"
+
+
+def _ensure_pdf_space(pdf, required_height: float):
+    """Agrega página cuando no hay espacio vertical suficiente para el siguiente bloque."""
+    if pdf.get_y() + required_height > pdf.page_break_trigger:
+        pdf.add_page()
 
 def create_professional_pdf():
     pdf = ProfessionalPDF()
@@ -634,10 +726,13 @@ def create_professional_pdf():
     
     for section in MANUAL_SECTIONS:
         if section["type"] == "step":
+            # Mantener bloque de título siempre visible y separado.
+            _ensure_pdf_space(pdf, 20)
+
             # Title
             pdf.set_font('Arial', 'B', 13)
             pdf.set_text_color(0, 51, 102) # Dark Blue
-            pdf.cell(0, 10, section["title"], 0, 1, 'L')
+            pdf.cell(0, 10, clean_text_for_pdf(section["title"]), 0, 1, 'L')
             pdf.set_text_color(0)
             
             # Content (using markdown parser logic slightly adapted or reuse)
@@ -648,11 +743,25 @@ def create_professional_pdf():
             pdf.ln(2)
             
             # Image
-            if "image" in section and os.path.exists(section["image"]):
-                pdf.image(section["image"], w=140, x=35) 
+            image_path = section.get("image")
+            if image_path and os.path.exists(image_path):
+                # Reservar espacio para imagen + caption; si no cabe, saltar de página
+                # y dejar indicador explícito del paso para evitar confusiones.
+                _ensure_pdf_space(pdf, 105)
+                step_number = _extract_step_number(section["title"])
+
+                pdf.set_font('Arial', 'B', 10)
+                pdf.set_text_color(75)
+                pdf.cell(0, 6, clean_text_for_pdf(f"Imagen correspondiente al Paso {step_number}"), 0, 1, 'C')
+                pdf.set_text_color(0)
+
+                image_width = 140
+                image_x = (pdf.w - image_width) / 2
+                pdf.image(image_path, w=image_width, x=image_x)
+
                 if "caption" in section:
                     pdf.set_font('Arial', 'I', 9)
-                    pdf.cell(0, 8, section["caption"], 0, 1, 'C')
+                    pdf.cell(0, 8, clean_text_for_pdf(section["caption"]), 0, 1, 'C')
             
             pdf.ln(10)
             
@@ -698,7 +807,7 @@ def create_professional_pdf():
     return pdf
 
 @st.cache_data(show_spinner="Generando PDF...")
-def generate_pdf_bytes():
+def generate_pdf_bytes(_assets_signature: tuple):
     """Genera el PDF y devuelve los bytes, cacheado para optimizar."""
     try:
         pdf = create_professional_pdf()
@@ -715,6 +824,150 @@ def generate_pdf_bytes():
     except Exception as e:
         st.error(f"Error generando PDF: {e}")
         return None
+
+
+def get_assets_signature():
+    """Firma simple para invalidar caché si cambian docs o capturas del manual."""
+    tracked_paths = [
+        Path("README.md"),
+        Path("CONTRIBUTING.md"),
+        Path(__file__),
+    ]
+
+    for section in MANUAL_SECTIONS:
+        image_path = section.get("image")
+        if image_path:
+            tracked_paths.append(Path(image_path))
+
+    signature = []
+    for path in tracked_paths:
+        if path.exists():
+            stat = path.stat()
+            signature.append((str(path), int(stat.st_mtime_ns), stat.st_size))
+        else:
+            signature.append((str(path), -1, -1))
+
+    # Incluye estructura del manual para que cambios de orden, títulos,
+    # captions o mapeo de imágenes invaliden la caché del PDF.
+    manual_signature = tuple(
+        (
+            section.get("type", ""),
+            section.get("title", ""),
+            section.get("image", ""),
+            section.get("caption", ""),
+            section.get("content", "")[:200],
+        )
+        for section in MANUAL_SECTIONS
+    )
+    signature.append(("MANUAL_SECTIONS", manual_signature))
+
+    return tuple(signature)
+
+
+# ── CSS inyectado una vez por render para el sistema de lightbox ──────────────
+_LIGHTBOX_CSS = """<style>
+a.ml-t {
+    display:block; width:210px; margin:14px 0 6px auto;
+    border-radius:10px; overflow:hidden; cursor:zoom-in;
+    box-shadow:0 3px 16px rgba(0,51,102,.2); border:1.5px solid #c4d7ee;
+    text-decoration:none; transition:transform .22s,box-shadow .22s;
+    position:relative;
+}
+a.ml-t:hover {
+    transform:translateY(-3px) scale(1.03);
+    box-shadow:0 8px 30px rgba(0,51,102,.32);
+}
+a.ml-t img { width:100%; display:block; }
+.ml-t-badge {
+    position:absolute; bottom:0; left:0; right:0;
+    padding:22px 8px 7px;
+    background:linear-gradient(transparent,rgba(0,20,55,.8));
+    color:#fff; font-size:.65em; font-style:italic;
+    text-align:center; line-height:1.4; pointer-events:none;
+}
+.ml-t-zoom {
+    position:absolute; top:7px; right:7px;
+    background:rgba(255,255,255,.87); border-radius:50%;
+    width:26px; height:26px; display:flex; align-items:center;
+    justify-content:center; font-size:.75em;
+    box-shadow:0 1px 5px rgba(0,0,0,.2); pointer-events:none;
+}
+.ml-lb {
+    display:none;
+    position:fixed !important;
+    left:0; top:0; width:100vw; height:100vh;
+    z-index:2147483000 !important;
+}
+.ml-lb:target {
+    display:flex; align-items:center; justify-content:center;
+    animation:ml-fd .22s ease;
+}
+@keyframes ml-fd {
+    from { opacity:0; transform:scale(.96); }
+    to   { opacity:1; transform:scale(1); }
+}
+a.ml-lb-bg {
+    position:fixed !important; inset:0; background:rgba(6,16,40,.9);
+    z-index:1; cursor:zoom-out; text-decoration:none;
+}
+.ml-lb-box {
+    position:relative; z-index:2;
+    max-width:90vw; text-align:center;
+}
+.ml-lb-box img {
+    max-width:100%; max-height:84vh; display:block;
+    border-radius:10px; box-shadow:0 10px 52px rgba(0,0,0,.65);
+    margin:0 auto;
+}
+.ml-lb-cap {
+    color:#b4cceb; font-size:.78em; font-style:italic;
+    padding:10px 0 0; line-height:1.5;
+    max-width:620px; margin:0 auto;
+}
+a.ml-lb-x {
+    position:absolute; top:-13px; right:-13px;
+    background:#2e7bcf; color:#fff; text-decoration:none;
+    border-radius:999px; min-width:110px; height:34px; padding:0 12px;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:.8em; letter-spacing:.2px;
+    box-shadow:0 2px 10px rgba(0,0,0,.38);
+    transition:background .15s; z-index:3;
+}
+a.ml-lb-x:hover { background:#1a5aa0; color:#fff; text-decoration:none; }
+.ml-lb-help {
+    color:#d7e8ff; font-size:.74em; text-align:center;
+    margin-top:7px; letter-spacing:.2px;
+}
+</style>"""
+
+
+def _build_lightbox_html(image_path: str, caption: str, lb_id: str) -> str:
+    """Construye thumbnail clicable + overlay lightbox CSS puro."""
+    if not image_path or not os.path.exists(image_path):
+        return ""
+    with open(image_path, "rb") as f:
+        img_b64 = base64.b64encode(f.read()).decode()
+    ext = Path(image_path).suffix.lstrip(".").lower()
+    if ext == "jpg":
+        ext = "jpeg"
+    src = f"data:image/{ext};base64,{img_b64}"
+    short = caption.split(":")[0].strip() if ":" in caption else caption[:42]
+    return (
+        f'<a href="#{lb_id}" class="ml-t" title="Clic para ampliar">'
+        f'<img src="{src}" alt="{short}"/>'
+        f'<span class="ml-t-zoom">🔍</span>'
+        f'<span class="ml-t-badge">{short}</span>'
+        f'</a>'
+        f'<div id="{lb_id}" class="ml-lb">'
+        f'<a href="#0" class="ml-lb-bg"></a>'
+        f'<div class="ml-lb-box">'
+        f'<a href="#0" class="ml-lb-x" title="Cerrar">&#x2715; Cerrar</a>'
+        f'<img src="{src}" alt="{caption}"/>'
+        f'<p class="ml-lb-cap">{caption}</p>'
+        f'<p class="ml-lb-help">Clic fuera de la imagen para cerrar</p>'
+        f'</div></div>'
+    )
+
 
 def main():
     st.title("📖 Manual de Usuario")
@@ -758,31 +1011,29 @@ def main():
     
     st.markdown("<br>", unsafe_allow_html=True)  # safe: static HTML
 
-    # Zig-zag layout using loop
+    # Inyectar CSS lightbox (se aplica en cada render)
+    st.markdown(_LIGHTBOX_CSS, unsafe_allow_html=True)  # safe: CSS estático
+
+    # Un paso por bloque — texto full-width + thumbnail compacto clicable
     for i, section in enumerate(MANUAL_SECTIONS):
         if section["type"] == "step":
             with st.container():
-                if section.get("image"):
-                    col_text, col_img = st.columns([1, 1], gap="large")
-                    
-                    # Alternating layout
-                    if i % 2 != 0:
-                        col_text, col_img = col_img, col_text
-                    
-                    with col_text:
-                        st.markdown(f"### {section['title']}")
-                        st.markdown(section["content"])
-                    
-                    with col_img:
-                        if os.path.exists(section["image"]):
-                            st.image(section["image"], caption=section.get("caption", ""), use_container_width=True)
-                        else:
-                            st.info(f"📷 {section.get('caption', 'Captura de pantalla no disponible')}")
-                else:
-                    # No image — full width text
-                    st.markdown(f"### {section['title']}")
-                    st.markdown(section["content"])
-                
+                st.markdown(
+                    f'<h3 style="color:#1a3a5c;border-left:4px solid #2e7bcf;'
+                    f'padding-left:12px;margin:8px 0 6px;">'
+                    f'{section["title"]}</h3>',
+                    unsafe_allow_html=True,  # safe: contenido estático
+                )
+                st.markdown(section["content"])
+
+                lb_html = _build_lightbox_html(
+                    section.get("image", ""),
+                    section.get("caption", ""),
+                    f"ml-lb-{i}",
+                )
+                if lb_html:
+                    st.markdown(lb_html, unsafe_allow_html=True)  # safe: base64 + CSS estático
+
                 st.divider()
 
     with st.expander("❓ Preguntas Frecuentes (FAQ)", expanded=False):
@@ -795,7 +1046,7 @@ def main():
         st.info("Obtenga el manual completo en PDF, incluyendo documentación técnica y créditos.")
         
         # Pre-generate or get from cache
-        pdf_bytes = generate_pdf_bytes()
+        pdf_bytes = generate_pdf_bytes(get_assets_signature())
         
         if pdf_bytes:
             st.download_button(
