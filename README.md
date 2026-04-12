@@ -1,45 +1,77 @@
-# Transformador XML JATS (JATS XML Transformer) - v0.7.5
+# Transformador XML JATS
 
-Una herramienta avanzada impulsada por Inteligencia Artificial para convertir documentos de Word (`.docx`) a formato **JATS XML** validado, diseñada específicamente para el flujo editorial de revistas científicas.
+> **v0.7.5** · Python 3.9+ · Streamlit · JATS 1.3 / 1.4 (ANSI/NISO Z39.96-2024)
 
-Esta aplicación automatiza el proceso de etiquetado semántico, extracción de tablas e imágenes, y validación contra el estándar **NISO JATS Version 1.4 (ANSI/NISO Z39.96-2024)**.
+Una herramienta avanzada impulsada por **Inteligencia Artificial Multi-Agente** para convertir documentos de Word (`.docx`) y PDF (`.pdf`) al estándar **JATS XML** validado, diseñada específicamente para el flujo editorial de revistas científicas.
+
+El sistema automatiza el etiquetado semántico completo del artículo, la extracción de metadatos, tablas e imágenes, y la validación contra el estándar **NISO JATS Version 1.4 (ANSI/NISO Z39.96-2024)**, con soporte para múltiples proveedores de IA (Gemini, OpenAI, Anthropic, DeepSeek, Mistral, Groq, Ollama local).
 
 ## 🚀 Características Principales
 
-- **Arquitectura Multi-Model (Vendor-Agnostic)**: El sistema soporta una amplia variedad de proveedores de Inteligencia Artificial más allá de Google Gemini, incluyendo **OpenAI (GPT-4o), Anthropic (Claude 3.5), DeepSeek, Mistral, Groq**, e incluso modelos locales sin costo usando **Ollama**.
-- **Soporte Multiformato**: Procesa documentos **Word (`.docx`)** y **PDF (`.pdf`)**.
-- **Extracción de Metadatos**: Identifica y extrae automáticamente metadatos clave (título, autores, DOI, fechas de publicación, recepción y aceptación).
-- **Extracción de Tablas**: Las tablas del documento se convierten automáticamente a `<table-wrap>` con `<thead>`/`<tbody>` correctamente estructurados.
-- **Preservación de Texto**: El sistema etiqueta el texto original sin modificarlo — respetando el trabajo de los correctores humanos.
-- **Revisión Interactiva**: Permite editar metadatos y dialogar con un chatbot para completar información faltante antes de la generación.
-- **Validación JATS 1.4**: Valida contra el último estándar **NISO JATS Version 1.4 (ANSI/NISO Z39.96-2024)**.
-- **Auditoría de Integridad Editorial (Semantic Check)**: El sistema no solo valida la estructura XML, sino que audita heurísticamente la presencia de datos reales, bloqueando "cascarones vacíos" o placeholders (`<!-- ... -->`) generados por modelos con baja capacidad o cuota limitada.
-- **Conversión a HTML**: Genera archivos HTML autocontenidos con logo incrustado (Base64), tema claro/oscuro, tabla de contenidos interactiva y enlaces funcionales. Las referencias bibliográficas se renderizan correctamente con DOIs clickeables.
-- **Vista Previa en Nueva Pestaña**: La previsualización del HTML se abre en una pestaña del navegador con soporte completo de UTF-8 y navegación por anclas.
-- **Gestión Multi-API Key**: Las claves de API de los distintos proveedores elegidos se guardan localmente de forma segura en una base de datos SQLite con ofuscación Base64. Puedes interconectar múltiples inteligencias sin reingresar parámetros iterativamente.
-- **Monitoreo de Tokens Universal**: Un panel estadístico integrado computará el uso histórico, las métricas de consumo de cada proveedor logrando mostrar los thresholds de alertas y prevenciones de pago antes de llegar a cuotas máximas.
-- **Detección de Cuota Agotada**: Cuando se agota la cuota gratuita, el sistema lo detecta automáticamente y muestra un banner `💳 Cuota gratuita agotada — usando tier de pago` en la barra lateral.
+### Conversión y Etiquetado
+- **Soporte Multiformato**: Procesa documentos **Word (`.docx`)** y **PDF (`.pdf`)** directamente.
+- **Etiquetado Semántico Completo**: La IA aplica el esquema JATS completo — secciones, párrafos, listas, fórmulas, figuras, tablas y referencias — sin alterar el texto original.
+- **Extracción de Metadatos con IA**: Identifica y extrae automáticamente título, autores (con afiliaciones), DOI, ORCID, fechas de recepción, aceptación y publicación.
+- **Extracción de Tablas**: Las tablas se convierten automáticamente a `<table-wrap>` con `<thead>`/`<tbody>` correctamente estructurados, preservando todas las filas y columnas.
+- **Preservación de Texto (Zero-Edit)**: El sistema etiqueta el texto original sin modificarlo, respetando el trabajo de los correctores humanos.
+
+### Arquitectura Multi-Agente
+- **Generación Paralela**: Permite generar múltiples versiones del XML simultáneamente usando distintos modelos (Gemini, OpenAI, Claude, etc.) y seleccionar el mejor resultado.
+- **Leaderboard DTD**: Panel competitivo que evalúa en tiempo real la precisión estructural de cada XML generado contra el DTD JATS, asignando un porcentaje de exactitud y coronando al modelo ganador.
+- **Agente Editorial Experto**: Agente de revisión con rol de editor experto que asiste didácticamente en la corrección de errores JATS antes de la exportación final.
+- **Arquitectura LLM-Agnostic**: Soporta **Google Gemini, OpenAI (GPT-4o), Anthropic (Claude 3.5), DeepSeek, Mistral, Groq** y modelos locales offline con **Ollama** o **LM Studio** — sin modificar el código.
+
+### Validación y Calidad
+- **Validación JATS 1.3 / 1.4**: Valida contra los estándares **NISO JATS Version 1.3 y 1.4 (ANSI/NISO Z39.96-2024)** usando el DTD oficial empaquetado localmente.
+- **Auditoría de Integridad Semántica (Semantic Check)**: Valida heurísticamente la densidad de texto real, bloqueando XMLs con placeholders (`<!-- ... -->`), secciones vacías o contenido insuficiente generados por modelos de baja capacidad o cuota limitada.
+- **Corrección Automática Asistida por IA**: Si la validación falla, un agente experto sugiere y aplica correcciones directamente sobre el XML generado, con revisión humana antes de aceptar.
+- **Parsing Resiliente**: Recuperación automática ante etiquetas ligeramente malformadas (`recover=True`), permitiendo generar la vista previa HTML incluso con XML imperfecto.
+
+### Salida y Exportación
+- **Conversión a HTML5 Responsivo**: Genera HTML autocontenidos con logo incrustado (Base64), modo claro/oscuro, tabla de contenidos interactiva y DOIs clickeables.
+- **Vista Previa en Nueva Pestaña**: La previsualización se abre en el navegador con soporte UTF-8 completo y navegación por anclas internas.
+- **Descarga Directa**: Botones para descargar el XML JATS final y el HTML generado.
+
+### Gestión y Seguridad
+- **Gestión Multi-Proveedor de API Keys**: Las claves se guardan localmente en SQLite con ofuscación Base64; nunca se envían a servidores externos.
+- **Monitoreo de Tokens**: Panel estadístico con historial de 30 días, alertas al 80 % y 100 % de la cuota gratuita, y métricas por proveedor.
+- **Detección de Cuota Agotada**: Cuando se agota la cuota gratuita el sistema detecta el error 429 automáticamente y muestra un banner informativo en la barra lateral.
+- **Metadatos de Revista Persistentes**: Título de revista, editorial e ISSN se configuran una sola vez y se inyectan en todas las transformaciones.
 - **Interfaz Dual**:
-  - **Web UI (Streamlit)**: Interfaz gráfica amigable para arrastrar y soltar archivos, editar contenido extraído y previsualizar resultados.
-  - **CLI (Línea de Comandos)**: Para automatización y procesamiento por lotes.
+  - **Web UI (Streamlit)**: Interfaz gráfica con arrastrar-y-soltar, revisión de metadatos, chatbot asistente y previsualización en tiempo real.
+  - **CLI (Línea de Comandos)**: Para automatización, procesamiento por lotes e integración en pipelines editoriales.
 
 ## 🛠️ Requisitos del Sistema
 
-- Windows, macOS o Linux.
-- [Python 3.9+](https://www.python.org/downloads/)
-- Una clave de API activa de cualquiera de los proveedores soportados (Gemini, OpenAI, Anthropic, DeepSeek, etc.) o una instalación local de **Ollama** ejecutándose en `localhost:11434`.
+| Requisito | Mínimo | Recomendado |
+|-----------|--------|-------------|
+| Sistema Operativo | Windows 10, macOS 11, Ubuntu 20.04 | macOS 13+ / Ubuntu 22.04 |
+| Python | 3.9 | 3.11+ |
+| RAM | 4 GB | 8 GB |
+| Almacenamiento | 500 MB | 1 GB |
+| Conexión a Internet | Requerida (para proveedores cloud) | — |
+
+**API Key requerida** de al menos uno de los proveedores soportados (Gemini, OpenAI, Anthropic, DeepSeek, Mistral, Groq) o una instalación local de **[Ollama](https://ollama.com)** ejecutándose en `localhost:11434`.
 
 ## 📦 Instalación
 
-1. **Clonar el repositorio** (si aplica) o descargar el código fuente.
+### Instalación Estándar
 
-2. **Crear un entorno virtual** (recomendado):
+1. **Clonar el repositorio**:
+
+    ```bash
+    git clone https://github.com/iCristian/XML-JATS.git
+    cd XML-JATS
+    ```
+
+2. **Crear un entorno virtual** (recomendado para aislar dependencias):
 
     ```bash
     python -m venv .venv
     # Activar:
-    # Windows: .venv\Scripts\activate
-    # macOS/Linux: source .venv/bin/activate
+    # Windows PowerShell: .venv\Scripts\Activate.ps1
+    # Windows CMD:        .venv\Scripts\activate.bat
+    # macOS/Linux:        source .venv/bin/activate
     ```
 
 3. **Instalar dependencias**:
@@ -48,89 +80,261 @@ Esta aplicación automatiza el proceso de etiquetado semántico, extracción de 
     pip install -r requirements.txt
     ```
 
-4. **Configurar la API Key de Gemini** (elige una opción):
+4. **Configurar la API Key** (elige una opción):
 
     **Opción A — Desde la interfaz web (recomendado):**
-    Al abrir la aplicación, dirígete a la pestaña **"⚙️ Configuración"** en el menú izquierdo. Escoge la inteligencia de tu agrado (ej. OpenAI, Anthropic, Gemini, Mastral, Deepseek), inserta tu respectiva key y presiona **"💾 Guardar"**.
+    Abre la aplicación y navega a **"⚙️ API y Tokens"** en el menú lateral. Selecciona tu proveedor de IA (Gemini, OpenAI, Anthropic, etc.), pega tu clave y presiona **"💾 Guardar"**. La clave se almacena en `data/config.db` (excluido de Git) con ofuscación Base64.
 
-    **Opción B — Variable de entorno (fallback):**
+    **Opción B — Variable de entorno:**
 
     ```bash
-    export GEMINI_API_KEY="tu_clave_aqui"
+    # Google Gemini
+    export GEMINI_API_KEY="AIza..."
+
+    # OpenAI
+    export OPENAI_API_KEY="sk-..."
+
+    # Anthropic
+    export ANTHROPIC_API_KEY="sk-ant-..."
     ```
 
-    > **Nota sobre cuota pagada:** si tu cuenta de Google AI tiene facturación habilitada, la misma clave funciona en el tier de pago una vez agotada la cuota gratuita. No se necesita ninguna clave adicional.
+    > **Modelos locales con Ollama:** No requieren API Key. Instala [Ollama](https://ollama.com), descarga un modelo (`ollama pull llama3`) y asegúrate de que el servicio esté corriendo. El sistema lo detecta automáticamente en `http://localhost:11434`.
+
+    > **Nota sobre cuota pagada (Gemini):** Si tu cuenta de Google AI tiene facturación habilitada en Google Cloud, la misma clave funciona automáticamente en el tier de pago una vez agotada la cuota gratuita. No se necesita ninguna clave adicional.
 
 ## 📖 Uso
 
 ### Interfaz Web (Recomendado)
 
-La interfaz gráfica es la forma más fácil de usar la herramienta.
+```bash
+streamlit run streamlit_app.py
+# o usando el script helper:
+./run_app.sh
+```
 
-1. Ejecuta la aplicación:
+Abre tu navegador en `http://localhost:8501`. El flujo de trabajo es:
 
-    ```bash
-    streamlit run streamlit_app.py
-    ```
-
-2. Abre tu navegador en la URL mostrada (usualmente `http://localhost:8501`).
-3. Sube tu archivo `.docx` o `.pdf`.
-4. Revisa y completa los metadatos extraídos.
-5. Genera el XML, valida y descarga los resultados.
-6. Genera el HTML y haz clic en **"Ver vista previa en nueva pestaña"** para inspeccionar el resultado.
+1. **Configurar** tu API Key en **"⚙️ API y Tokens"**.
+2. **Cargar** un archivo `.docx` o `.pdf` en el **Transformador**.
+3. **Revisar** los metadatos extraídos por la IA (título, autores, DOI, etc.).
+4. **Generar** el XML JATS — opcionalmente con múltiples modelos en paralelo.
+5. **Validar** el XML contra el DTD JATS oficial y corregir si es necesario.
+6. **Descargar** el XML validado y/o el HTML para publicación web.
 
 ### Línea de Comandos (CLI)
 
-Para usuarios avanzados que deseen integrar la herramienta en scripts.
+Para usuarios avanzados o integración en pipelines editoriales.
 
-**Transformación (Word → XML):**
+**Transformación (Word → XML JATS):**
 
 ```bash
 python -m modules.transformer entrada.docx salida.xml
 ```
 
-**Conversión (XML → HTML):**
+**Conversión (XML JATS → HTML5):**
 
 ```bash
 python -m modules.xml_html entrada.xml salida.html
 ```
 
+**Verificar modelos disponibles:**
+
+```bash
+python check_models.py
+```
+
 ## 📂 Estructura del Proyecto
 
-- `streamlit_app.py`: Punto de entrada de la aplicación web (Streamlit UI).
-- `modules/`:
-  - `transformer.py`: Núcleo de la lógica de conversión. Desacoplado de la interfaz de usuario. Usa `tenacity` para manejo robusto de reintentos (HTTP 429) y control de errores. Soporta generación de hasta 65K tokens de salida. Retorna `quota_exceeded: True` cuando se agota el límite diario gratuito.
-  - `metadata_processor.py`: Módulo para la extracción de metadatos mediante IA, agnóstico al entorno gráfico.
-  - `correction.py`: Módulo para la corrección asistida por IA (preserva texto original), completamente separado del estado de Streamlit.
-  - `prompts.py`: Repositorio centralizado de instrucciones maestras (prompts) de IA con plantillas detalladas para tablas, secciones, DOI y fechas.
-  - `xml_html.py`: Convertidor de JATS XML a HTML5 responsivo con renderización completa de referencias bibliográficas (DOIs clickeables, nombres de autores, fuentes en itálica).
-  - `config_store.py`: Almacenamiento persistente de configuración (API Key, uso de tokens) mediante SQLite. Gestiona una única API key; las funciones `*_pro` están obsoletas.
-- `views/`: Vistas de la interfaz gráfica (transformador, manual de usuario, documentación).
-- `data/`: Base de datos SQLite local (`config.db`) — excluida de Git.
-- `JATS-Publishing-1-3-MathML3-DTD/`: Archivos DTD locales para validación offline.
-- `imagenes_extraidas/`: Directorio temporal donde se guardan las imágenes extraídas del documento Word.
-- `resources/`: Logo de la revista y recursos gráficos.
+```text
+XML-JATS/
+├── streamlit_app.py          # Punto de entrada web (Streamlit multi-página)
+├── run_app.sh                # Script helper para lanzar la app
+├── requirements.txt          # Dependencias Python (pinned)
+├── README.md                 # Este archivo
+├── RESUME.md                 # Resumen técnico del proyecto
+├── CONTRIBUTING.md           # Guía de contribución
+│
+├── modules/                  # Backend — independiente de la UI
+│   ├── __init__.py
+│   ├── transformer.py        # Núcleo de conversión DOCX/PDF → XML JATS
+│   ├── metadata_processor.py # Extracción de metadatos con IA
+│   ├── correction.py         # Corrección asistida por IA (preserva texto original)
+│   ├── prompts.py            # Repositorio centralizado de prompts para la IA
+│   ├── xml_html.py           # Conversión XML JATS → HTML5 responsivo
+│   ├── config_store.py       # Persistencia SQLite (API keys, tokens, métricas)
+│   ├── llm_provider.py       # Abstracción multi-proveedor (LLMProvider)
+│   ├── convert_images.py     # Utilidad de extracción/conversión de imágenes
+│   └── dtd/                  # DTDs JATS empaquetados para validación offline
+│       └── JATS-Publishing-1-3-MathML3-DTD/
+│
+├── views/                    # Frontend — vistas Streamlit
+│   ├── transformador.py      # Vista principal: carga, metadatos, generación, validación
+│   ├── configuracion.py      # Gestión de API keys, cuotas y datos de revista
+│   ├── manual_usuario.py     # Manual de usuario interactivo con pasos y FAQ
+│   ├── documentacion.py      # Documentación técnica (README, CONTRIBUTING, RESUME)
+│   └── creditos.py           # Créditos, privacidad y licencias
+│
+├── resources/                # Recursos estáticos
+│   ├── UV_blanco.png         # Logo UV (fondo blanco)
+│   ├── UV_color.png          # Logo UV (color)
+│   ├── logo.png              # Logo principal
+│   ├── logo_transparent.png  # Logo transparente
+│   └── manual_images/        # Capturas de pantalla del manual de usuario
+│
+└── data/                     # Datos locales — excluidos de Git
+    └── config.db             # Base de datos SQLite (API keys, tokens, métricas)
+```
+
+### Descripción de Módulos Backend
+
+| Módulo | Responsabilidad |
+|--------|----------------|
+| `transformer.py` | Orquesta el flujo completo: extrae texto/tablas/imágenes del DOCX, invoca la IA para generar XML JATS, verifica completitud semántica y retorna el resultado. Usa `tenacity` para reintentos con backoff exponencial ante errores 429. |
+| `metadata_processor.py` | Extrae metadatos (título, autores, DOI, ORCID, afiliaciones, fechas) usando IA. Aplica `_normalize_metadata()` para corregir variaciones en las claves JSON devueltas por el modelo. |
+| `correction.py` | Agente de corrección que recibe el XML con errores DTD y genera una versión corregida preservando el texto original. Desacoplado de Streamlit. |
+| `prompts.py` | Repositorio centralizado de todos los prompts maestros. Ningún otro módulo hardcodea instrucciones para la IA. |
+| `xml_html.py` | Convierte XML JATS a HTML5 responsivo con logo incrustado (Base64), modo oscuro/claro, tabla de contenidos, DOIs clickeables y referencias bibliográficas completas. |
+| `config_store.py` | Gestión de persistencia mediante SQLite: guarda/carga API keys (ofuscadas), registra uso de tokens y métricas históricas. |
+| `llm_provider.py` | Clase abstracta `LLMProvider` con implementaciones para Gemini, OpenAI, Anthropic, DeepSeek, Mistral, Groq, Ollama y LM Studio. Punto de extensión para nuevos proveedores. |
+
+## 🔄 Flujo de Datos
+
+```
+Usuario sube DOCX/PDF
+        │
+        ▼
+transformer.extraer_contenido_estructurado()
+   ├── python-docx / pdfplumber  → texto plano + tablas + imágenes
+   └── (tablas renderizadas como markdown para el prompt)
+        │
+        ▼
+metadata_processor.MetadataExtractor
+   └── LLMProvider.generate() → JSON con título, autores, DOI, fechas
+        │
+        ▼
+[Revisión humana y chatbot asistente en UI]
+        │
+        ▼
+transformer.generar_xml_jats()  [opcionalmente en paralelo con múltiples modelos]
+   └── LLMProvider.generate() → XML JATS candidato
+        │
+        ▼
+Auditoría de Completitud Semántica (verificar_completitud_xml)
+   ├── Detecta placeholders (<!-- ... -->)
+   ├── Valida densidad de texto vs. original
+   └── Puntúa cada candidato
+        │
+        ▼
+Leaderboard: selección del XML con mayor puntaje DTD
+        │
+        ├── [Si errores] correction.corregir_xml()
+        │       └── LLMProvider.generate() → XML corregido
+        │
+        ▼
+xml_html.build_html() → HTML5 autocontenido con DOIs clickeables
+        │
+        ▼
+Descarga: XML + HTML
+```
+
+## 🤖 Proveedores de IA Soportados
+
+| Proveedor | Modelos por Defecto | Tier Gratuito | Variable de Entorno |
+|-----------|---------------------|---------------|---------------------|
+| **Google Gemini** | gemini-2.5-flash, gemini-2.5-pro, gemini-2.0-flash | ✅ Sí (RPD limitado) | `GEMINI_API_KEY` |
+| **OpenAI** | gpt-4o, gpt-4o-mini, gpt-4-turbo | ❌ Pay-as-you-go | `OPENAI_API_KEY` |
+| **Anthropic** | claude-3-5-sonnet, claude-3-haiku | ❌ Pay-as-you-go | `ANTHROPIC_API_KEY` |
+| **DeepSeek** | deepseek-chat, deepseek-coder | ✅ Limitado | `DEEPSEEK_API_KEY` |
+| **Mistral** | mistral-large, mistral-small | ✅ Limitado | `MISTRAL_API_KEY` |
+| **Groq** | llama3-70b, mixtral-8x7b | ✅ Sí | `GROQ_API_KEY` |
+| **Ollama** (local) | llama3, qwen2.5, etc. | ✅ Sin límites | — (local) |
+| **LM Studio** (local) | cualquier modelo GGUF | ✅ Sin límites | — (local) |
+
+### Cuotas Gemini (Tier Gratuito)
+
+| Modelo | Req/día | Tokens/min | Req/min |
+|--------|---------|------------|---------|
+| gemini-2.5-flash | 500 | 250 000 | 10 |
+| gemini-2.5-pro | 25 | 32 000 | 5 |
+| gemini-2.0-flash | 1 500 | 1 000 000 | 15 |
+
+> Una vez agotada la cuota gratuita, la misma clave funciona en **Pay-as-you-go** si la cuenta tiene facturación habilitada en Google Cloud.
+
+## ⚙️ Variables de Entorno
+
+| Variable | Proveedor | Descripción |
+|----------|-----------|-------------|
+| `GEMINI_API_KEY` | Google | API Key de Google Gemini |
+| `OPENAI_API_KEY` | OpenAI | API Key de OpenAI |
+| `ANTHROPIC_API_KEY` | Anthropic | API Key de Anthropic |
+| `DEEPSEEK_API_KEY` | DeepSeek | API Key de DeepSeek |
+| `MISTRAL_API_KEY` | Mistral | API Key de Mistral |
+| `GROQ_API_KEY` | Groq | API Key de Groq |
+
+Las variables de entorno funcionan como **fallback** si no hay clave guardada en `data/config.db`. Si ambas existen, prevalece la guardada en la base de datos.
+
+## 🔧 Solución de Problemas
+
+### Error: `ModuleNotFoundError`
+```bash
+# Asegúrate de tener el entorno virtual activado
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### Error: `SSL: CERTIFICATE_VERIFY_FAILED` (macOS)
+```bash
+# Instala los certificados de Python
+/Applications/Python\ 3.x/Install\ Certificates.command
+```
+El sistema también tiene un mecanismo de fallback que ignora errores SSL al descargar el DTD JATS.
+
+### Error 429: Cuota Agotada
+- Espera al día siguiente (los límites diarios se renuevan a las 00:00 UTC).
+- Cambia a un modelo con más cuota (ej. `gemini-2.0-flash` tiene 1500 RPD).
+- Configura otro proveedor (OpenAI, Anthropic, etc.) como alternativa.
+- Activa facturación en Google Cloud para usar el tier Pay-as-you-go con la misma clave.
+
+### El XML generado contiene placeholders `<!-- ... -->`
+- El sistema detecta esto automáticamente en la Auditoría de Completitud.
+- Si igual ocurre, usa el botón **"🔧 Intentar Solucionar con IA"** en la sección de Validación.
+- Si persiste, prueba con un modelo de mayor capacidad (ej. `gemini-2.5-pro` en lugar de `flash`).
+
+### Ollama no conecta
+```bash
+# Verificar que el servicio esté activo
+ollama list
+# Si no está corriendo, iniciarlo manualmente
+ollama serve
+```
+
+### Las imágenes del PDF no se extraen
+Los PDFs con imágenes vectoriales o con protección DRM pueden no permitir la extracción. Usa el archivo Word original si está disponible.
 
 ## 🤝 Créditos
 
 Desarrollado por **Cristian Carreño León**\
 Escuela de Obstetricia y Puericultura\
 Facultad de Medicina\
-Universidad de Valparaíso, Chile.
+Universidad de Valparaíso, Chile.\
+✉️ [cristian.carreno@uv.cl](mailto:cristian.carreno@uv.cl)
 
 Desarrollado para la **Universidad de Valparaíso** con el objetivo de optimizar los procesos de publicación científica.
 
 ### Tecnologías Utilizadas
 
-| Tecnología | Uso |
-| --- | --- |
-| Python 3.9+ | Lenguaje base |
-| Streamlit | Framework de interfaz web |
-| Google Gemini | Modelo de lenguaje (LLM) para etiquetado inteligente |
-| lxml | Procesamiento, validación y parsing de XML/HTML |
-| python-docx | Extracción de contenido desde archivos Word |
-| FPDF2 | Generación de manuales en PDF |
-| JATS 1.4 (ANSI/NISO Z39.96-2024) | Estándar de etiquetado XML |
+| Tecnología | Versión | Uso |
+| --- | --- | --- |
+| Python | 3.9+ | Lenguaje base |
+| Streamlit | 1.51+ | Framework de interfaz web |
+| Google Gemini | 2.5-flash | LLM principal para etiquetado |
+| lxml | 6.0+ | Procesamiento y validación XML/HTML |
+| python-docx | 1.2+ | Extracción de contenido Word |
+| pdfplumber | 0.10+ | Extracción de texto desde PDF |
+| tenacity | 9.1+ | Reintentos robustos con backoff exponencial |
+| FPDF2 | — | Generación del manual en PDF |
+| SQLite | — | Persistencia de API keys y métricas |
+| JATS | 1.3 / 1.4 | Estándar ANSI/NISO Z39.96-2024 |
 
 ## 📄 Licencia
 
