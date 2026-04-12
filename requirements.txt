@@ -30,3 +30,7 @@ watchdog==6.0.0
 fpdf==1.7.2
 pdfplumber==0.10.4
 python-docx>=0.8.11
+
+# Security
+cryptography>=42.0.0,<44.0.0
+certifi>=2024.0.0

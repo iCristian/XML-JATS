@@ -496,7 +496,7 @@ def _move_orphan_table_wraps(xml_string: str) -> str:
     Usa lxml con recover=True para manejar XML levemente roto.
     """
     try:
-        parser = etree.XMLParser(recover=True, encoding='utf-8')
+        parser = etree.XMLParser(recover=True, encoding='utf-8', resolve_entities=False, no_network=True)
         root = etree.fromstring(xml_string.encode('utf-8'), parser=parser)
     except Exception:
         return xml_string  # No podemos parsear, devolver sin tocar
@@ -595,10 +595,9 @@ def validar_jats_xml(xml_content: str) -> Tuple[bool, List[str]]:
             if not zip_path.exists():
                 print(f"Descargando DTD JATS desde {DTD_ZIP_URL}...")
                 import ssl
-                # Configurar contexto SSL que omite la verificación local de certificados
-                ctx = ssl.create_default_context()
-                ctx.check_hostname = False
-                ctx.verify_mode = ssl.CERT_NONE
+
+                import certifi
+                ctx = ssl.create_default_context(cafile=certifi.where())
                 
                 with urllib.request.urlopen(DTD_ZIP_URL, context=ctx) as response, open(zip_path, 'wb') as out_file:
                     out_file.write(response.read())
@@ -634,7 +633,7 @@ def validar_jats_xml(xml_content: str) -> Tuple[bool, List[str]]:
         xml_bytes = xml_content_patched.encode('utf-8')
         
         # Activar modo de recuperación para intentar parsear a pesar de etiquetas mal cerradas
-        parser = etree.XMLParser(dtd_validation=False, recover=True, no_network=False)
+        parser = etree.XMLParser(dtd_validation=False, recover=True, no_network=True, resolve_entities=False)
         xml_tree = etree.fromstring(xml_bytes, parser)
         dtd = etree.DTD(str(dtd_path))
 
@@ -671,7 +670,7 @@ def verificar_completitud_xml(xml_content: str, original_text: str = None) -> Tu
 
     # Extraer texto visible del body
     try:
-        parser = etree.XMLParser(recover=True, encoding='utf-8')
+        parser = etree.XMLParser(recover=True, encoding='utf-8', resolve_entities=False, no_network=True)
         root = etree.fromstring(xml_content.encode('utf-8'), parser=parser)
         body = root.find('.//body')
         body_text = "".join(body.itertext()) if body is not None else ""

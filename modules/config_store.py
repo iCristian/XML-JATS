@@ -3,8 +3,9 @@
 Almacena la API Key de Gemini y el historial de tokens consumidos
 en una base de datos SQLite local (``data/config.db``).
 
-La API key se guarda ofuscada con Base64 para evitar exposición
-accidental en texto plano, aunque no constituye encriptación fuerte.
+La API key se guarda cifrada con Fernet (cifrado simétrico autenticado)
+para proteger contra exposición accidental en texto plano. Las claves
+almacenadas en el formato Base64 anterior se migran automáticamente.
 
     - ``save_api_key`` / ``load_api_key``: persistencia de la API key.
     - ``save_setting`` / ``load_setting``: configuraciones genéricas.
@@ -35,9 +36,12 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from cryptography.fernet import Fernet
+
 # ─── Constantes ────────────────────────────────────────────────
 _DB_DIR = Path("data")
 _DB_PATH = _DB_DIR / "config.db"
+_FERNET_KEY_PATH = _DB_DIR / ".fernet.key"
 
 # Límites del tier gratuito de Gemini (por día / por minuto)
 FREE_TIER_LIMITS: Dict[str, Dict[str, int]] = {
@@ -119,30 +123,103 @@ def init_db() -> None:
 init_db()
 
 
-# ─── API Key ──────────────────────────────────────────────────
+# ─── Cifrado de API Keys ──────────────────────────────────────
+
+
+def _get_or_create_fernet_key() -> bytes:
+    """Obtiene o genera la clave Fernet para cifrado de API keys.
+
+    La clave se almacena en ``data/.fernet.key`` y se genera
+    automáticamente en la primera ejecución.
+    """
+    if _FERNET_KEY_PATH.exists():
+        return _FERNET_KEY_PATH.read_bytes().strip()
+    _DB_DIR.mkdir(parents=True, exist_ok=True)
+    key = Fernet.generate_key()
+    _FERNET_KEY_PATH.write_bytes(key)
+    os.chmod(str(_FERNET_KEY_PATH), 0o600)
+    return key
+
 
 def _obfuscate(text: str) -> str:
-    """Ofusca un texto con Base64 (no es encriptación).
+    """Cifra un texto con Fernet (cifrado simétrico autenticado).
 
     Args:
-        text: Texto plano a ofuscar.
+        text: Texto plano a cifrar.
 
     Returns:
-        str: Representación Base64 del texto.
+        str: Token Fernet cifrado.
     """
-    return base64.b64encode(text.encode("utf-8")).decode("utf-8")
+    f = Fernet(_get_or_create_fernet_key())
+    return f.encrypt(text.encode("utf-8")).decode("utf-8")
 
 
 def _deobfuscate(encoded: str) -> str:
-    """Revierte la ofuscación Base64.
+    """Descifra un texto. Soporta Fernet y Base64 legacy (migración).
+
+    Si el texto no es un token Fernet válido, intenta decodificarlo
+    como Base64 (formato anterior) para compatibilidad con bases de
+    datos existentes.
 
     Args:
-        encoded: Texto codificado en Base64.
+        encoded: Texto cifrado (Fernet) o codificado (Base64 legacy).
 
     Returns:
         str: Texto plano original.
     """
-    return base64.b64decode(encoded.encode("utf-8")).decode("utf-8")
+    f = Fernet(_get_or_create_fernet_key())
+    try:
+        return f.decrypt(encoded.encode("utf-8")).decode("utf-8")
+    except Exception:
+        # Fallback: Base64 legacy
+        return base64.b64decode(encoded.encode("utf-8")).decode("utf-8")
+
+
+def _migrate_legacy_keys() -> None:
+    """Re-cifra con Fernet cualquier API key almacenada en Base64 legacy."""
+    conn = _get_connection()
+    try:
+        fernet = Fernet(_get_or_create_fernet_key())
+        # Migrar tabla provider_keys
+        rows = conn.execute("SELECT provider_id, api_key FROM provider_keys").fetchall()
+        for row in rows:
+            stored = row["api_key"]
+            try:
+                fernet.decrypt(stored.encode("utf-8"))
+            except Exception:
+                try:
+                    plain = base64.b64decode(stored.encode("utf-8")).decode("utf-8")
+                    conn.execute(
+                        "UPDATE provider_keys SET api_key = ? WHERE provider_id = ?",
+                        (_obfuscate(plain), row["provider_id"]),
+                    )
+                except Exception:
+                    pass
+        # Migrar tabla config (gemini_api_key legacy)
+        legacy = conn.execute(
+            "SELECT value FROM config WHERE key = 'gemini_api_key'"
+        ).fetchone()
+        if legacy:
+            stored = legacy["value"]
+            try:
+                fernet.decrypt(stored.encode("utf-8"))
+            except Exception:
+                try:
+                    plain = base64.b64decode(stored.encode("utf-8")).decode("utf-8")
+                    conn.execute(
+                        "UPDATE config SET value = ? WHERE key = 'gemini_api_key'",
+                        (_obfuscate(plain),),
+                    )
+                except Exception:
+                    pass
+        conn.commit()
+    except Exception:
+        pass  # La migración no debe romper la importación del módulo
+    finally:
+        conn.close()
+
+
+_migrate_legacy_keys()
 
 
 def save_api_key(api_key: str) -> None:
