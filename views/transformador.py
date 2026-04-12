@@ -55,7 +55,7 @@ st.markdown("""
         border: 1px solid #c3e6cb;
     }
 </style>
-""", unsafe_allow_html=True)
+""", unsafe_allow_html=True)  # safe: static HTML
 
 # Helper para cambiar Tabs via JS
 def js_switch_tab(tab_index: int):
@@ -168,18 +168,18 @@ def main() -> None:
                 "4. **Resultados**: Descarga el XML/HTML."
             )
 
-        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)  # safe: static HTML
 
         # ─── Estado de API Key ───
         if has_api_key:
             st.markdown(
                 f"<div style='font-size: 0.8rem; color: #4CAF50; margin-bottom: 0.5rem;'>🔑 ✅ {provider_names.get(selected_provider, selected_provider)} configurado</div>",
-                unsafe_allow_html=True,
+                unsafe_allow_html=True,  # safe: provider_names is an internal dict, not user input
             )
         else:
             st.markdown(
                 "<div style='font-size: 0.8rem; color: #F44336; margin-bottom: 0.5rem;'>🔑 ❌ Sin API Key (Ir a Configuración)</div>",
-                unsafe_allow_html=True,
+                unsafe_allow_html=True,  # safe: static HTML
             )
 
         # ─── Banner de cuota de pago activa ───
@@ -191,7 +191,7 @@ def main() -> None:
             )
 
         # ─── Selección de Modelo ───
-        st.markdown("<p style='font-size: 0.9rem; font-weight: 600; margin-bottom: 0;'>📦 Modelo</p>", unsafe_allow_html=True)
+        st.markdown("<p style='font-size: 0.9rem; font-weight: 600; margin-bottom: 0;'>📦 Modelo</p>", unsafe_allow_html=True)  # safe: static HTML
 
         @st.cache_data(ttl=600)  # Reducir TTL para mayor frescura
         def get_available_models(provider_id: str, api_key: str, host: Optional[str] = None):
@@ -537,7 +537,7 @@ def main() -> None:
                             
                             st.text_area("Autores (separados por coma)", value=authors_str, help="Ej: Juan Pérez, María González", key="meta_authors")
 
-                            st.markdown("<br>", unsafe_allow_html=True)
+                            st.markdown("<br>", unsafe_allow_html=True)  # safe: static HTML
                             st.form_submit_button("💾 Guardar e ir al paso 2", on_click=save_metadata_callback, type="primary")
 
                         # Mostrar resumen de validación (fuera del form pero dentro del expander)
@@ -830,7 +830,7 @@ def main() -> None:
                         st.session_state.generated_xml = xml_mod
                         st.session_state.go_to_step_3 = True
 
-                    st.markdown("<br>", unsafe_allow_html=True)
+                    st.markdown("<br>", unsafe_allow_html=True)  # safe: static HTML
                     st.form_submit_button("💾 Guardar y Validar", on_click=aplicar_cambios_xml, type="primary")
 
             if st.session_state.pop("go_to_step_3", False):
@@ -1145,7 +1145,7 @@ def main() -> None:
                 <small>Transformador XML JATS v0.7.0</small>
             </div>
             """, 
-            unsafe_allow_html=True
+            unsafe_allow_html=True  # safe: static HTML
         )
 
 main()

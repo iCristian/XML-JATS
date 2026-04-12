@@ -1,10 +1,11 @@
-import streamlit as st
 import base64
-from fpdf import FPDF
-import tempfile
 import os
-from pathlib import Path
+import tempfile
 from datetime import datetime
+from pathlib import Path
+
+import streamlit as st
+from fpdf import FPDF
 
 # --- CONTENIDO MANUAL DE USUARIO (Hardcoded + Images) ---
 MANUAL_SECTIONS = [
@@ -443,7 +444,7 @@ def main():
         }
     ''')
     
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)  # safe: static HTML
 
     # Zig-zag layout using loop
     for i, section in enumerate(MANUAL_SECTIONS):
@@ -505,7 +506,7 @@ def main():
                 <small>Transformador XML JATS v0.7.0</small>
             </div>
             """, 
-            unsafe_allow_html=True
+            unsafe_allow_html=True  # safe: static HTML
         )
 
 if __name__ == "__main__":

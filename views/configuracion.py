@@ -39,7 +39,7 @@ def main() -> None:
             key="_cfg_provider_select",
         )
     with col_prov2:
-        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)  # safe: static HTML
         if st.button("💾 Guardar como Activo", width="stretch", type="primary"):
             if selected_provider != current_provider:
                 config_store.save_active_provider(selected_provider)
