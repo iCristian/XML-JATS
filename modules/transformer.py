@@ -66,6 +66,7 @@ def extraer_contenido_estructurado(docx_path: str) -> Optional[str]:
 
         # Crear directorio para imágenes si no existe
         IMAGE_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        os.chmod(str(IMAGE_OUTPUT_DIR), 0o700)
 
         # Usamos un iterador para procesar elementos del cuerpo (párrafos y tablas)
         for element in doc.element.body:
@@ -87,6 +88,9 @@ def extraer_contenido_estructurado(docx_path: str) -> Optional[str]:
                         
                         # Guardar la imagen
                         content_type = image_part.content_type.split('/')[-1]
+                        _ALLOWED_IMAGE_EXT = {'png', 'jpeg', 'jpg', 'gif', 'tiff', 'bmp', 'svg+xml'}
+                        if content_type not in _ALLOWED_IMAGE_EXT:
+                            content_type = 'png'
                         image_filename = f"imagen_{image_counter}.{content_type}"
                         image_path = IMAGE_OUTPUT_DIR / image_filename
                         with open(image_path, "wb") as f:

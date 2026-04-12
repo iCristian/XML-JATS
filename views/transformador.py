@@ -423,10 +423,9 @@ def main() -> None:
                                 if e.__class__.__name__ in ["StopException", "RerunException"]:
                                     raise e
                                 status.update(label="❌ Error Crítico Inesperado", state="error")
-                                st.error(f"Ocurrió un error no controlado durante el proceso: {str(e)}")
-                                # Imprimir traceback detallado para depuración
-                                import traceback
-                                st.expander("Ver detalles técnicos").code(traceback.format_exc())
+                                import logging
+                                logging.exception("Error no controlado en procesamiento")
+                                st.error("Ocurrió un error no controlado. Si persiste, contacte al administrador.")
                                 # No hacemos rerun aquí para que el usuario vea el error
                         
                         # Mover sleep y rerun FUERA del bloque status para evitar deadlocks de UI de Streamlit
