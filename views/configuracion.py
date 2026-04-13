@@ -12,6 +12,7 @@ import streamlit as st
 
 from modules import config_store
 from modules.llm_provider import PROVIDER_REGISTRY, list_providers
+from modules.theme import render_sidebar_footer
 
 
 def main() -> None:
@@ -320,6 +321,9 @@ Mantenerte bajo este umbral garantiza coste cero.
 
     if token_summary['last_used']:
         st.caption(f"Última operación: {token_summary['last_used'][:19].replace('T', ' ')}")
+
+    with st.sidebar:
+        render_sidebar_footer()
 
 
 main()

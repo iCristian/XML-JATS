@@ -13,49 +13,9 @@ from modules import (config_store, correction, metadata_processor, prompts,
                      transformer, xml_html)
 from modules.llm_provider import (PROVIDER_REGISTRY, get_provider,
                                   list_providers)
+from modules.theme import render_hero_header, render_sidebar_footer
 
 # Nota: st.set_page_config se ha movido a streamlit_app.py
-
-# CSS Personalizado
-st.markdown("""
-<style>
-    .main {
-        /* Dejar fondo por defecto */
-    }
-    .stButton>button {
-        width: 100%;
-        border-radius: 5px;
-        height: 3em;
-        background-color: #003366;
-        color: white;
-        border: none;
-    }
-    .stButton>button:hover {
-        background-color: #002244;
-    }
-    h1 {
-        color: #003366;
-    }
-    @media (prefers-color-scheme: dark) {
-        h1 { color: #8ab4f8; }
-    }
-    .branding {
-        text-align: center;
-        margin-top: 20px;
-        color: #666;
-        font-size: 0.9em;
-    }
-    .success-nav {
-        /* Ya no se usa para bloque estático, pero mantenemos por compat */
-        padding: 15px;
-        border-radius: 8px;
-        background-color: #d4edda;
-        color: #155724;
-        margin-top: 10px;
-        border: 1px solid #c3e6cb;
-    }
-</style>
-""", unsafe_allow_html=True)  # safe: static HTML
 
 # Helper para cambiar Tabs via JS
 def js_switch_tab(tab_index: int):
@@ -94,8 +54,7 @@ atexit.register(_cleanup_temp_files)
 
 def main() -> None:
     """Función principal de la aplicación Streamlit."""
-    st.title("📄 Transformador XML JATS")
-    st.markdown("### Convierte documentos Word a XML JATS con IA")
+    render_hero_header()
     
     with st.sidebar:
         # ─── Selección de Proveedor IA ───
@@ -173,12 +132,12 @@ def main() -> None:
         # ─── Estado de API Key ───
         if has_api_key:
             st.markdown(
-                f"<div style='font-size: 0.8rem; color: #4CAF50; margin-bottom: 0.5rem;'>🔑 ✅ {provider_names.get(selected_provider, selected_provider)} configurado</div>",
+                f"<div style='font-size: 0.8rem; color: #047857; margin-bottom: 0.5rem;'>🔑 ✅ {provider_names.get(selected_provider, selected_provider)} configurado</div>",
                 unsafe_allow_html=True,  # safe: provider_names is an internal dict, not user input
             )
         else:
             st.markdown(
-                "<div style='font-size: 0.8rem; color: #F44336; margin-bottom: 0.5rem;'>🔑 ❌ Sin API Key (Ir a Configuración)</div>",
+                "<div style='font-size: 0.8rem; color: #7e22ce; margin-bottom: 0.5rem;'>🔑 ❌ Sin API Key (Ir a Configuración)</div>",
                 unsafe_allow_html=True,  # safe: static HTML
             )
 
@@ -1138,14 +1097,6 @@ def main() -> None:
         elif _rpd_pct >= 0.8:
             st.warning(f"⚠️ Cuota diaria de `{_model}` casi agotada.")
         
-        st.markdown(
-            """
-            <div class='branding'>
-                <b>Universidad de Valparaíso</b><br>
-                <small>Transformador XML JATS v0.7.0</small>
-            </div>
-            """, 
-            unsafe_allow_html=True  # safe: static HTML
-        )
+        render_sidebar_footer()
 
 main()

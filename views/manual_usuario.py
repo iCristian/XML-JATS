@@ -8,6 +8,8 @@ from pathlib import Path
 import streamlit as st
 from fpdf import FPDF
 
+from modules.theme import render_sidebar_footer
+
 # --- CONTENIDO MANUAL DE USUARIO (Hardcoded + Images) ---
 MANUAL_SECTIONS = [
     {
@@ -1066,18 +1068,9 @@ def main():
                 width="stretch"
             )
 
-    # Sidebar Footer (Igual que en la app principal para consistencia)
+    # Sidebar Footer
     with st.sidebar:
-        st.markdown("---")
-        st.markdown(
-            """
-            <div class='branding'>
-                <b>Universidad de Valparaíso</b><br>
-                <small>Transformador XML JATS v0.7.5</small>
-            </div>
-            """, 
-            unsafe_allow_html=True  # safe: static HTML
-        )
+        render_sidebar_footer()
 
 if __name__ == "__main__":
     main()

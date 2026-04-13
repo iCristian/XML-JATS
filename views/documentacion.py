@@ -2,6 +2,8 @@ from pathlib import Path
 
 import streamlit as st
 
+from modules.theme import render_sidebar_footer
+
 
 def main():
     st.title("📚 Documentación del Proyecto")
@@ -29,17 +31,8 @@ def main():
         else:
             st.warning("CONTRIBUTING.md no encontrado.")
 
-    # Sidebar Footer (Igual que en la app principal para consistencia)
+    # Sidebar Footer
     with st.sidebar:
-        st.markdown("---")
-        st.markdown(
-            """
-            <div class='branding'>
-                <b>Universidad de Valparaíso</b><br>
-                <small>Transformador XML JATS v0.7.5</small>
-            </div>
-            """, 
-            unsafe_allow_html=True  # safe: static HTML
-        )
+        render_sidebar_footer()
 
 main()

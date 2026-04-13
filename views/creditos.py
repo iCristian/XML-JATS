@@ -3,14 +3,16 @@ from pathlib import Path
 
 import streamlit as st
 
+from modules.theme import render_sidebar_footer
+
 # Nota: st.set_page_config removido, se maneja en streamlit_app.py
 
-def _get_logo_base64() -> str:
-    """Lee el archivo de logo y lo convierte a Base64."""
+def _get_image_base64(path: str) -> str:
+    """Lee un archivo de imagen y lo convierte a Base64 data URI."""
     try:
-        logo_path = Path("resources/UV_blanco.png")
-        if logo_path.exists():
-            encoded = base64.b64encode(logo_path.read_bytes()).decode("utf-8")
+        p = Path(path)
+        if p.exists():
+            encoded = base64.b64encode(p.read_bytes()).decode("utf-8")
             return f"data:image/png;base64,{encoded}"
     except Exception:
         pass
@@ -22,15 +24,26 @@ def main():
     col1, col2 = st.columns([1, 2])
     
     with col1:
-        logo_src = _get_logo_base64()
-        if logo_src:
+        # Logo de marca XML-JATS
+        brand_src = _get_image_base64("resources/logos/logo.png")
+        uv_src = _get_image_base64("resources/UV_blanco.png")
+        if brand_src:
             st.markdown(
                 f"""
-                <div style="text-align: left; margin-bottom: 20px;">
-                    <img src="{logo_src}" style="max-width: 200px;">
+                <div style="text-align: center; margin-bottom: 12px;">
+                    <img src="{brand_src}" style="max-width: 140px; border-radius: 16px;">
                 </div>
-                """, 
-                unsafe_allow_html=True  # safe: logo_src is an internal base64 data URI
+                """,
+                unsafe_allow_html=True,  # safe: brand_src is an internal base64 data URI
+            )
+        if uv_src:
+            st.markdown(
+                f"""
+                <div style="text-align: center; margin-bottom: 12px;">
+                    <img src="{uv_src}" style="max-width: 160px;">
+                </div>
+                """,
+                unsafe_allow_html=True,  # safe: uv_src is an internal base64 data URI
             )
         
         st.markdown("""
@@ -95,17 +108,8 @@ def main():
         if st.button("⬅️ VOLVER AL INICIO", type="primary", width="stretch"):
             st.switch_page("views/transformador.py")
 
-    # Sidebar Footer (Igual que en la app principal)
+    # Sidebar Footer
     with st.sidebar:
-        st.markdown("---")
-        st.markdown(
-            """
-            <div class='branding'>
-                <b>Universidad de Valparaíso</b><br>
-                <small>Transformador XML JATS v0.7.5</small>
-            </div>
-            """, 
-            unsafe_allow_html=True  # safe: static HTML
-        )
+        render_sidebar_footer()
 
 main()
