@@ -173,7 +173,9 @@ XML-JATS/
 │   ├── llm_provider.py       # Abstracción multi-proveedor (LLMProvider)
 │   ├── convert_images.py     # Utilidad de extracción/conversión de imágenes
 │   └── dtd/                  # DTDs JATS empaquetados para validación offline
-│       └── JATS-Publishing-1-3-MathML3-DTD/
+│       ├── JATS-Publishing-1-3-MathML3-DTD/
+│       ├── JATS-Publishing-1-4-MathML3-DTD/  # ← DTD por defecto
+│       └── download_jats14.py  # Helper para descargar DTD 1.4 desde NCBI
 │
 ├── views/                    # Frontend — vistas Streamlit
 │   ├── transformador.py      # Vista principal: carga, metadatos, generación, validación

@@ -33,18 +33,26 @@ from .llm_provider import (PROVIDER_REGISTRY, LLMConfig, LLMResponse,
                            get_provider)
 
 # --- Constantes ---
-DTD_ZIP_URL = "https://ftp.ncbi.nlm.nih.gov/pub/jats/publishing/1.3/JATS-Publishing-1-3-MathML3-DTD.zip"
+# URLs de descarga para cada versión JATS (NCBI FTP)
+DTD_ZIP_URLS = {
+    "1.3": "https://ftp.ncbi.nlm.nih.gov/pub/jats/publishing/1.3/JATS-Publishing-1-3-MathML3-DTD.zip",
+    "1.4": "https://public.nlm.nih.gov/projects/jats/publishing/1.4/JATS-Publishing-1-4-MathML3-DTD.zip",
+}
 WORKSPACE_ROOT = Path(__file__).resolve().parent.parent
-# Ruta relativa al directorio de módulos donde se descargó
-DTD_DIR_INTERNAL = WORKSPACE_ROOT / "modules" / "dtd" / "JATS-Publishing-1-3-MathML3-DTD"
-DTD_FILENAME = "JATS-journalpublishing1-3-mathml3.dtd"
-DTD_LOCAL_FILE = DTD_DIR_INTERNAL / DTD_FILENAME
+# Directorio base para todos los DTDs (centralizado en modules/dtd/)
+DTD_BASE_DIR = WORKSPACE_ROOT / "modules" / "dtd"
 IMAGE_OUTPUT_DIR = WORKSPACE_ROOT / "imagenes_extraidas"
 
 
-# Función antigua de descarga eliminada/simplificada ya que usamos bundle local
-def descargar_y_extraer_dtd(url: str, extract_to: Path):
-    pass
+def _get_dtd_dir(version: str) -> Path:
+    """Devuelve la ruta al directorio DTD para una versión JATS dada."""
+    folder = f"JATS-Publishing-{version.replace('.', '-')}-MathML3-DTD"
+    return DTD_BASE_DIR / folder
+
+
+def _get_dtd_filename(version: str) -> str:
+    """Devuelve el nombre del archivo DTD principal para una versión JATS dada."""
+    return f"JATS-journalpublishing{version.replace('.', '-')}-mathml3.dtd"
 
 def extraer_contenido_estructurado(docx_path: str) -> Optional[str]:
     """Extrae contenido de un .docx, incluyendo texto, tablas e imágenes.
@@ -568,6 +576,9 @@ def _move_orphan_table_wraps(xml_string: str) -> str:
 def validar_jats_xml(xml_content: str) -> Tuple[bool, List[str]]:
     """Valida el contenido XML contra el DTD JATS local.
 
+    Busca el DTD en ``modules/dtd/`` según la versión configurada
+    (1.4 por defecto). Si no existe, intenta descargarlo desde NCBI.
+
     Args:
         xml_content (str): Cadena con el XML completo.
 
@@ -576,41 +587,59 @@ def validar_jats_xml(xml_content: str) -> Tuple[bool, List[str]]:
     """
     from . import config_store
     version = config_store.get_jats_version()
-    dtd_filename = f"JATS-journalpublishing{version.replace('.', '-')}-mathml3.dtd"
-    dtd_folder = f"JATS-Publishing-{version.replace('.', '-')}-MathML3-DTD"
+    dtd_filename = _get_dtd_filename(version)
+    dtd_dir = _get_dtd_dir(version)
 
+    # Búsqueda ordenada: primero la versión configurada en modules/dtd/,
+    # luego fallback a la otra versión disponible.
+    fallback_version = "1.3" if version == "1.4" else "1.4"
     possible_dtd_locations = [
-        WORKSPACE_ROOT / dtd_filename,
-        WORKSPACE_ROOT / dtd_folder / dtd_filename,
-        WORKSPACE_ROOT / "JATS-Publishing-1-4-MathML3-DTD" / "JATS-journalpublishing1-4-mathml3.dtd",
-        WORKSPACE_ROOT / "JATS-Publishing-1-3-MathML3-DTD" / "JATS-journalpublishing1-3-mathml3.dtd" # Fallback
+        # 1. Versión configurada en modules/dtd/ (ubicación canónica)
+        dtd_dir / dtd_filename,
+        # 2. Fallback: otra versión en modules/dtd/
+        _get_dtd_dir(fallback_version) / _get_dtd_filename(fallback_version),
     ]
-    
+
     dtd_path = None
-    for path in possible_dtd_locations:
+    used_fallback = False
+    for i, path in enumerate(possible_dtd_locations):
         if path.exists():
             dtd_path = path
+            used_fallback = (i > 0)
             break
-            
+
     if not dtd_path:
         # Intento de descarga automática si no existe
+        download_url = DTD_ZIP_URLS.get(version, DTD_ZIP_URLS["1.4"])
         try:
-            zip_path = WORKSPACE_ROOT / "jats_dtd.zip"
+            zip_path = DTD_BASE_DIR / f"jats_{version.replace('.', '')}_temp.zip"
             if not zip_path.exists():
-                print(f"Descargando DTD JATS desde {DTD_ZIP_URL}...")
+                print(f"📥 Descargando DTD JATS {version} desde {download_url}...")
                 import ssl
+                try:
+                    import certifi
+                    ctx = ssl.create_default_context(cafile=certifi.where())
+                except ImportError:
+                    ctx = ssl.create_default_context()
 
-                import certifi
-                ctx = ssl.create_default_context(cafile=certifi.where())
-                
-                with urllib.request.urlopen(DTD_ZIP_URL, context=ctx) as response, open(zip_path, 'wb') as out_file:
+                req = urllib.request.Request(download_url, headers={"User-Agent": "Mozilla/5.0"})
+                with urllib.request.urlopen(req, context=ctx, timeout=30) as response, \
+                     open(zip_path, 'wb') as out_file:
                     out_file.write(response.read())
-                print("Descarga completada.")
+                print("   ✓ Descarga completada.")
 
-            print("Extrayendo DTD...")
+            print("📦 Extrayendo DTD...")
             with zipfile.ZipFile(zip_path, 'r') as z:
-                z.extractall(WORKSPACE_ROOT)
-            
+                # Extraer a modules/dtd/ (no a la raíz del proyecto)
+                for member in z.namelist():
+                    if not member.startswith('__MACOSX'):
+                        z.extract(member, DTD_BASE_DIR)
+
+            # Limpiar ZIP temporal
+            if zip_path.exists():
+                zip_path.unlink()
+
+            # Re-buscar
             for path in possible_dtd_locations:
                 if path.exists():
                     dtd_path = path
@@ -619,23 +648,32 @@ def validar_jats_xml(xml_content: str) -> Tuple[bool, List[str]]:
             return False, [f"Fallo crítico al descargar/extraer DTD: {e}"]
 
     if not dtd_path:
-         return False, [f"No se encontró {dtd_filename} incluso después de intentar descargar."]
+        return False, [
+            f"No se encontró el DTD JATS {version} ({dtd_filename}).",
+            f"Ejecuta: python modules/dtd/download_jats14.py",
+        ]
 
-    print(f"Usando DTD: {dtd_path}")
+    if used_fallback:
+        actual_v = fallback_version
+        print(f"⚠️  DTD JATS {version} no disponible, usando fallback {actual_v}: {dtd_path}")
+    else:
+        print(f"✅ Usando DTD JATS {version}: {dtd_path}")
+
+    # La versión real del DTD cargado (puede diferir si hubo fallback)
+    dtd_actual_version = fallback_version if used_fallback else version
+    dtd_actual_filename = _get_dtd_filename(dtd_actual_version)
 
     try:
-        # Ajustar DOCTYPE para que apunte al DTD local si es necesario, 
-        # o asegurar que el validador lo encuentre.
-        # Aquí reemplazamos cualquier DOCTYPE existente con uno que apunte al archivo local.
+        # Reemplazar DOCTYPE para apuntar al DTD local correcto
         xml_content_patched = re.sub(
             r'<!DOCTYPE.*?>',
-            f'<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD with MathML3 v{version} 2024//EN" "{dtd_filename}">',
+            f'<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD with MathML3 v{dtd_actual_version} 2024//EN" "{dtd_actual_filename}">',
             xml_content,
             flags=re.DOTALL
         )
-        
+
         xml_bytes = xml_content_patched.encode('utf-8')
-        
+
         # Activar modo de recuperación para intentar parsear a pesar de etiquetas mal cerradas
         parser = etree.XMLParser(dtd_validation=False, recover=True, no_network=True, resolve_entities=False)
         xml_tree = etree.fromstring(xml_bytes, parser)
@@ -694,17 +732,20 @@ def verificar_completitud_xml(xml_content: str, original_text: str = None) -> Tu
 def guardar_salida_xml(xml_content: str, output_path: str) -> None:
     """Guarda el XML en disco con la declaración DOCTYPE correcta.
 
+    Utiliza la versión JATS configurada en config_store (1.4 por defecto)
+    para generar el DOCTYPE y el nombre de archivo DTD correspondiente.
+
     Args:
         xml_content (str): Contenido XML.
         output_path (str): Ruta de destino.
     """
     from . import config_store
     version = config_store.get_jats_version()
-    dtd_filename = f"JATS-journalpublishing{version.replace('.', '-')}-mathml3.dtd"
+    dtd_filename = _get_dtd_filename(version)
 
     try:
         with open(output_path, 'w', encoding='utf-8') as f:
-            dtd_decl = f'<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v{version} 2024//EN" "{dtd_filename}">' 
+            dtd_decl = f'<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD with MathML3 v{version} 2024//EN" "{dtd_filename}">'
 
             # Eliminar declaración XML duplicada si existe
             if xml_content.startswith('<?xml'):

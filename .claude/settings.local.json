@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /Users/usuario/dev/XML-JATS-2 -type f -name *.json -o -name *.yaml -o -name *.yml -o -name *.xml -o -name *.xsd -o -name *.xsl -o -name *.dtd -o -name *.mod -o -name *.ent)",
+      "Bash(git -C /Users/usuario/dev/XML-JATS-2 log --oneline -20)",
+      "Bash(wc -l /Users/usuario/dev/XML-JATS-2/modules/*.py /Users/usuario/dev/XML-JATS-2/views/*.py /Users/usuario/dev/XML-JATS-2/streamlit_app.py)",
+      "Bash(rm -rf temp/ imagenes_extraidas/ jats_dtd.zip codigoFuente_inscripcion.pdf JATS-Publishing-1-3-MathML3-DTD/)",
+      "Bash(rm -f .DS_Store)"
+    ]
+  }
+}

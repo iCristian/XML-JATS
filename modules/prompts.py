@@ -76,7 +76,7 @@ def get_generation_prompt(texto_articulo: str, metadata: Optional[Dict[str, Any]
     {metadata_instructions}
 
     INSTRUCCIONES DE ETIQUETADO:
-    1.  **Estructura General:** Raíz `<article>` con `xmlns:xlink="http://www.w3.org/1999/xlink"` y `xml:lang="es"`. Debe contener `<front>`, `<body>`, y `<back>`.
+    1.  **Estructura General:** Raíz `<article xmlns:xlink="http://www.w3.org/1999/xlink" dtd-version="{version}" article-type="research-article" xml:lang="es">`. Debe contener `<front>`, `<body>`, y `<back>`.
     2.  **Sección <front>:** (DEBE seguir EXACTAMENTE esta estructura y orden, no cambies el orden ni omitas etiquetas obligatorias del estándar XML-JATS {version}):
         ```xml
         <front>

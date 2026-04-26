@@ -45,7 +45,9 @@ streamlit_app.py (Punto de Entrada)
               │
               ▼
        modules/dtd/                 (Validación offline)
-       └── JATS-Publishing-1-3-MathML3-DTD/
+       ├── JATS-Publishing-1-3-MathML3-DTD/
+       ├── JATS-Publishing-1-4-MathML3-DTD/  ← DTD por defecto
+       └── download_jats14.py
 ```
 
 ---
@@ -89,7 +91,9 @@ XML-JATS/
 │   ├── llm_provider.py       # Abstracción LLMProvider + PROVIDER_REGISTRY
 │   ├── convert_images.py     # Utilidad de conversión de imágenes
 │   └── dtd/                  # DTD JATS local para validación offline
-│       └── JATS-Publishing-1-3-MathML3-DTD/
+│       ├── JATS-Publishing-1-3-MathML3-DTD/
+│       ├── JATS-Publishing-1-4-MathML3-DTD/  # ← DTD por defecto
+│       └── download_jats14.py  # Helper para descargar DTD 1.4 desde NCBI
 │
 ├── views/                    # Frontend — Vistas Streamlit
 │   ├── transformador.py      # Vista principal de transformación
@@ -116,7 +120,7 @@ XML-JATS/
 4. **Revisión Humana**: La UI muestra los metadatos extraídos en campos editables. Un chatbot asistente solicita información faltante (DOI y fecha son obligatorios).
 5. **Generación Paralela (Leaderboard)**: `transformer.generar_xml_jats()` invoca `llm_provider.LLMProvider.generate()` con el prompt maestro de `prompts.py`. Si el usuario seleccionó múltiples modelos, la generación se ejecuta en paralelo y los resultados se ordenan por puntaje DTD.
 6. **Auditoría de Completitud Semántica**: `verificar_completitud_xml()` detecta placeholders, secciones vacías y baja densidad de texto. El XML que no pasa la auditoría se descarta automáticamente.
-7. **Validación DTD**: El XML candidato se valida contra el DTD JATS 1.3 o 1.4 usando `lxml.etree.DTD`. Los errores se presentan en la UI con sugerencias de corrección.
+7. **Validación DTD**: El XML candidato se valida contra el DTD JATS 1.4 por defecto (o 1.3 si está configurado) usando `lxml.etree.DTD`. Los DTDs se ubican en `modules/dtd/` y la resolución de versión es dinámica. Los errores se presentan en la UI con sugerencias de corrección.
 8. **Corrección (Agente Editorial)**: Si hay errores DTD o la auditoría marca inconsistencias, `correction.corregir_xml()` invoca la IA con el XML erróneo y el informe de errores para obtener una versión corregida, preservando el texto original.
 9. **Generación HTML**: `xml_html.build_html()` convierte el XML final a HTML5 responsivo con logo incrustado, tabla de contenidos interactiva y DOIs clickeables.
 10. **Exportación**: El usuario descarga el XML JATS validado y/o el HTML generado.
