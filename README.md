@@ -364,9 +364,17 @@ Desarrollado para la **Universidad de Valparaíso** con el objetivo de optimizar
 
 ## 📄 Licencia
 
-Este software es de uso exclusivo para la **Universidad de Valparaíso**. Todos los derechos reservados.
+Este proyecto se distribuye bajo la licencia **[Creative Commons Atribución-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es)**.
 
-El código fuente y la documentación contenidos en este repositorio son propiedad intelectual de la Universidad de Valparaíso y su autor. Queda prohibida su reproducción, distribución o modificación sin autorización expresa.
+[![CC BY-NC-SA 4.0](https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+
+Esto significa que usted es libre de compartir y adaptar este material siempre que:
+
+- **Dé crédito** al autor original (Cristian Carreño León / Universidad de Valparaíso).
+- **No lo use con fines comerciales**.
+- **Distribuya sus contribuciones** bajo la misma licencia.
+
+Consulte el archivo [`LICENSE`](LICENSE) para el texto completo.
 
 El uso de servicios de terceros (Google, OpenAI, Anthropic, DeepSeek, Mistral, Groq, Ollama o LM Studio) está sujeto adicionalmente a las condiciones de licenciamiento y privacidad de cada proveedor.
 

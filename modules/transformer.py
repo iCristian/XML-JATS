@@ -3,13 +3,13 @@
 """Script para convertir documentos Word a JATS XML usando IA.
 
 Este módulo orquesta la extracción de contenido de archivos .docx, la generación
-de XML JATS mediante un modelo de lenguaje (Gemini), y la validación del resultado.
+de XML JATS mediante un modelo de lenguaje, y la validación del resultado.
 Cumple con las normas de documentación de Google.
 
 Attributes:
-    DTD_ZIP_URL (str): URL para descargar el DTD de JATS 1.3.
+    DTD_ZIP_URLS (dict): URLs para descargar los DTDs de JATS por versión.
     WORKSPACE_ROOT (Path): Ruta base del espacio de trabajo actual.
-    DTD_FILENAME (str): Nombre del archivo DTD local.
+    DTD_BASE_DIR (Path): Directorio base centralizado de DTDs (modules/dtd/).
     IMAGE_OUTPUT_DIR (Path): Directorio para guardar imágenes extraídas.
 """
 

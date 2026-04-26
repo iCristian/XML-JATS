@@ -1,21 +1,52 @@
-MIT License
+# Licencia / License
 
-Copyright (c) 2026 Cristian Carreño León / Universidad de Valparaíso
+## Creative Commons Atribución-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Copyright (c) 2024-2026 Cristian Carreño León  
+Universidad de Valparaíso — Facultad de Medicina  
+Escuela de Obstetricia y Puericultura
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+---
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+### Usted es libre de:
+
+- **Compartir** — copiar y redistribuir el material en cualquier medio o formato.
+- **Adaptar** — remezclar, transformar y construir a partir del material.
+
+El licenciante no puede revocar estas libertades en tanto usted siga los términos de la licencia.
+
+### Bajo los siguientes términos:
+
+- **Atribución (BY)** — Usted debe dar crédito de manera adecuada, brindar un enlace a la licencia, e indicar si se han realizado cambios. Puede hacerlo en cualquier forma razonable, pero no de forma tal que sugiera que usted o su uso tienen el apoyo del licenciante.
+
+- **NoComercial (NC)** — Usted no puede hacer uso del material con propósitos comerciales.
+
+- **CompartirIgual (SA)** — Si usted mezcla, transforma o crea a partir del material, debe distribuir su contribución bajo la misma licencia del original.
+
+- **Sin restricciones adicionales** — No puede aplicar términos legales ni medidas tecnológicas que restrinjan legalmente a otros a hacer cualquier uso permitido por la licencia.
+
+### Avisos:
+
+No tiene que cumplir con la licencia para elementos del material en el dominio público o cuando su uso esté permitido por una excepción o limitación aplicable.
+
+No se dan garantías. La licencia puede no darle todos los permisos que necesita para el uso que tenga previsto. Por ejemplo, otros derechos como publicidad, privacidad, o derechos morales pueden limitar la forma en que utilice el material.
+
+---
+
+### Alcance de esta licencia
+
+Esta licencia se aplica a la **totalidad del proyecto**, incluyendo pero no limitado a:
+
+- Código fuente (Python, scripts, configuraciones)
+- Prompts e instrucciones para modelos de IA (`modules/prompts.py`)
+- Esquemas y archivos DTD incluidos (derivados de JATS/NISO, sujetos a sus propias licencias)
+- Documentación (README, RESUME, CONTRIBUTING, manual de usuario)
+- Recursos gráficos originales (logos, íconos, capturas)
+
+**Nota:** Los esquemas DTD de JATS (ANSI/NISO Z39.96) incluidos en `modules/dtd/` son propiedad de NISO y se distribuyen bajo sus propios términos de licencia. Consulte [https://jats.nlm.nih.gov](https://jats.nlm.nih.gov) para más información.
+
+---
+
+**Texto legal completo:** [https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.es](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.es)
+
+**Resumen legible:** [https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es)

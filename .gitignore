@@ -196,3 +196,6 @@ JATS-Publishing-1-3-MathML3-DTD/
 
 # Unrelated documents
 codigoFuente_inscripcion.pdf
+
+# Local test/utility scripts (not for public distribution)
+tests/
