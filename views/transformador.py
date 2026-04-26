@@ -132,12 +132,12 @@ def main() -> None:
         # ─── Estado de API Key ───
         if has_api_key:
             st.markdown(
-                f"<div style='font-size: 0.8rem; color: #047857; margin-bottom: 0.5rem;'>🔑 ✅ {provider_names.get(selected_provider, selected_provider)} configurado</div>",
+                f"<div style='font-size: 0.8rem; color: {'#34d399' if st.session_state.get('_theme_dark', True) else '#047857'}; margin-bottom: 0.5rem;'>🔑 ✅ {provider_names.get(selected_provider, selected_provider)} configurado</div>",
                 unsafe_allow_html=True,  # safe: provider_names is an internal dict, not user input
             )
         else:
             st.markdown(
-                "<div style='font-size: 0.8rem; color: #7e22ce; margin-bottom: 0.5rem;'>🔑 ❌ Sin API Key (Ir a Configuración)</div>",
+                f"<div style='font-size: 0.8rem; color: {'#e040fb' if st.session_state.get('_theme_dark', True) else '#7e22ce'}; margin-bottom: 0.5rem;'>🔑 ❌ Sin API Key (Ir a Configuración)</div>",
                 unsafe_allow_html=True,  # safe: static HTML
             )
 
@@ -150,7 +150,7 @@ def main() -> None:
             )
 
         # ─── Selección de Modelo ───
-        st.markdown("<p style='font-size: 0.9rem; font-weight: 600; margin-bottom: 0;'>📦 Modelo</p>", unsafe_allow_html=True)  # safe: static HTML
+        st.markdown("📦 **Modelo**")
 
         @st.cache_data(ttl=600)  # Reducir TTL para mayor frescura
         def get_available_models(provider_id: str, api_key: str, host: Optional[str] = None):
@@ -1062,18 +1062,20 @@ def main() -> None:
                 }}
                 </script>
                 <button onclick="openHtmlPreview()" style="
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    background: linear-gradient(135deg, #0891b2 0%, #6d28d9 100%);
                     color: white;
                     border: none;
                     padding: 12px 28px;
-                    border-radius: 8px;
-                    font-size: 16px;
+                    border-radius: 10px;
+                    font-family: 'Inter', -apple-system, sans-serif;
+                    font-size: 15px;
                     font-weight: 600;
+                    letter-spacing: 0.01em;
                     cursor: pointer;
-                    transition: transform 0.2s, box-shadow 0.2s;
-                    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(102, 126, 234, 0.6)';"
-                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(102, 126, 234, 0.4)';">
+                    transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, filter 0.2s ease;
+                    box-shadow: 0 4px 15px rgba(8, 145, 178, 0.4);
+                " onmouseover="this.style.transform='translateY(-2px) scale(1.03)'; this.style.boxShadow='0 6px 24px rgba(8,145,178,0.45), 0 0 40px rgba(124,58,237,0.25)'; this.style.filter='brightness(1.15)';"
+                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(8, 145, 178, 0.4)'; this.style.filter='brightness(1)';">
                     🔍 Ver vista previa en nueva pestaña
                 </button>
                 """

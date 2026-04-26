@@ -82,7 +82,7 @@ def inject_theme_css() -> None:
         bg_secondary = "#dfe3ea"
         bg_card = "#f0f2f7"
         text_primary = "#0f172a"     # casi negro para max contraste
-        text_secondary = "#1e293b"   # gris muy oscuro
+        text_secondary = "#475569"   # gris medio para mejor diferenciación
         accent = "#0e7490"           # cyan oscuro legible
         accent_hover = "#0891b2"
         accent_secondary = "#7e22ce" # magenta oscuro legible
@@ -114,6 +114,12 @@ def inject_theme_css() -> None:
         background-color: {bg_primary} !important;
         color: {text_primary} !important;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+        -webkit-font-smoothing: antialiased !important;
+        -moz-osx-font-smoothing: grayscale !important;
+        letter-spacing: -0.01em !important;
+    }}
+    .stApp p, .stApp li, .stApp span, .stApp label {{
+        line-height: 1.6 !important;
     }}
 
     /* --- Sidebar --- */
@@ -257,15 +263,22 @@ def inject_theme_css() -> None:
         0%, 100% {{ text-shadow: 0 0 8px {'rgba(0,229,255,0.18)' if dark else 'rgba(14,116,144,0.10)'}; }}
         50% {{ text-shadow: 0 0 18px {'rgba(0,229,255,0.32)' if dark else 'rgba(14,116,144,0.18)'}; }}
     }}
+    /* Brand headings (h1, h2): Share Tech Mono + uppercase = identidad de marca */
     .stApp h1,
-    .stApp h2,
+    .stApp h2 {{
+        font-family: 'Share Tech Mono', monospace !important;
+        letter-spacing: 0.04em !important;
+        text-transform: uppercase !important;
+    }}
+    /* Content headings (h3-h6): Inter = legibilidad */
     .stApp h3,
     .stApp h4,
     .stApp h5,
     .stApp h6 {{
-        font-family: 'Share Tech Mono', monospace !important;
-        letter-spacing: 0.04em !important;
-        text-transform: uppercase !important;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+        letter-spacing: -0.01em !important;
+        text-transform: none !important;
+        line-height: 1.4 !important;
     }}
     .stApp h1 {{
         color: {accent} !important;
@@ -292,12 +305,12 @@ def inject_theme_css() -> None:
     }}
     .stApp h3 {{
         color: {accent_secondary} !important;
-        font-weight: 400 !important;
+        font-weight: 600 !important;
         font-size: clamp(0.95rem, 2.2vw, 1.15rem) !important;
     }}
     .stApp h4 {{
         color: {accent} !important;
-        font-weight: 400 !important;
+        font-weight: 600 !important;
         font-size: 0.95rem !important;
         opacity: 0.85;
     }}
@@ -1078,18 +1091,23 @@ def render_hero_header() -> None:
         font-weight: 400;
     }}
     .hero-subtitle {{
-        font-family: 'Share Tech Mono', monospace;
-        font-size: 0.92rem;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-size: 0.94rem;
+        font-weight: 500;
         color: {subtitle_color};
         margin: 0;
-        letter-spacing: 0.06em;
+        letter-spacing: 0.01em;
+        line-height: 1.5;
         animation: subtitleSlide 0.8s ease-out 0.5s both;
     }}
     .hero-tagline {{
-        font-size: 0.78rem;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-size: 0.82rem;
+        font-weight: 400;
         color: {text_muted};
-        margin: 0.2rem 0 0 0;
-        letter-spacing: 0.02em;
+        margin: 0.3rem 0 0 0;
+        letter-spacing: 0.01em;
+        line-height: 1.5;
         animation: subtitleSlide 0.8s ease-out 0.7s both;
     }}
     .hero-line {{
