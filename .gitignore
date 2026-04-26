@@ -166,6 +166,7 @@ generate_pdf_source.py
 .gemini/
 Checkpoints/
 [Cc]ache/
+.claude/
 
 # OS Junk Files
 __MACOSX/
