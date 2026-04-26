@@ -23,10 +23,11 @@ render_sidebar_header()
 
 # Definición de las páginas
 pages = {
-    "Aplicación": [
-        st.Page("views/transformador.py", title="Transformador", icon="📄"),
+    "Herramientas": [
+        st.Page("views/transformador.py", title="Convertir DOCX → XML JATS", icon="🔄"),
     ],
     "Configuración": [
+        st.Page("views/config_revista.py", title="Revista", icon="📰"),
         st.Page("views/configuracion.py", title="API y Tokens", icon="⚙️"),
     ],
     "Información": [

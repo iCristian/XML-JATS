@@ -337,17 +337,25 @@ def main() -> None:
                                     st.stop()
                                 
                                 # Inyectar datos por defecto de la revista si existen
-                                journal_defaults = config_store.get_default_journal_data()
-                                if journal_defaults.get("title") and not meta.get("journal_title"):
+                                journal_defaults = config_store.get_journal_config()
+                                if journal_defaults.get("title"):
                                     meta["journal_title"] = journal_defaults["title"]
-                                elif journal_defaults.get("title") and meta.get("journal_title"):
-                                    # Override para asegurar que siempre usamos el de configuración si está definido
-                                    meta["journal_title"] = journal_defaults["title"]
-                                    
                                 if journal_defaults.get("publisher"):
                                     meta["publisher_name"] = journal_defaults["publisher"]
-                                if journal_defaults.get("issn"):
-                                    meta["issn"] = journal_defaults["issn"]
+                                if journal_defaults.get("issn_print"):
+                                    meta["issn"] = journal_defaults["issn_print"]
+                                if journal_defaults.get("issn_electronic"):
+                                    meta["issn_electronic"] = journal_defaults["issn_electronic"]
+                                if journal_defaults.get("doi_base"):
+                                    meta["doi_base"] = journal_defaults["doi_base"]
+                                if journal_defaults.get("abbrev_title"):
+                                    meta["abbrev_journal_title"] = journal_defaults["abbrev_title"]
+                                if journal_defaults.get("journal_id"):
+                                    meta["journal_id"] = journal_defaults["journal_id"]
+                                if journal_defaults.get("license_url"):
+                                    meta["license_url"] = journal_defaults["license_url"]
+                                if journal_defaults.get("subject"):
+                                    meta["subject"] = journal_defaults["subject"]
                                 
                                 st.session_state.extracted_metadata = meta
                                 

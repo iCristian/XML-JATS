@@ -452,7 +452,11 @@ def delete_setting(key: str) -> None:
 
 
 def get_default_journal_data() -> Dict[str, str]:
-    """Obtiene los datos por defecto de la revista."""
+    """Obtiene los datos por defecto de la revista (legacy, 3 campos).
+
+    .. deprecated::
+        Usar :func:`get_journal_config` para acceso completo.
+    """
     return {
         "title": load_setting("default_journal_title") or "",
         "publisher": load_setting("default_publisher_name") or "",
@@ -461,10 +465,104 @@ def get_default_journal_data() -> Dict[str, str]:
 
 
 def save_default_journal_data(title: str, publisher: str, issn: str) -> None:
-    """Guarda los datos por defecto de la revista."""
+    """Guarda los datos por defecto de la revista (legacy, 3 campos).
+
+    .. deprecated::
+        Usar :func:`save_journal_config` para persistencia completa.
+    """
     save_setting("default_journal_title", title)
     save_setting("default_publisher_name", publisher)
     save_setting("default_journal_issn", issn)
+
+
+# ─── Configuración completa de Revista ────────────────────────
+
+# Claves de configuración para la revista (journal-meta JATS)
+_JOURNAL_KEYS: Dict[str, str] = {
+    "title":          "default_journal_title",
+    "abbrev_title":   "journal_abbrev_title",
+    "journal_id":     "journal_publisher_id",
+    "publisher":      "default_publisher_name",
+    "issn_print":     "default_journal_issn",
+    "issn_electronic": "journal_issn_electronic",
+    "doi_base":       "journal_doi_base",
+    "subject":        "journal_subject",
+    "license_url":    "journal_license_url",
+    "default_lang":   "journal_default_lang",
+}
+
+
+def get_journal_config() -> Dict[str, str]:
+    """Obtiene la configuración completa de la revista.
+
+    Returns:
+        Dict con todas las claves de configuración editorial.
+        Los valores no configurados se retornan como cadena vacía.
+    """
+    return {key: load_setting(db_key) or "" for key, db_key in _JOURNAL_KEYS.items()}
+
+
+def save_journal_config(data: Dict[str, str]) -> None:
+    """Guarda la configuración completa de la revista.
+
+    Args:
+        data: Diccionario con las claves de :data:`_JOURNAL_KEYS`.
+              Las claves no presentes se ignoran.
+    """
+    for key, db_key in _JOURNAL_KEYS.items():
+        if key in data:
+            save_setting(db_key, data[key].strip())
+
+
+# ─── Logos de revista ─────────────────────────────────────────
+
+_LOGOS_DIR = _DB_DIR / "logos"
+
+
+def save_journal_logo(mode: str, image_bytes: bytes, filename: str) -> Path:
+    """Guarda un logo de la revista (modo claro u oscuro).
+
+    Args:
+        mode: ``'light'`` o ``'dark'``.
+        image_bytes: Bytes del archivo de imagen.
+        filename: Nombre original del archivo (para extensión).
+
+    Returns:
+        Path al archivo guardado.
+    """
+    _LOGOS_DIR.mkdir(parents=True, exist_ok=True)
+    ext = Path(filename).suffix.lower() or ".png"
+    dest = _LOGOS_DIR / f"journal_logo_{mode}{ext}"
+    # Eliminar logos previos del mismo modo con otra extensión
+    for old in _LOGOS_DIR.glob(f"journal_logo_{mode}.*"):
+        old.unlink(missing_ok=True)
+    dest.write_bytes(image_bytes)
+    return dest
+
+
+def get_journal_logo_path(mode: str) -> Optional[Path]:
+    """Retorna la ruta al logo de la revista para un modo dado.
+
+    Args:
+        mode: ``'light'`` o ``'dark'``.
+
+    Returns:
+        Path al archivo si existe, ``None`` en caso contrario.
+    """
+    for p in _LOGOS_DIR.glob(f"journal_logo_{mode}.*"):
+        if p.is_file():
+            return p
+    return None
+
+
+def delete_journal_logo(mode: str) -> None:
+    """Elimina el logo de la revista para un modo dado.
+
+    Args:
+        mode: ``'light'`` o ``'dark'``.
+    """
+    for p in _LOGOS_DIR.glob(f"journal_logo_{mode}.*"):
+        p.unlink(missing_ok=True)
 
 
 def get_jats_version() -> str:
@@ -475,6 +573,7 @@ def get_jats_version() -> str:
 def save_jats_version(version: str) -> None:
     """Guarda la versión de JATS preferida."""
     save_setting("jats_version", version)
+
 
 
 def get_ollama_host() -> str:

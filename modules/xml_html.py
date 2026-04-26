@@ -947,21 +947,35 @@ def _render_references(references: List[Dict[str, str]]) -> str:
 
 
 
-def _get_logo_base64() -> str:
-    """Lee el archivo de logo y lo convierte a Base64."""
+def _encode_logo(path: Path) -> str:
+    """Codifica un logo a Data URI base64."""
     try:
-        # Prefer the transparent fixed version if it exists
-        logo_path = Path("resources/logo_transparent.png")
-        if not logo_path.exists():
-            logo_path = Path("resources/logo.png")
-            
-        if logo_path.exists():
-            import base64
-            encoded = base64.b64encode(logo_path.read_bytes()).decode("utf-8")
-            return f"data:image/png;base64,{encoded}"
+        if not path.exists():
+            return ""
+        mime_type, _ = mimetypes.guess_type(str(path))
+        if not mime_type:
+            mime_type = "image/png"
+        data = base64.b64encode(path.read_bytes()).decode("utf-8")
+        return f"data:{mime_type};base64,{data}"
     except Exception:
-        pass
-    return ""
+        return ""
+
+
+def _get_journal_logos() -> tuple:
+    """Obtiene los logos de la revista (light y dark) desde la configuración.
+
+    Returns:
+        Tupla (light_data_uri, dark_data_uri). Cadenas vacías si no hay logos.
+    """
+    try:
+        from . import config_store
+        light_path = config_store.get_journal_logo_path("light")
+        dark_path = config_store.get_journal_logo_path("dark")
+        light_src = _encode_logo(light_path) if light_path else ""
+        dark_src = _encode_logo(dark_path) if dark_path else ""
+        return light_src, dark_src
+    except Exception:
+        return "", ""
 
 def _render_sidebar(doc: Dict[str, Any]) -> str:
     """Genera el panel lateral con la tabla de contenidos (TOC) y metadatos.
@@ -1021,14 +1035,34 @@ def _render_sidebar(doc: Dict[str, Any]) -> str:
     if pub_date:
         meta_rows.append(f"<li><span>Fecha:</span> {escape(pub_date)}</li>")
 
-    logo_src = _get_logo_base64()
+    light_logo, dark_logo = _get_journal_logos()
     logo_html = ""
-    if logo_src:
-        logo_html = f"""
-        <div class=\"logo-container\" style=\"text-align: center; margin-bottom: 20px;\">
-            <img src=\"{logo_src}\" alt=\"Logo Revista\" style=\"max-width: 80%; height: auto;\">
-        </div>
-        """
+    if light_logo or dark_logo:
+        parts = []
+        parts.append('<div class="logo-container" style="text-align: center; margin-bottom: 20px;">')
+        if light_logo:
+            parts.append(
+                f'<img src="{light_logo}" alt="Logo Revista" '
+                f'class="logo-light" style="max-width: 80%; height: auto;">'
+            )
+        if dark_logo:
+            parts.append(
+                f'<img src="{dark_logo}" alt="Logo Revista" '
+                f'class="logo-dark" style="max-width: 80%; height: auto;">'
+            )
+        # If only one logo is provided, show it in both modes
+        if light_logo and not dark_logo:
+            parts.append(
+                f'<img src="{light_logo}" alt="Logo Revista" '
+                f'class="logo-dark" style="max-width: 80%; height: auto;">'
+            )
+        elif dark_logo and not light_logo:
+            parts.append(
+                f'<img src="{dark_logo}" alt="Logo Revista" '
+                f'class="logo-light" style="max-width: 80%; height: auto;">'
+            )
+        parts.append('</div>')
+        logo_html = '\n'.join(parts)
 
     template = """
   <aside class=\"sidebar\" id=\"sidebar\" aria-label=\"Índice de contenido\" aria-hidden=\"false\">
@@ -1292,6 +1326,10 @@ body.sidebar-open .sidebar {
   align-items: center;
   justify-content: center;
 }
+.logo-light { display: block; }
+.logo-dark { display: none; }
+body[data-theme="dark"] .logo-light { display: none; }
+body[data-theme="dark"] .logo-dark { display: block; }
 .sidebar .panel {
   margin-top: 24px;
 }
