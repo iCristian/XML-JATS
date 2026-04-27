@@ -28,6 +28,7 @@ pages = {
     ],
     "Configuración": [
         st.Page("views/config_revista.py", title="Revista", icon="📰"),
+        st.Page("views/config_prompt.py", title="Prompt de Transformación", icon="📝"),
         st.Page("views/configuracion.py", title="API y Tokens", icon="⚙️"),
     ],
     "Información": [

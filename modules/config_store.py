@@ -451,6 +451,38 @@ def delete_setting(key: str) -> None:
         conn.close()
 
 
+# ─── Prompts Personalizados ───────────────────────────────────
+
+def get_custom_generation_prompt() -> Optional[str]:
+    """Obtiene el prompt de generación XML personalizado si existe."""
+    return load_setting("custom_generation_prompt")
+
+
+def save_custom_generation_prompt(prompt_text: str) -> None:
+    """Guarda un prompt de generación XML personalizado."""
+    save_setting("custom_generation_prompt", prompt_text)
+
+
+def delete_custom_generation_prompt() -> None:
+    """Elimina el prompt de generación XML personalizado."""
+    delete_setting("custom_generation_prompt")
+
+
+def get_custom_extraction_prompt() -> Optional[str]:
+    """Obtiene el prompt de extracción de metadatos personalizado si existe."""
+    return load_setting("custom_extraction_prompt")
+
+
+def save_custom_extraction_prompt(prompt_text: str) -> None:
+    """Guarda un prompt de extracción de metadatos personalizado."""
+    save_setting("custom_extraction_prompt", prompt_text)
+
+
+def delete_custom_extraction_prompt() -> None:
+    """Elimina el prompt de extracción de metadatos personalizado."""
+    delete_setting("custom_extraction_prompt")
+
+
 def get_default_journal_data() -> Dict[str, str]:
     """Obtiene los datos por defecto de la revista (legacy, 3 campos).
 
