@@ -1012,10 +1012,10 @@ def main() -> None:
             c1, c2 = st.columns(2)
             with c1:
                 st.download_button(
-                    "⬇️ Descargar XML",
-                    st.session_state.generated_xml,
+                    label="⬇️ Descargar XML",
+                    data=st.session_state.generated_xml.encode("utf-8"),
                     file_name="articulo.xml",
-                    mime="application/xml"
+                    mime="application/octet-stream"
                 )
             with c2:
                 if st.button("Generar HTML"):
@@ -1032,10 +1032,10 @@ def main() -> None:
                 
                 if st.session_state.generated_html:
                     st.download_button(
-                        "⬇️ Descargar HTML",
-                        st.session_state.generated_html,
+                        label="⬇️ Descargar HTML",
+                        data=st.session_state.generated_html.encode("utf-8"),
                         file_name="articulo.html",
-                        mime="text/html"
+                        mime="application/octet-stream"
                     )
             
             if st.session_state.generated_html:
