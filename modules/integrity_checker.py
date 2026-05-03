@@ -360,14 +360,21 @@ class IntegrityChecker:
                     title_el.text if title_el is not None and title_el.text
                     else f"Sección {idx}"
                 )
-                sec_text = "".join(sec.itertext())
+                # Extraer contenido SIN el <title> para que el hash coincida
+                # con el texto original segmentado (que separa título y contenido)
+                content_parts: List[str] = []
+                for child in sec:
+                    if child.tag != 'title':
+                        content_parts.append("".join(child.itertext()))
+                sec_text = " ".join(content_parts)
+                sec_text_full = "".join(sec.itertext())  # Con título para raw_text
                 key = f"body_{idx}_{self._normalize_text(title)}"
                 result[key] = SectionStats(
                     title=title,
-                    word_count=self._count_words(sec_text),
+                    word_count=self._count_words(sec_text_full),
                     paragraph_count=len(sec.findall('p')),
                     text_hash=self._compute_hash(sec_text),
-                    raw_text=sec_text,
+                    raw_text=sec_text_full,
                 )
 
         # Extraer referencias

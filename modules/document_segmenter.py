@@ -456,6 +456,9 @@ class DocumentSegmenter:
 
         # Eliminar el encabezado de referencias de la primera línea
         lines = back_text.splitlines()
+        # Saltar líneas vacías iniciales
+        while lines and not lines[0].strip():
+            lines = lines[1:]
         if lines:
             first_line = lines[0].strip()
             if any(
