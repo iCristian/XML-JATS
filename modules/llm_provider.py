@@ -637,3 +637,159 @@ def list_providers(filter_unavailable: bool = False) -> List[Dict[str, str]]:
             continue
         providers.append({"id": pid, "name": p.display_name})
     return providers
+
+
+# ─── Detección de context window ────────────────────────────────
+
+# Context windows conocidos para modelos populares (tokens)
+_KNOWN_CONTEXT_WINDOWS: Dict[str, int] = {
+    # Gemini
+    "gemini-2.5-flash": 1_048_576,
+    "gemini-2.5-pro": 1_048_576,
+    "gemini-2.5-flash-lite": 1_048_576,
+    "gemini-3-flash-preview": 1_048_576,
+    "gemini-3-pro-preview": 1_048_576,
+    "gemini-2.0-flash": 1_048_576,
+    # OpenAI
+    "gpt-4o": 128_000,
+    "gpt-4o-mini": 128_000,
+    "gpt-4.1": 1_047_576,
+    "gpt-4.1-mini": 1_047_576,
+    "o3-mini": 200_000,
+    # Anthropic
+    "claude-sonnet-4-20250514": 200_000,
+    "claude-opus-4-20250514": 200_000,
+    "claude-3-5-haiku-20241022": 200_000,
+    # Ollama / Local (valores conservadores por defecto)
+    "llama3.1": 128_000,
+    "llama3.2": 128_000,
+    "llama3.2:1b": 32_000,
+    "llama3.2:3b": 32_000,
+    "qwen2.5": 32_000,
+    "qwen2.5:3b": 32_000,
+    "qwen2.5:7b": 32_000,
+    "mistral": 32_000,
+    "gemma2": 8_000,
+    "gemma2:2b": 8_000,
+    "phi3": 4_096,
+    "phi3:mini": 4_096,
+    "phi3:small": 8_000,
+    "phi3.5": 4_096,
+    "llama-3-8b-instruct": 8_000,
+    "qwen2.5-7b-instruct": 32_000,
+    "mistral-7b-instruct-v0.3": 32_000,
+    "phi-3-mini-4k-instruct": 4_096,
+    # DeepSeek
+    "deepseek-chat": 64_000,
+    "deepseek-reasoner": 64_000,
+    # Mistral
+    "mistral-large-latest": 128_000,
+    "mistral-small-latest": 32_000,
+    # Groq
+    "llama-3.3-70b-versatile": 128_000,
+    "llama-3.1-8b-instant": 128_000,
+    "mixtral-8x7b-32768": 32_768,
+    "gemma2-9b-it": 8_000,
+}
+
+
+def estimate_context_window(
+    provider_id: str,
+    model_name: str,
+    api_key: str = "",
+) -> int:
+    """Estima la ventana de contexto para un modelo dado.
+
+    Para proveedores locales (Ollama, LM Studio), intenta consultar
+    la API si está disponible. Para proveedores cloud, usa valores
+    conocidos. Como fallback, devuelve 8192.
+
+    Args:
+        provider_id: ID del proveedor.
+        model_name: Nombre del modelo (puede incluir etiquetas como [LOCAL]).
+        api_key: API key (no usada para locales, pero requerida por firma).
+
+    Returns:
+        Número de tokens de contexto estimado.
+    """
+    # Limpiar nombre del modelo (quitar etiquetas [LOCAL], etc.)
+    clean_model = model_name
+    if clean_model.startswith("[") and "] " in clean_model:
+        clean_model = clean_model.split("] ", 1)[1]
+
+    # 1. Buscar en tabla de conocidos
+    if clean_model in _KNOWN_CONTEXT_WINDOWS:
+        return _KNOWN_CONTEXT_WINDOWS[clean_model]
+
+    # 2. Intentar detectar vía API para proveedores locales
+    if provider_id in ("ollama", "lmstudio"):
+        try:
+            import requests
+            from . import config_store
+
+            if provider_id == "ollama":
+                host = config_store.get_ollama_host().rstrip("/")
+                # Endpoint /api/show de Ollama
+                show_url = f"{host}/api/show"
+                resp = requests.post(
+                    show_url,
+                    json={"name": clean_model},
+                    timeout=5,
+                )
+                if resp.status_code == 200:
+                    data = resp.json()
+                    params = data.get("parameters", {})
+                    ctx = params.get("num_ctx")
+                    if ctx and isinstance(ctx, int):
+                        return ctx
+            elif provider_id == "lmstudio":
+                host = config_store.get_lmstudio_host().rstrip("/")
+                if host.endswith("/v1"):
+                    host = host[:-3]
+                models_url = f"{host}/v1/models"
+                resp = requests.get(models_url, timeout=5)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    for m in data.get("data", []):
+                        if m.get("id") == clean_model:
+                            return m.get("max_context_length", 8192)
+        except Exception:
+            pass
+
+    # 3. Fallback: valores conservadores según patrón del nombre
+    if any(x in clean_model.lower() for x in ("phi3", "phi-3", "mini", "1b", "2b", "3b")):
+        return 4096
+    if any(x in clean_model.lower() for x in ("7b", "8b", "9b")):
+        return 8192
+    if any(x in clean_model.lower() for x in ("13b", "14b", "30b", "32b")):
+        return 32768
+    if any(x in clean_model.lower() for x in ("70b", "large", "opus", "pro")):
+        return 128000
+
+    return 8192
+
+
+def get_model_tier(model_name: str) -> str:
+    """Clasifica un modelo en 'small', 'medium', 'large' según tamaño estimado.
+
+    Útil para decidir estrategia de prompts y chunking.
+
+    Args:
+        model_name: Nombre del modelo.
+
+    Returns:
+        Una de: 'small', 'medium', 'large'.
+    """
+    clean = model_name.lower()
+    if clean.startswith("[") and "] " in clean:
+        clean = clean.split("] ", 1)[1]
+
+    small_indicators = ("phi3", "phi-3", "mini", "1b", "2b", "3b", "small", "tiny")
+    large_indicators = ("gpt-4", "claude-opus", "gemini-2.5-pro", "gemini-3-pro",
+                        "70b", "large", "o1", "o3", "o4")
+
+    if any(ind in clean for ind in small_indicators):
+        return "small"
+    if any(ind in clean for ind in large_indicators):
+        return "large"
+    return "medium"

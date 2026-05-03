@@ -231,3 +231,30 @@ class ChunkManager:
         if current:
             chunks.append(current.strip() + ",")
         return chunks
+
+    def halve_chunk(self, text: str) -> List[str]:
+        """Divide un chunk por la mitad respetando límites de párrafo.
+
+        Útil para degradación graceful cuando un modelo rechaza un chunk
+        por ser demasiado largo (OOM, timeout, o context overflow).
+
+        Args:
+            text: Texto del chunk que falló.
+
+        Returns:
+            Lista de 2 sub-chunks.
+        """
+        paragraphs = [p.strip() for p in text.split('\n\n') if p.strip()]
+        if len(paragraphs) <= 1:
+            # Solo un párrafo: partir por oraciones
+            sentences = re.split(r'(?<=[.!?])\s+', text)
+            mid = len(sentences) // 2
+            return [
+                ' '.join(sentences[:mid]).strip(),
+                ' '.join(sentences[mid:]).strip(),
+            ]
+        mid = len(paragraphs) // 2
+        return [
+            '\n\n'.join(paragraphs[:mid]).strip(),
+            '\n\n'.join(paragraphs[mid:]).strip(),
+        ]

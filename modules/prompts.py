@@ -609,3 +609,58 @@ Si todo está perfecto: {{"integridad_completa": true, "párrafos_revisados": N,
 
 Responde SOLO con el JSON, sin explicaciones adicionales.
 """
+
+
+# ─── Prompts ligeros para modelos pequeños (3B-7B) ─────────────
+
+
+def get_body_section_prompt_light(
+    section_title: str,
+    section_text: str,
+) -> str:
+    """Prompt ultra-ligero para etiquetar una sección del body.
+
+    Diseñado para modelos de 3B-7B parámetros con ventanas pequeñas.
+    Elimina metadatos de contexto y reduce instrucciones al mínimo.
+
+    Args:
+        section_title: Título de la sección.
+        section_text: Texto plano de la sección.
+
+    Returns:
+        Prompt listo para enviar al LLM.
+    """
+    return f"""Etiqueta esta sección como XML JATS. Reglas:
+1. Transcribe TODO el texto. NO omitas nada.
+2. Cada párrafo = <p>.
+3. Envuelve en <sec><title>{section_title}</title>...</sec>.
+4. NO uses comentarios <!-- -->.
+
+TEXTO:
+{section_text}
+
+XML:"""
+
+
+def get_reference_batch_prompt_light(
+    batch: List[str],
+    start_index: int = 1,
+) -> str:
+    """Prompt ligero para generar referencias JATS.
+
+    Args:
+        batch: Lista de referencias en texto plano.
+        start_index: Número inicial.
+
+    Returns:
+        Prompt listo para enviar al LLM.
+    """
+    refs_block = "\n".join(f"{i + start_index}. {r}" for i, r in enumerate(batch))
+    return f"""Genera elementos <ref> JATS para estas referencias.
+Reglas: <label>N</label>, <element-citation>, separa autores/título/fuente/año.
+NO pongas el número dentro de <element-citation>.
+
+REFERENCIAS:
+{refs_block}
+
+XML:"""

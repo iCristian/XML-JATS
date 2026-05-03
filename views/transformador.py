@@ -701,7 +701,26 @@ def main() -> None:
             # Configuración del chunk
             chunk_cfg = st.expander("Configuración avanzada del Pipeline")
             with chunk_cfg:
-                col_chunk, col_model = st.columns(2)
+                _pid_pipe = st.session_state.get('_active_provider', 'gemini')
+                _mdl_pipe = st.session_state.get('selected_model', 'gemini-2.5-flash')
+                _key_pipe = st.session_state.get('_active_api_key', '')
+                
+                # Autodetección de context window y tier
+                from modules.llm_provider import estimate_context_window, get_model_tier
+                detected_ctx = estimate_context_window(_pid_pipe, _mdl_pipe, _key_pipe)
+                model_tier = get_model_tier(_mdl_pipe)
+                
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.metric("Contexto detectado", f"{detected_ctx:,} tokens")
+                with col2:
+                    tier_emoji = {"small": "🐤", "medium": "🦅", "large": "🦖"}.get(model_tier, "❓")
+                    st.metric("Tier del modelo", f"{tier_emoji} {model_tier.upper()}")
+                with col3:
+                    st.text(f"{_pid_pipe}")
+                    st.text(f"{_mdl_pipe}")
+                
+                col_chunk, col_para = st.columns(2)
                 with col_chunk:
                     max_input_tokens = st.selectbox(
                         "Ventana de contexto (tokens):",
@@ -709,11 +728,18 @@ def main() -> None:
                         index=2,
                         help="Tamaño máximo del prompt. Reduce este valor si usas modelos locales pequeños (ej. 2048 para Ollama en celulares)."
                     )
-                with col_model:
-                    _pid_pipe = st.session_state.get('_active_provider', 'gemini')
-                    _mdl_pipe = st.session_state.get('selected_model', 'gemini-2.5-flash')
-                    st.text(f"Proveedor: {_pid_pipe}")
-                    st.text(f"Modelo: {_mdl_pipe}")
+                with col_para:
+                    parallel_toggle = st.toggle(
+                        "Procesar en paralelo",
+                        value=False,
+                        help="Activa el procesamiento paralelo de secciones (más rápido, pero consume más RAM/GPU). Desactívalo para móviles."
+                    )
+                
+                use_light = st.toggle(
+                    "Usar prompts ligeros",
+                    value=(model_tier == "small"),
+                    help="Reduce las instrucciones del prompt para modelos pequeños (3B-7B). Mejora estabilidad en Ollama móvil."
+                )
                 
                 st.checkbox(
                     "Forzar verificación IA de integridad",
@@ -734,10 +760,6 @@ def main() -> None:
                 st.session_state._validation_ran = False
                 st.session_state.pipeline_result = None
                 
-                _pid_pipe = st.session_state.get('_active_provider', 'gemini')
-                _mdl_pipe = st.session_state.get('selected_model', 'gemini-2.5-flash')
-                _key_pipe = st.session_state.get('_active_api_key', '')
-                
                 journal_cfg = cs.get_journal_config()
                 
                 with st.status("⚡ Ejecutando Pipeline por Fases...", expanded=True) as status:
@@ -747,6 +769,10 @@ def main() -> None:
                         api_key=_key_pipe,
                         max_input_tokens=max_input_tokens,
                         max_output_tokens=max_input_tokens,
+                        parallel=parallel_toggle,
+                        max_workers=4,
+                        use_light_prompts=use_light,
+                        enable_ai_verification=st.session_state.get("pipeline_force_ai_verify", True),
                     )
                     
                     status.write("🔄 Fase 0: Segmentación semántica del documento...")

@@ -17,16 +17,18 @@ Typical usage::
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
-from .document_segmenter import DocumentSegmenter, DocumentSegments
+from .document_segmenter import DocumentSegmenter, DocumentSegments, BodySection
 from .chunk_manager import ChunkManager
 from .integrity_checker import IntegrityChecker, OriginalStats, IntegrityReport
 from .ai_integrity_verifier import AiIntegrityVerifier, VerificationResult
 from .transformer import validar_jats_xml, invocar_llm
 from .metadata_processor import MetadataExtractor
 from . import prompts
+from .llm_provider import estimate_context_window, get_model_tier
 
 
 # ─── Estructuras de datos ────────────────────────────────────────
@@ -65,6 +67,10 @@ class PipelineOrchestrator:
         api_key: Optional[str] = None,
         max_input_tokens: int = 8192,
         max_output_tokens: int = 4096,
+        parallel: bool = False,
+        max_workers: int = 4,
+        use_light_prompts: bool = False,
+        enable_ai_verification: bool = True,
     ) -> None:
         """Inicializa el orquestador.
 
@@ -74,15 +80,29 @@ class PipelineOrchestrator:
             api_key: Clave de API.
             max_input_tokens: Ventana de contexto del modelo.
             max_output_tokens: Límite de salida del modelo.
+            parallel: Si es True, procesa body sections en paralelo.
+            max_workers: Número máximo de hilos para paralelización.
+            use_light_prompts: Usar prompts reducidos para modelos pequeños.
+            enable_ai_verification: Ejecutar verificación semántica con LLM.
         """
         self.provider_id = provider_id
         self.model = model
         self.api_key = api_key or ""
-        self.segmenter = DocumentSegmenter()
+        self.parallel = parallel
+        self.max_workers = max_workers
+        self.use_light_prompts = use_light_prompts
+        self.enable_ai_verification = enable_ai_verification
+
+        # Autodetección de context window si no se especificó explícitamente
+        if max_input_tokens == 8192:  # Valor por defecto
+            detected = estimate_context_window(provider_id, model, api_key or "")
+            max_input_tokens = min(detected, max_input_tokens)
+
         self.chunk_manager = ChunkManager(
             max_input_tokens=max_input_tokens,
             max_output_tokens=max_output_tokens,
         )
+        self.segmenter = DocumentSegmenter()
         self.integrity_checker = IntegrityChecker()
         self.ai_verifier = AiIntegrityVerifier(
             provider_id=provider_id,
@@ -163,9 +183,34 @@ class PipelineOrchestrator:
         self._add_stage("Body", "running")
         body_sections_xml: List[str] = []
         try:
-            for sec in segments.body_sections:
-                sec_xml = self._generate_body_section(sec, metadata)
-                body_sections_xml.append(sec_xml)
+            if self.parallel and len(segments.body_sections) > 1:
+                # Paralelización con ThreadPoolExecutor
+                section_results: Dict[int, str] = {}
+                with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+                    futures = {
+                        executor.submit(
+                            self._generate_body_section, sec, metadata
+                        ): idx
+                        for idx, sec in enumerate(segments.body_sections)
+                    }
+                    for future in as_completed(futures):
+                        idx = futures[future]
+                        try:
+                            section_results[idx] = future.result()
+                        except Exception as exc:
+                            sec_title = segments.body_sections[idx].title
+                            raise RuntimeError(
+                                f"Error en sección '{sec_title}': {exc}"
+                            ) from exc
+                # Reconstruir en orden
+                body_sections_xml = [
+                    section_results[i] for i in range(len(segments.body_sections))
+                ]
+            else:
+                # Modo secuencial (default, recomendado para móviles)
+                for sec in segments.body_sections:
+                    sec_xml = self._generate_body_section(sec, metadata)
+                    body_sections_xml.append(sec_xml)
             self._add_stage("Body", "success")
         except Exception as e:
             self._add_stage("Body", "failed", str(e))
@@ -261,10 +306,13 @@ class PipelineOrchestrator:
 
     def _generate_body_section(
         self,
-        sec,
+        sec: BodySection,
         metadata: Optional[Dict[str, Any]],
     ) -> str:
-        """Genera el XML de una sección del body.
+        """Genera el XML de una sección del body con degradación graceful.
+
+        Si un chunk falla (por contexto excedido, OOM, timeout),
+        lo divide a la mitad y reintenta hasta 2 veces.
 
         Args:
             sec: Instancia de BodySection.
@@ -276,25 +324,102 @@ class PipelineOrchestrator:
         chunks = self.chunk_manager.split_section(sec.content)
         chunk_xmls: List[str] = []
         for chunk in chunks:
-            prompt = prompts.get_body_section_prompt(
-                section_title=sec.title,
-                section_text=chunk,
-                metadata=metadata,
+            xml_part = self._call_llm_with_fallback(
+                prompt_factory=lambda: prompts.get_body_section_prompt(
+                    section_title=sec.title,
+                    section_text=chunk,
+                    metadata=metadata,
+                ) if not self.use_light_prompts else prompts.get_body_section_prompt_light(
+                    section_title=sec.title,
+                    section_text=chunk,
+                ),
+                fallback_text=chunk,
+                context=f"sección '{sec.title}'",
             )
+            chunk_xmls.append(xml_part)
+        return "\n".join(chunk_xmls)
+
+    def _call_llm_with_fallback(
+        self,
+        prompt_factory: Callable[[], str],
+        fallback_text: str,
+        context: str = "",
+        max_retries: int = 2,
+    ) -> str:
+        """Llama al LLM con degradación graceful por chunk halving.
+
+        Args:
+            prompt_factory: Función que genera el prompt.
+            fallback_text: Texto a dividir si hay fallo por tamaño.
+            context: Contexto para mensajes de error.
+            max_retries: Máximo de reintentos con chunks más pequeños.
+
+        Returns:
+            Texto de respuesta del LLM.
+
+        Raises:
+            RuntimeError: Si se agotan los reintentos.
+        """
+        current_text = fallback_text
+        attempt = 0
+        last_error = ""
+
+        while attempt <= max_retries:
+            prompt = prompt_factory()
             response = invocar_llm(
                 prompt=prompt,
                 model_version=self.model,
                 api_key=self.api_key,
                 provider_id=self.provider_id,
             )
-            if response.get('returncode') != 0:
-                raise RuntimeError(
-                    f"Error en sección '{sec.title}': "
-                    f"{response.get('stderr', 'unknown')}"
+            if response.get('returncode') == 0:
+                return response.get('stdout', '').strip()
+
+            error_msg = response.get('stderr', 'unknown').lower()
+            last_error = response.get('stderr', 'unknown')
+
+            # Detectar si es un error relacionado con tamaño/contexto
+            size_related = any(k in error_msg for k in [
+                "context", "too long", "maximum", "exceed", "overflow",
+                "tokens", "length", "truncated", "oom", "out of memory",
+                "timeout", "tiempo de espera",
+            ])
+
+            if not size_related or attempt >= max_retries:
+                break
+
+            # Degradación: dividir texto a la mitad
+            halves = self.chunk_manager.halve_chunk(current_text)
+            if len(halves) < 2:
+                break
+
+            # Procesar ambas mitades y concatenar
+            results: List[str] = []
+            for half in halves:
+                # Ajustar prompt_factory para la mitad
+                # Esto es un hack: reemplazamos el texto completo por la mitad
+                # en el prompt. Funciona porque los prompts usan replace().
+                half_prompt = prompt.replace(current_text, half)
+                half_response = invocar_llm(
+                    prompt=half_prompt,
+                    model_version=self.model,
+                    api_key=self.api_key,
+                    provider_id=self.provider_id,
                 )
-            xml_part = response.get('stdout', '').strip()
-            chunk_xmls.append(xml_part)
-        return "\n".join(chunk_xmls)
+                if half_response.get('returncode') == 0:
+                    results.append(half_response.get('stdout', '').strip())
+                else:
+                    results.append("")
+            if all(results):
+                return "\n".join(results)
+
+            current_text = halves[0] if len(halves) > 0 else current_text
+            attempt += 1
+
+        raise RuntimeError(
+            f"Error generando {context}: {last_error} "
+            f"(agotados {max_retries} reintentos de degradación)"
+        )
 
     def _generate_back(self, segments: DocumentSegments) -> str:
         """Genera el XML del <back> (referencias).
@@ -317,7 +442,12 @@ class PipelineOrchestrator:
         all_refs_xml: List[str] = []
         start_idx = 1
         for batch in ref_batches:
-            prompt = prompts.get_reference_batch_prompt(batch, start_idx)
+            prompt_fn = (
+                prompts.get_reference_batch_prompt_light
+                if self.use_light_prompts
+                else prompts.get_reference_batch_prompt
+            )
+            prompt = prompt_fn(batch, start_idx)
             response = invocar_llm(
                 prompt=prompt,
                 model_version=self.model,
