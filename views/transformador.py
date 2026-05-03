@@ -222,6 +222,10 @@ def main() -> None:
 
     if 'last_uploaded_filename' not in st.session_state:
         st.session_state.last_uploaded_filename = None
+    if 'pipeline_mode' not in st.session_state:
+        st.session_state.pipeline_mode = "monolitico"
+    if 'pipeline_result' not in st.session_state:
+        st.session_state.pipeline_result = None
 
     # Definimos Tabs
     # Tab 0: Carga
@@ -526,149 +530,323 @@ def main() -> None:
         elif not st.session_state.get('metadata_verified', False):
              st.warning("⚠️ **Atención**: No has validado completamente los metadatos en el Paso 1. Esto podría generar un XML incompleto.")
         
-        # --- Configuración Multi-Agente ---
-        configured_pids = config_store.get_configured_providers()
-        # Filtrar automáticamente proveedores locales si están disponibles
-        if "ollama" not in configured_pids and "ollama" in provider_ids:
-            configured_pids.append("ollama")
-        if "lmstudio" not in configured_pids and "lmstudio" in provider_ids:
-            configured_pids.append("lmstudio")
-            
-        # Solo mostrar como seleccionables en la batalla a los proveedores funcionales
-        available_pids = [p for p in configured_pids if p in PROVIDER_REGISTRY and PROVIDER_REGISTRY[p].is_available()]
-        provider_names_multi = {p: PROVIDER_REGISTRY[p].display_name for p in available_pids}
+        # ─── Selector de Modo de Procesamiento ────────────────────
+        mode_cols = st.columns([1, 1])
+        with mode_cols[0]:
+            processing_mode = st.radio(
+                "Modo de procesamiento:",
+                options=["monolitico", "pipeline"],
+                format_func=lambda x: "🧠 Monolítico (modelos grandes)" if x == "monolitico" else "⚡ Pipeline por fases (Beta)",
+                index=0 if st.session_state.pipeline_mode == "monolitico" else 1,
+                key="processing_mode_radio",
+                help="Monolítico: envía el artículo completo en un solo prompt (requiere modelo grande). Pipeline: divide el artículo en secciones y las procesa por separado (compatible con modelos pequeños)."
+            )
+            if processing_mode != st.session_state.pipeline_mode:
+                st.session_state.pipeline_mode = processing_mode
+                st.rerun()
         
-        st.subheader("Selección de Agentes y Modelos")
-        st.markdown("Selecciona los proveedores y modelos de IA que participarán en la Batalla de Modelos:")
+        with mode_cols[1]:
+            if processing_mode == "pipeline":
+                st.info("💡 El modo Pipeline subdivide el artículo en Front, Body por secciones y Back, permitiendo usar modelos con ventanas de contexto pequeñas (ej. Ollama en celulares).")
         
-        selected_pids = st.multiselect(
-            "1. Elige los Proveedores:",
-            options=available_pids,
-            format_func=lambda p: provider_names_multi[p],
-            default=[available_pids[0]] if available_pids else []
-        )
-        
-        battle_roster = []
-        
-        if selected_pids:
-            cols = st.columns(len(selected_pids)) if len(selected_pids) <= 3 else st.columns(3)
+        # ─── Configuración Multi-Agente (solo Monolítico) ─────────
+        if processing_mode == "monolitico":
+            configured_pids = config_store.get_configured_providers()
+            # Filtrar automáticamente proveedores locales si están disponibles
+            if "ollama" not in configured_pids and "ollama" in provider_ids:
+                configured_pids.append("ollama")
+            if "lmstudio" not in configured_pids and "lmstudio" in provider_ids:
+                configured_pids.append("lmstudio")
+                
+            # Solo mostrar como seleccionables en la batalla a los proveedores funcionales
+            available_pids = [p for p in configured_pids if p in PROVIDER_REGISTRY and PROVIDER_REGISTRY[p].is_available()]
+            provider_names_multi = {p: PROVIDER_REGISTRY[p].display_name for p in available_pids}
             
-            for i, pid in enumerate(selected_pids):
-                with cols[i % len(cols)]:
-                    provider_obj = PROVIDER_REGISTRY[pid]
-                    api_key = config_store.load_provider_key(pid) if pid not in ("ollama", "lmstudio") else pid
-                    
-                    _host = None
-                    if pid == "ollama":
-                        _host = config_store.get_ollama_host()
-                    elif pid == "lmstudio":
-                        _host = config_store.get_lmstudio_host()
-                        
-                    models = get_available_models(pid, api_key, _host)
-                    
-                    selected_models = st.multiselect(
-                        f"Modelos de {provider_names_multi[pid]}:",
-                        options=models,
-                        default=[models[0]] if models else [],
-                        key=f"battle_models_{pid}"
-                    )
-                    
-                    for mdl in selected_models:
-                        battle_roster.append({
-                            "label": f"{provider_names[pid]} ({mdl})",
-                            "provider": pid,
-                            "model": mdl,
-                            "api_key": api_key
-                        })
-                        
-        if battle_roster:
-            st.info("🤖 **Participantes en la batalla:** " + ", ".join([f"`{r['label']}`" for r in battle_roster]))
+            st.subheader("Selección de Agentes y Modelos")
+            st.markdown("Selecciona los proveedores y modelos de IA que participarán en la Batalla de Modelos:")
             
-        can_generate = bool(st.session_state.extracted_text and len(battle_roster) > 0)
-        
-        if st.button("Generar XML JATS", type="primary", disabled=not can_generate):
-            st.session_state.generated_versions = []
-            st.session_state.generated_xml = None
-            st.session_state.validation_errors = []
-            st.session_state._validation_ran = False
-            
-            st.session_state._validation_ran_batalla = False
-            
-            total_agents = len(battle_roster)
-            
-            prompt = prompts.get_generation_prompt(
-                st.session_state.extracted_text, 
-                st.session_state.extracted_metadata
+            selected_pids = st.multiselect(
+                "1. Elige los Proveedores:",
+                options=available_pids,
+                format_func=lambda p: provider_names_multi[p],
+                default=[available_pids[0]] if available_pids else []
             )
             
-            # Contenedores para el estado de cada agente progresivo
-            status_containers = {}
-            for r in battle_roster:
-                agent_label = r["label"]
-                status_containers[agent_label] = st.empty()
-                status_containers[agent_label].info(f"⏳ {agent_label}: Esperando turno...")
+            battle_roster = []
+            
+            if selected_pids:
+                cols = st.columns(len(selected_pids)) if len(selected_pids) <= 3 else st.columns(3)
                 
-            for idx, r in enumerate(battle_roster):
-                agent_label = r["label"]
-                _pid = r["provider"]
-                _model = r["model"]
-                _key = r["api_key"]
-                status_containers[agent_label].warning(f"🔄 {agent_label}: Procesando XML [{idx+1}/{total_agents}]...")
+                for i, pid in enumerate(selected_pids):
+                    with cols[i % len(cols)]:
+                        provider_obj = PROVIDER_REGISTRY[pid]
+                        api_key = config_store.load_provider_key(pid) if pid not in ("ollama", "lmstudio") else pid
+                        
+                        _host = None
+                        if pid == "ollama":
+                            _host = config_store.get_ollama_host()
+                        elif pid == "lmstudio":
+                            _host = config_store.get_lmstudio_host()
+                            
+                        models = get_available_models(pid, api_key, _host)
+                        
+                        selected_models = st.multiselect(
+                            f"Modelos de {provider_names_multi[pid]}:",
+                            options=models,
+                            default=[models[0]] if models else [],
+                            key=f"battle_models_{pid}"
+                        )
+                        
+                        for mdl in selected_models:
+                            battle_roster.append({
+                                "label": f"{provider_names[pid]} ({mdl})",
+                                "provider": pid,
+                                "model": mdl,
+                                "api_key": api_key
+                            })
+                            
+            if battle_roster:
+                st.info("🤖 **Participantes en la batalla:** " + ", ".join([f"`{r['label']}`" for r in battle_roster]))
                 
-                result = transformer.invocar_llm(
-                    prompt, 
-                    model_version=_model,
-                    api_key=_key,
-                    provider_id=_pid,
+            can_generate = bool(st.session_state.extracted_text and len(battle_roster) > 0)
+            
+            if st.button("Generar XML JATS", type="primary", disabled=not can_generate):
+                st.session_state.generated_versions = []
+                st.session_state.generated_xml = None
+                st.session_state.validation_errors = []
+                st.session_state._validation_ran = False
+                
+                st.session_state._validation_ran_batalla = False
+                
+                total_agents = len(battle_roster)
+                
+                prompt = prompts.get_generation_prompt(
+                    st.session_state.extracted_text, 
+                    st.session_state.extracted_metadata
                 )
                 
-                if result.get('quota_exceeded'):
-                    st.session_state["_paid_quota_active"] = True
-                
-                if result.get('returncode') == 0 and result.get('stdout'):
-                    xml_out = result.get('stdout', '').strip()
-                    st.session_state.generated_versions.append({
-                        "label": agent_label,
-                        "provider": _pid,
-                        "model": _model,
-                        "xml": xml_out,
-                        "tokens": result.get('token_usage', {}).get('total_tokens', 0)
-                    })
-                    status_containers[agent_label].success(f"✅ {agent_label}: Generado correctamente.")
+                # Contenedores para el estado de cada agente progresivo
+                status_containers = {}
+                for r in battle_roster:
+                    agent_label = r["label"]
+                    status_containers[agent_label] = st.empty()
+                    status_containers[agent_label].info(f"⏳ {agent_label}: Esperando turno...")
                     
-                    tu = result.get('token_usage', {})
-                    if tu.get('total_tokens', 0) > 0:
-                        config_store.log_token_usage(
-                            operation="generation",
-                            model=_model,
-                            prompt_tokens=tu.get('prompt_tokens', 0),
-                            completion_tokens=tu.get('completion_tokens', 0),
-                            total_tokens=tu.get('total_tokens', 0),
-                        )
-                else:
-                    status_containers[agent_label].error(f"❌ {agent_label}: Fallo al generar. {result.get('stderr')}")
+                for idx, r in enumerate(battle_roster):
+                    agent_label = r["label"]
+                    _pid = r["provider"]
+                    _model = r["model"]
+                    _key = r["api_key"]
+                    status_containers[agent_label].warning(f"🔄 {agent_label}: Procesando XML [{idx+1}/{total_agents}]...")
                     
-            # Evaluación Inmediata en Tab 2
-            if st.session_state.generated_versions:
-                with st.spinner("Realizando evaluación experta inmediata (DTD JATS)..."):
-                    for version in st.session_state.generated_versions:
-                        is_valid, errors = transformer.validar_jats_xml(version['xml'])
-                        is_complete, semantic_warnings = transformer.verificar_completitud_xml(version['xml'], st.session_state.extracted_text)
+                    result = transformer.invocar_llm(
+                        prompt, 
+                        model_version=_model,
+                        api_key=_key,
+                        provider_id=_pid,
+                    )
+                    
+                    if result.get('quota_exceeded'):
+                        st.session_state["_paid_quota_active"] = True
+                    
+                    if result.get('returncode') == 0 and result.get('stdout'):
+                        xml_out = result.get('stdout', '').strip()
+                        st.session_state.generated_versions.append({
+                            "label": agent_label,
+                            "provider": _pid,
+                            "model": _model,
+                            "xml": xml_out,
+                            "tokens": result.get('token_usage', {}).get('total_tokens', 0)
+                        })
+                        status_containers[agent_label].success(f"✅ {agent_label}: Generado correctamente.")
                         
-                        score = max(0, 100 - (len(errors) * 5)) if not is_valid else 100
-                        if not is_complete:
-                            score = min(score, 20)  # Penalización severa por XML vacío
-                            errors = semantic_warnings + errors # Agregar como errores para forzar corrección
+                        tu = result.get('token_usage', {})
+                        if tu.get('total_tokens', 0) > 0:
+                            config_store.log_token_usage(
+                                operation="generation",
+                                model=_model,
+                                prompt_tokens=tu.get('prompt_tokens', 0),
+                                completion_tokens=tu.get('completion_tokens', 0),
+                                total_tokens=tu.get('total_tokens', 0),
+                            )
+                    else:
+                        status_containers[agent_label].error(f"❌ {agent_label}: Fallo al generar. {result.get('stderr')}")
+                        
+                # Evaluación Inmediata en Tab 2
+                if st.session_state.generated_versions:
+                    with st.spinner("Realizando evaluación experta inmediata (DTD JATS)..."):
+                        for version in st.session_state.generated_versions:
+                            is_valid, errors = transformer.validar_jats_xml(version['xml'])
+                            is_complete, semantic_warnings = transformer.verificar_completitud_xml(version['xml'], st.session_state.extracted_text)
                             
-                        version['score'] = score
-                        version['errors'] = errors
-                    st.session_state._validation_ran_batalla = True
-                    st.session_state.generated_versions.sort(key=lambda x: x.get('score', 0), reverse=True)
+                            score = max(0, 100 - (len(errors) * 5)) if not is_valid else 100
+                            if not is_complete:
+                                score = min(score, 20)  # Penalización severa por XML vacío
+                                errors = semantic_warnings + errors # Agregar como errores para forzar corrección
+                                
+                            version['score'] = score
+                            version['errors'] = errors
+                        st.session_state._validation_ran_batalla = True
+                        st.session_state.generated_versions.sort(key=lambda x: x.get('score', 0), reverse=True)
+                
+                st.session_state.show_correction_chat = False
+                st.session_state.pending_correction_xml = None
+                
+                st.rerun()
+        
+        # ─── Modo Pipeline ────────────────────────────────────────
+        else:
+            st.subheader("⚡ Pipeline por Fases")
             
-            st.session_state.show_correction_chat = False
-            st.session_state.pending_correction_xml = None
+            # Configuración del chunk
+            chunk_cfg = st.expander("Configuración avanzada del Pipeline")
+            with chunk_cfg:
+                col_chunk, col_model = st.columns(2)
+                with col_chunk:
+                    max_input_tokens = st.selectbox(
+                        "Ventana de contexto (tokens):",
+                        options=[2048, 4096, 8192, 16384, 32768, 65536, 131072],
+                        index=2,
+                        help="Tamaño máximo del prompt. Reduce este valor si usas modelos locales pequeños (ej. 2048 para Ollama en celulares)."
+                    )
+                with col_model:
+                    _pid_pipe = st.session_state.get('_active_provider', 'gemini')
+                    _mdl_pipe = st.session_state.get('selected_model', 'gemini-2.5-flash')
+                    st.text(f"Proveedor: {_pid_pipe}")
+                    st.text(f"Modelo: {_mdl_pipe}")
+                
+                st.checkbox(
+                    "Forzar verificación IA de integridad",
+                    value=True,
+                    key="pipeline_force_ai_verify",
+                    help="Si está activado, se ejecutará un modelo LLM para comparar el texto original contra el XML generado y detectar omisiones o parafraseos."
+                )
             
-            st.rerun()
+            can_generate_pipe = bool(st.session_state.extracted_text and st.session_state.get('uploaded_file_path'))
+            
+            if st.button("▶️ Ejecutar Pipeline por Fases", type="primary", disabled=not can_generate_pipe):
+                from modules.pipeline_orchestrator import PipelineOrchestrator
+                from modules import config_store as cs
+                
+                st.session_state.generated_versions = []
+                st.session_state.generated_xml = None
+                st.session_state.validation_errors = []
+                st.session_state._validation_ran = False
+                st.session_state.pipeline_result = None
+                
+                _pid_pipe = st.session_state.get('_active_provider', 'gemini')
+                _mdl_pipe = st.session_state.get('selected_model', 'gemini-2.5-flash')
+                _key_pipe = st.session_state.get('_active_api_key', '')
+                
+                journal_cfg = cs.get_journal_config()
+                
+                with st.status("⚡ Ejecutando Pipeline por Fases...", expanded=True) as status:
+                    orchestrator = PipelineOrchestrator(
+                        provider_id=_pid_pipe,
+                        model=_mdl_pipe,
+                        api_key=_key_pipe,
+                        max_input_tokens=max_input_tokens,
+                        max_output_tokens=max_input_tokens,
+                    )
+                    
+                    status.write("🔄 Fase 0: Segmentación semántica del documento...")
+                    result = orchestrator.run(
+                        docx_path=st.session_state.uploaded_file_path,
+                        metadata=st.session_state.extracted_metadata,
+                        journal_config=journal_cfg,
+                    )
+                    
+                    # Mostrar progreso por fase
+                    for stage in result.stages:
+                        icon = "✅" if stage.status == "success" else "⚠️" if stage.status == "warning" else "❌" if stage.status == "failed" else "⏳"
+                        status.write(f"{icon} **{stage.name}**: {stage.status.upper()}{(' — ' + stage.message) if stage.message else ''}")
+                    
+                    if result.error:
+                        status.update(label="❌ Pipeline falló", state="error", expanded=True)
+                        st.error(f"Error en pipeline: {result.error}")
+                    else:
+                        status.update(label="✅ Pipeline completado", state="complete", expanded=False)
+                        st.session_state.pipeline_result = result
+                        st.session_state.generated_xml = result.xml_string
+                        st.session_state.validation_errors = result.dtd_errors
+                        st.session_state._validation_ran = True
+                        
+                        # Crear una única versión para compatibilidad con el leaderboard
+                        st.session_state.generated_versions = [{
+                            "label": f"Pipeline ({_pid_pipe} / {_mdl_pipe})",
+                            "provider": _pid_pipe,
+                            "model": _mdl_pipe,
+                            "xml": result.xml_string,
+                            "tokens": 0,
+                            "score": 100 if result.is_valid_dtd and (result.integrity_report.is_complete if result.integrity_report else False) else max(0, 100 - len(result.dtd_errors) * 5),
+                            "errors": result.dtd_errors,
+                        }]
+                        
+                        # Log de tokens (estimado, ya que el pipeline hace múltiples llamadas)
+                        config_store.log_token_usage(
+                            operation="generation_pipeline",
+                            model=_mdl_pipe,
+                            prompt_tokens=0,
+                            completion_tokens=0,
+                            total_tokens=0,
+                        )
+                        
+                        # Mostrar reporte de integridad
+                        if result.integrity_report:
+                            if result.integrity_report.is_complete:
+                                st.success("🔒 **Integridad textual 100%**: Todas las secciones coinciden con el original.")
+                            else:
+                                st.warning("⚠️ **Problemas de integridad detectados**:")
+                                for w in result.integrity_report.warnings[:5]:
+                                    st.write(f"- {w}")
+                                if len(result.integrity_report.warnings) > 5:
+                                    st.write(f"- ... y {len(result.integrity_report.warnings) - 5} más.")
+                        
+                        # Mostrar reporte de verificación IA
+                        if result.ai_verification:
+                            any_problems = any(not r.is_complete for r in result.ai_verification.values())
+                            if any_problems:
+                                st.warning("🤖 **Verificación IA detectó discrepancias**:")
+                                for sec_title, verify in result.ai_verification.items():
+                                    if not verify.is_complete and verify.problems:
+                                        st.write(f"- **{sec_title}**: {verify.problems[0].description}")
+                            else:
+                                st.success("🤖 **Verificación IA**: Sin discrepancias semánticas detectadas.")
+                        
+                        st.rerun()
+            
+            # Mostrar resultado previo del pipeline si existe
+            if st.session_state.get('pipeline_result'):
+                pipe_res = st.session_state.pipeline_result
+                st.markdown("---")
+                st.markdown("### 📊 Resultado del Pipeline")
+                
+                cols = st.columns(4)
+                with cols[0]:
+                    st.metric("DTD Válido", "✅ Sí" if pipe_res.is_valid_dtd else "❌ No")
+                with cols[1]:
+                    integrity_ok = pipe_res.integrity_report.is_complete if pipe_res.integrity_report else False
+                    st.metric("Integridad", "✅ OK" if integrity_ok else "⚠️ Falla")
+                with cols[2]:
+                    ai_ok = not any(not r.is_complete for r in (pipe_res.ai_verification or {}).values())
+                    st.metric("Verificación IA", "✅ OK" if ai_ok else "⚠️ Falla")
+                with cols[3]:
+                    st.metric("Errores DTD", len(pipe_res.dtd_errors))
+                
+                if pipe_res.dtd_errors:
+                    with st.expander("Ver errores DTD"):
+                        for err in pipe_res.dtd_errors[:10]:
+                            st.code(err)
+                
+                if pipe_res.integrity_report and not pipe_res.integrity_report.is_complete:
+                    with st.expander("Ver diff de integridad"):
+                        for diff in pipe_res.integrity_report.section_diffs:
+                            if not diff.match:
+                                st.markdown(f"**{diff.title}**")
+                                if diff.diff_html:
+                                    st.markdown(diff.diff_html, unsafe_allow_html=True)
+                                else:
+                                    st.write("Sección modificada (hash no coincide).")
 
         if st.session_state.get('generated_versions'):
             st.success(f"✅ Se evaluaron {len(st.session_state.generated_versions)} versión(es).")
