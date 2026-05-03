@@ -133,7 +133,15 @@ La arquitectura propuesta abandona el modelo "Un Prompt para Todo" en favor de u
 │                    FASE 4: ENSAMBLAJE Y VALIDACIÓN GLOBAL            │
 │  Input: front + body_chunks + back                                  │
 │  Output: XML completo <article>...</article>                        │
-│  Verificación: integridad textual 100% + validación DTD             │
+│  Verificación: integridad textual 100% (programática) + DTD         │
+└─────────────────────────────────────────────────────────────────────┘
+                                    ↓
+┌─────────────────────────────────────────────────────────────────────┐
+│          FASE 5: COMPROBACIÓN DE INTEGRIDAD CON MODELO IA            │
+│  Input: texto original segmentado + XML ensamblado                  │
+│  Output: Dict con {sección: {"completo": bool, "observaciones": []}}│
+│  Modelo: Preferiblemente el mismo usado o uno pequeño de verificación│
+│  Objetivo: Confirmar que NINGÚN párrafo fue omitido ni resumido     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -307,6 +315,82 @@ Esto permite al usuario ver exactamente qué perdió la IA.
 
 ---
 
+## 8.5 Fase 5: Comprobación de Integridad con Modelo IA (Nuevo)
+
+Además de la verificación programática (hashes y conteo de palabras), se agrega una **verificación semántica con un modelo de lenguaje** que actúa como "revisor editorial" independiente.
+
+### 8.5.1 ¿Por qué un modelo IA para verificar?
+
+La verificación programática (hash MD5, conteo de palabras) detecta omisiones brutales, pero no captura:
+- **Parafraseos sutiles**: El modelo cambió "La hipertensión arterial es un factor de riesgo" por "La presión alta constituye un riesgo".
+- **Condensación de párrafos**: Un párrafo de 5 oraciones fue reducido a 2 oraciones con la "misma idea".
+- **Omisión de oraciones intermedias**: El párrafo conserva la primera y última oración pero elimina las del medio.
+- **Cambios en datos numéricos**: El modelo "redondeó" o "corrigió" una cifra (ej. p-valor 0.023 → 0.02).
+
+Un modelo de lenguaje, comparando el texto original de una sección contra el texto extraído del XML de esa misma sección, puede detectar estas desviaciones con alta precisión.
+
+### 8.5.2 Diseño del Prompt de Verificación IA
+
+```
+Actúa como un revisor editorial extremadamente riguroso. Tu única tarea es comparar dos textos y detectar CUALQUIER diferencia de contenido.
+
+TEXTO ORIGINAL (del documento fuente):
+<ORIGINAL_START>
+{texto_original_seccion}
+<ORIGINAL_END>
+
+TEXTO EXTRAÍDO DEL XML JATS (sin etiquetas):
+<XML_START>
+{texto_plano_xml_seccion}
+<XML_END>
+
+INSTRUCCIONES ESTRICTAS:
+1. Compara párrafo por párrafo en orden.
+2. Reporta SIEMPRE que un párrafo del original NO esté presente íntegramente en el XML.
+3. Reporta SIEMPRE que un párrafo del XML sea más corto, esté parafraseado o contenga datos numéricos diferentes.
+4. NO aceptes "significado similar" como válido. El texto debe ser IDÉNTICO salvo errores de OCR menores.
+5. Devuelve SOLO un JSON con este formato:
+
+{
+  "integridad_completa": false,
+  "párrafos_revisados": 5,
+  "párrafos_con_problemas": 2,
+  "problemas": [
+    {
+      "tipo": "OMISION",
+      "descripcion": "El párrafo 3 del original (que comienza con 'Los resultados indican que...') no aparece en el XML.",
+      "fragmento_original": "Los resultados indican que..."
+    },
+    {
+      "tipo": "PARAFRASEO",
+      "descripcion": "El párrafo 2 fue resumido. El original dice 'Se realizó un análisis de varianza de dos vías' pero el XML dice 'Se hizo un ANOVA'.",
+      "fragmento_original": "Se realizó un análisis de varianza de dos vías",
+      "fragmento_xml": "Se hizo un ANOVA"
+    }
+  ]
+}
+
+Si todo está perfecto: {"integridad_completa": true, "párrafos_revisados": N, "párrafos_con_problemas": 0, "problemas": []}
+```
+
+### 8.5.3 Estrategia de Ejecución
+
+1. **Por sección**: Se ejecuta una llamada por cada sección del body (Introducción, Métodos, etc.), no para el artículo completo. Esto mantiene el prompt pequeño y permite paralelización.
+2. **Revisor ligero**: Puede usarse un modelo pequeño (Phi-3, Qwen2.5-3B) porque la tarea es comparación, no generación creativa. El prompt es corto: 2 textos de ~500-2.000 palabras + instrucciones.
+3. **Dos niveles de verificación**:
+   - **Nivel 1 (Programático)**: `integrity_checker.py` compara hashes. Si falla, rechazo inmediato.
+   - **Nivel 2 (IA)**: Si el nivel 1 pasa pero hay sospechas (diferencia de palabras entre 95-99%), se activa la verificación IA.
+   - **Nivel 3 (DTD)**: Validación estructural final.
+
+### 8.5.4 Acciones ante Falla de Integridad IA
+
+Si la IA reporta problemas:
+- **Re-procesar la sección específica**: Volver a Fase 2 con un prompt más estricto (ej. "Este párrafo NO puede omitirse: ...").
+- **Marcar para revisión humana**: Si tras 2 reintentos persiste, mostrar el diff visual y pedir al usuario que copie/pege el párrafo faltante.
+- **Nunca aceptar un XML con problemas de integridad IA sin confirmación explícita del usuario**.
+
+---
+
 ## 9. Nuevos Módulos Propuestos
 
 ### 9.1 `modules/document_segmenter.py`
@@ -335,13 +419,21 @@ Responsabilidad: Calcular tamaños de chunks según modelo y dividir contenido.
 - `split_section_if_needed(section_text, max_tokens) -> List[str]`
 - Divide párrafos en sub-chunks respetando límites de oración.
 
-### 9.5 Refactorización de `prompts.py`
+### 9.5 `modules/ai_integrity_verifier.py` (Nuevo)
+Responsabilidad: Ejecutar la verificación semántica con un modelo de lenguaje.
+- `verify_section_with_llm(original_text: str, xml_plain_text: str, provider_id: str, model: str, api_key: str) -> VerificationResult`
+- Paralelizable por sección.
+- Devuelve un dataclass con `is_complete`, `problems` (lista de dicts), `confidence`.
+- Puede usar el mismo modelo grande o un modelo pequeño dedicado de verificación.
+
+### 9.6 Refactorización de `prompts.py`
 
 Añadir funciones:
 - `get_front_prompt(metadata: dict, journal_config: dict) -> str`
 - `get_body_section_prompt(section_title: str, section_text: str, metadata: dict) -> str`
 - `get_table_prompt(table_data: dict) -> str`
 - `get_reference_batch_prompt(batch: List[str], start_index: int) -> str`
+- `get_integrity_verification_prompt(original_text: str, xml_plain_text: str) -> str` (Nuevo)
 - `get_assembly_prompt(front_xml: str, body_sections_xml: List[str], back_xml: str) -> str` (opcional; ensamblaje puede ser programático)
 
 ---
@@ -366,9 +458,11 @@ Añadir funciones:
 - [ ] Implementar degradación graceful (reducción de chunk + reintento).
 - [ ] Optimizar prompts para modelos 3B (reducción de instrucciones).
 
-### Fase D: Validación y Refinamiento (Semanas 7-8)
+### Fase D: Verificación IA y Refinamiento (Semanas 7-8)
 - [ ] Integrar `integrity_checker` como gate obligatorio antes de DTD.
-- [ ] Implementar diff visual en la UI para secciones fallidas.
+- [ ] Implementar `ai_integrity_verifier.py` con prompt de comparación semántica.
+- [ ] Integrar verificación IA como **Fase 5** del pipeline (post-ensamblaje, pre-DTD).
+- [ ] Implementar diff visual en la UI para secciones fallidas (programático + IA).
 - [ ] Pruebas con Ollama en celular (Android Termux / iOS).
 - [ ] Benchmark: tiempo de procesamiento y tasa de éxito vs. modo monolítico.
 
@@ -424,6 +518,7 @@ Añadir funciones:
 | Tiempo de procesamiento con Ollama 3B en CPU (artículo 10 pág.) | N/A (no funciona) | <60s |
 | Tasa de validación DTD exitosa a la primera | ~40-60% | >80% |
 | Tasa de re-intento por sección (vs. re-intento de artículo completo) | 100% re-intento completo | <20% re-intento completo |
+| Tasa de detección de resúmenes/parafraseos por verificación IA | 0% | >95% |
 
 \* Basado en observaciones de `verificar_completitud_xml` y reportes de usuarios.
 
@@ -436,11 +531,11 @@ La arquitectura monolítica actual es el cuello de botella fundamental que impid
 2. Utilizar modelos locales pequeños y económicos.
 3. Escalar el procesamiento de manera eficiente.
 
-La transición a un **Pipeline por Fases con Chunking Inteligente** no solo resuelve estos problemas, sino que también introduce un marco de validación robusto (`integrity_checker`) que hace explícita una promesa que hoy solo es implícita: **que el artículo se transforma íntegramente**.
+La transición a un **Pipeline por Fases con Chunking Inteligente** no solo resuelve estos problemas, sino que también introduce un marco de validación de dos niveles (`integrity_checker` programático + `ai_integrity_verifier` semántico) que hace explícita una promesa que hoy solo es implícita: **que el artículo se transforma íntegramente, sin resumir, sin parafrasear y sin omitir**.
 
 Esta propuesta está diseñada para ser implementada de forma incremental, sin romper el modo Monolítico existente, permitiendo validación A/B y adopción controlada.
 
-**Próximo paso recomendado**: Aprobación de esta propuesta para iniciar la Fase A (Implementación de `document_segmenter.py` y `integrity_checker.py`).
+**Próximo paso recomendado**: Iniciar la Fase A (Implementación de `document_segmenter.py`, `chunk_manager.py`, `integrity_checker.py` y `ai_integrity_verifier.py`).
 
 ---
 
