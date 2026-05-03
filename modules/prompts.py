@@ -356,3 +356,256 @@ def get_interactive_correction_prompt(xml_content: str, validation_errors: List[
 
     TU RESPUESTA:
     """
+
+
+# ─── Prompts especializados para Pipeline por Fases ──────────────
+
+
+def get_front_prompt(
+    metadata: Dict[str, Any],
+    journal_config: Dict[str, str],
+) -> str:
+    """Prompt mínimo para generar SOLO la sección <front> del JATS XML.
+
+    Args:
+        metadata: Metadatos extraídos del documento.
+        journal_config: Configuración persistente de la revista.
+
+    Returns:
+        Prompt listo para enviar al LLM.
+    """
+    from . import config_store
+    version = config_store.get_jats_version()
+
+    journal_title = journal_config.get("title", metadata.get("journal_title", ""))
+    publisher = journal_config.get("publisher", "")
+    issn = journal_config.get("issn_print", "")
+
+    authors_list = metadata.get("authors", [])
+    authors_str = "\n".join(
+        f'- {a.get("given_names", "")} {a.get("surname", "")} '
+        f'(ORCID: {a.get("orcid", "N/D")}, Aff: {a.get("aff_id", "")})'
+        for a in authors_list
+    ) if isinstance(authors_list, list) else str(authors_list)
+
+    return f"""Actúa como un maquetador XML JATS experto. Genera ÚNICAMENTE la sección `<front>` de un artículo JATS versión {version}.
+
+REGLAS CRÍTICAS:
+- NO generes `<body>`, `<back>` ni la raíz `<article>`.
+- La salida debe comenzar con `<front>` y terminar con `</front>`.
+- Usa EXACTAMENTE los metadatos proporcionados. NO inventes datos.
+- Si un dato falta, deja la etiqueta vacía (ej. `<volume></volume>`).
+
+METADATOS DEL ARTÍCULO:
+- Título: {metadata.get('article_title', '')}
+- Título en inglés: {metadata.get('trans_title', '')}
+- Revista: {journal_title}
+- Editorial: {publisher}
+- ISSN: {issn}
+- DOI: {metadata.get('doi', '')}
+- Fecha publicación: {metadata.get('publication_date', '')}
+- Autores:
+{authors_str}
+- Resumen: {metadata.get('abstract', '')}
+- Palabras clave: {metadata.get('keywords', [])}
+
+ESTRUCTURA OBLIGATORIA (mantén este orden exacto):
+```xml
+<front>
+  <journal-meta>
+    <journal-id journal-id-type="publisher-id">...</journal-id>
+    <journal-title-group><journal-title>...</journal-title></journal-title-group>
+    <issn>...</issn>
+    <publisher><publisher-name>...</publisher-name></publisher>
+  </journal-meta>
+  <article-meta>
+    <article-id pub-id-type="doi">...</article-id>
+    <title-group>
+      <article-title>...</article-title>
+      <trans-title-group xml:lang="en"><trans-title>...</trans-title></trans-title-group>
+    </title-group>
+    <contrib-group>...</contrib-group>
+    <aff id="aff1">...</aff>
+    <author-notes><corresp>...</corresp></author-notes>
+    <pub-date pub-type="epub"><day>...</day><month>...</month><year>...</year></pub-date>
+    <volume></volume><issue></issue><fpage></fpage><lpage></lpage>
+    <history>
+      <date date-type="received"><day></day><month></month><year></year></date>
+      <date date-type="accepted"><day></day><month></month><year></year></date>
+    </history>
+    <abstract><title>Resumen</title><p>...</p></abstract>
+    <kwd-group><kwd>...</kwd></kwd-group>
+  </article-meta>
+</front>
+```
+
+Responde SOLO con el bloque XML, sin explicaciones.
+"""
+
+
+def get_body_section_prompt(
+    section_title: str,
+    section_text: str,
+    metadata: Optional[Dict[str, Any]] = None,
+) -> str:
+    """Prompt mínimo para etiquetar UNA sola sección del body como JATS XML.
+
+    Args:
+        section_title: Título de la sección (ej. "Introducción").
+        section_text: Texto plano de la sección completa.
+        metadata: Metadatos opcionales para contexto mínimo.
+
+    Returns:
+        Prompt listo para enviar al LLM.
+    """
+    meta_ctx = ""
+    if metadata:
+        meta_ctx = (
+            f"Artículo: {metadata.get('article_title', 'Desconocido')}. "
+            f"DOI: {metadata.get('doi', 'N/D')}."
+        )
+
+    return f"""Actúa como un maquetador XML JATS. Tu tarea es etiquetar UNA sola sección del artículo.
+
+REGLAS CRÍTICAS:
+- Transcribe TODO el texto íntegramente. NO omitas párrafos. NO resumas. NO parafrasees.
+- Cada párrafo del original debe convertirse en un `<p>`.
+- Envuelve la sección en `<sec><title>...</title>...</sec>`.
+- NO generes `<front>`, `<back>` ni la raíz `<article>`.
+- NO uses comentarios XML como placeholders (`<!-- ... -->`).
+- Las citas bibliográficas dentro del texto deben ir como `<xref ref-type="bibr" rid="refN">(Autor, Año)</xref>`.
+
+CONTEXTO: {meta_ctx}
+
+SECCIÓN A ETIQUETAR: {section_title}
+
+TEXTO ORIGINAL:
+<USER_DOCUMENT_START>
+{section_text}
+<USER_DOCUMENT_END>
+
+Responde SOLO con el bloque XML de la sección, sin explicaciones.
+"""
+
+
+def get_table_prompt(table_data: Dict[str, Any]) -> str:
+    """Prompt mínimo para generar un `<table-wrap>` JATS.
+
+    Args:
+        table_data: Dict con 'id', 'caption', 'content' (filas separadas por ; y celdas por |).
+
+    Returns:
+        Prompt listo para enviar al LLM.
+    """
+    caption = table_data.get("caption", "")
+    content = table_data.get("content", "")
+    table_id = table_data.get("id", "t1")
+
+    return f"""Actúa como un maquetador XML JATS. Genera un `<table-wrap>` para esta tabla.
+
+REGLAS:
+- Usa `<table-wrap id="{table_id}">`.
+- Incluye `<label>` y `<caption><title>` si hay caption.
+- La primera fila suele ser `<thead>` (encabezados), el resto `<tbody>`.
+- Cada celda separada por `|` → `<td>` o `<th>`.
+- NO omitas filas ni columnas.
+
+CAPTION: {caption}
+
+DATOS DE LA TABLA (filas separadas por ';', celdas por '|'):
+<USER_DOCUMENT_START>
+{content}
+<USER_DOCUMENT_END>
+
+Responde SOLO con el bloque XML, sin explicaciones.
+"""
+
+
+def get_reference_batch_prompt(
+    batch: List[str],
+    start_index: int = 1,
+) -> str:
+    """Prompt para generar un batch de referencias `<ref>` JATS.
+
+    Args:
+        batch: Lista de strings, cada uno una referencia en texto plano.
+        start_index: Número inicial de la referencia (para label).
+
+    Returns:
+        Prompt listo para enviar al LLM.
+    """
+    refs_block = "\n".join(f"{i + start_index}. {r}" for i, r in enumerate(batch))
+
+    return f"""Actúa como un maquetador XML JATS. Genera elementos `<ref>` para estas referencias bibliográficas.
+
+REGLAS:
+- Cada referencia debe ser un `<ref id="refN">` con `<label>N</label>`.
+- Usa `<element-citation publication-type="journal">` (o book, web, etc. según corresponda).
+- Separa componentes: `<person-group>`, `<article-title>`, `<source>`, `<year>`, `<volume>`, `<fpage>`, `<lpage>`, `<pub-id pub-id-type="doi">`.
+- NO pongas el número de referencia dentro de `<element-citation>`; solo en `<label>`.
+- Asegúrate de cerrar cada `<ref>` antes de abrir el siguiente.
+
+REFERENCIAS:
+<USER_DOCUMENT_START>
+{refs_block}
+<USER_DOCUMENT_END>
+
+Responde SOLO con los elementos `<ref>...<ref>` (sin envolver en `<ref-list>`), sin explicaciones.
+"""
+
+
+def get_integrity_verification_prompt(
+    original_text: str,
+    xml_plain_text: str,
+) -> str:
+    """Prompt para que un modelo IA compare original vs XML y detecte omisiones.
+
+    Args:
+        original_text: Texto original de la sección.
+        xml_plain_text: Texto extraído del XML (sin etiquetas).
+
+    Returns:
+        Prompt listo para enviar al LLM.
+    """
+    return f"""Actúa como un revisor editorial extremadamente riguroso. Tu única tarea es comparar dos textos y detectar CUALQUIER diferencia de contenido.
+
+TEXTO ORIGINAL (del documento fuente):
+<ORIGINAL_START>
+{original_text}
+<ORIGINAL_END>
+
+TEXTO EXTRAÍDO DEL XML JATS (sin etiquetas):
+<XML_START>
+{xml_plain_text}
+<XML_END>
+
+INSTRUCCIONES ESTRICTAS:
+1. Compara párrafo por párrafo en orden.
+2. Reporta SIEMPRE que un párrafo del original NO esté presente íntegramente en el XML.
+3. Reporta SIEMPRE que un párrafo del XML sea más corto, esté parafraseado o contenga datos numéricos diferentes.
+4. NO aceptes "significado similar" como válido. El texto debe ser IDÉNTICO salvo errores de OCR menores.
+5. Devuelve SOLO un JSON con este formato exacto:
+
+{{
+  "integridad_completa": false,
+  "párrafos_revisados": 5,
+  "párrafos_con_problemas": 2,
+  "problemas": [
+    {{
+      "tipo": "OMISION",
+      "descripcion": "El párrafo 3 del original no aparece en el XML.",
+      "fragmento_original": "..."
+    }},
+    {{
+      "tipo": "PARAFRASEO",
+      "descripcion": "El párrafo 2 fue resumido.",
+      "fragmento_original": "...",
+      "fragmento_xml": "..."
+    }}
+  ]
+}}
+
+Si todo está perfecto: {{"integridad_completa": true, "párrafos_revisados": N, "párrafos_con_problemas": 0, "problemas": []}}
+
+Responde SOLO con el JSON, sin explicaciones adicionales.
+"""
