@@ -11,8 +11,8 @@ import streamlit.components.v1 as components
 
 from modules import (config_store, correction, metadata_processor, prompts,
                      transformer, xml_html)
-from modules.llm_provider import (PROVIDER_REGISTRY, get_provider,
-                                  list_providers)
+from modules.llm_provider import (PROVIDER_REGISTRY, get_model_tier,
+                                  get_provider, list_providers)
 from modules.theme import render_hero_header, render_sidebar_footer
 
 # Nota: st.set_page_config se ha movido a streamlit_app.py
@@ -50,6 +50,32 @@ def _cleanup_temp_files() -> None:
 
 
 atexit.register(_cleanup_temp_files)
+
+
+def _determine_recommended_mode() -> str:
+    """Sugiere 'pipeline' o 'monolitico' según modelo y tamaño del artículo.
+
+    Returns:
+        'pipeline' si el modelo es pequeño o el artículo es largo;
+        'monolitico' en caso contrario.
+    """
+    selected_model = st.session_state.get("selected_model", "")
+    provider_id = st.session_state.get("_active_provider", "")
+
+    # Criterio 1: modelos locales o clasificados como pequeños
+    if provider_id in ("ollama", "lmstudio"):
+        return "pipeline"
+    tier = get_model_tier(selected_model)
+    if tier == "small":
+        return "pipeline"
+
+    # Criterio 2: artículos largos (>3000 palabras ≈ 6-7 páginas)
+    extracted_text = st.session_state.get("extracted_text", "")
+    word_count = len(extracted_text.split())
+    if word_count > 3000:
+        return "pipeline"
+
+    return "monolitico"
 
 
 def main() -> None:
@@ -223,7 +249,9 @@ def main() -> None:
     if 'last_uploaded_filename' not in st.session_state:
         st.session_state.last_uploaded_filename = None
     if 'pipeline_mode' not in st.session_state:
-        st.session_state.pipeline_mode = "monolitico"
+        st.session_state.pipeline_mode = "auto"
+    if 'pipeline_mode_user_selected' not in st.session_state:
+        st.session_state.pipeline_mode_user_selected = False
     if 'pipeline_result' not in st.session_state:
         st.session_state.pipeline_result = None
 
@@ -531,22 +559,33 @@ def main() -> None:
              st.warning("⚠️ **Atención**: No has validado completamente los metadatos en el Paso 1. Esto podría generar un XML incompleto.")
         
         # ─── Selector de Modo de Procesamiento ────────────────────
+        # Auto-detección: si el usuario nunca eligió manualmente, sugerimos
+        # el modo más adecuado según modelo y longitud del artículo.
+        effective_mode = st.session_state.pipeline_mode
+        if effective_mode == "auto" or not st.session_state.get("pipeline_mode_user_selected"):
+            effective_mode = _determine_recommended_mode()
+            st.session_state.pipeline_mode = effective_mode
+
         mode_cols = st.columns([1, 1])
         with mode_cols[0]:
             processing_mode = st.radio(
                 "Modo de procesamiento:",
                 options=["monolitico", "pipeline"],
-                format_func=lambda x: "🧠 Monolítico (modelos grandes)" if x == "monolitico" else "⚡ Pipeline por fases (Beta)",
-                index=0 if st.session_state.pipeline_mode == "monolitico" else 1,
+                format_func=lambda x: "🧠 Monolítico (modelos grandes)" if x == "monolitico" else "⚡ Pipeline por fases",
+                index=0 if effective_mode == "monolitico" else 1,
                 key="processing_mode_radio",
                 help="Monolítico: envía el artículo completo en un solo prompt (requiere modelo grande). Pipeline: divide el artículo en secciones y las procesa por separado (compatible con modelos pequeños)."
             )
-            if processing_mode != st.session_state.pipeline_mode:
+            if processing_mode != effective_mode:
                 st.session_state.pipeline_mode = processing_mode
+                st.session_state.pipeline_mode_user_selected = True
                 st.rerun()
-        
+
         with mode_cols[1]:
-            if processing_mode == "pipeline":
+            if not st.session_state.get("pipeline_mode_user_selected"):
+                st.info(f"💡 Modo recomendado automáticamente: **{'Pipeline' if effective_mode == 'pipeline' else 'Monolítico'}**. "
+                        f"Puedes cambiarlo manualmente si lo prefieres.")
+            elif processing_mode == "pipeline":
                 st.info("💡 El modo Pipeline subdivide el artículo en Front, Body por secciones y Back, permitiendo usar modelos con ventanas de contexto pequeñas (ej. Ollama en celulares).")
         
         # ─── Configuración Multi-Agente (solo Monolítico) ─────────

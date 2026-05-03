@@ -18,6 +18,20 @@ Python 3.9+ Streamlit app (multi-page, registry in `streamlit_app.py`) with a de
 | CLI transform (DOCX/PDF → XML) | `python -m modules.transformer <input.docx> <output.xml>` |
 | CLI convert (XML → HTML) | `python -m modules.xml_html <input.xml> <output.html>` |
 | Check available models | `python check_models.py` |
+| Benchmark pipeline (mock) | `python tests/benchmark_fase_d.py` |
+
+---
+
+## Processing Modes
+
+The app supports two transformation strategies, selectable in the UI (Tab 2 "Generación"):
+
+1. **Monolithic** (`modules/transformer.py`): sends the entire article in a single prompt. Fast for short articles, but requires a large-context model and can silently truncate long documents.
+2. **Pipeline** (`modules/pipeline_orchestrator.py`): splits the article into semantic segments (front, body sections, back references), processes each chunk independently, and assembles the final XML. This is the **recommended** mode for:
+   - Local/small models (Ollama, LM Studio, Phi-3, Qwen2.5-3B, Llama 3.2 3B)
+   - Articles longer than ~3,000 words
+
+**Auto-selection:** the UI defaults to Pipeline automatically when the selected provider is `ollama`/`lmstudio`, the model tier is "small" (per `llm_provider.get_model_tier()`), or the extracted text exceeds 3,000 words. The user can override this manually at any time.
 
 ---
 
@@ -32,7 +46,7 @@ for f in modules/*.py views/*.py streamlit_app.py; do
 done
 
 # 2. Import check
-python -c "from modules import transformer, metadata_processor, correction, llm_provider, config_store, prompts, xml_html; print('Imports OK')"
+python -c "from modules import transformer, metadata_processor, correction, llm_provider, config_store, prompts, xml_html, document_segmenter, chunk_manager, integrity_checker, ai_integrity_verifier, pipeline_orchestrator; print('Imports OK')"
 
 # 3. Manual smoke test
 streamlit run streamlit_app.py

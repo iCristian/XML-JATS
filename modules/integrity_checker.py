@@ -167,7 +167,9 @@ class IntegrityChecker:
         """
         stats = OriginalStats()
 
-        # Front
+        # Front: solo contabilizamos palabras, NO hash.
+        # El <front> JATS es una transformación estructural de metadatos,
+        # no una transcripción literal del texto plano del documento.
         if segments.front_text.strip():
             words = self._count_words(segments.front_text)
             paras = self._count_paragraphs(segments.front_text)
@@ -177,7 +179,7 @@ class IntegrityChecker:
                 title="Front (Metadatos + Resumen)",
                 word_count=words,
                 paragraph_count=paras,
-                text_hash=self._compute_hash(segments.front_text),
+                text_hash="",  # Hash vacío = se ignora en comparación exacta
                 raw_text=segments.front_text,
             )
 
@@ -234,14 +236,22 @@ class IntegrityChecker:
         xml_sections = self._extract_xml_sections(xml_string)
         xml_total_words = sum(s.word_count for s in xml_sections.values())
 
-        # Comparación global
+        # Comparación global (excluyendo front del ratio)
+        original_body_back_words = sum(
+            s.word_count for k, s in original_stats.sections.items()
+            if k != "front"
+        )
+        xml_body_back_words = sum(
+            s.word_count for k, s in xml_sections.items()
+            if k != "front"
+        )
         global_ratio = (
-            xml_total_words / max(original_stats.total_words, 1)
+            xml_body_back_words / max(original_body_back_words, 1)
         )
         if global_ratio < self.threshold:
             warnings.append(
-                f"Pérdida de texto global: {original_stats.total_words} "
-                f"palabras originales → {xml_total_words} palabras en XML "
+                f"Pérdida de texto global (body+back): {original_body_back_words:,} "
+                f"palabras originales → {xml_body_back_words:,} palabras en XML "
                 f"(ratio {global_ratio:.2%})"
             )
 
@@ -261,6 +271,19 @@ class IntegrityChecker:
                     original_words=orig_sec.word_count,
                     xml_words=0,
                     match=False,
+                ))
+                continue
+
+            # Si el hash original está vacío (ej. front), se salta la comparación
+            # literal porque es una transformación estructural, no transcripción.
+            if not orig_sec.text_hash:
+                section_diffs.append(SectionDiff(
+                    title=orig_sec.title,
+                    original_hash="(ignorado)",
+                    xml_hash=xml_sec.text_hash,
+                    original_words=orig_sec.word_count,
+                    xml_words=xml_sec.word_count,
+                    match=True,
                 ))
                 continue
 
