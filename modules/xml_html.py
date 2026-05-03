@@ -1219,7 +1219,7 @@ button {
 .header-panel {
   margin: 0 auto;
   width: 100%;
-  max-width: 960px;
+  max-width: 100%;
   background: var(--bg-card);
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-md);
@@ -1418,7 +1418,7 @@ body[data-theme="dark"] .logo-dark { display: block; }
 .main {
   background: transparent;
   width: 100%;
-  max-width: 960px;
+  max-width: 100%;
   margin: 0 auto;
 }
 .surface {
