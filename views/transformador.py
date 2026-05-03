@@ -52,6 +52,33 @@ def _cleanup_temp_files() -> None:
 atexit.register(_cleanup_temp_files)
 
 
+@st.cache_data(ttl=600)
+def _get_available_models(provider_id: str, api_key: str, host: Optional[str] = None) -> List[str]:
+    """Lista modelos disponibles para un proveedor.
+
+    Args:
+        provider_id: ID del proveedor.
+        api_key: API key del proveedor.
+        host: Host opcional para proveedores locales (invalida cache).
+
+    Returns:
+        Lista de nombres de modelo.
+    """
+    provider_obj = PROVIDER_REGISTRY.get(provider_id)
+    if not provider_obj:
+        return []
+    default_models = provider_obj.get_default_models()
+    if not api_key and provider_id not in ("ollama", "lmstudio"):
+        return default_models
+    try:
+        live_models = provider_obj.list_models(api_key or "ollama")
+        if live_models:
+            return live_models
+    except Exception:
+        pass
+    return default_models
+
+
 def _determine_recommended_mode() -> str:
     """Sugiere 'pipeline' o 'monolitico' según modelo y tamaño del artículo.
 
@@ -178,32 +205,14 @@ def main() -> None:
         # ─── Selección de Modelo ───
         st.markdown("📦 **Modelo**")
 
-        @st.cache_data(ttl=600)  # Reducir TTL para mayor frescura
-        def get_available_models(provider_id: str, api_key: str, host: Optional[str] = None):
-            provider_obj = PROVIDER_REGISTRY.get(provider_id)
-            if not provider_obj:
-                return []
-            default_models = provider_obj.get_default_models()
-            if not api_key and provider_id not in ("ollama", "lmstudio"):
-                return default_models
-            try:
-                # El host ya se obtiene internamente en list_models desde config_store,
-                # pero pasarlo aquí asegura que @st.cache_data invalide si cambia.
-                live_models = provider_obj.list_models(api_key or "ollama")
-                if live_models:
-                    return live_models
-            except Exception:
-                pass
-            return default_models
-
         # Obtener host actual para invalidar cache si cambia
         current_local_host = None
         if selected_provider == "ollama":
             current_local_host = config_store.get_ollama_host()
         elif selected_provider == "lmstudio":
             current_local_host = config_store.get_lmstudio_host()
-            
-        model_options = get_available_models(selected_provider, st.session_state["_active_api_key"], current_local_host)
+
+        model_options = _get_available_models(selected_provider, st.session_state["_active_api_key"], current_local_host)
 
         selected_model = st.selectbox(
             "Modelo:",
@@ -254,6 +263,10 @@ def main() -> None:
         st.session_state.pipeline_mode_user_selected = False
     if 'pipeline_result' not in st.session_state:
         st.session_state.pipeline_result = None
+    if 'pipeline_provider_id' not in st.session_state:
+        st.session_state.pipeline_provider_id = st.session_state.get("_active_provider", "gemini")
+    if 'pipeline_model_name' not in st.session_state:
+        st.session_state.pipeline_model_name = st.session_state.get("selected_model", "gemini-2.5-flash")
 
     # Definimos Tabs
     # Tab 0: Carga
@@ -740,15 +753,68 @@ def main() -> None:
             # Configuración del chunk
             chunk_cfg = st.expander("Configuración avanzada del Pipeline")
             with chunk_cfg:
-                _pid_pipe = st.session_state.get('_active_provider', 'gemini')
-                _mdl_pipe = st.session_state.get('selected_model', 'gemini-2.5-flash')
-                _key_pipe = st.session_state.get('_active_api_key', '')
-                
+                # ─── Selector de proveedor y modelo para el Pipeline ───
+                all_providers = list_providers(filter_unavailable=True)
+                all_provider_ids = [p["id"] for p in all_providers]
+                all_provider_names = {p["id"]: p["name"] for p in all_providers}
+
+                pipe_provider = st.selectbox(
+                    "🤖 Proveedor para el Pipeline:",
+                    options=all_provider_ids,
+                    format_func=lambda pid: all_provider_names.get(pid, pid),
+                    index=all_provider_ids.index(st.session_state.pipeline_provider_id)
+                    if st.session_state.pipeline_provider_id in all_provider_ids else 0,
+                    key="pipeline_provider_select",
+                    help="Proveedor de IA que ejecutará el Pipeline. Puede ser diferente del usado para metadatos."
+                )
+                if pipe_provider != st.session_state.pipeline_provider_id:
+                    st.session_state.pipeline_provider_id = pipe_provider
+                    # Resetear modelo al default del nuevo proveedor
+                    default_models = PROVIDER_REGISTRY[pipe_provider].get_default_models()
+                    st.session_state.pipeline_model_name = default_models[0] if default_models else ""
+                    st.rerun()
+
+                # API key del proveedor seleccionado para el pipeline
+                _key_pipe = config_store.load_provider_key(pipe_provider) or ""
+                if not _key_pipe and pipe_provider not in ("ollama", "lmstudio"):
+                    env_var = PROVIDER_REGISTRY[pipe_provider].get_api_key_env_var()
+                    _key_pipe = os.environ.get(env_var, "") if env_var else ""
+
+                # Host para locales
+                pipe_host = None
+                if pipe_provider == "ollama":
+                    pipe_host = config_store.get_ollama_host()
+                elif pipe_provider == "lmstudio":
+                    pipe_host = config_store.get_lmstudio_host()
+
+                # Selector de modelo
+                pipe_model_options = _get_available_models(pipe_provider, _key_pipe, pipe_host)
+                pipe_model = st.selectbox(
+                    "📦 Modelo para el Pipeline:",
+                    options=pipe_model_options,
+                    index=pipe_model_options.index(st.session_state.pipeline_model_name)
+                    if st.session_state.pipeline_model_name in pipe_model_options else 0,
+                    key="pipeline_model_select",
+                    help="Modelo que ejecutará cada fase del Pipeline."
+                )
+                if pipe_model != st.session_state.pipeline_model_name:
+                    st.session_state.pipeline_model_name = pipe_model
+                    st.rerun()
+
+                _pid_pipe = pipe_provider
+                _mdl_pipe = pipe_model
+
+                # Verificación de estado para locales
+                if pipe_provider in ("ollama", "lmstudio"):
+                    is_ready = PROVIDER_REGISTRY[pipe_provider]._ensure_local_ready()
+                    if not is_ready:
+                        st.warning(f"⚠️ {all_provider_names.get(pipe_provider)} no responde. Verifica que esté en ejecución.")
+
                 # Autodetección de context window y tier
                 from modules.llm_provider import estimate_context_window, get_model_tier
                 detected_ctx = estimate_context_window(_pid_pipe, _mdl_pipe, _key_pipe)
                 model_tier = get_model_tier(_mdl_pipe)
-                
+
                 col1, col2, col3 = st.columns(3)
                 with col1:
                     st.metric("Contexto detectado", f"{detected_ctx:,} tokens")
@@ -756,9 +822,8 @@ def main() -> None:
                     tier_emoji = {"small": "🐤", "medium": "🦅", "large": "🦖"}.get(model_tier, "❓")
                     st.metric("Tier del modelo", f"{tier_emoji} {model_tier.upper()}")
                 with col3:
-                    st.text(f"{_pid_pipe}")
-                    st.text(f"{_mdl_pipe}")
-                
+                    st.caption(f"{_pid_pipe} / {_mdl_pipe}")
+
                 col_chunk, col_para = st.columns(2)
                 with col_chunk:
                     max_input_tokens = st.selectbox(
@@ -773,13 +838,13 @@ def main() -> None:
                         value=False,
                         help="Activa el procesamiento paralelo de secciones (más rápido, pero consume más RAM/GPU). Desactívalo para móviles."
                     )
-                
+
                 use_light = st.toggle(
                     "Usar prompts ligeros",
                     value=(model_tier == "small"),
                     help="Reduce las instrucciones del prompt para modelos pequeños (3B-7B). Mejora estabilidad en Ollama móvil."
                 )
-                
+
                 st.checkbox(
                     "Forzar verificación IA de integridad",
                     value=True,
