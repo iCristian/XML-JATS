@@ -640,7 +640,7 @@ def main() -> None:
                         elif pid == "lmstudio":
                             _host = config_store.get_lmstudio_host()
                             
-                        models = get_available_models(pid, api_key, _host)
+                        models = _get_available_models(pid, api_key, _host)
                         
                         selected_models = st.multiselect(
                             f"Modelos de {provider_names_multi[pid]}:",
