@@ -199,3 +199,7 @@ codigoFuente_inscripcion.pdf
 
 # Local test/utility scripts (not for public distribution)
 tests/
+
+# Local test files (DOCX/XML artifacts)
+4975.docx
+4975.xml
