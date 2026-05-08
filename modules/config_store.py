@@ -520,6 +520,7 @@ _JOURNAL_KEYS: Dict[str, str] = {
     "doi_base":       "journal_doi_base",
     "subject":        "journal_subject",
     "license_url":    "journal_license_url",
+    "license_text":   "journal_license_text",
     "default_lang":   "journal_default_lang",
 }
 

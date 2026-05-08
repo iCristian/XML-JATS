@@ -496,6 +496,38 @@ def sanitize_generated_xml(xml_string: str) -> str:
     # Por robustez, lo envolvemos en un <sec> si está suelto en <body>
     # (esto generalmente ya se resuelve con el paso 6)
 
+    # ── 8. SciELO: element-citation → mixed-citation ───────────
+    xml_string = xml_string.replace("<element-citation", "<mixed-citation")
+    xml_string = xml_string.replace("</element-citation>", "</mixed-citation>")
+
+    # ── 9. SciELO: volumen/issue vacíos → placeholder ──────────
+    xml_string = re.sub(r'<volume>\s*</volume>', '<volume>1</volume>', xml_string)
+    xml_string = re.sub(r'<issue>\s*</issue>', '<issue>1</issue>', xml_string)
+
+    # ── 10. SciELO: <fig><caption><p> → <caption><title> ──────
+    # Reemplazar <caption><p>texto</p></caption> → <caption><title>texto</title></caption>
+    xml_string = re.sub(
+        r'<caption>\s*<p>(.*?)</p>\s*</caption>',
+        r'<caption>\n<title>\1</title>\n</caption>',
+        xml_string,
+        flags=re.DOTALL,
+    )
+
+    # ── 11. SciELO: generar <counts> si falta ────────────────────
+    try:
+        xml_string = _inject_counts(xml_string)
+    except Exception:
+        pass
+
+    # ── 12. SciELO: agregar @iso-8601-date a fechas de history ───
+    xml_string = _add_iso_dates_to_history(xml_string)
+
+    # ── 13. SciELO: fn-type="other" → "supported-by" ─────────────
+    xml_string = xml_string.replace('fn-type="other"', 'fn-type="supported-by"')
+
+    # ── 14. SciELO: ISSN placeholder genérico ────────────────────
+    xml_string = xml_string.replace('<issn pub-type="ppub">0000-0000</issn>', '<issn pub-type="ppub">XXXX-XXXX</issn>')
+
     return xml_string
 
 
@@ -571,6 +603,145 @@ def _move_orphan_table_wraps(xml_string: str) -> str:
             result = match.group(1) + '\n' + result
     
     return result
+
+
+def _inject_counts(xml_string: str) -> str:
+    """Inserta <counts> dentro de <article-meta> si falta.
+
+    Cuenta figuras, tablas, referencias y páginas del XML parseado.
+    """
+    import re
+    try:
+        parser = etree.XMLParser(recover=True, encoding='utf-8', resolve_entities=False, no_network=True)
+        root = etree.fromstring(xml_string.encode('utf-8'), parser=parser)
+    except Exception:
+        return xml_string
+
+    article_meta = root.find('.//article-meta')
+    if article_meta is None:
+        return xml_string
+
+    # Si ya existe <counts>, no tocar
+    if article_meta.find('counts') is not None:
+        return xml_string
+
+    # Contar elementos
+    fig_count = len(root.findall('.//fig'))
+    table_count = len(root.findall('.//table-wrap'))
+    ref_count = len(root.findall('.//back//ref'))
+
+    # Páginas: lpage - fpage + 1
+    fpage_el = article_meta.find('fpage')
+    lpage_el = article_meta.find('lpage')
+    try:
+        fpage = int(fpage_el.text) if fpage_el is not None and fpage_el.text else 1
+        lpage = int(lpage_el.text) if lpage_el is not None and lpage_el.text else fpage
+        page_count = max(1, lpage - fpage + 1)
+    except (ValueError, TypeError):
+        page_count = 1
+
+    counts = etree.Element('counts')
+    etree.SubElement(counts, 'fig-count', count=str(fig_count))
+    etree.SubElement(counts, 'table-count', count=str(table_count))
+    etree.SubElement(counts, 'ref-count', count=str(ref_count))
+    etree.SubElement(counts, 'page-count', count=str(page_count))
+
+    # Insertar justo antes del primer <abstract> o al final de <article-meta>
+    abstract = article_meta.find('abstract')
+    if abstract is not None:
+        idx = list(article_meta).index(abstract)
+        article_meta.insert(idx, counts)
+    else:
+        article_meta.append(counts)
+
+    return etree.tostring(root, encoding='unicode', xml_declaration=False)
+
+
+def _add_iso_dates_to_history(xml_string: str) -> str:
+    """Agrega @iso-8601-date a cada <date> dentro de <history>.
+
+    El formato ISO esperado es YYYY-MM-DD. Si falta día o mes, se usa
+    YYYY-MM o YYYY según corresponda.
+    """
+    import re
+
+    def _patch_date(match: 're.Match') -> str:
+        tag = match.group(1)
+        day = (match.group(2) or '').strip()
+        month = (match.group(3) or '').strip()
+        year = (match.group(4) or '').strip()
+
+        if not year:
+            return match.group(0)
+
+        # Construir ISO según disponibilidad
+        iso = year
+        if month and month.isdigit():
+            iso = f"{year}-{int(month):02d}"
+            if day and day.isdigit():
+                iso = f"{year}-{int(month):02d}-{int(day):02d}"
+        elif month:
+            # Mes textual — intentar mapeo básico
+            meses = {
+                'enero': '01', 'febrero': '02', 'marzo': '03', 'abril': '04',
+                'mayo': '05', 'junio': '06', 'julio': '07', 'agosto': '08',
+                'septiembre': '09', 'octubre': '10', 'noviembre': '11', 'diciembre': '12',
+                'january': '01', 'february': '02', 'march': '03', 'april': '04',
+                'may': '05', 'june': '06', 'july': '07', 'august': '08',
+                'september': '09', 'october': '10', 'november': '11', 'december': '12',
+            }
+            m = meses.get(month.lower(), '')
+            if m:
+                iso = f"{year}-{m}"
+                if day and day.isdigit():
+                    iso = f"{year}-{m}-{int(day):02d}"
+
+        return f'<date date-type="{tag}" iso-8601-date="{iso}">{match.group(5)}</date>'
+
+    # Patrón robusto para <date date-type="...">...<day>..</day><month>..</month><year>..</year>...</date>
+    pattern = re.compile(
+        r'<date\s+date-type="([^"]+)"(?![^>]*iso-8601-date)>(.*?)<year>([^<]+)</year>(.*?)</date>',
+        re.DOTALL
+    )
+
+    # Necesitamos capturar day y month que pueden estar antes o después del year
+    def _patch_date_v2(match: 're.Match') -> str:
+        date_type = match.group(1)
+        inner = match.group(2)
+        year = match.group(3).strip()
+        rest = match.group(4)
+
+        day_match = re.search(r'<day>([^<]+)</day>', inner)
+        month_match = re.search(r'<month>([^<]+)</month>', inner)
+        day = day_match.group(1).strip() if day_match else ''
+        month = month_match.group(1).strip() if month_match else ''
+
+        if not year:
+            return match.group(0)
+
+        iso = year
+        if month and month.isdigit():
+            iso = f"{year}-{int(month):02d}"
+            if day and day.isdigit():
+                iso = f"{year}-{int(month):02d}-{int(day):02d}"
+        elif month:
+            meses = {
+                'enero': '01', 'febrero': '02', 'marzo': '03', 'abril': '04',
+                'mayo': '05', 'junio': '06', 'julio': '07', 'agosto': '08',
+                'septiembre': '09', 'octubre': '10', 'noviembre': '11', 'diciembre': '12',
+                'january': '01', 'february': '02', 'march': '03', 'april': '04',
+                'may': '05', 'june': '06', 'july': '07', 'august': '08',
+                'september': '09', 'october': '10', 'november': '11', 'december': '12',
+            }
+            m = meses.get(month.lower(), '')
+            if m:
+                iso = f"{year}-{m}"
+                if day and day.isdigit():
+                    iso = f"{year}-{m}-{int(day):02d}"
+
+        return f'<date date-type="{date_type}" iso-8601-date="{iso}">{inner}<year>{year}</year>{rest}</date>'
+
+    return pattern.sub(_patch_date_v2, xml_string)
 
 
 def validar_jats_xml(xml_content: str) -> Tuple[bool, List[str]]:

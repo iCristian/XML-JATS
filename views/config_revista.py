@@ -101,12 +101,14 @@ def main() -> None:
     col_ids1, col_ids2, col_ids3 = st.columns(3, gap="large")
     with col_ids1:
         new_issn_print = st.text_input(
-            "ISSN Impreso",
+            "ISSN Impreso *",
             value=cfg["issn_print"],
             placeholder="0000-0000",
-            help='→ `<issn pub-type="ppub">`',
+            help='→ `<issn pub-type="ppub">` (obligatorio para SciELO)',
             key="jr_issn_print",
         )
+        if not cfg["issn_print"].strip() or cfg["issn_print"].strip() in ("0000-0000", "XXXX-XXXX"):
+            st.warning("⚠️ El ISSN impreso no está configurado. SciELO rechazará el XML hasta que lo completes.")
     with col_ids2:
         new_issn_electronic = st.text_input(
             "ISSN Electrónico",
@@ -157,6 +159,13 @@ def main() -> None:
             help="→ `<license xlink:href=\"...\">`",
             key="jr_license",
         )
+        new_license_text = st.text_area(
+            "Texto de la Licencia",
+            value=cfg.get("license_text", "Esta obra está bajo una licencia internacional Creative Commons Atribución 4.0."),
+            height=68,
+            help="Texto descriptivo de la licencia → `<license-p>`",
+            key="jr_license_text",
+        )
 
     st.markdown("---")
 
@@ -204,6 +213,7 @@ def main() -> None:
             "doi_base": new_doi_base,
             "subject": new_subject,
             "license_url": new_license,
+            "license_text": new_license_text,
             "default_lang": new_lang,
         }
         config_store.save_journal_config(journal_data)

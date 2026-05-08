@@ -82,24 +82,27 @@ def _get_available_models(provider_id: str, api_key: str, host: Optional[str] = 
 def _determine_recommended_mode() -> str:
     """Sugiere 'pipeline' o 'monolitico' según modelo y tamaño del artículo.
 
+    Por defecto recomienda monolítico. Solo sugiere pipeline cuando el modelo
+    es claramente pequeño (local o 3B-7B) o el artículo es extremadamente largo.
+
     Returns:
-        'pipeline' si el modelo es pequeño o el artículo es largo;
+        'pipeline' si el modelo es local/small o el artículo supera 6 000 palabras;
         'monolitico' en caso contrario.
     """
     selected_model = st.session_state.get("selected_model", "")
     provider_id = st.session_state.get("_active_provider", "")
 
-    # Criterio 1: modelos locales o clasificados como pequeños
+    # Criterio 1: solo modelos locales o clasificados como "small" (3B-7B)
     if provider_id in ("ollama", "lmstudio"):
         return "pipeline"
     tier = get_model_tier(selected_model)
     if tier == "small":
         return "pipeline"
 
-    # Criterio 2: artículos largos (>3000 palabras ≈ 6-7 páginas)
+    # Criterio 2: artículos extremadamente largos (>6 000 palabras ≈ 12+ páginas)
     extracted_text = st.session_state.get("extracted_text", "")
     word_count = len(extracted_text.split())
-    if word_count > 3000:
+    if word_count > 6000:
         return "pipeline"
 
     return "monolitico"
@@ -258,9 +261,12 @@ def main() -> None:
     if 'last_uploaded_filename' not in st.session_state:
         st.session_state.last_uploaded_filename = None
     if 'pipeline_mode' not in st.session_state:
-        st.session_state.pipeline_mode = "auto"
+        st.session_state.pipeline_mode = "monolitico"
     if 'pipeline_mode_user_selected' not in st.session_state:
         st.session_state.pipeline_mode_user_selected = False
+    # Reset a monolítico si el usuario no eligió manualmente y la sesión es antigua
+    if not st.session_state.pipeline_mode_user_selected and st.session_state.pipeline_mode == "pipeline":
+        st.session_state.pipeline_mode = "monolitico"
     if 'pipeline_result' not in st.session_state:
         st.session_state.pipeline_result = None
     if 'pipeline_provider_id' not in st.session_state:
@@ -399,6 +405,8 @@ def main() -> None:
                                     meta["journal_id"] = journal_defaults["journal_id"]
                                 if journal_defaults.get("license_url"):
                                     meta["license_url"] = journal_defaults["license_url"]
+                                if journal_defaults.get("license_text"):
+                                    meta["license_text"] = journal_defaults["license_text"]
                                 if journal_defaults.get("subject"):
                                     meta["subject"] = journal_defaults["subject"]
                                 
@@ -493,6 +501,8 @@ def main() -> None:
                                 new_journal = st.session_state.meta_journal
                                 new_doi = st.session_state.meta_doi
                                 new_authors_str = st.session_state.meta_authors
+                                new_volume = st.session_state.get("meta_volume", "")
+                                new_issue = st.session_state.get("meta_issue", "")
                                 
                                 # Procesar autores
                                 authors_list = []
@@ -519,6 +529,8 @@ def main() -> None:
                                     'journal_title': new_journal,
                                     'publication_date': new_date,
                                     'doi': new_doi,
+                                    'volume': new_volume,
+                                    'issue': new_issue,
                                     'authors': authors_list
                                 })
                                 
@@ -549,6 +561,15 @@ def main() -> None:
                             
                             st.text_area("Autores (separados por coma)", value=authors_str, help="Ej: Juan Pérez, María González", key="meta_authors")
 
+                            # Campos adicionales de publicación
+                            mv1, mv2, mv3 = st.columns(3)
+                            with mv1:
+                                st.text_input("Volumen", value=meta.get('volume', ''), placeholder="Ej: 5", key="meta_volume")
+                            with mv2:
+                                st.text_input("Número (Issue)", value=meta.get('issue', ''), placeholder="Ej: 2", key="meta_issue")
+                            with mv3:
+                                st.text_input("Páginas (ej: 13-21)", value=f"{meta.get('fpage', '')}–{meta.get('lpage', '')}".replace("–", "-") if meta.get('fpage') else "", placeholder="Ej: 13-21", key="meta_pages")
+
                             st.markdown("<br>", unsafe_allow_html=True)  # safe: static HTML
                             st.form_submit_button("💾 Guardar e ir al paso 2", on_click=save_metadata_callback, type="primary")
 
@@ -572,34 +593,73 @@ def main() -> None:
              st.warning("⚠️ **Atención**: No has validado completamente los metadatos en el Paso 1. Esto podría generar un XML incompleto.")
         
         # ─── Selector de Modo de Procesamiento ────────────────────
-        # Auto-detección: si el usuario nunca eligió manualmente, sugerimos
-        # el modo más adecuado según modelo y longitud del artículo.
         effective_mode = st.session_state.pipeline_mode
-        if effective_mode == "auto" or not st.session_state.get("pipeline_mode_user_selected"):
+        if not st.session_state.get("pipeline_mode_user_selected"):
             effective_mode = _determine_recommended_mode()
             st.session_state.pipeline_mode = effective_mode
 
-        mode_cols = st.columns([1, 1])
-        with mode_cols[0]:
-            processing_mode = st.radio(
-                "Modo de procesamiento:",
-                options=["monolitico", "pipeline"],
-                format_func=lambda x: "🧠 Monolítico (modelos grandes)" if x == "monolitico" else "⚡ Pipeline por fases",
-                index=0 if effective_mode == "monolitico" else 1,
-                key="processing_mode_radio",
-                help="Monolítico: envía el artículo completo en un solo prompt (requiere modelo grande). Pipeline: divide el artículo en secciones y las procesa por separado (compatible con modelos pequeños)."
-            )
-            if processing_mode != effective_mode:
-                st.session_state.pipeline_mode = processing_mode
-                st.session_state.pipeline_mode_user_selected = True
-                st.rerun()
+        st.markdown("#### 🎯 Estrategia de Transformación")
 
-        with mode_cols[1]:
-            if not st.session_state.get("pipeline_mode_user_selected"):
-                st.info(f"💡 Modo recomendado automáticamente: **{'Pipeline' if effective_mode == 'pipeline' else 'Monolítico'}**. "
-                        f"Puedes cambiarlo manualmente si lo prefieres.")
-            elif processing_mode == "pipeline":
-                st.info("💡 El modo Pipeline subdivide el artículo en Front, Body por secciones y Back, permitiendo usar modelos con ventanas de contexto pequeñas (ej. Ollama en celulares).")
+        mode_cols = st.columns(2, gap="medium")
+        modes = [
+            {
+                "id": "monolitico",
+                "icon": "🧠",
+                "title": "Monolítico",
+                "subtitle": "Un solo prompt, artículo completo.",
+                "detail": "Envía el documento entero al modelo en una sola llamada. Ideal cuando el modelo tiene suficiente contexto.",
+                "pros": ["Máxima coherencia global", "Una sola llamada a la API", "Mejor para modelos grandes (Gemini, GPT-4, Claude)"],
+                "cons": ["Requiere modelo con gran ventana de contexto", "Puede truncar documentos largos (> 3.000 palabras)"],
+                "ideal": "Modelos grandes + artículos cortos",
+            },
+            {
+                "id": "pipeline",
+                "icon": "⚡",
+                "title": "Pipeline por Fases",
+                "subtitle": "🧪 Experimental — Divide, transforma y ensambla.",
+                "detail": "Separa el artículo en Front, Body por secciones y Back. Cada parte se transforma por separado y luego se ensambla vía DOM. **Esta estrategia está en fase experimental y puede tener limitaciones.**",
+                "pros": ["Compatible con modelos pequeños (Ollama, LM Studio)", "Maneja artículos de cualquier longitud", "Sanitización DOM garantiza XML well-formed"],
+                "cons": ["Múltiples llamadas a la API", "Requiere ensamblaje posterior", "Fase experimental — puede presentar errores estructurales"],
+                "ideal": "Modelos locales o artículos extensos",
+            },
+        ]
+
+        selected_mode = st.session_state.pipeline_mode
+        for idx, mode in enumerate(modes):
+            with mode_cols[idx]:
+                is_selected = selected_mode == mode["id"]
+                is_recommended = effective_mode == mode["id"]
+
+                with st.container(border=True):
+                    # Header
+                    header = f"**{mode['icon']} {mode['title']}**"
+                    if is_recommended and not st.session_state.get("pipeline_mode_user_selected"):
+                        header += "  &nbsp;`:rainbow[✨ RECOMENDADO]`"
+                    st.markdown(header)
+                    st.caption(mode["subtitle"])
+
+                    # Descripción
+                    st.markdown(mode["detail"])
+
+                    # Expandible con pros/cons (más compacto)
+                    with st.expander("Ver detalles", expanded=False):
+                        st.markdown("**Ventajas**")
+                        for p in mode["pros"]:
+                            st.markdown(f"- :green-badge[✓] {p}")
+                        st.markdown("**Limitaciones**")
+                        for c in mode["cons"]:
+                            st.markdown(f"- :orange-badge[▲] {c}")
+                        st.markdown(f"**Ideal para:** *{mode['ideal']}*")
+
+                    # Botón de acción
+                    btn_type = "primary" if is_selected else "secondary"
+                    btn_label = "✓  Seleccionado" if is_selected else f"Usar {mode['title']}"
+                    if st.button(btn_label, key=f"mode_btn_{mode['id']}", type=btn_type, use_container_width=True):
+                        st.session_state.pipeline_mode = mode["id"]
+                        st.session_state.pipeline_mode_user_selected = True
+                        st.rerun()
+
+        processing_mode = st.session_state.pipeline_mode
         
         # ─── Configuración Multi-Agente (solo Monolítico) ─────────
         if processing_mode == "monolitico":
@@ -1217,9 +1277,9 @@ def main() -> None:
                     st.markdown("### 🛠️ Corrección Inteligente Asistida")
                     
                     if not st.session_state.get('proposed_correction_plan'):
-                        st.info("La IA puede revisar estos problemas y proponer un 'Plan de Cambios'. Podrás revisar este plan y realizar observaciones o proveer métadatos faltantes antes de permitirle a la IA tocar el código.")
-                        if st.button("🔍 Generar Plan de Cambios con IA", type="primary", key="btn_ai_plan"):
-                            with st.spinner("La IA está elaborando el plan de acción..."):
+                        st.info("El asistente revisará los problemas y te hará preguntas sencillas en lenguaje natural sobre los datos que faltan. No necesitas saber nada de XML.")
+                        if st.button("🔍 Analizar y preguntarme qué falta", type="primary", key="btn_ai_plan"):
+                            with st.spinner("Analizando los errores y preparando preguntas..."):
                                 api_key = st.session_state.get('_active_api_key', '')
                                 selected_model = st.session_state.get("selected_model", "gemini-2.5-flash")
                                 _pid = st.session_state.get('_active_provider', 'gemini')
@@ -1248,15 +1308,20 @@ def main() -> None:
                                 st.session_state.proposed_correction_plan = response_text
                                 st.rerun()
                     else:
-                        # Mostrar el plan propuesto y el text area
-                        st.markdown("#### 📝 Plan de Cambios Propuesto por la IA")
+                        # Mostrar el plan como preguntas amigables
+                        st.markdown("#### 📋 Información requerida para completar tu artículo")
+                        st.info("💬 **Responde las preguntas a continuación en tus propias palabras.** El asistente se encargará de toda la parte técnica del XML.")
                         st.markdown(st.session_state.proposed_correction_plan)
                         
-                        st.markdown("#### ✍️ Observaciones y Ejecución")
-                        user_feedback = st.text_area("Agrega datos faltantes (ej. correos, ORCIDs) o instrucciones adicionales para la IA antes de aplicar el plan:", height=100)
+                        st.markdown("#### ✍️ Tus respuestas")
+                        user_feedback = st.text_area(
+                            "Escribe aquí los datos que te solicitó el asistente (volumen, número de la revista, nombres de autores, correos, fechas, etc.):",
+                            height=120,
+                            placeholder="Ejemplo:\n- El artículo se publica en el Vol. 5, Núm. 2\n- El autor de correspondencia es Juan Pérez, correo jperez@universidad.cl\n- Fecha de recibido: 15/03/2025, aceptado: 20/06/2025"
+                        )
                         
-                        if st.button("🚀 Proceder a Ejecutar Plan y Corregir XML", type="primary", key="btn_ai_execute"):
-                            with st.spinner("La IA está aplicando estructuralmente el plan al XML..."):
+                        if st.button("🚀 Aplicar correcciones y generar XML", type="primary", key="btn_ai_execute"):
+                            with st.spinner("Incorporando tus datos y corrigiendo el documento..."):
                                 api_key = st.session_state.get('_active_api_key', '')
                                 selected_model = st.session_state.get("selected_model", "gemini-2.5-flash")
                                 _pid = st.session_state.get('_active_provider', 'gemini')
@@ -1346,6 +1411,15 @@ def main() -> None:
                         mime="application/octet-stream"
                     )
             
+            # Advertencia de validación SciELO
+            st.markdown("---")
+            st.warning(
+                "⚠️ **Validación obligatoria antes de enviar a SciELO**\n\n"
+                "El XML generado debe pasar por el validador oficial de SciELO para asegurar el cumplimiento del estándar SPS. "
+                "Incluso si la validación DTD local es exitosa, pueden existir reglas específicas de SciELO no cubiertas por esta herramienta.\n\n"
+                "🔗 [Validador SciELO Style Checker](https://manager.scielo.org/tools/validators/stylechecker/)"
+            )
+
             if st.session_state.generated_html:
                 st.markdown("---")
                 st.info("💡 La vista previa se abre en una pestaña nueva del navegador para que los enlaces y estilos funcionen correctamente.")

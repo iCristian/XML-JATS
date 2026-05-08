@@ -1,6 +1,6 @@
 # Transformador XML JATS
 
-> **v0.7.5** · Python 3.9+ · Streamlit · JATS 1.3 / 1.4 (ANSI/NISO Z39.96-2024)
+> **v0.8.0-alpha** · Python 3.9+ · Streamlit · JATS 1.3 / 1.4 (ANSI/NISO Z39.96-2024)
 
 Una herramienta avanzada impulsada por **Inteligencia Artificial Multi-Agente** para convertir documentos de Word (`.docx`) y PDF (`.pdf`) al estándar **JATS XML** validado, diseñada específicamente para el flujo editorial de revistas científicas.
 
@@ -381,6 +381,19 @@ El uso de servicios de terceros (Google, OpenAI, Anthropic, DeepSeek, Mistral, G
 Para consultas sobre licenciamiento o uso, contactar a: [cristian.carreno@uv.cl](mailto:cristian.carreno@uv.cl)
 
 ## 📅 Historial de Versiones (Changelog)
+
+### v0.8.0-alpha — Pipeline por Fases, Sanitización DOM y Proveedor OpenCode Go
+
+- **Pipeline v2 con Ensamblaje DOM**: Nueva arquitectura de ensamblaje basada en `lxml.etree` que reemplaza la concatenación de strings. Cada fragmento (front, body, back) se parsea como subtree y se añade al árbol DOM, garantizando XML well-formed incluso si el modelo genera fragmentos con errores.
+- **Degradación Progresiva (L1→L4)**: Sistema de 4 niveles de complejidad de prompts para modelos pequeños. Desde prompts normales (L1) hasta formato de texto marcado (L4) que se convierte a XML programáticamente sin usar LLM. El nivel inicial se selecciona automáticamente según el tier del modelo (small/medium/large).
+- **Sanitizador por Fase**: Nuevo módulo `pipeline_sanitizer.py` que valida cada fragmento XML antes del ensamblaje: extrae tags del interior de `<article>` si el modelo los envuelve, cierra tags huérfanos, elimina placeholders y crea marcadores seguros si un fragmento es irrecuperable.
+- **Gestión de Output Budget**: El `ChunkManager` ahora considera `max_output_tokens` además de `max_input_tokens`. Divide chunks más finamente para modelos con ventanas de salida pequeñas (ej. 2048 tokens en móviles).
+- **Persistencia Temporal**: Nuevo módulo `pipeline_temp_manager.py` que guarda automáticamente todos los artefactos del pipeline (prompts, outputs, sanitizados, ensamblados, validación) en `data/pipeline_temp/` para debug y auditoría.
+- **Verificación IA Condicional**: El `AiIntegrityVerifier` se omite automáticamente para modelos "small", ahorrando llamadas API y evitando falsos positivos en modelos débiles.
+- **UI Profesional de Selección de Modo**: Tarjetas comparativas Monolítico vs Pipeline con ventajas, limitaciones y recomendación automática. Badge dinámico que sugiere el modo óptimo según modelo y longitud del artículo.
+- **Proveedor OpenCode Go**: Soporte nativo para modelos de suscripción de OpenCode Go (12 modelos: GLM, Kimi, DeepSeek V4, Qwen, MiniMax, MiMo), con API compatible con OpenAI y base URL `opencode.ai/zen/go/v1`.
+- **Compatibilidad SciELO**: Atributos `specific-use="sps-1.8"` y `dtd-version="1.1"` en el `<article>` raíz para cumplir con el validador oficial de SciELO Style Checker. Advertencia de validación obligatoria en el paso de Resultados.
+- **Versión de framework**: Actualización general a `v0.8.0-alpha`.
 
 ### v0.7.5 — Auditoría Semántica y Robustez de Infraestructura
 

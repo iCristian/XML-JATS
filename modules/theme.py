@@ -18,7 +18,7 @@ import streamlit as st
 BRAND_CYAN = "#00FFFF"
 BRAND_MAGENTA = "#FF00FF"
 BRAND_DARK_BG = "#0a0e1a"
-BRAND_VERSION = "v0.7.5"
+BRAND_VERSION = "v0.8.0-alpha"
 
 LOGO_PATH = Path("resources/logos/logo.png")
 LOGO_MARCA_PATH = Path("resources/logos/logo_marca.png")

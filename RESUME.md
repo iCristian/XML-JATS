@@ -4,7 +4,7 @@
 
 **XML-JATS-Transformer** es una herramienta especializada para la **conversión automática de documentos académicos** (Word/PDF) al formato **JATS XML** (Journal Article Tag Suite), el estándar internacional utilizado por revistas científicas para indexación, preservación digital e interoperabilidad con plataformas como OJS, PubMed Central y SciELO.
 
-Desarrollado para automatizar el flujo editorial de la Universidad de Valparaíso, el sistema emplea una arquitectura Multi-Agente con soporte para múltiples proveedores de LLM (Google Gemini, OpenAI, Anthropic, DeepSeek, Mistral, Groq, Ollama local).
+Desarrollado para automatizar el flujo editorial de la Universidad de Valparaíso, el sistema emplea una arquitectura Multi-Agente con soporte para múltiples proveedores de LLM (Google Gemini, OpenAI, Anthropic, DeepSeek, Mistral, Groq, OpenCode Go, Ollama local).
 
 ---
 
@@ -34,20 +34,28 @@ streamlit_app.py (Punto de Entrada)
               ┌─────────────────────────────────────────┘
               │
               ▼
-       modules/                     (Backend — sin dependencias de UI)
-       ├── transformer.py           (Núcleo: DOCX/PDF → XML JATS)
-       ├── metadata_processor.py    (Extracción metadatos con IA)
-       ├── correction.py            (Corrección XML asistida por IA)
-       ├── prompts.py               (Repositorio centralizado de prompts)
-       ├── xml_html.py              (XML JATS → HTML5 responsivo)
-       ├── config_store.py          (Persistencia SQLite — API keys + métricas)
-       └── llm_provider.py          (Abstracción Multi-Proveedor)
-              │
-              ▼
-       modules/dtd/                 (Validación offline)
-       ├── JATS-Publishing-1-3-MathML3-DTD/
-       ├── JATS-Publishing-1-4-MathML3-DTD/  ← DTD por defecto
-       └── download_jats14.py
+        modules/                     (Backend — sin dependencias de UI)
+        ├── transformer.py           (Núcleo: DOCX/PDF → XML JATS)
+        ├── metadata_processor.py    (Extracción metadatos con IA)
+        ├── correction.py            (Corrección XML asistida por IA)
+        ├── prompts.py               (Repositorio centralizado de prompts)
+        ├── xml_html.py              (XML JATS → HTML5 responsivo)
+        ├── config_store.py          (Persistencia SQLite — API keys + métricas)
+        ├── llm_provider.py          (Abstracción Multi-Proveedor)
+        ├── pipeline_orchestrator.py (Pipeline por Fases — degradación L1→L4)
+        ├── document_segmenter.py    (Segmentación semántica de artículos)
+        ├── chunk_manager.py         (División de texto por tokens + output budget)
+        ├── pipeline_sanitizer.py    (Sanitización de fragmentos XML por fase)
+        ├── pipeline_temp_manager.py (Persistencia temporal de artefactos)
+        ├── integrity_checker.py     (Verificador programático de integridad)
+        ├── ai_integrity_verifier.py (Verificador IA de integridad semántica)
+        └── theme.py                 (CSS y marca visual)
+               │
+               ▼
+        modules/dtd/                 (Validación offline)
+        ├── JATS-Publishing-1-3-MathML3-DTD/
+        ├── JATS-Publishing-1-4-MathML3-DTD/  ← DTD por defecto
+        └── download_jats14.py
 ```
 
 ---
@@ -137,6 +145,7 @@ XML-JATS/
 | DeepSeek | `deepseek` | ✅ Limitado | deepseek-chat |
 | Mistral | `mistral` | ✅ Limitado | mistral-large, mistral-small |
 | Groq | `groq` | ✅ Sí | llama3-70b, mixtral-8x7b |
+| OpenCode Go | `opencode_go` | ❌ Suscripción ($10/mes) | glm-5, kimi-k2.6, deepseek-v4-pro, qwen3.6-plus, minimax-m2.7 |
 | Ollama (local) | `ollama` | ✅ Sin límites | llama3, qwen2.5, etc. |
 | LM Studio (local) | `lmstudio` | ✅ Sin límites | Cualquier modelo GGUF |
 
@@ -184,6 +193,7 @@ XML-JATS/
 | `DEEPSEEK_API_KEY` | DeepSeek | API Key de DeepSeek |
 | `MISTRAL_API_KEY` | Mistral | API Key de Mistral |
 | `GROQ_API_KEY` | Groq | API Key de Groq |
+| `OPENCODE_GO_API_KEY` | OpenCode Go | API Key de OpenCode Go (suscripción) |
 
 ---
 
@@ -215,10 +225,12 @@ for f in modules/*.py views/*.py; do python -m py_compile "$f" && echo "OK: $f";
 
 ## Estado del Proyecto
 
-- **Versión actual:** 0.7.5
+- **Versión actual:** 0.8.0-alpha
 - **Framework UI:** Streamlit 1.51+ (multi-página)
-- **Arquitectura LLM:** LLM-Agnostic (Gemini, OpenAI, Anthropic, DeepSeek, Mistral, Groq, Ollama, LM Studio)
+- **Arquitectura LLM:** LLM-Agnostic (Gemini, OpenAI, Anthropic, DeepSeek, Mistral, Groq, OpenCode Go, Ollama, LM Studio)
+- **Estrategias de procesamiento:** Monolítico (artículo completo en un prompt) y Pipeline por Fases (segmentación → chunks → ensamblaje DOM)
 - **Validación:** DTD JATS 1.3 / 1.4 con scoring automatizado y Auditoría de Integridad Semántica (Zero-Placeholder)
+- **Compatibilidad SciELO:** specific-use="sps-1.8", dtd-version="1.1"
 - **Max output tokens:** 65 536 (soporta artículos extensos sin truncamiento)
 
 ---

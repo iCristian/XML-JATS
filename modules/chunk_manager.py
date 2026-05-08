@@ -52,6 +52,19 @@ class ChunkConfig:
         )
         return max(available, 512)
 
+    @property
+    def max_output_content_tokens(self) -> int:
+        """Tokens disponibles para la salida XML del modelo.
+
+        El XML de salida suele ser ~1.5x más largo que el texto plano
+        por las etiquetas. Limitamos el contenido de entrada para que
+        la salida no exceda max_output_tokens.
+        """
+        # Factor de expansión típico JATS: 1.3 - 1.5
+        expansion_factor = 1.4
+        output_limited = int(self.max_output_tokens / expansion_factor)
+        return max(output_limited, 512)
+
 
 # ─── Clase principal ─────────────────────────────────────────────
 
@@ -105,21 +118,27 @@ class ChunkManager:
         return max(raw, 1)
 
     def fits_in_one_chunk(self, text: str) -> bool:
-        """Determina si un texto cabe en un único prompt.
+        """Determina si un texto cabe en un único prompt y su salida es viable.
 
         Args:
             text: Texto candidato.
 
         Returns:
-            True si cabe dentro del límite configurado.
+            True si cabe dentro del límite de entrada y la salida esperada
+            no excede max_output_tokens.
         """
-        return self.estimate_tokens(text) <= self.config.max_content_tokens
+        tokens = self.estimate_tokens(text)
+        return (
+            tokens <= self.config.max_content_tokens
+            and tokens <= self.config.max_output_content_tokens
+        )
 
     def split_section(self, text: str) -> List[str]:
         """Divide una sección de texto en chunks que quepan en el modelo.
 
         Respeta límites de párrafo y, si es necesario, de oración
-        para no cortar en medio de una idea.
+        para no cortar en medio de una idea. Considera tanto el límite
+        de entrada como el de salida (el más restrictivo prevalece).
 
         Args:
             text: Texto de la sección (puede ser muy largo).
@@ -139,7 +158,11 @@ class ChunkManager:
 
         chunks: List[str] = []
         current_chunk = ""
-        max_tokens = self.config.max_content_tokens
+        # El límite efectivo es el más restrictivo entre input y output
+        max_tokens = min(
+            self.config.max_content_tokens,
+            self.config.max_output_content_tokens,
+        )
 
         for para in paragraphs:
             para_tokens = self.estimate_tokens(para)

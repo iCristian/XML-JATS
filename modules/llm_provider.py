@@ -597,6 +597,27 @@ PROVIDER_REGISTRY: Dict[str, LLMProvider] = {
         custom_api_key_env_var="",
         custom_default_models=["llama-3-8b-instruct", "qwen2.5-7b-instruct", "mistral-7b-instruct-v0.3", "phi-3-mini-4k-instruct"],
     ),
+    "opencode_go": OpenAIProvider(
+        base_url="https://opencode.ai/zen/go/v1",
+        custom_provider_id="opencode_go",
+        custom_display_name="OpenCode Go",
+        custom_api_key_url="https://opencode.ai/auth",
+        custom_api_key_env_var="OPENCODE_GO_API_KEY",
+        custom_default_models=[
+            "glm-5.1",
+            "glm-5",
+            "kimi-k2.6",
+            "kimi-k2.5",
+            "deepseek-v4-pro",
+            "deepseek-v4-flash",
+            "mimo-v2.5-pro",
+            "mimo-v2.5",
+            "qwen3.6-plus",
+            "qwen3.5-plus",
+            "minimax-m2.7",
+            "minimax-m2.5",
+        ],
+    ),
 }
 
 
@@ -690,6 +711,19 @@ _KNOWN_CONTEXT_WINDOWS: Dict[str, int] = {
     "llama-3.1-8b-instant": 128_000,
     "mixtral-8x7b-32768": 32_768,
     "gemma2-9b-it": 8_000,
+    # OpenCode Go
+    "glm-5.1": 128_000,
+    "glm-5": 128_000,
+    "kimi-k2.6": 256_000,
+    "kimi-k2.5": 256_000,
+    "deepseek-v4-pro": 128_000,
+    "deepseek-v4-flash": 128_000,
+    "mimo-v2.5-pro": 256_000,
+    "mimo-v2.5": 256_000,
+    "qwen3.6-plus": 128_000,
+    "qwen3.5-plus": 128_000,
+    "minimax-m2.7": 128_000,
+    "minimax-m2.5": 128_000,
 }
 
 
@@ -785,11 +819,16 @@ def get_model_tier(model_name: str) -> str:
         clean = clean.split("] ", 1)[1]
 
     small_indicators = ("phi3", "phi-3", "mini", "1b", "2b", "3b", "small", "tiny")
-    large_indicators = ("gpt-4", "claude-opus", "gemini-2.5-pro", "gemini-3-pro",
-                        "70b", "large", "o1", "o3", "o4")
+    large_indicators = (
+        "gpt-4", "claude-opus", "gemini-2.5-pro", "gemini-3-pro",
+        "70b", "large", "o1", "o3", "o4",
+        # OpenCode Go
+        "glm-5", "kimi-k2", "deepseek-v4-pro", "mimo-v2.5-pro",
+        "qwen3.6-plus", "minimax",
+    )
 
-    if any(ind in clean for ind in small_indicators):
-        return "small"
     if any(ind in clean for ind in large_indicators):
         return "large"
+    if any(ind in clean for ind in small_indicators):
+        return "small"
     return "medium"

@@ -1,7 +1,7 @@
 # Propuesta de Mejora: Arquitectura Pipeline por Fases para XML-JATS Transformer
 
 **Rama:** `experimento4`  
-**Versión base:** 0.7.5  
+**Versión base:** 0.8.0-alpha  
 **Fecha:** 2026-05-03  
 **Meta:** Transformar artículos científicos al estándar XML-JATS 1.4 de forma **100% íntegra** (sin resumir, sin modificar, sin truncar), con soporte optimizado para modelos pequeños y ejecutables en dispositivos móviles vía Ollama.
 

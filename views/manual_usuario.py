@@ -232,30 +232,78 @@ Si hay información faltante o quieres ajustar los metadatos, el Chatbot Asisten
     },
     {
         "type": "step",
-        "title": "Paso 8 — Seleccionar Modelos y Generar el XML JATS",
+        "title": "Paso 8 — Estrategia de Transformación: Monolítico vs Pipeline",
         "content": """
-Con los metadatos confirmados, es momento de generar el XML JATS. Puedes usar uno o múltiples modelos de IA simultáneamente.
+Con los metadatos confirmados, es momento de generar el XML JATS. El sistema ofrece dos estrategias de transformación complementarias. La interfaz te sugerirá automáticamente la más adecuada y podrás cambiarla si lo deseas.
 
-**Cómo generar el XML:**
+---
 
-1. En la pestaña **"Generación"** del Transformador, verás el selector de modelos.
-2. Selecciona uno o más modelos de IA de la lista desplegable:
-   - **Modo simple:** selecciona un solo modelo para una generación rápida.
-   - **Modo Multi-Agente:** selecciona 2-3 modelos para generar múltiples versiones en paralelo y elegir la mejor.
-3. Presiona el botón **"🚀 Generar XML JATS"**.
-4. El sistema procesará el artículo aplicando el estándar JATS 1.4:
-   - Etiquetará todas las secciones (`<sec>`, `<title>`, `<p>`).
-   - Convertirá las tablas a `<table-wrap>` con `<thead>`/`<tbody>`.
-   - Estructurará los metadatos en `<article-meta>`.
-   - Formateará las referencias bibliográficas en `<ref-list>`.
-5. Una barra de progreso mostrará el avance en tiempo real.
+### 🎯 Estrategias disponibles
 
-> ⏱️ La generación típicamente toma 30-90 segundos por modelo. Con múltiples modelos en paralelo, el tiempo total es similar al del modelo más lento.
+|  | 🧠 **Monolítico** | ⚡ **Pipeline por Fases** |
+|---|---|---|
+| **¿Cómo funciona?** | Envía el artículo completo al modelo en un solo prompt | Divide el artículo en Front, secciones del Body y Back; procesa cada parte por separado |
+| **¿Cuándo usarlo?** | Modelos grandes (Gemini 2.5 Pro, GPT-4, Claude Opus) + artículos cortos (< 3 000 palabras) | Modelos locales (Ollama, LM Studio), modelos pequeños (Phi-3, Qwen 3B), o artículos extensos |
+| **Ventajas** | Máxima coherencia global; una sola llamada a la API; estructura JATS consistente | Compatible con cualquier modelo sin importar su ventana de contexto; maneja artículos de cualquier longitud; sanitización DOM garantiza XML válido |
+| **Limitaciones** | Requiere modelo con gran ventana de contexto; puede truncar documentos largos; inadecuado para modelos de 3B-7B | Múltiples llamadas a la API; requiere fase de ensamblaje; puede perder cohesión entre secciones |
 
-> 🔢 El sistema soporta artículos de hasta 65 536 tokens de salida — equivalente a artículos de ~50 páginas sin truncamiento.
+---
+
+### 🧠 Modo Monolítico
+
+El artículo completo se envía en un único prompt al modelo, que genera el XML JATS de una sola vez. Es la estrategia más rápida y produce documentos con máxima cohesión estructural, ya que el modelo tiene una visión global de todo el contenido.
+
+**Recomendado para:**
+- Gemini 2.5 Pro/Flash, GPT-4o, Claude Sonnet/Opus, DeepSeek V4 Pro
+- Artículos de hasta ~3 000 palabras (~6-7 páginas)
+- Cuando la calidad estructural es prioridad sobre el costo
+
+**Modo Multi-Agente (exclusivo del Monolítico):** puedes seleccionar múltiples proveedores y modelos para que generen versiones en paralelo. El Leaderboard evaluará cada resultado por precisión DTD y te permitirá elegir el mejor.
+
+---
+
+### ⚡ Modo Pipeline por Fases
+
+Esta estrategia separa el artículo en segmentos semánticos y procesa cada uno de forma independiente. Es la opción recomendada para modelos locales (Ollama, LM Studio) o cuando el artículo supera las 3 000 palabras.
+
+**Fases del Pipeline:**
+1. **Segmentación** — El texto se divide en Front (título, autores, resumen), secciones del Body (Introducción, Métodos, Resultados, etc.) y Back (referencias bibliográficas).
+2. **Front** — El modelo genera solo el `<front>` con journal-meta y article-meta.
+3. **Body** — Cada sección se procesa por separado. Si una sección es muy larga, se divide automáticamente en chunks más pequeños.
+4. **Back** — Las referencias se procesan en lotes de 10.
+5. **Ensamblaje DOM** — Las partes se unen usando `lxml.etree`, garantizando XML bien formado aunque algún fragmento tenga errores menores.
+6. **Sanitización** — Correcciones automáticas: cierre de tags huérfanos, eliminación de placeholders, extracción de contenido anidado en `<article>`.
+7. **Post-procesamiento** — Correcciones estructurales programáticas sin usar LLM (tablas huérfanas, tags mal anidados).
+
+**Degradación progresiva (modelos pequeños):** El pipeline ajusta automáticamente la complejidad del prompt según el modelo:
+- **Nivel 1** — Prompt completo con `<sec>`, `<title>`, `<p>`, `<xref>` y tablas
+- **Nivel 2** — Prompt ligero: `<sec>`, `<title>`, `<p>` (sin referencias cruzadas)
+- **Nivel 3** — Prompt ultra-ligero: solo `<title>` y `<p>`, el `<sec>` lo añade el ensamblador
+- **Nivel 4** — Formato de texto plano con marcadores (`TITULO:`, `P:`); el XML se genera programáticamente sin usar el modelo
+
+**Recomendado para:**
+- Ollama (todos los modelos locales), LM Studio, proveedores con modelos pequeños
+- Artículos de cualquier longitud
+- Cuando necesitas procesar documentos extensos con recursos limitados
+
+---
+
+### 🔄 ¿Cómo se elige automáticamente?
+
+El sistema analiza dos factores y sugiere el modo óptimo:
+
+| Factor | Umbral | Modo sugerido |
+|--------|--------|---------------|
+| Tier del modelo | `small` (3B-7B) | Pipeline |
+| Tier del modelo | `medium` (8B-13B) | Monolítico |
+| Tier del modelo | `large` (70B+) | Monolítico |
+| Palabras del artículo | > 3 000 | Pipeline |
+| Proveedor local | Ollama / LM Studio | Pipeline |
+
+Siempre puedes cambiar manualmente la estrategia desde las tarjetas de selección en la interfaz.
 """,
-        "image": "resources/manual_images/08.png",
-        "caption": "Figura 8: Interfaz de generación XML JATS. Selecciona los modelos de IA que competirán en la generación simultánea."
+        "image": None,
+        "caption": ""
     },
     {
         "type": "step",
@@ -491,7 +539,7 @@ Software de uso exclusivo para la Universidad de Valparaíso. Todos los derechos
 El código y la documentación son propiedad de la Universidad de Valparaíso y su autor.
 El uso de servicios de terceros está sujeto a términos de cada proveedor (cloud o local) seleccionado por el usuario.
 
-Version: 0.7.5
+Version: 0.8.0-alpha
 """
 
 class ProfessionalPDF(FPDF):
@@ -699,7 +747,7 @@ def create_professional_pdf():
     pdf.set_font('Arial', 'B', 11)
     pdf.cell(0, 10, 'Autor: Cristian Carreño León', 0, 1, 'C')
     pdf.cell(0, 10, f'Fecha: {datetime.now().strftime("%d-%m-%Y")}', 0, 1, 'C')
-    pdf.cell(0, 10, 'Versión: 0.7.5', 0, 1, 'C')
+    pdf.cell(0, 10, 'Versión: 0.8.0-alpha', 0, 1, 'C')
     pdf.cell(0, 10, 'Contacto: cristian.carreno@uv.cl', 0, 1, 'C')
     
     # --- SECCIÓN 1: DOCUMENTACIÓN ---
