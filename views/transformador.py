@@ -471,14 +471,16 @@ def main() -> None:
                 if st.session_state.extracted_text:
                     if not st.session_state.extracted_metadata:
                         st.session_state.extracted_metadata = {}
-                        
-                    with st.expander("📝 Formulario de Metadatos Extraídos", expanded=True):
-                        st.markdown("Revisa los metadatos extraídos. Puedes editarlos antes de ir al Paso 2.")
+                    
+                    meta = st.session_state.extracted_metadata
+                    
+                    with st.expander("📝 Revisión de Metadatos", expanded=True):
+                        st.markdown("Revisa los metadatos extraídos por la IA. Corrige o completa antes de generar el XML.")
                         
                         valid_container = st.container()
-                        with valid_container.form("metadata_form", border=False):
+                        with valid_container.form("metadata_unified_form", border=False):
                             meta = st.session_state.extracted_metadata
-                            
+
                             # Preparar valor inicial para autores
                             current_authors = meta.get('authors', [])
                             authors_str = ""
@@ -493,9 +495,9 @@ def main() -> None:
                                         names.append(a)
                                 authors_str = ", ".join(names)
 
-                            # Callback para guardar
-                            def save_metadata_callback():
-                                # Recuperar valores desde el estado del formulario
+                            # Callback unificado
+                            def save_unified_metadata_callback():
+                                # --- Básicos ---
                                 new_title = st.session_state.meta_title
                                 new_date = st.session_state.meta_date
                                 new_journal = st.session_state.meta_journal
@@ -503,8 +505,8 @@ def main() -> None:
                                 new_authors_str = st.session_state.meta_authors
                                 new_volume = st.session_state.get("meta_volume", "")
                                 new_issue = st.session_state.get("meta_issue", "")
+                                new_pages = st.session_state.get("meta_pages", "")
                                 
-                                # Procesar autores
                                 authors_list = []
                                 if new_authors_str:
                                     for name in new_authors_str.split(','):
@@ -522,8 +524,42 @@ def main() -> None:
                                                 "surname": surname,
                                                 "aff_id": ""
                                             })
+                                
+                                fpage, lpage = "", ""
+                                if new_pages:
+                                    pg_parts = new_pages.replace("–", "-").split("-")
+                                    fpage = pg_parts[0].strip()
+                                    lpage = pg_parts[1].strip() if len(pg_parts) > 1 else fpage
 
-                                # Actualizar metadatos
+                                # --- Enriquecidos ---
+                                enrichment_fields = {
+                                    "has_version_description": "version_description",
+                                    "has_related_resources": "related_resources",
+                                    "has_volume_special_id": "volume_special_id",
+                                    "has_volume_series": "volume_series",
+                                    "has_issue_special_id": "issue_special_id",
+                                    "has_issue_title": "issue_title",
+                                    "has_issue_sponsor": "issue_sponsor",
+                                    "has_article_section": "article_section",
+                                    "has_isbn": "isbn",
+                                    "has_external_links": "external_links",
+                                    "has_supplementary_material": "supplementary_material",
+                                    "has_funding": "funding_description",
+                                    "has_acknowledgments": "acknowledgments",
+                                    "has_conference": "conference_description",
+                                    "has_publication_history": "publication_history",
+                                }
+                                enrichment_updates = {}
+                                for has_key, val_key in enrichment_fields.items():
+                                    has_val = st.session_state.get(f"enr_{has_key}", False)
+                                    val = st.session_state.get(f"enr_{val_key}", "")
+                                    enrichment_updates[has_key] = bool(has_val)
+                                    enrichment_updates[val_key] = str(val).strip()
+                                
+                                enrichment_updates["is_supplement"] = bool(st.session_state.get("enr_is_supplement", False))
+                                enrichment_updates["supplement_description"] = str(st.session_state.get("enr_supplement_description", "")).strip()
+                                enrichment_updates["contact_email"] = str(st.session_state.get("enr_contact_email", "")).strip()
+
                                 st.session_state.extracted_metadata.update({
                                     'article_title': new_title,
                                     'journal_title': new_journal,
@@ -531,10 +567,12 @@ def main() -> None:
                                     'doi': new_doi,
                                     'volume': new_volume,
                                     'issue': new_issue,
-                                    'authors': authors_list
+                                    'fpage': fpage,
+                                    'lpage': lpage,
+                                    'authors': authors_list,
+                                    **enrichment_updates,
                                 })
                                 
-                                # Validar
                                 from modules import metadata_processor
                                 extractor = metadata_processor.MetadataExtractor()
                                 missing = extractor.validate_metadata(st.session_state.extracted_metadata)
@@ -546,11 +584,8 @@ def main() -> None:
                                 else:
                                     st.session_state.metadata_verified = True 
                                     st.toast(f"⚠️ Guardado con faltantes: {', '.join(missing)}", icon="⚠️")
-                                
-                                # Bandera para cambiar de tab luego de que termine el callback
-                                st.session_state.go_to_step_2 = True
 
-                            # Layout en columnas con KEYS para el estado
+                            st.markdown("**📋 Metadatos Básicos**")
                             mc1, mc2 = st.columns(2)
                             with mc1:
                                 st.text_input("Título Artículo", value=meta.get('article_title', ''), key="meta_title")
@@ -561,23 +596,92 @@ def main() -> None:
                             
                             st.text_area("Autores (separados por coma)", value=authors_str, help="Ej: Juan Pérez, María González", key="meta_authors")
 
-                            # Campos adicionales de publicación
                             mv1, mv2, mv3 = st.columns(3)
                             with mv1:
                                 st.text_input("Volumen", value=meta.get('volume', ''), placeholder="Ej: 5", key="meta_volume")
                             with mv2:
                                 st.text_input("Número (Issue)", value=meta.get('issue', ''), placeholder="Ej: 2", key="meta_issue")
                             with mv3:
-                                st.text_input("Páginas (ej: 13-21)", value=f"{meta.get('fpage', '')}–{meta.get('lpage', '')}".replace("–", "-") if meta.get('fpage') else "", placeholder="Ej: 13-21", key="meta_pages")
+                                pages_val = f"{meta.get('fpage', '')}–{meta.get('lpage', '')}".replace("–", "-") if meta.get('fpage') else ""
+                                st.text_input("Páginas (ej: 13-21)", value=pages_val, placeholder="Ej: 13-21", key="meta_pages")
 
-                            st.markdown("<br>", unsafe_allow_html=True)  # safe: static HTML
-                            st.form_submit_button("💾 Guardar e ir al paso 2", on_click=save_metadata_callback, type="primary")
+                            st.markdown("---")
+                            st.markdown("**🔍 Enriquecimiento (la IA intentó detectarlos desde el texto)**")
+                            st.caption("Deja vacío lo que no aplica. Solo marca el checkbox y completa si aplica a tu artículo.")
 
-                        # Mostrar resumen de validación (fuera del form pero dentro del expander)
+                            st.markdown("*Identificación y Relaciones*")
+                            c1, c2 = st.columns(2)
+                            with c1:
+                                st.checkbox("¿Es una versión específica? (preprint, revisada, etc.)", value=meta.get("has_version_description", False), key="enr_has_version_description")
+                                st.text_input("Descripción de la versión", value=meta.get("version_description", ""), key="enr_version_description")
+                            with c2:
+                                st.checkbox("¿Hay recursos relacionados? (dataset, software, artículos)", value=meta.get("has_related_resources", False), key="enr_has_related_resources")
+                                st.text_input("Recursos relacionados", value=meta.get("related_resources", ""), key="enr_related_resources")
+
+                            st.markdown("*Revista — Volumen y Número*")
+                            c1, c2 = st.columns(2)
+                            with c1:
+                                st.checkbox("¿Volumen con identificador especial?", value=meta.get("has_volume_special_id", False), key="enr_has_volume_special_id")
+                                st.text_input("Identificador del volumen", value=meta.get("volume_special_id", ""), key="enr_volume_special_id")
+                                st.checkbox("¿Pertenece a una serie?", value=meta.get("has_volume_series", False), key="enr_has_volume_series")
+                                st.text_input("Serie del volumen", value=meta.get("volume_series", ""), key="enr_volume_series")
+                            with c2:
+                                st.checkbox("¿Número con identificador especial?", value=meta.get("has_issue_special_id", False), key="enr_has_issue_special_id")
+                                st.text_input("Identificador del número", value=meta.get("issue_special_id", ""), key="enr_issue_special_id")
+                                st.checkbox("¿Número con título específico?", value=meta.get("has_issue_title", False), key="enr_has_issue_title")
+                                st.text_input("Título del número", value=meta.get("issue_title", ""), key="enr_issue_title")
+                                st.checkbox("¿Patrocinador para este número?", value=meta.get("has_issue_sponsor", False), key="enr_has_issue_sponsor")
+                                st.text_input("Patrocinador", value=meta.get("issue_sponsor", ""), key="enr_issue_sponsor")
+
+                            st.markdown("*Artículo y Publicación*")
+                            c1, c2 = st.columns(2)
+                            with c1:
+                                st.checkbox("¿Es parte de una sección específica?", value=meta.get("has_article_section", False), key="enr_has_article_section")
+                                st.text_input("Sección / Parte", value=meta.get("article_section", ""), key="enr_article_section")
+                                st.checkbox("¿Hay ISBN asociado?", value=meta.get("has_isbn", False), key="enr_has_isbn")
+                                st.text_input("ISBN", value=meta.get("isbn", ""), key="enr_isbn")
+                            with c2:
+                                st.checkbox("¿Es parte de un suplemento?", value=meta.get("is_supplement", False), key="enr_is_supplement")
+                                st.text_input("Descripción del suplemento", value=meta.get("supplement_description", ""), key="enr_supplement_description")
+                                st.text_input("Email de contacto principal", value=meta.get("contact_email", ""), key="enr_contact_email")
+
+                            st.markdown("*Enlaces y Material Adicional*")
+                            st.checkbox("¿Enlaces externos importantes? (repositorio, web, código)", value=meta.get("has_external_links", False), key="enr_has_external_links")
+                            st.text_area("Enlaces externos", value=meta.get("external_links", ""), key="enr_external_links")
+                            st.checkbox("¿Material suplementario? (videos, datos, anexos)", value=meta.get("has_supplementary_material", False), key="enr_has_supplementary_material")
+                            st.text_area("Material suplementario", value=meta.get("supplementary_material", ""), key="enr_supplementary_material")
+
+                            st.markdown("*Financiamiento y Agradecimientos*")
+                            c1, c2 = st.columns(2)
+                            with c1:
+                                st.checkbox("¿Recibió financiamiento?", value=meta.get("has_funding", False), key="enr_has_funding")
+                                st.text_area("Descripción del financiamiento", value=meta.get("funding_description", ""), key="enr_funding_description")
+                            with c2:
+                                st.checkbox("¿Apoyo significativo adicional?", value=meta.get("has_acknowledgments", False), key="enr_has_acknowledgments")
+                                st.text_area("Agradecimientos / Apoyo", value=meta.get("acknowledgments", ""), key="enr_acknowledgments")
+
+                            st.markdown("*Conferencia e Historial*")
+                            c1, c2 = st.columns(2)
+                            with c1:
+                                st.checkbox("¿Versión extendida de conferencia?", value=meta.get("has_conference", False), key="enr_has_conference")
+                                st.text_input("Conferencia (nombre, fecha, lugar)", value=meta.get("conference_description", ""), key="enr_conference_description")
+                            with c2:
+                                st.checkbox("¿Historial de publicación relevante?", value=meta.get("has_publication_history", False), key="enr_has_publication_history")
+                                st.text_input("Historial (recibido, aceptado, revisado)", value=meta.get("publication_history", ""), key="enr_publication_history")
+
+                            st.markdown("<br>", unsafe_allow_html=True)
+                            st.form_submit_button("💾 Guardar y validar metadatos", on_click=save_unified_metadata_callback, type="primary")
+
                         if st.session_state.get('metadata_missing_fields'):
                             st.warning(f"⚠️ Campos pendientes: **{', '.join(st.session_state.metadata_missing_fields)}**")
                         elif st.session_state.get('metadata_verified'):
                             st.success("✅ Todos los metadatos obligatorios están completos.")
+                            st.divider()
+                            if st.button("✅ Confirmar todo e ir al Paso 2", type="primary", use_container_width=True, key="btn_go_step2"):
+                                st.session_state.go_to_step_2 = True
+                                st.rerun()
+                        else:
+                            st.warning("⚠️ Completa y guarda los metadatos básicos antes de avanzar.")
 
             # Detectar la intención de navegar y avisar vía JS render
             if st.session_state.pop("go_to_step_2", False):
@@ -1285,6 +1389,7 @@ def main() -> None:
                                 _pid = st.session_state.get('_active_provider', 'gemini')
                                 res = correction.generar_plan_correccion(
                                     st.session_state.validation_errors,
+                                    metadata=st.session_state.get("extracted_metadata"),
                                     model_version=selected_model,
                                     api_key=api_key,
                                     provider_id=_pid,

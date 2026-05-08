@@ -35,11 +35,24 @@ class MetadataExtractor:
     def __init__(self):
         pass
 
-    @staticmethod
-    def _normalize_metadata(data: Dict[str, Any]) -> Dict[str, Any]:
+    # Campos booleanos de enriquecimiento que deben normalizarse
+    _BOOLEAN_FIELDS = [
+        "has_version_description", "has_related_resources",
+        "has_volume_special_id", "has_volume_series",
+        "has_issue_special_id", "has_issue_title",
+        "has_issue_sponsor", "has_article_section",
+        "has_isbn", "is_supplement",
+        "has_external_links", "has_supplementary_material",
+        "has_funding", "has_acknowledgments",
+        "has_conference", "has_publication_history",
+    ]
+
+    @classmethod
+    def _normalize_metadata(cls, data: Dict[str, Any]) -> Dict[str, Any]:
         """Normaliza claves conocidas del resultado de la IA.
         
-        Corrige variaciones como 'roi' → 'doi' que el modelo puede devolver.
+        Corrige variaciones como 'roi' → 'doi' que el modelo puede devolver,
+        y normaliza campos booleanos de enriquecimiento.
         """
         # Normalizar roi → doi (typo histórico en prompts)
         if 'roi' in data and 'doi' not in data:
@@ -47,6 +60,15 @@ class MetadataExtractor:
         # Asegurar que doi existe como clave
         if 'doi' not in data:
             data['doi'] = None
+
+        # Normalizar campos booleanos: el LLM a veces devuelve strings
+        for field in cls._BOOLEAN_FIELDS:
+            if field in data:
+                val = data[field]
+                if isinstance(val, str):
+                    data[field] = val.lower() in ("true", "yes", "sí", "1", "si")
+                elif not isinstance(val, bool):
+                    data[field] = bool(val)
         return data
 
     def extract_from_file(self, file_path: str, model_version: str = "gemini-2.5-flash", api_key: str = None, provider_id: str = "gemini", **_kwargs) -> Dict[str, Any]:

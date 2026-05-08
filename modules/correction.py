@@ -7,7 +7,7 @@ y feedback del usuario a un modelo de lenguaje (Gemini) para obtener una versió
 """
 
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from . import prompts
 from .transformer import WORKSPACE_ROOT, invocar_gemini_cli, invocar_llm
@@ -38,14 +38,18 @@ def corregir_xml(
     prompt = prompts.get_interactive_correction_prompt(xml_content, validation_errors, user_feedback)
     return invocar_llm(prompt, model_version=model_version, api_key=api_key, provider_id=provider_id)
 
-def generar_plan_correccion(validation_errors: List[str],
-                            model_version: str = "gemini-2.5-flash", 
-                            api_key: str = "",
-                            provider_id: str = "gemini") -> Dict[str, Any]:
+def generar_plan_correccion(
+    validation_errors: List[str],
+    metadata: Optional[Dict[str, Any]] = None,
+    model_version: str = "gemini-2.5-flash",
+    api_key: str = "",
+    provider_id: str = "gemini",
+) -> Dict[str, Any]:
     """Genera un plan de acción sugerido basado en los errores de validación, sin retornar XML.
 
     Args:
         validation_errors: Lista de cadenas de error DTD.
+        metadata: Metadatos extraídos (incluyendo enriquecidos) para evitar preguntas redundantes.
         model_version: Modelo a usar.
         api_key: Puede ser vacía si el LLM la resuelve.
         provider_id: Proveedor de LLM.
@@ -53,5 +57,5 @@ def generar_plan_correccion(validation_errors: List[str],
     Returns:
         Dict con 'stdout' (el plan redactado), 'token_usage', etc.
     """
-    prompt = prompts.get_correction_plan_prompt(validation_errors)
+    prompt = prompts.get_correction_plan_prompt(validation_errors, metadata=metadata)
     return invocar_llm(prompt, model_version=model_version, api_key=api_key, provider_id=provider_id)
